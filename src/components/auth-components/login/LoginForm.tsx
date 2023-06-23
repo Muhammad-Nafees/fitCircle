@@ -1,0 +1,164 @@
+import {
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../utils/metrics';
+import {loginSchema} from '../../../validations';
+import CustomInput from '../../shared-components/CustomInput';
+import {STYLES} from '../../../styles/globalStyles';
+import CustomDivider from '../../shared-components/CustomDivider';
+import SocialIcons from '../../shared-components/SocialIcons';
+import CustomButton from '../../shared-components/CustomButton';
+import {Formik} from 'formik';
+import {useNavigation} from '@react-navigation/native';
+
+interface FormValues {
+  email: string;
+  password: string;
+}
+
+const LoginForm = () => {
+  const navigation = useNavigation();
+  const initialValues: FormValues = {
+    email: '',
+    password: '',
+  };
+
+  const handleSubmit = (values: FormValues) => {
+    console.log(values);
+    navigation.navigate('CreateAccount');
+  };
+  return (
+    <View style={styles.container}>
+      <ScrollView>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={loginSchema}
+          onSubmit={handleSubmit}>
+          {({
+            handleChange,
+            handleSubmit,
+            handleBlur,
+            submitForm,
+            values,
+            errors,
+            touched,
+            initialTouched,
+          }) => (
+            <View
+              style={{
+                marginTop: verticalScale(42),
+                gap: 0,
+                alignItems: 'center',
+              }}>
+              <CustomInput
+                label="Email"
+                placeholder="Username"
+                value={values.email}
+                error={errors.email}
+                touched={touched.email}
+                initialTouched={true}
+                handleChange={handleChange('email')}
+              />
+              <View style={{gap: 0, position: 'relative'}}>
+                <CustomInput
+                  label="Password"
+                  placeholder="Password"
+                  value={values.password}
+                  error={errors.password}
+                  touched={touched.email}
+                  initialTouched={true}
+                  handleChange={handleChange('password')}
+                />
+                <Text
+                  style={[
+                    STYLES.text12,
+                    {
+                      color: '#209BCC',
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#209BCC',
+                      width: horizontalScale(96),
+                      position: 'absolute',
+                      right: 0,
+                      bottom: -verticalScale(10),
+                    },
+                  ]}>
+                  Forget Password
+                </Text>
+              </View>
+              <View style={{marginTop: verticalScale(37), gap: 37}}>
+                <CustomButton onPress={handleSubmit}>Log in</CustomButton>
+                <CustomDivider text="Or Sign Up" />
+                <SocialIcons />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 2,
+                  justifyContent: 'center',
+                  marginTop: verticalScale(30),
+                }}>
+                <Text style={STYLES.text14}>Don’t have an account? </Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('CreateAccount')}>
+                  <Text
+                    style={[
+                      STYLES.text14,
+                      {
+                        fontWeight: '700',
+                        color: '#209BCC',
+                        textDecorationLine: 'underline',
+                      },
+                    ]}>
+                    Sign up
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={{marginVertical: verticalScale(47)}}>
+                <Text
+                  style={[
+                    STYLES.text12,
+                    {fontWeight: '500', color: '#979797'},
+                  ]}>
+                  By clicking login, you agree to our{' '}
+                  <Text style={{color: '#219EBC'}}>Terms and Conditions </Text>{' '}
+                  and
+                  <Text style={{color: '#219EBC'}}> Privacy Policy </Text>
+                </Text>
+              </View>
+            </View>
+          )}
+        </Formik>
+      </ScrollView>
+    </View>
+  );
+};
+
+export default LoginForm;
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: verticalScale(630),
+    overflow: 'scroll',
+    zIndex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.93)',
+    borderTopLeftRadius: moderateScale(30),
+    borderTopRightRadius: moderateScale(30),
+    // justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: horizontalScale(30),
+    paddingTop: verticalScale(42),
+  },
+});
