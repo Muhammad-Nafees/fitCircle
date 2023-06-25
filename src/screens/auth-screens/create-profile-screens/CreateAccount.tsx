@@ -6,7 +6,7 @@ import CustomInput from '../../../components/shared-components/CustomInput';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {Formik, Field} from 'formik';
 import {signupSchema} from '../../../validations';
-import PhoneInput from 'react-native-phone-number-input';
+import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 
 interface FormValues {
   email: string;
@@ -15,7 +15,7 @@ interface FormValues {
   confirmPassword: string;
 }
 
-const CreateAccount = () => {
+const CreateAccount = ({navigation}: any) => {
   const initialValues: FormValues = {
     email: '',
     phoneNumber: null,
@@ -24,9 +24,10 @@ const CreateAccount = () => {
   };
   const handleSubmit = (values: FormValues) => {
     console.log(values);
+    navigation.navigate('CreateProfile');
   };
   return (
-    <View style={styles.container}>
+    <View style={STYLES.container}>
       <ScrollView>
         <Formik
           initialValues={initialValues}
@@ -58,34 +59,7 @@ const CreateAccount = () => {
                   initialTouched={true}
                   handleChange={handleChange('email')}
                 />
-                <View style={{marginVertical: verticalScale(4),marginBottom: verticalScale(20), gap: 8}}>
-                <Text style={STYLES.text12}>Verify Number</Text>
-                  <Field name="phoneNumber">
-                    {() => (
-                      <PhoneInput
-                        //   defaultValue={value}
-                        defaultCode="PK"
-                        textInputStyle={{
-                          height: 20,
-                          width: 20,
-                          padding: 0,
-                          fontSize: 12,
-                          color: '#000',
-                        }}
-                        codeTextStyle={{fontSize: 11, color: '#000'}}
-                        containerStyle={{
-                          height: verticalScale(48),
-                          width: horizontalScale(290),
-                          backgroundColor: 'white',
-                        }}
-                        onChangeText={phoneNumber =>
-                          setFieldValue('phoneNumber',  +phoneNumber)
-                        }
-                        withShadow
-                      />
-                    )}
-                  </Field>
-                </View>
+                <CustomPhoneInput setFieldValue={setFieldValue} />
                 <CustomInput
                   label="Password"
                   placeholder="Password"
@@ -106,7 +80,7 @@ const CreateAccount = () => {
                 />
               </View>
               <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Cotinue</CustomButton>
+                <CustomButton onPress={handleSubmit}>Continue</CustomButton>
               </View>
             </>
           )}
@@ -119,17 +93,11 @@ const CreateAccount = () => {
 export default CreateAccount;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#292A2C',
-    paddingHorizontal: horizontalScale(14),
-  },
   formContainer: {
     marginTop: verticalScale(62),
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 4
-    // gap: 10,
+    gap: 4,
   },
 
   button: {

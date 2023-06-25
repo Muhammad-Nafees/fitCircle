@@ -6,14 +6,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../utils/metrics';
-import CustomButton from '../../../components/shared-components/CustomButton';
-import {BlurView} from '@react-native-community/blur';
 import {STYLES} from '../../../styles/globalStyles';
-import CustomInput from '../../../components/shared-components/CustomInput';
-import CustomDivider from '../../../components/shared-components/CustomDivider';
-import SocialIcons from '../../../components/shared-components/SocialIcons';
-import {Formik} from 'formik';
-import {loginSchema} from '../../../validations';
 import LoginForm from '../../../components/auth-components/login/LoginForm';
 
 const LoginFormScreen = () => {

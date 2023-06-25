@@ -11,6 +11,15 @@ import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormS
 import CreateAccount from '../screens/auth-screens/create-profile-screens/CreateAccount';
 import HeaderBackArrow from '../components/shared-components/HeaderBackArrow';
 import {horizontalScale, verticalScale} from '../utils/metrics';
+import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
+import GenderScreen from '../screens/auth-screens/create-profile-screens/GenderScreen';
+import CustomHeader from '../components/shared-components/CustomHeader';
+import InterestScreen from '../screens/auth-screens/create-profile-screens/InterestScreen';
+import CommunitiesScreen from '../screens/auth-screens/create-profile-screens/CommunitiesScreen';
+import SocialMediaAccount from '../screens/auth-screens/create-profile-screens/SocialMediaAccount';
+import ChooseVerification from '../screens/auth-screens/create-profile-screens/ChooseVerification';
+import VerifyScreen from '../screens/auth-screens/create-profile-screens/VerifyScreen';
+import AccountVerified from '../screens/auth-screens/create-profile-screens/AccountVerified';
 
 const Stack = createStackNavigator();
 
@@ -18,35 +27,63 @@ const AuthStackNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        headerShadowVisible: false,
+        title: '',
+        headerStyle: {
+          backgroundColor: '#292A2C',
+          height: verticalScale(100),
+        },
+        headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-      }}>
-      <Stack.Screen name="SplashScreen" component={SplashScreen} />
-      <Stack.Screen name="SigninScreenOne" component={SignInScreenOne} />
-      <Stack.Screen name="SigninScreenTwo" component={SignInScreenTwo} />
-      <Stack.Screen name="LoginFormScreen" component={LoginFormScreen} />
-      <Stack.Screen name="SignupFormScreen" component={SignupFormScreen} />
+      }}
+      // initialRouteName="GenderScreen">
+
+      initialRouteName="SplashScreen"> 
       <Stack.Screen
-        name="CreateAccount"
-        component={CreateAccount}
-        options={({route, navigation}) => ({
-          headerShown: true,
-          headerShadowVisible: false,
-          title: '',
-          headerStyle: {
-            backgroundColor: '#292A2C',
-            height: verticalScale(100),
-          },
-          headerLeft: () => (
-            <View
-              style={{
-                marginTop: verticalScale(20),
-                marginLeft: horizontalScale(20),
-              }}>
-              <HeaderBackArrow onPress={() => navigation.goBack()} />
-            </View>
-          ),
-        })}
+        name="SplashScreen"
+        component={SplashScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SigninScreenOne"
+        component={SignInScreenOne}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SigninScreenTwo"
+        component={SignInScreenTwo}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="LoginFormScreen"
+        component={LoginFormScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SignupFormScreen"
+        component={SignupFormScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="CreateAccount" component={CreateAccount} />
+      <Stack.Screen
+        name="CreateProfile"
+        component={CreateProfile}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="GenderScreen" component={GenderScreen} />
+      <Stack.Screen name="InterestScreen" component={InterestScreen} />
+      <Stack.Screen name="CommunitiesScreen" component={CommunitiesScreen} />
+      <Stack.Screen name="SocialMediaAccount" component={SocialMediaAccount} />
+      <Stack.Screen
+        name="ChooseVerificationType"
+        component={ChooseVerification}
+      />
+      <Stack.Screen name="VerifyScreen" component={VerifyScreen} />
+      <Stack.Screen
+        name="AccountVerified"
+        component={AccountVerified}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );

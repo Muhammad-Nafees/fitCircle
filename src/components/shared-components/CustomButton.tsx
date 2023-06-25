@@ -17,7 +17,8 @@ const CustomButton = ({children, extraStyles, isDisabled, onPress}: Props) => {
       disabled={isDisabled}>
       <View
         style={[
-          isDisabled ? styles.disabledButton : styles.button,
+          styles.button,
+          {backgroundColor: isDisabled ? '#444444' : '#13728C'},
           extraStyles,
         ]}>
         <Text
@@ -33,19 +34,11 @@ export default CustomButton;
 
 const styles = StyleSheet.create({
   button: {
+    height: 50,
     paddingVertical: verticalScale(12),
     borderRadius: moderateScale(100),
-    backgroundColor: '#13728C',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  disabledButton: {
-    // marginTop: verticalScale(40),
-    // paddingVertical: verticalScale(12),
-    // borderRadius: moderateScale(12),
-    // backgroundColor: COLORS.neutral200,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   buttonText: {
     color: '#ffffff',

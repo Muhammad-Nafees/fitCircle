@@ -13,6 +13,7 @@ interface Props {
   error?: string;
   touched: boolean | undefined;
   initialTouched?: boolean;
+  extraStyles?: any;
   handleChange: (e: any) => void;
 }
 
@@ -51,9 +52,8 @@ const CustomInput = ({...props}: Props) => {
   return (
     <View style={{}}>
       <Text style={STYLES.text12}>{props.label}</Text>
-
       <TextInput
-        style={[inputStyle, STYLES.text14]}
+        style={[inputStyle, STYLES.text14, , props.extraStyles]}
         placeholder={isFocused ? '' : props.placeholder}
         value={props.value}
         onChangeText={handleChangeText}
@@ -91,6 +91,6 @@ const styles = StyleSheet.create({
     width: horizontalScale(294),
     height: verticalScale(50),
     marginTop: verticalScale(8),
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
 });

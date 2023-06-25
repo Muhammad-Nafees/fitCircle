@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import {verticalScale} from '../utils/metrics';
 import {STYLES} from '../styles/globalStyles';
 
 const SplashScreen = ({navigation}: any) => {

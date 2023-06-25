@@ -10,11 +10,12 @@ import BackIcon from '../../../assets/icons/BackIcon';
 
 interface Props {
   onPress: () => void;
+  extraStyles?: any;
 }
 
-const HeaderBackArrow = ({onPress}: Props) => {
+const HeaderBackArrow = ({extraStyles, onPress}: Props) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={[styles.container, extraStyles]} onPress={onPress}>
       <BackIcon />
     </TouchableOpacity>
   );

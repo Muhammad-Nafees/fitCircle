@@ -1,7 +1,12 @@
 import {StyleSheet} from 'react-native';
-import {moderateScale, verticalScale} from '../utils/metrics';
+import {horizontalScale, moderateScale, verticalScale} from '../utils/metrics';
 
 export const STYLES = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#292A2C',
+    paddingHorizontal: horizontalScale(14),
+  },
   text12: {
     fontSize: moderateScale(12),
     lineHeight: verticalScale(15),
@@ -25,7 +30,7 @@ export const STYLES = StyleSheet.create({
     lineHeight: verticalScale(39),
     fontWeight: '700',
     color: '#ffffff',
-  },  
+  },
   text40: {
     fontSize: moderateScale(40),
     lineHeight: verticalScale(49),

@@ -18,6 +18,7 @@ import SocialIcons from '../../shared-components/SocialIcons';
 import CustomButton from '../../shared-components/CustomButton';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
+import {CreateAccountNavigationProp} from '../../../interfaces/NavigationTypes';
 
 interface FormValues {
   email: string;
@@ -25,7 +26,7 @@ interface FormValues {
 }
 
 const LoginForm = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<CreateAccountNavigationProp>();
   const initialValues: FormValues = {
     email: '',
     password: '',
