@@ -120,7 +120,7 @@ const GenderForm = () => {
             style={{
               width: '100%',
               paddingHorizontal: horizontalScale(40),
-              marginVertical: verticalScale(118),
+              marginVertical: verticalScale(60),
             }}>
             <CustomButton onPress={() => navigation.navigate('CommunitiesScreen') }>Continue</CustomButton>
           </View>

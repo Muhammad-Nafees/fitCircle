@@ -7,7 +7,7 @@ import CustomPhoneInput from '../../shared-components/CustomPhoneInput';
 import CustomButton from '../../shared-components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import {CustomSelect} from '../../shared-components/CustomSelect';
-import { GenderScreenNavigationProp } from '../../../interfaces/NavigationTypes';
+import {GenderScreenNavigationProp} from '../../../interfaces/NavigationTypes';
 
 const countries = ['Country1', 'Country2', 'Country3', 'Country4'];
 const cities = ['City1', 'City2', 'City4', 'City4'];
@@ -22,10 +22,12 @@ interface FormValues {
   city: string;
   physicalInformation: string;
   dateOfBirth: string;
-  
+}
+interface Props {
+  profilePicture: any;
 }
 
-const CreateProfileForm = () => {
+const CreateProfileForm = ({profilePicture}: Props) => {
   const navigation = useNavigation<GenderScreenNavigationProp>();
 
   const initialValues: FormValues = {
@@ -96,9 +98,8 @@ const CreateProfileForm = () => {
               setFieldValue={setFieldValue}
               label="Phone Number"
             />
-            <CustomSelect label='Country' values={countries} />
-            <CustomSelect label='City' values={cities} />
-
+            <CustomSelect label="Country" values={countries} />
+            <CustomSelect label="City" values={cities} />
 
             <CustomInput
               label="Physical Information"
@@ -120,7 +121,12 @@ const CreateProfileForm = () => {
             />
           </View>
           <View style={styles.button}>
-            <CustomButton onPress={() => navigation.navigate('GenderScreen')}>
+            <CustomButton
+              onPress={() =>
+                navigation.navigate('GenderScreen', {
+                  profilePicture: profilePicture,
+                })
+              }>
               Continue
             </CustomButton>
           </View>

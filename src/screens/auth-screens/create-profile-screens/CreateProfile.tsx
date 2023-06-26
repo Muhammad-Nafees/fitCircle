@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Text, View, ScrollView, StyleSheet} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import HeaderBackArrow from '../../../components/shared-components/HeaderBackArrow';
@@ -6,7 +6,14 @@ import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import ProfilePhotos from '../../../components/auth-components/create-profile/ProfilePhotos';
 import CreateProfileForm from '../../../components/auth-components/create-profile/CreateProfileForm';
 
+
+
 const CreateProfile = ({navigation}: any) => {
+  const [profilePicture, setProfilePicture] = useState<any>();
+  const handleSelectProfilePicture = (image:any) => {
+    setProfilePicture(image)
+    console.log(image)
+  }
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView>
@@ -26,9 +33,9 @@ const CreateProfile = ({navigation}: any) => {
             }}
             onPress={() => navigation.goBack()}
           />
-          <ProfilePhotos />
+          <ProfilePhotos onSelectProfilePicture={handleSelectProfilePicture} />
         </View>
-        <CreateProfileForm />
+        <CreateProfileForm profilePicture={profilePicture} />
       </ScrollView>
     </View>
   );
