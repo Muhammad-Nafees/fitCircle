@@ -4,7 +4,7 @@ import {STYLES} from '../../../styles/globalStyles';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 
-const ChooseVerification = ({navigation}: any) => {
+const ChooseVerificationType = ({navigation}: any) => {
   const [verificationType, setVerificationType] = useState<string>('phone');
   return (
     <View style={STYLES.container}>
@@ -34,7 +34,7 @@ const ChooseVerification = ({navigation}: any) => {
               }}
               onPress={() => {
                 setVerificationType('email'),
-                  navigation.navigate('VerifyScreen');
+                  navigation.navigate('OtpScreen');
               }}>
               Email Verification
             </CustomButton>
@@ -48,7 +48,7 @@ const ChooseVerification = ({navigation}: any) => {
               }}
               onPress={() => {
                 setVerificationType('phone'),
-                  navigation.navigate('VerifyScreen');
+                  navigation.navigate('OtpScreen');
               }}>
               Phone Verification
             </CustomButton>
@@ -59,7 +59,7 @@ const ChooseVerification = ({navigation}: any) => {
   );
 };
 
-export default ChooseVerification;
+export default ChooseVerificationType;
 
 const styles = StyleSheet.create({
   cardContainer: {

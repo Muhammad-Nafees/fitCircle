@@ -17,9 +17,11 @@ import CustomHeader from '../components/shared-components/CustomHeader';
 import InterestScreen from '../screens/auth-screens/create-profile-screens/InterestScreen';
 import CommunitiesScreen from '../screens/auth-screens/create-profile-screens/CommunitiesScreen';
 import SocialMediaAccount from '../screens/auth-screens/create-profile-screens/SocialMediaAccount';
-import ChooseVerification from '../screens/auth-screens/create-profile-screens/ChooseVerification';
+import ChooseVerification from '../screens/auth-screens/create-profile-screens/ChooseVerificationType';
 import VerifyScreen from '../screens/auth-screens/create-profile-screens/VerifyScreen';
-import AccountVerified from '../screens/auth-screens/create-profile-screens/AccountVerified';
+import OtpScreen from '../screens/auth-screens/create-profile-screens/OtpScreen';
+import UploadCertificate from '../screens/auth-screens/create-profile-screens/UploadCertificate';
+import ChooseVerificationType from '../screens/auth-screens/create-profile-screens/ChooseVerificationType';
 
 const Stack = createStackNavigator();
 
@@ -38,7 +40,6 @@ const AuthStackNavigator = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
       initialRouteName="SplashScreen">
-
       {/* // initialRouteName="SplashScreen">  */}
       <Stack.Screen
         name="SplashScreen"
@@ -77,12 +78,18 @@ const AuthStackNavigator = () => {
       <Stack.Screen name="SocialMediaAccount" component={SocialMediaAccount} />
       <Stack.Screen
         name="ChooseVerificationType"
-        component={ChooseVerification}
+        component={ChooseVerificationType}
       />
-      <Stack.Screen name="VerifyScreen" component={VerifyScreen} />
+      <Stack.Screen name="OtpScreen" component={OtpScreen} />
       <Stack.Screen
         name="AccountVerified"
-        component={AccountVerified}
+        component={VerifyScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="UploadCertificate" component={UploadCertificate} />
+      <Stack.Screen
+        name="CertificateVerified"
+        component={VerifyScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

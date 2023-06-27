@@ -10,12 +10,13 @@ import ImagePicker, {
   launchCamera,
   MediaType,
 } from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 interface Props {
-  onSelectProfilePicture: (picture:any) => void;
+  onSelectProfilePicture: (picture: any) => void;
 }
 
-const ProfilePhotos = ({onSelectProfilePicture}:Props) => {
+const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
   const [selectedCoverImage, setSelectedCoverImage] = useState<any | null>(
     null,
   );
@@ -24,6 +25,14 @@ const ProfilePhotos = ({onSelectProfilePicture}:Props) => {
   );
 
   const handleUploadPhoto = (type: string) => {
+    if (type == 'profile' && selectedProfileImage) {
+      setSelectedProfileImage(null);
+      return;
+    }
+    if (type == 'cover' && selectedCoverImage) {
+      setSelectedCoverImage(null);
+      return;
+    }
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       includeBase64: false,
@@ -45,13 +54,29 @@ const ProfilePhotos = ({onSelectProfilePicture}:Props) => {
     <>
       <View style={styles.coverPhotoContainer}>
         {selectedCoverImage ? (
-          <Image
-            source={{
-              uri: selectedCoverImage.resourcePath,
-            }}
-            resizeMode="cover"
-            style={{width: 375, height: 182}}
-          />
+          <>
+            <Image
+              source={{
+                uri: selectedCoverImage.resourcePath,
+              }}
+              resizeMode="cover"
+              style={{width: 375, height: 182}}
+            />
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={[
+                styles.profileCamera,
+                {
+                  position: 'absolute',
+                  top: verticalScale(19),
+                  right: horizontalScale(10),
+                  backgroundColor: '#34535A',
+                },
+              ]}
+              onPress={() => handleUploadPhoto('cover')}>
+              <Icon name="trash-outline" color="white" size={20} />
+            </TouchableOpacity>
+          </>
         ) : (
           <TouchableOpacity onPress={() => handleUploadPhoto('cover')}>
             <Text style={[STYLES.text12, {textDecorationLine: 'underline'}]}>
@@ -61,7 +86,7 @@ const ProfilePhotos = ({onSelectProfilePicture}:Props) => {
         )}
       </View>
       <View style={styles.profilePhotoContainer}>
-        {selectedProfileImage ? (
+        {selectedProfileImage && (
           <Image
             source={{
               uri: selectedProfileImage.resourcePath,
@@ -69,14 +94,17 @@ const ProfilePhotos = ({onSelectProfilePicture}:Props) => {
             resizeMode="cover"
             style={{width: 142, height: 142, borderRadius: 71}}
           />
-        ) : (
-          <TouchableOpacity
-            style={styles.profileCamera}
-            activeOpacity={0.7}
-            onPress={() => handleUploadPhoto('profile')}>
-            <Cameraicon />
-          </TouchableOpacity>
         )}
+        <TouchableOpacity
+          style={styles.profileCamera}
+          activeOpacity={0.7}
+          onPress={() => handleUploadPhoto('profile')}>
+          {selectedProfileImage ? (
+            <Icon name="trash-outline" color="white" size={20} />
+          ) : (
+            <Cameraicon />
+          )}
+        </TouchableOpacity>
       </View>
     </>
   );

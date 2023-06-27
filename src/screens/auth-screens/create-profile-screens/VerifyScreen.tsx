@@ -1,96 +1,35 @@
-import React, {useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {STYLES} from '../../../styles/globalStyles';
-import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import {horizontalScale, verticalScale} from '../../../utils/metrics';
+import {useRoute} from '@react-navigation/native';
 
-const VerifyScreen = ({navigation}: any ) => {
-  const inputRefs = useRef<Array<TextInput | null>>([]);
-  const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
-
-  const handleInputChange = (index: number, value: string) => {
-    const updatedOtp = [...otp];
-    updatedOtp[index] = value;
-    setOtp(updatedOtp);
-
-    if (value && index < inputRefs.current.length - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleInputKeyPress = (index: number, key: string) => {
-    if (key === 'Backspace' && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    } else if (key !== 'Backspace' && index < inputRefs.current.length - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
+const VerifyScreen = ({navigation}:any) => {
+  const {name} = useRoute();
+  const handleNavigation = () => {
+      if(name == "CertificateVerified") {
+            navigation.navigate("InterestScreen")
+      }
+      else { 
+        return;
+      }
+  }
   return (
-    <View style={STYLES.container}>
-      <ScrollView>
-        <View style={{gap: 10}}>
-          <Text style={[STYLES.text16, {fontWeight: '700'}]}>
-            Verify your phone
-          </Text>
-          <Text style={[STYLES.text12, {fontWeight: '400'}]}>
-            Verification code sent to your phone +1 234 567 8901
-          </Text>
+    <View style={styles.container}>
+      <View style={styles.card}>
+        <View style={styles.icon}>
+          <Icon name="checkmark-outline" color="white" size={24} />
         </View>
-        <View style={styles.cardContainer}>
-          <View style={styles.card}>
-            <View style={styles.inputContainer}>
-              {Array.from({length: 6}, (_, index) => (
-                <TextInput
-                  key={index}
-                  style={styles.input}
-                  maxLength={1}
-                  keyboardType="numeric"
-                  secureTextEntry={!otp[index]}
-                  returnKeyType="next"
-                  blurOnSubmit={false}
-                  ref={ref => (inputRefs.current[index] = ref)}
-                  value={otp[index]}
-                  onChangeText={value => handleInputChange(index, value)}
-                  onKeyPress={({nativeEvent: {key}}) =>
-                    handleInputKeyPress(index, key)
-                  }
-                />
-              ))}
-            </View>
-            <View style={{marginTop: verticalScale(20), gap: 4}}>
-              <Text style={STYLES.text14}>
-                OTP will expired in <Text style={{color: 'red'}}> 00:11 </Text>
-              </Text>
-              <Text style={STYLES.text14}>
-                Didn’t recive code?
-                <Text
-                  style={{color: '#209BCC', textDecorationLine: 'underline'}}>
-                  {' '}
-                  Resend OTP
-                </Text>
-              </Text>
-            </View>
-            <View
-              style={{
-                marginHorizontal: horizontalScale(50),
-                marginTop: verticalScale(50),
-              }}>
-              <CustomButton
-                onPress={() => navigation.navigate('AccountVerified')}>
-                Verify
-              </CustomButton>
-            </View>
-          </View>
+        <Text style={[STYLES.text14, {marginTop: 2}]}>
+          {name == 'CertificateVerified'
+            ? 'Certificate Verified!'
+            : 'Account created!'}{' '}
+        </Text>
+        <View style={{width: '75%', marginTop: verticalScale(25)}}>
+          <CustomButton onPress={handleNavigation}>Continue</CustomButton>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };
@@ -98,29 +37,26 @@ const VerifyScreen = ({navigation}: any ) => {
 export default VerifyScreen;
 
 const styles = StyleSheet.create({
-  cardContainer: {
+  container: {
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
   },
   card: {
-    marginTop: horizontalScale(68),
-    width: horizontalScale(352),
-    height: 240,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 30,
+    backgroundColor: 'rgba(107, 107, 107, 0.5)',
     justifyContent: 'center',
-    paddingHorizontal: horizontalScale(32),
-    paddingVertical: verticalScale(16),
+    alignItems: 'center',
+    width: 271,
+    height: 180,
+    borderRadius: 30,
   },
-  inputContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderRadius: 4,
-    fontSize: 16,
-    backgroundColor: '#FBFBFB',
-    textAlign: 'center',
+  icon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#30D298',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

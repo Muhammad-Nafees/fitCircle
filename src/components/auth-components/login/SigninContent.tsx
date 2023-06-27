@@ -16,12 +16,10 @@ import {BlurView} from '@react-native-community/blur';
 
 interface Props {
   children?: ReactNode;
-  screen?: number
+  screen?: number;
 }
 
-const SigninContent = ({children,screen}: Props) => {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
-  const [isLoginForm, setIsLoginForm] = useState<boolean>(false);
+const SigninContent = ({children, screen}: Props) => {
   return (
     <ImageBackground
       source={require('../../../../assets/images/backgroundImage.jpg')}
@@ -32,9 +30,9 @@ const SigninContent = ({children,screen}: Props) => {
         style={{
           gap: 12,
           paddingHorizontal: horizontalScale(28),
-          marginTop: verticalScale(387),
+          marginTop: verticalScale(360),
         }}>
-        <Text style={[STYLES.text40, {width: horizontalScale(238),}]}>
+        <Text style={[STYLES.text40, {width: horizontalScale(238)}]}>
           Find the best gyms and coaches
         </Text>
         <Text style={STYLES.text16}>
@@ -45,8 +43,16 @@ const SigninContent = ({children,screen}: Props) => {
 
       <View style={styles.card}>
         <View style={styles.linesContainer}>
-          <View style={[styles.lines,{backgroundColor: screen == 2 ? '#444444' : 'white'}]}></View>
-          <View style={[styles.lines, {backgroundColor: screen == 2 ? 'white' : '#444444'}]}></View>
+          <View
+            style={[
+              styles.lines,
+              {backgroundColor: screen == 2 ? '#444444' : 'white'},
+            ]}></View>
+          <View
+            style={[
+              styles.lines,
+              {backgroundColor: screen == 2 ? 'white' : '#444444'},
+            ]}></View>
           <View style={[styles.lines, {backgroundColor: '#444444'}]}></View>
         </View>
         <View style={{marginTop: verticalScale(31)}}>{children}</View>
@@ -64,9 +70,10 @@ const styles = StyleSheet.create({
   },
   card: {
     marginTop: horizontalScale(22),
-    height: verticalScale(202),
+    height: verticalScale(230),
     backgroundColor: '#0D0D0D',
     paddingHorizontal: horizontalScale(47),
+    justifyContent: 'center',
   },
   linesContainer: {
     marginTop: verticalScale(20),

@@ -13,6 +13,7 @@ interface Props {
   error?: string;
   touched: boolean | undefined;
   initialTouched?: boolean;
+  keyboardType?: 'default' | 'numeric' | 'email-address';
   extraStyles?: any;
   handleChange: (e: any) => void;
 }
@@ -59,6 +60,7 @@ const CustomInput = ({...props}: Props) => {
         onChangeText={handleChangeText}
         underlineColor={'transpsarent'}
         theme={theme}
+        keyboardType={props.keyboardType}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
       />

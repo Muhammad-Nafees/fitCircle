@@ -1,6 +1,6 @@
-import {View, Text} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
-import {verticalScale} from '../../utils/metrics';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -45,14 +45,21 @@ export const CustomSelect = ({
           marginVertical: 2,
           borderWidth: 0,
         }}
-        rowStyle={{borderBottomWidth: 0, backgroundColor: '#FBFBFB'}}
-        buttonTextStyle={{fontSize: 14, color: 'rgba(68, 68, 68, 0.5)'}}
+        rowStyle={{borderBottomWidth: 0, backgroundColor: '#FBFBFB',}}
+        buttonTextStyle={{fontSize: 14, color: 'rgba(68, 68, 68, 0.5)',textAlign: 'left'}}
         buttonStyle={{
           height: height ? verticalScale(height) : verticalScale(45),
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '78%',
+        
         }}
       />
     </View>
   );
 };
+
+// const styles = StyleSheet.create({
+//   dropdown1DropdownStyle: {
+    
+//   }
+// })

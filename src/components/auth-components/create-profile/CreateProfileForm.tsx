@@ -7,7 +7,8 @@ import CustomPhoneInput from '../../shared-components/CustomPhoneInput';
 import CustomButton from '../../shared-components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import {CustomSelect} from '../../shared-components/CustomSelect';
-import {GenderScreenNavigationProp} from '../../../interfaces/NavigationTypes';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthStackParamList} from '../../../interfaces/NavigationTypes';
 
 const countries = ['Country1', 'Country2', 'Country3', 'Country4'];
 const cities = ['City1', 'City2', 'City4', 'City4'];
@@ -25,10 +26,16 @@ interface FormValues {
 }
 interface Props {
   profilePicture: any;
+  route: any;
 }
+type NavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'GenderScreen',
+  'UploadCertificate'
+>;
 
-const CreateProfileForm = ({profilePicture}: Props) => {
-  const navigation = useNavigation<GenderScreenNavigationProp>();
+const CreateProfileForm = ({profilePicture, route}: Props) => {
+  const navigation = useNavigation<NavigationProp>();
 
   const initialValues: FormValues = {
     firstName: '',
@@ -42,6 +49,15 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     dateOfBirth: '',
   };
   const handleSubmit = () => {};
+  const handleNavigate = () => {
+    if (route.params.params.userType == 'user')
+      navigation.navigate('GenderScreen', {
+        profilePicture: profilePicture,
+      });
+    else {
+      navigation.navigate('UploadCertificate');
+    }
+  };
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
       {({
@@ -121,14 +137,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             />
           </View>
           <View style={styles.button}>
-            <CustomButton
-              onPress={() =>
-                navigation.navigate('GenderScreen', {
-                  profilePicture: profilePicture,
-                })
-              }>
-              Continue
-            </CustomButton>
+            <CustomButton onPress={handleNavigate}>Continue</CustomButton>
           </View>
         </>
       )}

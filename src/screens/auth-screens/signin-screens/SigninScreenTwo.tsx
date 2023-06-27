@@ -3,19 +3,21 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {verticalScale} from '../../../utils/metrics';
 
 const SignInScreenTwo = ({navigation, route}: any) => {
-  const handleClick = () => {
+  const handleClick = (userType: string) => {
     if (route.params.accountType == 'login') {
-      navigation.navigate('LoginFormScreen');
+      navigation.navigate('LoginFormScreen', {userType: userType});
     } else {
-      navigation.navigate('CreateAccount');
+      navigation.navigate('CreateAccount', {userType: userType});
     }
   };
   return (
     <SigninContent screen={2}>
-      <CustomButton onPress={handleClick}>I WANT TO GET IN SHAPE</CustomButton>
+      <CustomButton onPress={() => handleClick('user')}>
+        I WANT TO GET IN SHAPE
+      </CustomButton>
       <CustomButton
-        extraStyles={{marginTop: verticalScale(26)}}
-        onPress={handleClick}>
+        extraStyles={{marginTop: verticalScale(16)}}
+        onPress={() => handleClick('provider')}>
         I AM A COACH / CREATOR
       </CustomButton>
     </SigninContent>

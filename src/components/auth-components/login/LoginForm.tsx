@@ -38,7 +38,7 @@ const LoginForm = () => {
   };
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView nestedScrollEnabled = {true}>
         <Formik
           initialValues={initialValues}
           validationSchema={loginSchema}
@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: verticalScale(630),
-    overflow: 'scroll',
+    maxHeight: verticalScale(630),
+    // overflow: 'scroll',
     zIndex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.93)',
     borderTopLeftRadius: moderateScale(30),

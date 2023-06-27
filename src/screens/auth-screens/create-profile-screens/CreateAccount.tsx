@@ -15,7 +15,7 @@ interface FormValues {
   confirmPassword: string;
 }
 
-const CreateAccount = ({navigation}: any) => {
+const CreateAccount = ({navigation,route}: any) => {
   const initialValues: FormValues = {
     email: '',
     phoneNumber: null,
@@ -23,8 +23,7 @@ const CreateAccount = ({navigation}: any) => {
     confirmPassword: '',
   };
   const handleSubmit = (values: FormValues) => {
-    console.log(values);
-    navigation.navigate('CreateProfile');
+    navigation.navigate('CreateProfile',route);
   };
   return (
     <View style={STYLES.container}>

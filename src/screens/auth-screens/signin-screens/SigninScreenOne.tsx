@@ -8,7 +8,7 @@ const SignInScreenOne = ({navigation}: any) => {
   return (
     <SigninContent>
       <CustomButton onPress={() => navigation.navigate('SigninScreenTwo', {accountType: "CreateAccount"})}>CREATE ACCOUNT</CustomButton>
-      <CustomButton extraStyles={{backgroundColor: 'trasnparent',marginTop: verticalScale(26)}} onPress={() => navigation.navigate('SigninScreenTwo',{accountType: "login"})}>LOG IN</CustomButton>
+      <CustomButton extraStyles={{backgroundColor: 'trasnparent',marginTop: verticalScale(16)}} onPress={() => navigation.navigate('SigninScreenTwo',{accountType: "login"})}>LOG IN</CustomButton>
     </SigninContent>
   );
 };

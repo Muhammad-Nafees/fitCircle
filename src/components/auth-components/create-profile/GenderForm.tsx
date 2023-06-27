@@ -6,7 +6,7 @@ import CustomInput from '../../shared-components/CustomInput';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../shared-components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import { CommunitiesScreenNavigationProp } from '../../../interfaces/NavigationTypes';
+import { InterestScreenNavigationProp } from '../../../interfaces/NavigationTypes';
 
 interface FormValues {
   age: string;
@@ -15,13 +15,13 @@ interface FormValues {
 }
 const GenderForm = () => {
 
-   const navigation = useNavigation<CommunitiesScreenNavigationProp>(); 
+   const navigation = useNavigation<InterestScreenNavigationProp>(); 
   const initialValues: FormValues = {
     age: '',
     height: '',
     weight: '',
   };
-  const handleSubmit = () => {};
+  const handleSubmit = (values:FormValues) => {};
 
   return (
     <Formik
@@ -51,9 +51,10 @@ const GenderForm = () => {
                 label="Age"
                 placeholder=""
                 value={values.age}
-                error={values.age}
+                // error={values.age}
                 touched={touched.age}
-                handleChange={handleChange}
+                keyboardType='numeric'
+                handleChange={handleChange('age')}
                 extraStyles={{width: 52}}
               />
               <View style={{flexDirection: 'row'}}>
@@ -61,9 +62,10 @@ const GenderForm = () => {
                   label="Height"
                   placeholder=""
                   value={values.height}
-                  error={values.height}
+                  // error={values.height}
                   touched={touched.height}
-                  handleChange={handleChange}
+                  keyboardType='numeric'
+                  handleChange={handleChange('height')}
                   extraStyles={{width: 52}}
                 />
 
@@ -83,9 +85,10 @@ const GenderForm = () => {
                   label="Weight"
                   placeholder=""
                   value={values.weight}
-                  error={values.weight}
+                  // error={values.weight}
                   touched={touched.weight}
-                  handleChange={handleChange}
+                  keyboardType='numeric'
+                  handleChange={handleChange('weight')}
                   extraStyles={{width: 52}}
                 />
                 <CustomSelect
@@ -122,7 +125,7 @@ const GenderForm = () => {
               paddingHorizontal: horizontalScale(40),
               marginVertical: verticalScale(60),
             }}>
-            <CustomButton onPress={() => navigation.navigate('CommunitiesScreen') }>Continue</CustomButton>
+            <CustomButton onPress={() => navigation.navigate('InterestScreen') }>Continue</CustomButton>
           </View>
         </View>
       )}
