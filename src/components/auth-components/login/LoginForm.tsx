@@ -18,7 +18,22 @@ import SocialIcons from '../../shared-components/SocialIcons';
 import CustomButton from '../../shared-components/CustomButton';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
-import {CreateAccountNavigationProp} from '../../../interfaces/NavigationTypes';
+import axios from 'axios';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthStackParamList} from '../../../interfaces/navigation.type';
+import {useEffect, useState} from 'react';
+import {BASE_URL} from '../../../api/constant';
+import Toast from 'react-native-toast-message';
+import CustomLoader from '../../shared-components/CustomLoader';
+import {loginIn} from '../../../api';
+import {useDispatch} from 'react-redux';
+import {authenticate, setuserRole} from '../../../redux/authSlice';
+
+type NavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'HomeScreen',
+  'ForgetPassword'
+>;
 
 interface FormValues {
   email: string;
@@ -26,19 +41,57 @@ interface FormValues {
 }
 
 const LoginForm = () => {
-  const navigation = useNavigation<CreateAccountNavigationProp>();
+  const navigation = useNavigation<NavigationProp>();
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   const initialValues: FormValues = {
     email: '',
     password: '',
   };
-
-  const handleSubmit = (values: FormValues) => {
-    console.log(values);
-    navigation.navigate('CreateAccount');
+  const handleSubmit = async (values: FormValues) => {
+    setIsLoading(true);
+    try {
+      const response = await loginIn(values.email, values.password);
+      setIsLoading(false);
+      if (response?.status === 200) {
+        dispatch(authenticate());
+        dispatch(setuserRole(response.data.role));
+        Toast.show({
+          type: 'success',
+          text1: 'Login Successful!',
+          text2: 'Welcome!',
+        });
+        navigation.navigate('HomeScreen');
+      }
+    } catch (error: any) {
+      setIsLoading(false);
+      if (error.response.status === 400) {
+        Toast.show({
+          type: 'error',
+          text1: 'Login Unsuccessfull!',
+          text2: 'Invalid email or password!',
+        });
+      } else if (error.response.status === 500) {
+        Toast.show({
+          type: 'error',
+          text1: 'Login Unsuccessfull!',
+          text2: 'Internal Server Error. Please try again later',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Login Unsuccessfull!',
+          text2: 'Network error. Please try again later',
+        });
+      }
+    }
   };
+
   return (
     <View style={styles.container}>
-      <ScrollView nestedScrollEnabled = {true}>
+      <ScrollView
+        nestedScrollEnabled={true}
+        keyboardShouldPersistTaps={'always'}>
         <Formik
           initialValues={initialValues}
           validationSchema={loginSchema}
@@ -62,6 +115,8 @@ const LoginForm = () => {
               <CustomInput
                 label="Email"
                 placeholder="Username"
+                keyboardType="email-address"
+                autoCapitalize="none"
                 value={values.email}
                 error={errors.email}
                 touched={touched.email}
@@ -76,26 +131,35 @@ const LoginForm = () => {
                   error={errors.password}
                   touched={touched.email}
                   initialTouched={true}
+                  isPasswordIcon={true}
                   handleChange={handleChange('password')}
                 />
-                <Text
-                  style={[
-                    STYLES.text12,
-                    {
-                      color: '#209BCC',
-                      borderBottomWidth: 1,
-                      borderBottomColor: '#209BCC',
-                      width: horizontalScale(96),
-                      position: 'absolute',
-                      right: 0,
-                      bottom: -verticalScale(10),
-                    },
-                  ]}>
-                  Forget Password
-                </Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('ForgetPassword')}>
+                  <Text
+                    style={[
+                      STYLES.text12,
+                      {
+                        color: '#209BCC',
+                        borderBottomWidth: 1,
+                        borderBottomColor: '#209BCC',
+                        width: horizontalScale(96),
+                        position: 'absolute',
+                        right: 0,
+                        bottom: -verticalScale(10),
+                      },
+                    ]}>
+                    Forget Password
+                  </Text>
+                </TouchableOpacity>
               </View>
               <View style={{marginTop: verticalScale(37), gap: 37}}>
-                <CustomButton onPress={handleSubmit}>Log in</CustomButton>
+                <CustomButton
+                  onPress={handleSubmit}
+                  isDisabled={isLoading ? true : false}>
+                  {' '}
+                  {isLoading ? <CustomLoader /> : ' Log in'}
+                </CustomButton>
                 <CustomDivider text="Or Sign Up" />
                 <SocialIcons />
               </View>
@@ -108,7 +172,7 @@ const LoginForm = () => {
                 }}>
                 <Text style={STYLES.text14}>Don’t have an account? </Text>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('CreateAccount')}>
+                  onPress={() => navigation.navigate('SigninScreenTwo')}>
                   <Text
                     style={[
                       STYLES.text14,

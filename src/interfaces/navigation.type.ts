@@ -1,19 +1,17 @@
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 export type AuthStackParamList = {
   CreateAccount: any;
   GenderScreen: any;
-  InterestScreen:any;
+  InterestScreen: any;
   CommunitiesScreen: any;
-  UploadCertificate: any
+  UploadCertificate: any;
+  HomeScreen: any;
+  ForgetPassword: any;
+  SigninScreenTwo: any;
 
   // Add other routes here...
 };
-
-export type CreateAccountNavigationProp = NativeStackNavigationProp<
-  AuthStackParamList,
-  'CreateAccount'
->;
 
 export type InterestScreenNavigationProp = NativeStackNavigationProp<
   AuthStackParamList,

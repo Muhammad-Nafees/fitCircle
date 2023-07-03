@@ -8,12 +8,32 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
+import Toast from 'react-native-toast-message';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 
-const OtpScreen = ({navigation}: any ) => {
+const OtpScreen = ({navigation, route}: any) => {
   const inputRefs = useRef<Array<TextInput | null>>([]);
-  const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
+  const [otp, setOtp] = useState<string[]>(Array());
+
+  const handleSubmit = () => {
+    const concatenatedString = otp.join('');
+    const convertOtpIntoNumber = parseInt(concatenatedString);
+    if (convertOtpIntoNumber == route.params.otp) {
+      navigation.navigate('CreateNewPassword', {otp: convertOtpIntoNumber});
+      Toast.show({
+        type: 'success',
+        text1: 'Success!',
+        text2: 'OTP verified.',
+      });
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid OTP!',
+        text2: 'Please enter valid otp.',
+      });
+    }
+  };
 
   const handleInputChange = (index: number, value: string) => {
     const updatedOtp = [...otp];
@@ -35,13 +55,16 @@ const OtpScreen = ({navigation}: any ) => {
 
   return (
     <View style={STYLES.container}>
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="always">
         <View style={{gap: 10}}>
           <Text style={[STYLES.text16, {fontWeight: '700'}]}>
             Verify your phone
           </Text>
           <Text style={[STYLES.text12, {fontWeight: '400'}]}>
-            Verification code sent to your phone +1 234 567 8901
+            Verification code is :{' '}
+            <Text style={[STYLES.text14, {fontWeight: '500'}]}>
+              {route?.params?.otp}{' '}
+            </Text>
           </Text>
         </View>
         <View style={styles.cardContainer}>
@@ -84,7 +107,8 @@ const OtpScreen = ({navigation}: any ) => {
                 marginTop: verticalScale(50),
               }}>
               <CustomButton
-                onPress={() => navigation.navigate('AccountVerified')}>
+                // isDisabled={otp.length == 6 ? true : false}
+                onPress={handleSubmit}>
                 Verify
               </CustomButton>
             </View>

@@ -9,9 +9,10 @@ import {
 import {STYLES} from '../../../styles/globalStyles';
 import LoginForm from '../../../components/auth-components/login/LoginForm';
 
+
 const LoginFormScreen = () => {
   return (
-    <ScrollView>
+    <ScrollView keyboardShouldPersistTaps={'always'}>
       <SigninContent />
       <Text
         style={[

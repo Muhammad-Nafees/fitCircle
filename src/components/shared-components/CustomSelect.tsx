@@ -13,6 +13,7 @@ interface Props {
   width?: string | number;
   height?: number;
   isIcon?: boolean;
+  setFieldValue: any;
 }
 
 export const CustomSelect = ({
@@ -23,6 +24,7 @@ export const CustomSelect = ({
   width,
   height,
   isIcon = true,
+  setFieldValue,
   styles,
 }: Props) => {
   return (
@@ -31,7 +33,7 @@ export const CustomSelect = ({
       <SelectDropdown
         data={values}
         onSelect={(selectedItem, index) => {
-          console.log(selectedItem, index);
+          setFieldValue(label, selectedItem);
         }}
         renderDropdownIcon={() =>
           isIcon && <Icon name="chevron-down-outline" color="grey" size={24} />
@@ -45,21 +47,18 @@ export const CustomSelect = ({
           marginVertical: 2,
           borderWidth: 0,
         }}
-        rowStyle={{borderBottomWidth: 0, backgroundColor: '#FBFBFB',}}
-        buttonTextStyle={{fontSize: 14, color: 'rgba(68, 68, 68, 0.5)',textAlign: 'left'}}
+        rowStyle={{borderBottomWidth: 0, backgroundColor: '#FBFBFB'}}
+        buttonTextStyle={{
+          fontSize: 14,
+          color: 'rgba(68, 68, 68, 0.5)',
+          textAlign: 'left',
+        }}
         buttonStyle={{
           height: height ? verticalScale(height) : verticalScale(45),
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '78%',
-        
         }}
       />
     </View>
   );
 };
-
-// const styles = StyleSheet.create({
-//   dropdown1DropdownStyle: {
-    
-//   }
-// })

@@ -22,6 +22,9 @@ import VerifyScreen from '../screens/auth-screens/create-profile-screens/VerifyS
 import OtpScreen from '../screens/auth-screens/create-profile-screens/OtpScreen';
 import UploadCertificate from '../screens/auth-screens/create-profile-screens/UploadCertificate';
 import ChooseVerificationType from '../screens/auth-screens/create-profile-screens/ChooseVerificationType';
+import HomeScreen from '../screens/home-screens';
+import ForgetPassword from '../screens/auth-screens/forget-password-screens/ForgetPassword';
+import CreateNewPassword from '../screens/auth-screens/forget-password-screens/CreateNewPassword';
 
 const Stack = createStackNavigator();
 
@@ -92,6 +95,14 @@ const AuthStackNavigator = () => {
         component={VerifyScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
+      <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
+
     </Stack.Navigator>
   );
 };

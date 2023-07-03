@@ -35,7 +35,7 @@ export default CustomButton;
 const styles = StyleSheet.create({
   button: {
     height: 50,
-    paddingVertical: verticalScale(12),
+    // paddingVertical: verticalScale(12),
     borderRadius: moderateScale(100),
     alignItems: 'center',
     justifyContent: 'center',

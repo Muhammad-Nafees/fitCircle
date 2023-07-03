@@ -8,7 +8,9 @@ import CustomButton from '../../shared-components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import {CustomSelect} from '../../shared-components/CustomSelect';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthStackParamList} from '../../../interfaces/NavigationTypes';
+import {AuthStackParamList} from '../../../interfaces/navigation.type';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
 
 const countries = ['Country1', 'Country2', 'Country3', 'Country4'];
 const cities = ['City1', 'City2', 'City4', 'City4'];
@@ -21,12 +23,13 @@ interface FormValues {
   phoneNumber: string;
   country: string;
   city: string;
+  gender?: string;
   physicalInformation: string;
   dateOfBirth: string;
+  hourlyRate?: string;
 }
 interface Props {
   profilePicture: any;
-  route: any;
 }
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -34,8 +37,9 @@ type NavigationProp = NativeStackNavigationProp<
   'UploadCertificate'
 >;
 
-const CreateProfileForm = ({profilePicture, route}: Props) => {
+const CreateProfileForm = ({profilePicture}: Props) => {
   const navigation = useNavigation<NavigationProp>();
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
 
   const initialValues: FormValues = {
     firstName: '',
@@ -45,12 +49,13 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
     phoneNumber: '',
     country: '',
     city: '',
+    gender: '',
     physicalInformation: '',
     dateOfBirth: '',
+    hourlyRate: '',
   };
-  const handleSubmit = () => {};
-  const handleNavigate = () => {
-    if (route.params.params.userType == 'user')
+  const handleSubmit = (values: FormValues) => {
+    if (userRole == 'user')
       navigation.navigate('GenderScreen', {
         profilePicture: profilePicture,
       });
@@ -113,10 +118,29 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
             <CustomPhoneInput
               setFieldValue={setFieldValue}
               label="Phone Number"
+              value={values.phoneNumber}
+              error={errors.phoneNumber}
+              touched={touched.phoneNumber}
+              handleChange={handleChange('phoneNumber')}
             />
-            <CustomSelect label="Country" values={countries} />
-            <CustomSelect label="City" values={cities} />
-
+            <CustomSelect
+              label="Country"
+              values={countries}
+              setFieldValue={setFieldValue}
+            />
+            <CustomSelect
+              label="City"
+              values={cities}
+              setFieldValue={setFieldValue}
+            />
+            {userRole == 'trainer' && (
+              <CustomSelect
+                label="Gender"
+                values={['Male', 'Female']}
+                defaultValue="Male"
+                setFieldValue={setFieldValue}
+              />
+            )}
             <CustomInput
               label="Physical Information"
               placeholder="Enter"
@@ -135,9 +159,20 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
               initialTouched={true}
               handleChange={handleChange('dateOfBirth')}
             />
+            {userRole == 'trainer' && (
+              <CustomInput
+                label="Hourly Rate"
+                placeholder="$20.00"
+                value={values.hourlyRate}
+                error={errors.hourlyRate}
+                touched={touched.hourlyRate}
+                initialTouched={true}
+                handleChange={handleChange('hourlyRate')}
+              />
+            )}
           </View>
           <View style={styles.button}>
-            <CustomButton onPress={handleNavigate}>Continue</CustomButton>
+            <CustomButton onPress={handleSubmit}>Continue</CustomButton>
           </View>
         </>
       )}

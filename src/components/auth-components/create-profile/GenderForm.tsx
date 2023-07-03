@@ -6,7 +6,7 @@ import CustomInput from '../../shared-components/CustomInput';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../shared-components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import { InterestScreenNavigationProp } from '../../../interfaces/NavigationTypes';
+import { InterestScreenNavigationProp } from '../../../interfaces/navigation.type';
 
 interface FormValues {
   age: string;

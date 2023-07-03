@@ -15,7 +15,7 @@ interface FormValues {
   confirmPassword: string;
 }
 
-const CreateAccount = ({navigation,route}: any) => {
+const CreateAccount = ({navigation}: any) => {
   const initialValues: FormValues = {
     email: '',
     phoneNumber: null,
@@ -23,14 +23,15 @@ const CreateAccount = ({navigation,route}: any) => {
     confirmPassword: '',
   };
   const handleSubmit = (values: FormValues) => {
-    navigation.navigate('CreateProfile',route);
+    // console.log(values);
+    navigation.navigate('CreateProfile');
   };
   return (
     <View style={STYLES.container}>
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={initialValues}
-          validationSchema={signupSchema}
+          // validationSchema={signupSchema}
           onSubmit={handleSubmit}>
           {({
             handleChange,
@@ -55,10 +56,18 @@ const CreateAccount = ({navigation,route}: any) => {
                   value={values.email}
                   error={errors.email}
                   touched={touched.email}
+                  keyboardType='email-address'
+                  autoCapitalize='none'
                   initialTouched={true}
                   handleChange={handleChange('email')}
                 />
-                <CustomPhoneInput setFieldValue={setFieldValue} />
+                <CustomPhoneInput
+                  value={values.phoneNumber}
+                  error={errors.phoneNumber}
+                  touched={touched.phoneNumber}
+                  handleChange={handleChange('phoneNumber')}
+                  setFieldValue={setFieldValue}
+                />
                 <CustomInput
                   label="Password"
                   placeholder="Password"

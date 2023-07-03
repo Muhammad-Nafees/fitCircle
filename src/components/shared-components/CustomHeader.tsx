@@ -9,7 +9,7 @@ const CustomHeader = () => {
     <View
       style={{
         marginTop: verticalScale(20),
-        marginLeft: horizontalScale(20),
+        marginLeft: horizontalScale(12),
       }}>
       <HeaderBackArrow onPress={() => navigation.goBack()} />
     </View>

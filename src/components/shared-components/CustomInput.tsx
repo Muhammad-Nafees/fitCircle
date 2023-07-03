@@ -1,10 +1,10 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {StyleSheet, View} from 'react-native';
-import {Text, TextInput} from 'react-native-paper';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
-import {STYLES} from '../../styles/globalStyles';
-import AlertIcon from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Text, TextInput } from 'react-native-paper';
+import { horizontalScale, verticalScale } from '../../utils/metrics';
+import { STYLES } from '../../styles/globalStyles';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 interface Props {
   placeholder: string;
@@ -14,11 +14,14 @@ interface Props {
   touched: boolean | undefined;
   initialTouched?: boolean;
   keyboardType?: 'default' | 'numeric' | 'email-address';
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   extraStyles?: any;
+  isPasswordIcon?: boolean;
   handleChange: (e: any) => void;
 }
 
-const CustomInput = ({...props}: Props) => {
+const CustomInput = ({ ...props }: Props) => {
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   const theme = {
@@ -29,6 +32,10 @@ const CustomInput = ({...props}: Props) => {
     },
     roundness: 0, // Border radius value
   };
+  
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
   const handleInputFocus = () => {
     setIsFocused(true);
@@ -37,6 +44,7 @@ const CustomInput = ({...props}: Props) => {
   const handleInputBlur = () => {
     setIsFocused(false);
   };
+  
   const handleChangeText = (text: string) => {
     props.handleChange(text);
   };
@@ -51,16 +59,18 @@ const CustomInput = ({...props}: Props) => {
   };
 
   return (
-    <View style={{}}>
+    <View style={{ position: 'relative' }}>
       <Text style={STYLES.text12}>{props.label}</Text>
       <TextInput
         style={[inputStyle, STYLES.text14, , props.extraStyles]}
         placeholder={isFocused ? '' : props.placeholder}
         value={props.value}
         onChangeText={handleChangeText}
-        underlineColor={'transpsarent'}
+        underlineColor={'transparent'}
+        secureTextEntry={props.isPasswordIcon && !passwordVisible}
         theme={theme}
         keyboardType={props.keyboardType}
+        autoCapitalize={props.autoCapitalize}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
       />
@@ -74,13 +84,24 @@ const CustomInput = ({...props}: Props) => {
             flexDirection: 'row',
             alignItems: 'center',
             gap: 2,
-            marginTop: verticalScale(1),
+            marginTop: verticalScale(7),
           }}>
-          <AlertIcon name="alert-circle" size={22} color="white" />
+          <Icon name="alert-circle" size={22} color="white" />
           <Text style={STYLES.text12}>{props.error}</Text>
         </View>
       ) : (
-        <View style={{height: 25}} />
+        <View style={{ height: 29 }} />
+      )}
+
+      {props.isPasswordIcon && (
+        <TouchableWithoutFeedback onPress={togglePasswordVisibility}>
+          <Icon
+            name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
+            color="black"
+            size={24}
+            style={styles.icon}
+          />
+        </TouchableWithoutFeedback>
       )}
     </View>
   );
@@ -94,5 +115,11 @@ const styles = StyleSheet.create({
     height: verticalScale(50),
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
+    
+  },
+  icon: {
+    position: 'absolute',
+    right: horizontalScale(17),
+    top: verticalScale(34),
   },
 });
