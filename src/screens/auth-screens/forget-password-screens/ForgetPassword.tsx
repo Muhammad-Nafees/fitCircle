@@ -31,7 +31,7 @@ const ForgetPassword = ({navigation}: any) => {
         type: 'success',
         text1: 'User Verified!',
       });
-      navigation.navigate('OtpScreen', {otp: data});
+      navigation.navigate('OtpScreen', {otp: data, email: values.email.toLowerCase()});
     } catch (error: any) {
       if (error.response.status == 409) {
         Toast.show({

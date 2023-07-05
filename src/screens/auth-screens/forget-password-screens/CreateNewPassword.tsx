@@ -38,7 +38,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
         });
         navigation.navigate('LoginFormScreen');
       }
-    } catch (error) {
+    } catch (error:any) {
       Toast.show({
         type: 'error',
         text1: 'Server Error',

@@ -11,9 +11,30 @@ import {STYLES} from '../../../styles/globalStyles';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {COMMUNITIES_LIST} from '../../../../data/data';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import {IUser} from '../../../interfaces/user.interface';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
+import {setUserData} from '../../../redux/authSlice';
+import {createProfile} from '../../../api';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
+import Toast from 'react-native-toast-message';
 
 const CommunitiesScreen = ({navigation}: any) => {
   const [selectedCommunities, setSelectedCommunities] = useState<any>([]);
+  const [selectedCommunitiesName, setSelectedCommunitiesName] = useState<
+    string[]
+  >([]);
+  const previousUserData = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
+
+  const handleSubmit = async () => {
+    const partialUserData: Partial<IUser> = {
+      ...previousUserData,
+      communities: selectedCommunitiesName,
+    };
+    dispatch(setUserData(partialUserData));
+    navigation.navigate('SocialMediaAccount')
+  };
 
   const handleSelect = (communityName: string, id: string) => {
     if (selectedCommunities.some((item: any) => item.id === id)) {
@@ -23,6 +44,7 @@ const CommunitiesScreen = ({navigation}: any) => {
       setSelectedCommunities(filteredCommunities);
     } else {
       setSelectedCommunities((prev: any) => [...prev, {communityName, id}]);
+      setSelectedCommunitiesName(prev => [...prev, communityName]);
     }
   };
 
@@ -84,7 +106,7 @@ const CommunitiesScreen = ({navigation}: any) => {
         }}>
         <CustomButton
           isDisabled={selectedCommunities.length == 0 ? true : false}
-          onPress={() => navigation.navigate('SocialMediaAccount')}>
+          onPress={handleSubmit}>
           Continue
         </CustomButton>
       </View>

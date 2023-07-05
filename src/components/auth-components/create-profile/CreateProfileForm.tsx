@@ -9,25 +9,16 @@ import {useNavigation} from '@react-navigation/native';
 import {CustomSelect} from '../../shared-components/CustomSelect';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../../../interfaces/navigation.type';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
+import {profileSchema} from '../../../validations';
+import {setUserData} from '../../../redux/authSlice';
+import {IUserRole} from '../../../interfaces/auth.interface';
+import {IUser} from '../../../interfaces/user.interface';
 
 const countries = ['Country1', 'Country2', 'Country3', 'Country4'];
 const cities = ['City1', 'City2', 'City4', 'City4'];
 
-interface FormValues {
-  firstName: string;
-  lastName: string;
-  userName: string;
-  bio: string;
-  phoneNumber: string;
-  country: string;
-  city: string;
-  gender?: string;
-  physicalInformation: string;
-  dateOfBirth: string;
-  hourlyRate?: string;
-}
 interface Props {
   profilePicture: any;
 }
@@ -40,21 +31,38 @@ type NavigationProp = NativeStackNavigationProp<
 const CreateProfileForm = ({profilePicture}: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
+  const dispatch = useDispatch();
 
-  const initialValues: FormValues = {
+  const initialValues: IUser = {
+    role: userRole || undefined,
     firstName: '',
     lastName: '',
-    userName: '',
+    username: '',
     bio: '',
-    phoneNumber: '',
+    phone: null,
     country: '',
     city: '',
     gender: '',
     physicalInformation: '',
-    dateOfBirth: '',
-    hourlyRate: '',
+    dob: '',
+    hourlyRate: null,
   };
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = (values: IUser) => {
+    const partialUserData: Omit<IUser, 'userRole'> = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      username: values.username,
+      bio: values.bio,
+      phone: values.phone,
+      country: values.country,
+      city: values.city,
+      gender: values.gender,
+      physicalInformation: values.physicalInformation,
+      dob: values.dob,
+      hourlyRate: values.hourlyRate,
+    };
+    dispatch(setUserData({...partialUserData, role: userRole}));
+
     if (userRole == 'user')
       navigation.navigate('GenderScreen', {
         profilePicture: profilePicture,
@@ -64,7 +72,10 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     }
   };
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={profileSchema}
+      onSubmit={handleSubmit}>
       {({
         handleChange,
         handleSubmit,
@@ -99,11 +110,11 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             <CustomInput
               label="Username"
               placeholder="Enter your username"
-              value={values.userName}
-              error={errors.userName}
-              touched={touched.userName}
+              value={values.username}
+              error={errors.username}
+              touched={touched.username}
               initialTouched={true}
-              handleChange={handleChange('userName')}
+              handleChange={handleChange('username')}
             />
             <CustomInput
               extraStyles={{height: 120}}
@@ -118,26 +129,32 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             <CustomPhoneInput
               setFieldValue={setFieldValue}
               label="Phone Number"
-              value={values.phoneNumber}
-              error={errors.phoneNumber}
-              touched={touched.phoneNumber}
-              handleChange={handleChange('phoneNumber')}
+              value={values.phone}
+              error={errors.phone}
+              touched={touched.phone}
+              handleChange={handleChange('phone')}
             />
+
             <CustomSelect
               label="Country"
+              selectedValue={values.country}
               values={countries}
+              error={errors.country}
               setFieldValue={setFieldValue}
             />
             <CustomSelect
               label="City"
+              selectedValue={values.city}
               values={cities}
+              error={errors.city}
               setFieldValue={setFieldValue}
             />
             {userRole == 'trainer' && (
               <CustomSelect
                 label="Gender"
+                selectedValue={values.gender}
                 values={['Male', 'Female']}
-                defaultValue="Male"
+                error={errors.gender}
                 setFieldValue={setFieldValue}
               />
             )}
@@ -153,11 +170,11 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             <CustomInput
               label="Date of birth"
               placeholder="01/01/2023"
-              value={values.dateOfBirth}
-              error={errors.dateOfBirth}
-              touched={touched.dateOfBirth}
+              value={values.dob}
+              error={errors.dob}
+              touched={touched.dob}
               initialTouched={true}
-              handleChange={handleChange('dateOfBirth')}
+              handleChange={handleChange('dob')}
             />
             {userRole == 'trainer' && (
               <CustomInput

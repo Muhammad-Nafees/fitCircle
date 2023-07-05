@@ -4,17 +4,21 @@ import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {useRoute} from '@react-navigation/native';
-
-const VerifyScreen = ({navigation}:any) => {
+import {useSelector} from 'react-redux';
+import Toast from 'react-native-toast-message';
+const VerifyScreen = ({navigation}: any) => {
   const {name} = useRoute();
   const handleNavigation = () => {
-      if(name == "CertificateVerified") {
-            navigation.navigate("InterestScreen")
-      }
-      else { 
-        return;
-      }
-  }
+    if (name == 'CertificateVerified') {
+      navigation.navigate('InterestScreen');
+    } else {
+      Toast.show({
+        type: 'success',
+        text1: 'Welcome To Fit Circle!',
+      });
+      navigation.navigate('HomeScreen');
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.card}>

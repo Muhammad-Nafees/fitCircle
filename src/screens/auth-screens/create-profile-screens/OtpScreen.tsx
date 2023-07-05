@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -11,21 +11,48 @@ import {STYLES} from '../../../styles/globalStyles';
 import Toast from 'react-native-toast-message';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
+import {resetPassword} from '../../../api';
 
 const OtpScreen = ({navigation, route}: any) => {
   const inputRefs = useRef<Array<TextInput | null>>([]);
   const [otp, setOtp] = useState<string[]>(Array());
+  const accountType = useSelector((state: RootState) => state.auth.accountType);
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const [email, setEmail] = useState<string | undefined>('');
+  const [generatedOtp, setGeneratedOtp] = useState(null);
+  const [isDisable, setIsDisable] = useState(false);
+
+  const [secondsRemaining, setSecondsRemaining] = useState(60);
+  useEffect(() => {
+    if (accountType == 'signup') {
+      setEmail(userData?.email);
+    } else {
+      setEmail(route?.params.email);
+    }
+    setGeneratedOtp(route?.params.otp);
+  }, []);
 
   const handleSubmit = () => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
-    if (convertOtpIntoNumber == route.params.otp) {
-      navigation.navigate('CreateNewPassword', {otp: convertOtpIntoNumber});
-      Toast.show({
-        type: 'success',
-        text1: 'Success!',
-        text2: 'OTP verified.',
-      });
+    if (convertOtpIntoNumber == generatedOtp) {
+      if (accountType == 'signup') {
+        Toast.show({
+          type: 'success',
+          text1: 'OTP verified.',
+          text2: 'Account has been created!',
+        });
+        navigation.navigate('AccountVerified');
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Success!',
+          text2: 'OTP verified.',
+        });
+        navigation.navigate('CreateNewPassword', {otp: convertOtpIntoNumber});
+      }
     } else {
       Toast.show({
         type: 'error',
@@ -34,6 +61,38 @@ const OtpScreen = ({navigation, route}: any) => {
       });
     }
   };
+  const handleResendOtp = async () => {
+    try {
+      const response = await resetPassword(email as string);
+      const newOtp = response.data;
+      setGeneratedOtp(newOtp);
+      setSecondsRemaining(60);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success!',
+        text2: 'New Otp generated!',
+      });
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: 'Server Error',
+      });
+    }
+  };
+  useEffect(() => {
+    if (secondsRemaining == 0) {
+      return;
+    }
+    let interval = setInterval(() => {
+      setSecondsRemaining(secondsRemaining => {
+        secondsRemaining <= 1 && clearInterval(interval);
+        return secondsRemaining - 1;
+      });
+    }, 1000); //each count lasts for a second
+    //cleanup the interval on complete
+    return () => clearInterval(interval);
+  }, [secondsRemaining]);
 
   const handleInputChange = (index: number, value: string) => {
     const updatedOtp = [...otp];
@@ -61,9 +120,13 @@ const OtpScreen = ({navigation, route}: any) => {
             Verify your phone
           </Text>
           <Text style={[STYLES.text12, {fontWeight: '400'}]}>
+            Your email is :{' '}
+            <Text style={[STYLES.text14, {fontWeight: '500'}]}>{email}</Text>
+          </Text>
+          <Text style={[STYLES.text12, {fontWeight: '400'}]}>
             Verification code is :{' '}
             <Text style={[STYLES.text14, {fontWeight: '500'}]}>
-              {route?.params?.otp}{' '}
+              {generatedOtp}
             </Text>
           </Text>
         </View>
@@ -90,16 +153,29 @@ const OtpScreen = ({navigation, route}: any) => {
             </View>
             <View style={{marginTop: verticalScale(20), gap: 4}}>
               <Text style={STYLES.text14}>
-                OTP will expired in <Text style={{color: 'red'}}> 00:11 </Text>
-              </Text>
-              <Text style={STYLES.text14}>
-                Didn’t recive code?
-                <Text
-                  style={{color: '#209BCC', textDecorationLine: 'underline'}}>
+                {secondsRemaining == 0
+                  ? 'Otp has expired!'
+                  : 'OTP will expired in'}{' '}
+                <Text style={{color: 'red'}}>
                   {' '}
-                  Resend OTP
+                  {secondsRemaining != 0 && `00:${secondsRemaining}`}{' '}
                 </Text>
               </Text>
+              <View style={{flexDirection: 'row', gap: 2}}>
+                <Text style={STYLES.text14}> Didn’t recive code?</Text>
+                {secondsRemaining == 0 && (
+                  <TouchableOpacity onPress={handleResendOtp}>
+                    <Text
+                      style={{
+                        color: '#209BCC',
+                        textDecorationLine: 'underline',
+                      }}>
+                      {' '}
+                      Resend OTP
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
             <View
               style={{
@@ -107,7 +183,7 @@ const OtpScreen = ({navigation, route}: any) => {
                 marginTop: verticalScale(50),
               }}>
               <CustomButton
-                // isDisabled={otp.length == 6 ? true : false}
+                isDisabled={secondsRemaining == 0 ? true : false}
                 onPress={handleSubmit}>
                 Verify
               </CustomButton>
@@ -134,6 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: horizontalScale(32),
     paddingVertical: verticalScale(16),
+    marginBottom: verticalScale(40),
   },
   inputContainer: {
     flexDirection: 'row',

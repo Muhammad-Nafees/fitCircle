@@ -7,31 +7,72 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {Formik, Field} from 'formik';
 import {signupSchema} from '../../../validations';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
+import {register} from '../../../api';
+import {authenticate, setUserData} from '../../../redux/authSlice';
+import Toast from 'react-native-toast-message';
+import {useDispatch} from 'react-redux';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 
-interface FormValues {
+export interface CreateAccountFormValues {
   email: string;
-  phoneNumber: number | null;
+  phone: number | null;
   password: string;
   confirmPassword: string;
 }
 
 const CreateAccount = ({navigation}: any) => {
-  const initialValues: FormValues = {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const initialValues: CreateAccountFormValues = {
     email: '',
-    phoneNumber: null,
+    phone: null,
     password: '',
     confirmPassword: '',
   };
-  const handleSubmit = (values: FormValues) => {
-    // console.log(values);
-    navigation.navigate('CreateProfile');
+  const handleSubmit = async (values: CreateAccountFormValues) => {
+    console.log(values);
+    setIsLoading(true);
+    try {
+      const response = await register(values);
+      if (response?.status === 200) {
+        setIsLoading(false);
+        dispatch(authenticate());
+        Toast.show({
+          type: 'success',
+          text1: 'User Registered Successfully!',
+        });
+        navigation.navigate('CreateProfile');
+      }
+    } catch (error: any) {
+      console.log(error.response.data);
+      setIsLoading(false);
+      if (error.response.status === 409) {
+        Toast.show({
+          type: 'error',
+          text1: 'Account Already Exists!',
+          text2: 'Please try another email.',
+        });
+      } else if (error.response.status === 500) {
+        Toast.show({
+          type: 'error',
+          text1: 'Login Unsuccessfull!',
+          text2: 'Internal Server Error. Please try again later',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Login Unsuccessfull!',
+          text2: 'Network error. Please try again later',
+        });
+      }
+    }
   };
   return (
     <View style={STYLES.container}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={initialValues}
-          // validationSchema={signupSchema}
+          validationSchema={signupSchema}
           onSubmit={handleSubmit}>
           {({
             handleChange,
@@ -56,16 +97,16 @@ const CreateAccount = ({navigation}: any) => {
                   value={values.email}
                   error={errors.email}
                   touched={touched.email}
-                  keyboardType='email-address'
-                  autoCapitalize='none'
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                   initialTouched={true}
                   handleChange={handleChange('email')}
                 />
                 <CustomPhoneInput
-                  value={values.phoneNumber}
-                  error={errors.phoneNumber}
-                  touched={touched.phoneNumber}
-                  handleChange={handleChange('phoneNumber')}
+                  value={values.phone}
+                  error={errors.phone}
+                  touched={touched.phone}
+                  handleChange={handleChange('phone')}
                   setFieldValue={setFieldValue}
                 />
                 <CustomInput
@@ -74,21 +115,27 @@ const CreateAccount = ({navigation}: any) => {
                   value={values.password}
                   error={errors.password}
                   touched={touched.password}
+                  isPasswordIcon={true}
                   initialTouched={true}
                   handleChange={handleChange('password')}
                 />
                 <CustomInput
-                  label="Re-enter Password"
-                  placeholder="Re-enter Passowrd"
+                  label="Re-Enter Password"
+                  placeholder="Re-Enter Password"
                   value={values.confirmPassword}
                   error={errors.confirmPassword}
+                  isPasswordIcon={true}
                   touched={touched.confirmPassword}
                   initialTouched={true}
                   handleChange={handleChange('confirmPassword')}
                 />
               </View>
               <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                <CustomButton
+                  onPress={handleSubmit}
+                  isDisabled={isLoading ? true : false}>
+                  {isLoading ? <CustomLoader /> : 'Continue'}{' '}
+                </CustomButton>
               </View>
             </>
           )}

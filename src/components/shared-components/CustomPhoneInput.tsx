@@ -28,7 +28,6 @@ const CustomPhoneInput = ({
     boolean | undefined
   >(false);
   const [isError, setIsError] = useState('');
-
   useEffect(() => {
     if (value == '') {
       setIsError('Phone number is required!');

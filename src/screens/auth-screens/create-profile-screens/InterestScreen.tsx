@@ -1,26 +1,75 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {INTERESTS} from '../../../../data/data';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
+import {getInterest} from '../../../api';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
+import Toast from 'react-native-toast-message';
+import {IUser} from '../../../interfaces/user.interface';
+import {setUserData} from '../../../redux/authSlice';
 
-interface Category {
-  id: string;
-  category: string;
+export interface IInterest {
+  _id: string;
+  interest: string;
 }
 
 const InterestScreen = ({navigation}: any) => {
-  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [selectedInterest, setSelectedInterest] = useState<IInterest[]>([]);
+  const [selectedInterestName, setSelectedInterestName] = useState<string[]>(
+    [],
+  );
+  console.log(useSelector((state: RootState) => state.auth.user));
+  const [interests, setInterest] = useState<IInterest[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const previousUserData = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
 
-  const handleSelect = (category: string, id: string) => {
-    if (selectedCategories.some(item => item.id === id)) {
-      const filteredCategories = selectedCategories.filter(
-        item => item.id !== id,
+  useEffect(() => {
+    const fetchInterest = async () => {
+      setIsLoading(true);
+
+      try {
+        const response = await getInterest();
+        Toast.show({
+          type: 'success',
+          text1: 'Data populated successfully!',
+        });
+        setInterest(response?.data);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        Toast.show({
+          type: 'error',
+          text1: 'Server Error!',
+        });
+      }
+    };
+
+    fetchInterest();
+  }, []);
+
+  const handleSubmit = () => {
+    const partialUserData: Partial<IUser> = {
+      ...previousUserData,
+      interest: selectedInterestName,
+    };
+    dispatch(setUserData(partialUserData));
+    navigation.navigate('CommunitiesScreen');
+  };
+
+  const handleSelect = (interest: string, _id: string) => {
+    if (selectedInterest.some(item => item._id === _id)) {
+      const filteredCategories = selectedInterest.filter(
+        item => item._id !== _id,
       );
-      setSelectedCategories(filteredCategories);
+      setSelectedInterest(filteredCategories);
     } else {
-      setSelectedCategories(prev => [...prev, {category, id}]);
+      setSelectedInterest(prev => [...prev, {interest, _id}]);
+      setSelectedInterestName(prev => [...prev, interest]);
     }
   };
 
@@ -32,38 +81,40 @@ const InterestScreen = ({navigation}: any) => {
         </Text>
 
         <View style={styles.itemsContainer}>
-          {INTERESTS.map(interest => {
-            return (
-              <TouchableOpacity
-                key={interest.id}
-                style={[
-                  styles.itemsInnerContainer,
-                  {
-                    backgroundColor: selectedCategories.some(
-                      item => item.id === interest.id,
-                    )
-                      ? '#209BCC'
-                      : 'transparent',
-                    borderColor: selectedCategories.some(
-                      item => item.id === interest.id,
-                    )
-                      ? 'transparent'
-                      : 'white',
-                  },
-                ]}
-                onPress={() =>
-                  handleSelect(interest.interestName, interest.id)
-                }>
-                <Text style={STYLES.text14}>{interest.interestName}</Text>
-              </TouchableOpacity>
-            );
-          })}
+          {interests?.length === 0 ? (
+            <CustomLoader isStyle={true} />
+          ) : (
+            interests?.map(data => {
+              return (
+                <TouchableOpacity
+                  key={data?._id}
+                  style={[
+                    styles.itemsInnerContainer,
+                    {
+                      backgroundColor: selectedInterest.some(
+                        item => item._id === data._id,
+                      )
+                        ? '#209BCC'
+                        : 'transparent',
+                      borderColor: selectedInterest.some(
+                        item => item._id === data._id,
+                      )
+                        ? 'transparent'
+                        : 'white',
+                    },
+                  ]}
+                  onPress={() => handleSelect(data?.interest, data?._id)}>
+                  <Text style={STYLES.text14}>{data?.interest}</Text>
+                </TouchableOpacity>
+              );
+            })
+          )}
         </View>
       </View>
       <View style={{marginHorizontal: 20, marginBottom: 40}}>
         <CustomButton
-          isDisabled={selectedCategories.length === 0 ? true : false}
-          onPress={() => navigation.navigate('CommunitiesScreen')}>
+          isDisabled={selectedInterest.length === 0 ? true : false}
+          onPress={handleSubmit}>
           Continue
         </CustomButton>
       </View>

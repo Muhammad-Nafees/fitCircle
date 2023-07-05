@@ -85,12 +85,13 @@ const CustomInput = ({ ...props }: Props) => {
             alignItems: 'center',
             gap: 2,
             marginTop: verticalScale(7),
+            marginBottom: verticalScale(4)
           }}>
           <Icon name="alert-circle" size={22} color="white" />
           <Text style={STYLES.text12}>{props.error}</Text>
         </View>
       ) : (
-        <View style={{ height: 29 }} />
+        <View style={{ height: 25 }} />
       )}
 
       {props.isPasswordIcon && (

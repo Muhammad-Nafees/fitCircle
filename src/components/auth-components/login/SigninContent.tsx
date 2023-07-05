@@ -26,36 +26,37 @@ const SigninContent = ({children, screen}: Props) => {
       alt="bgImage"
       resizeMode="cover"
       style={styles.container}>
-      <View
-        style={{
-          gap: 12,
-          paddingHorizontal: horizontalScale(28),
-          marginTop: verticalScale(360),
-        }}>
-        <Text style={[STYLES.text40, {width: horizontalScale(238)}]}>
-          Find the best gyms and coaches
-        </Text>
-        <Text style={STYLES.text16}>
-          Gym buddies, New friends, Advise & Tips, Community, Inspiration,
-          Motivation
-        </Text>
-      </View>
-
-      <View style={styles.card}>
-        <View style={styles.linesContainer}>
-          <View
-            style={[
-              styles.lines,
-              {backgroundColor: screen == 2 ? '#444444' : 'white'},
-            ]}></View>
-          <View
-            style={[
-              styles.lines,
-              {backgroundColor: screen == 2 ? 'white' : '#444444'},
-            ]}></View>
-          <View style={[styles.lines, {backgroundColor: '#444444'}]}></View>
+      <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
+        <View
+          style={{
+            gap: 12,
+            paddingHorizontal: horizontalScale(28),
+          }}>
+          <Text style={[STYLES.text40, {width: horizontalScale(238)}]}>
+            Find the best gyms and coaches
+          </Text>
+          <Text style={STYLES.text16}>
+            Gym buddies, New friends, Advise & Tips, Community, Inspiration,
+            Motivation
+          </Text>
         </View>
-        <View style={{marginTop: verticalScale(31)}}>{children}</View>
+
+        <View style={styles.card}>
+          <View style={styles.linesContainer}>
+            <View
+              style={[
+                styles.lines,
+                {backgroundColor: screen == 2 ? '#444444' : 'white'},
+              ]}></View>
+            <View
+              style={[
+                styles.lines,
+                {backgroundColor: screen == 2 ? 'white' : '#444444'},
+              ]}></View>
+            <View style={[styles.lines, {backgroundColor: '#444444'}]}></View>
+          </View>
+          <View style={{marginTop: verticalScale(31)}}>{children}</View>
+        </View>
       </View>
     </ImageBackground>
   );

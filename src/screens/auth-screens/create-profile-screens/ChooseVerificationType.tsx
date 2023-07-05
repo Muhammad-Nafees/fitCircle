@@ -3,16 +3,59 @@ import {View, Text, StyleSheet} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
+import Toast from 'react-native-toast-message';
+import {resetPassword} from '../../../api';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const ChooseVerificationType = ({navigation}: any) => {
-  const [verificationType, setVerificationType] = useState<string>('phone');
+  const [verificationType, setVerificationType] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const email = userData?.email;
+
+  const handleSubmit = async (type: string) => {
+    if (type == 'email') {
+      setVerificationType('email');
+    } else {
+      setVerificationType('phone');
+    }
+    try {
+      setIsLoading(true);
+      const response = await resetPassword(email as string);
+      const data = response.data;
+      Toast.show({
+        type: 'success',
+        text1: 'User Verified!',
+      });
+      navigation.navigate('OtpScreen', {otp: data});
+      setIsLoading(false);
+    } catch (error: any) {
+      if (error.response.status == 409) {
+        Toast.show({
+          type: 'error',
+          text1: 'User does not exist!',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Server Error',
+        });
+      }
+      setIsLoading(false);
+    }
+  };
+
   return (
     <View style={STYLES.container}>
       <View style={{gap: 10}}>
         <Text style={[STYLES.text16, {fontWeight: '700'}]}>
-          {verificationType == 'email'
-            ? 'Continue with email'
-            : 'Continue with phone'}
+          {verificationType == ''
+            ? 'Continue with email or phone'
+            : verificationType == 'phone'
+            ? 'Continue with phone'
+            : 'Continue with email'}
         </Text>
         <Text style={[STYLES.text12, {fontWeight: '400'}]}>
           You’ll receive 6 digit code to verify next
@@ -27,30 +70,34 @@ const ChooseVerificationType = ({navigation}: any) => {
             <CustomButton
               extraStyles={{
                 backgroundColor:
-                  verificationType == 'phone' ? 'transparent' : '#13728C',
-                borderWidth: verificationType == 'phone' ? 1 : 0,
+                  verificationType == 'email' ? '#13728C' : 'transparent',
+                borderWidth: verificationType == 'email' ? 0 : 1,
                 borderColor:
-                  verificationType == 'phone' ? 'white' : 'transparent',
+                  verificationType == 'email' ? 'transparent' : 'white',
               }}
               onPress={() => {
-                setVerificationType('email'),
-                  navigation.navigate('OtpScreen');
+                handleSubmit('email');
               }}>
-              Email Verification
+              {verificationType == 'email' ? (
+                <CustomLoader />
+              ) : (
+                'Email Verification'
+              )}
             </CustomButton>
             <CustomButton
               extraStyles={{
                 backgroundColor:
-                  verificationType != 'phone' ? 'transparent' : '#13728C',
-                borderWidth: verificationType != 'phone' ? 1 : 0,
+                  verificationType == 'phone' ? '#13728C' : 'transparent',
+                borderWidth: verificationType == 'phone' ? 0 : 1,
                 borderColor:
-                  verificationType != 'phone' ? 'white' : 'transparent',
+                  verificationType == 'phone' ? 'transparent' : 'white',
               }}
-              onPress={() => {
-                setVerificationType('phone'),
-                  navigation.navigate('OtpScreen');
-              }}>
-              Phone Verification
+              onPress={() => handleSubmit('phone')}>
+              {verificationType == 'phone' ? (
+                <CustomLoader />
+              ) : (
+                'Phone Verification'
+              )}
             </CustomButton>
           </View>
         </View>

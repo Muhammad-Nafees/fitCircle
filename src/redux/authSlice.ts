@@ -1,9 +1,11 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {IAuth, userRole} from '../interfaces/auth.interface';
+import {IAccountType, IAuth, IUserRole} from '../interfaces/auth.interface';
+import {IUser} from '../interfaces/user.interface';
 
 const initialState: IAuth = {
   isAuthenticated: false,
-  userRole: null,
+  accountType: null,
+  userRole: undefined,
   user: null,
 };
 
@@ -11,19 +13,26 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setuserRole: (state, action: PayloadAction<userRole>) => {
+    setuserRole: (state, action: PayloadAction<IUserRole>) => {
       state.userRole = action.payload;
+    },
+    setAccountType: (state, action: PayloadAction<IAccountType>) => {
+      state.accountType = action.payload;
     },
     authenticate: state => {
       state.isAuthenticated = true;
     },
     logout: state => {
       state.isAuthenticated = false;
-      state.userRole = null;
+      state.userRole = undefined;
+    },
+    setUserData: (state, action: PayloadAction<IUser>) => {
+      state.user = action.payload;
     },
   },
 });
 
-export const {setuserRole, authenticate, logout} = authSlice.actions;
+export const {setuserRole, setAccountType, setUserData, authenticate, logout} =
+  authSlice.actions;
 
 export default authSlice.reducer;

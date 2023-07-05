@@ -9,7 +9,6 @@ import SignInScreenTwo from '../screens/auth-screens/signin-screens/SigninScreen
 import LoginFormScreen from '../screens/auth-screens/login-screens/LoginFormScreen';
 import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormScreen';
 import CreateAccount from '../screens/auth-screens/create-profile-screens/CreateAccount';
-import HeaderBackArrow from '../components/shared-components/HeaderBackArrow';
 import {horizontalScale, verticalScale} from '../utils/metrics';
 import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
 import GenderScreen from '../screens/auth-screens/create-profile-screens/GenderScreen';
@@ -17,7 +16,6 @@ import CustomHeader from '../components/shared-components/CustomHeader';
 import InterestScreen from '../screens/auth-screens/create-profile-screens/InterestScreen';
 import CommunitiesScreen from '../screens/auth-screens/create-profile-screens/CommunitiesScreen';
 import SocialMediaAccount from '../screens/auth-screens/create-profile-screens/SocialMediaAccount';
-import ChooseVerification from '../screens/auth-screens/create-profile-screens/ChooseVerificationType';
 import VerifyScreen from '../screens/auth-screens/create-profile-screens/VerifyScreen';
 import OtpScreen from '../screens/auth-screens/create-profile-screens/OtpScreen';
 import UploadCertificate from '../screens/auth-screens/create-profile-screens/UploadCertificate';
@@ -42,7 +40,7 @@ const AuthStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="SplashScreen">
+      initialRouteName="GenderScreen">
       {/* // initialRouteName="SplashScreen">  */}
       <Stack.Screen
         name="SplashScreen"

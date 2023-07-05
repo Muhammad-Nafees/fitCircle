@@ -18,16 +18,14 @@ import SocialIcons from '../../shared-components/SocialIcons';
 import CustomButton from '../../shared-components/CustomButton';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../../../interfaces/navigation.type';
-import {useEffect, useState} from 'react';
-import {BASE_URL} from '../../../api/constant';
+import {useState} from 'react';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../shared-components/CustomLoader';
 import {loginIn} from '../../../api';
 import {useDispatch} from 'react-redux';
-import {authenticate, setuserRole} from '../../../redux/authSlice';
+import {authenticate, setUserData, setuserRole} from '../../../redux/authSlice';
 
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -52,10 +50,12 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       const response = await loginIn(values.email, values.password);
+      console.log(response)
       setIsLoading(false);
       if (response?.status === 200) {
         dispatch(authenticate());
         dispatch(setuserRole(response.data.role));
+        dispatch(setUserData(response?.data));
         Toast.show({
           type: 'success',
           text1: 'Login Successful!',
@@ -88,10 +88,7 @@ const LoginForm = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        nestedScrollEnabled={true}
-        keyboardShouldPersistTaps={'always'}>
+    <ScrollView nestedScrollEnabled={true} keyboardShouldPersistTaps={'always'}>
         <Formik
           initialValues={initialValues}
           validationSchema={loginSchema}
@@ -202,8 +199,7 @@ const LoginForm = () => {
             </View>
           )}
         </Formik>
-      </ScrollView>
-    </View>
+    </ScrollView>
   );
 };
 
