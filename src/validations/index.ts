@@ -40,8 +40,14 @@ export const profileSchema = Yup.object().shape({
   physicalInformation: Yup.string().required(
     'Physical Information is required!',
   ),
-  dob: Yup.string().required('Dob is required!'),
-  hourlyRate: Yup.string().when('userRole', (st: any, schema: any) => {
+  dob: Yup.string()
+  .matches(
+    /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/,
+    'Invalid date format. Must be mm/dd/yyyy',
+  )
+  .required(),
+
+    hourlyRate: Yup.string().when('userRole', (st: any, schema: any) => {
     return st && st[0] === 'trainer'
       ? Yup.string().required()
       : Yup.string().strip();

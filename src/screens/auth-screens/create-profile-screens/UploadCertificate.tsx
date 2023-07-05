@@ -1,13 +1,65 @@
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
-import UploadCertificateCard from '../../../components/auth-components/create-profile/UploadCertificateCard';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import {horizontalScale, verticalScale} from '../../../utils/metrics';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../utils/metrics';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  ImageLibraryOptions,
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import PickCertificateCard from '../../../components/auth-components/create-profile/PickCertificateCard';
+import UploadCertificateCard from '../../../components/auth-components/create-profile/UploadCertificateCard';
+import ImageCard from '../../../components/auth-components/create-profile/ImageCard';
 
 const UploadCertificate = ({navigation}: any) => {
+  const [selectedCameraImage, setSelectedCameraImage] = useState<any>('');
+  const [uploadImage, setUploadImage] = useState<any>('');
+  const [addMoreImages, setAddMoreImages] = useState<any>([]);
+
   const handleNavigate = () => {
     navigation.navigate('CertificateVerified');
   };
+
+  const handleCapture = (type: string) => {
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 10000,
+      maxWidth: 10000,
+    };
+    if (type == 'camera') {
+      launchCamera(options, (response: any) => {
+        setSelectedCameraImage(response.assets[0].uri);
+      });
+    } else if (type == 'upload') {
+      launchImageLibrary(options, (response: any) => {
+        setUploadImage(response.assets[0].uri);
+      });
+    } else {
+      launchImageLibrary(options, (response: any) => {
+        setAddMoreImages((prev: any) => [response.assets[0].uri, ...prev]);
+      });
+    }
+  };
+
+  const handleDelete = (img: string) => {
+    setAddMoreImages(addMoreImages.filter((image: string) => image !== img));
+  };
+
+  console.log(selectedCameraImage);
   return (
     <View style={STYLES.container}>
       <ScrollView>
@@ -23,9 +75,38 @@ const UploadCertificate = ({navigation}: any) => {
           </TouchableOpacity>
         </View>
         <View style={{alignItems: 'center', marginTop: 20, gap: 16}}>
-          <UploadCertificateCard icon="camera-outline" text="Camera" />
-          <UploadCertificateCard icon="cloud-upload-outline" text="Upload" />
-          <UploadCertificateCard icon="add-circle-outline" text="Add more" />
+          <PickCertificateCard
+            iconName="camera-outline"
+            text="camera"
+            selectedCameraImage={selectedCameraImage}
+            setSelectedCameraImage={setSelectedCameraImage}
+            onPress={() => handleCapture('camera')}
+          />
+          <UploadCertificateCard
+            iconName="cloud-upload-outline"
+            text="Upload"
+            uploadImage={uploadImage}
+            setUploadImage={setUploadImage}
+            onPress={() => handleCapture('upload')}
+          />
+          {addMoreImages.map((image: any) => {
+            return (
+              <ImageCard
+                key={image}
+                uri={image}
+                onPress={() => handleDelete(image)}
+              />
+            );
+          })}
+          {uploadImage !== '' && (
+            <TouchableOpacity
+              style={[styles.container]}
+              activeOpacity={0.6}
+              onPress={() => handleCapture('addMore')}>
+              <Icon name="add-circle-outline" size={30} color="white" />
+              <Text style={[STYLES.text14, {fontWeight: '600'}]}>Add more</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <View
           style={{
@@ -40,3 +121,17 @@ const UploadCertificate = ({navigation}: any) => {
 };
 
 export default UploadCertificate;
+
+const styles = StyleSheet.create({
+  container: {
+    width: horizontalScale(298),
+    height: verticalScale(204),
+    borderRadius: moderateScale(16),
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderStyle: 'dashed',
+    backgroundColor: 'rgba(68, 68, 68, 0.50)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

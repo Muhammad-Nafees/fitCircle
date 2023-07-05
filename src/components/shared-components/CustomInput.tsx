@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
-import { Text, TextInput } from 'react-native-paper';
-import { horizontalScale, verticalScale } from '../../utils/metrics';
-import { STYLES } from '../../styles/globalStyles';
+import {StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+import {Text, TextInput} from 'react-native-paper';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
   handleChange: (e: any) => void;
 }
 
-const CustomInput = ({ ...props }: Props) => {
+const CustomInput = ({...props}: Props) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -32,7 +32,7 @@ const CustomInput = ({ ...props }: Props) => {
     },
     roundness: 0, // Border radius value
   };
-  
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -44,7 +44,7 @@ const CustomInput = ({ ...props }: Props) => {
   const handleInputBlur = () => {
     setIsFocused(false);
   };
-  
+
   const handleChangeText = (text: string) => {
     props.handleChange(text);
   };
@@ -59,7 +59,7 @@ const CustomInput = ({ ...props }: Props) => {
   };
 
   return (
-    <View style={{ position: 'relative' }}>
+    <View style={{position: 'relative'}}>
       <Text style={STYLES.text12}>{props.label}</Text>
       <TextInput
         style={[inputStyle, STYLES.text14, , props.extraStyles]}
@@ -70,6 +70,7 @@ const CustomInput = ({ ...props }: Props) => {
         secureTextEntry={props.isPasswordIcon && !passwordVisible}
         theme={theme}
         keyboardType={props.keyboardType}
+        numberOfLines={1} // Add this line
         autoCapitalize={props.autoCapitalize}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
@@ -85,13 +86,13 @@ const CustomInput = ({ ...props }: Props) => {
             alignItems: 'center',
             gap: 2,
             marginTop: verticalScale(7),
-            marginBottom: verticalScale(4)
+            marginBottom: verticalScale(4),
           }}>
           <Icon name="alert-circle" size={22} color="white" />
           <Text style={STYLES.text12}>{props.error}</Text>
         </View>
       ) : (
-        <View style={{ height: 25 }} />
+        <View style={{height: 25}} />
       )}
 
       {props.isPasswordIcon && (
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
     height: verticalScale(50),
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
-    
   },
   icon: {
     position: 'absolute',

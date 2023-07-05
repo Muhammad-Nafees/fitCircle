@@ -34,7 +34,9 @@ export const CustomSelect = ({
 }: Props) => {
   return (
     <View style={[{gap: 8}, styles]}>
-      <Text>{<Text style={STYLES.text12}>{label}</Text>}</Text>
+      <Text>
+        {<Text style={STYLES.text12}>{label != 'unit' && label}</Text>}
+      </Text>
       <SelectDropdown
         data={values}
         onSelect={(selectedItem, index) => {

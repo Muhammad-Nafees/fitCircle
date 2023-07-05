@@ -14,22 +14,22 @@ import ImageCard from './ImageCard';
 interface Props {
   iconName: string;
   text: string;
-  uploadImage: any;
-  setUploadImage: any;
+  selectedCameraImage: any;
+  setSelectedCameraImage: any;
   onPress: () => void;
 }
 
-const UploadCertificate = ({
+const PickCertificateCard = ({
   iconName,
   text,
-  uploadImage,
-  setUploadImage,
+  selectedCameraImage,
+  setSelectedCameraImage,
   onPress,
 }: Props) => {
   const handleDelete = () => {
-    setUploadImage('');
+    setSelectedCameraImage('');
   };
-  return uploadImage == '' ? (
+  return selectedCameraImage == '' ? (
     <TouchableOpacity
       style={[styles.container]}
       activeOpacity={0.6}
@@ -38,11 +38,11 @@ const UploadCertificate = ({
       <Text style={[STYLES.text14, {fontWeight: '600'}]}>{text}</Text>
     </TouchableOpacity>
   ) : (
-    <ImageCard uri={uploadImage} onPress={handleDelete} />
+    <ImageCard uri={selectedCameraImage} onPress={handleDelete} />
   );
 };
 
-export default UploadCertificate;
+export default PickCertificateCard;
 
 const styles = StyleSheet.create({
   container: {

@@ -40,7 +40,7 @@ const AuthStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="GenderScreen">
+      initialRouteName="UploadCertificate">
       {/* // initialRouteName="SplashScreen">  */}
       <Stack.Screen
         name="SplashScreen"

@@ -49,6 +49,7 @@ export const createProfile = async (userData: IUser) => {
       hourlyRate: userData.hourlyRate,
       interest: userData.interest,
       communities: userData.communities,
+      socialMediaLinks: userData.socialMediaLinks
     },
   );
   return response;

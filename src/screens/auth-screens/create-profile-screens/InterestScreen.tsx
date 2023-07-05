@@ -44,7 +44,7 @@ const InterestScreen = ({navigation}: any) => {
         setIsLoading(false);
         Toast.show({
           type: 'error',
-          text1: 'Server Error!',
+          text1: 'Network Error!',
         });
       }
     };

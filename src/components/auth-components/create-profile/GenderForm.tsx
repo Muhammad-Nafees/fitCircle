@@ -10,13 +10,12 @@ import {InterestScreenNavigationProp} from '../../../interfaces/navigation.type'
 import {genderSchema} from '../../../validations';
 import {useDispatch, useSelector} from 'react-redux';
 import {setUserData} from '../../../redux/authSlice';
-import { IUser } from '../../../interfaces/user.interface';
-import { RootState } from '../../../redux/store';
+import {IUser} from '../../../interfaces/user.interface';
+import {RootState} from '../../../redux/store';
 
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData)
 
   const dispatch = useDispatch();
 
@@ -38,10 +37,9 @@ const GenderForm = () => {
       bodytype: values.bodytype,
       activity: values.activity,
     };
-  
+
     dispatch(setUserData(partialUserData));
     navigation.navigate('InterestScreen');
-
   };
 
   return (
@@ -72,19 +70,19 @@ const GenderForm = () => {
                 setFieldValue={setFieldValue}
               />
 
+              <CustomInput
+                label="Age"
+                placeholder=""
+                value={values.age}
+                error={errors.age}
+                touched={touched.age}
+                initialTouched={true}
+                keyboardType="numeric"
+                handleChange={handleChange('age')}
+                // extraStyles={{width: 52}}
+              />
               <View style={{flexDirection: 'row', gap: horizontalScale(13)}}>
-                <CustomInput
-                  label="Age"
-                  placeholder=""
-                  value={values.age}
-                  error={errors.age}
-                  touched={touched.age}
-                  initialTouched={true}
-                  keyboardType="numeric"
-                  handleChange={handleChange('age')}
-                  extraStyles={{width: 52}}
-                />
-                <View style={{flexDirection: 'row'}}>
+                <View style={{position: 'relative'}}>
                   <CustomInput
                     label="Height"
                     placeholder=""
@@ -94,22 +92,23 @@ const GenderForm = () => {
                     initialTouched={true}
                     keyboardType="numeric"
                     handleChange={handleChange('height')}
-                    extraStyles={{width: 52}}
+                    extraStyles={{width: horizontalScale(140),paddingRight: horizontalScale(45)}}
                   />
-
-                  {/* <CustomSelect
-                    label=""
-                    defaultValue="Ft"
-                    values={['Ft', 'm']}
-                    setFieldValue={setFieldValue}
-                    styles={{position: 'relative', bottom: verticalScale(7)}}
-                    backgroundColor="#209BCC"
-                    width={50}
-                    height={50.5}
-                    isIcon={false}
-                  /> */}
+                  <View style={{position: 'absolute', right: 0}}>
+                    <CustomSelect
+                      label="unit"
+                      defaultValue="Ft"
+                      values={['Ft', 'm']}
+                      setFieldValue={setFieldValue}
+                      styles={{position: 'relative', bottom: verticalScale(7)}}
+                      backgroundColor="#209BCC"
+                      width={50}
+                      height={50.6}
+                      isIcon={false}
+                    />
+                  </View>
                 </View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{position: 'relative'}}>
                   <CustomInput
                     label="Weight"
                     placeholder=""
@@ -119,19 +118,21 @@ const GenderForm = () => {
                     initialTouched={true}
                     keyboardType="numeric"
                     handleChange={handleChange('weight')}
-                    extraStyles={{width: 52}}
+                    extraStyles={{width: horizontalScale(140)}}
                   />
-                  {/* <CustomSelect
-                    label=""
-                    defaultValue="Kg"
-                    values={['Kg', 'lb']}
-                    styles={{position: 'relative', bottom: verticalScale(7)}}
-                    backgroundColor="#209BCC"
-                    setFieldValue="Kg"
-                    width={50}
-                    height={50.5}
-                    isIcon={false}
-                  /> */}
+                  <View style={{position: 'absolute', right: 0}}>
+                    <CustomSelect
+                      label="unit"
+                      defaultValue="Kg"
+                      values={['Kg', 'lb']}
+                      styles={{position: 'relative', bottom: verticalScale(7)}}
+                      backgroundColor="#209BCC"
+                      setFieldValue={setFieldValue}
+                      width={50}
+                      height={50.6}
+                      isIcon={false}
+                    />
+                  </View>
                 </View>
               </View>
               <CustomSelect
