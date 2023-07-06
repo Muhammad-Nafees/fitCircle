@@ -10,6 +10,7 @@ const HomeScreen = () => {
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    
       <Text>Welcome to Home Screen!</Text>
       <Text>I am a {userData?.role}</Text>
       <Text>My name is {userData?.firstName}</Text>
