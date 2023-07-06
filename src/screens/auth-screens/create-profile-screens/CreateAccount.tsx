@@ -8,7 +8,11 @@ import {Formik, Field} from 'formik';
 import {signupSchema} from '../../../validations';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 import {register} from '../../../api';
-import {authenticate, setUserData} from '../../../redux/authSlice';
+import {
+  authenticate,
+  setRefreshToken,
+  setUserData,
+} from '../../../redux/authSlice';
 import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
@@ -36,7 +40,9 @@ const CreateAccount = ({navigation}: any) => {
       const response = await register(values);
       if (response?.status === 200) {
         setIsLoading(false);
+        console.log(response?.data)
         dispatch(authenticate());
+        dispatch(setRefreshToken(response?.data.token));
         Toast.show({
           type: 'success',
           text1: 'User Registered Successfully!',

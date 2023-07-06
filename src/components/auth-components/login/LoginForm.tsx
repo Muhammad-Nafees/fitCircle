@@ -25,7 +25,12 @@ import Toast from 'react-native-toast-message';
 import CustomLoader from '../../shared-components/CustomLoader';
 import {loginIn} from '../../../api';
 import {useDispatch} from 'react-redux';
-import {authenticate, setUserData, setuserRole} from '../../../redux/authSlice';
+import {
+  authenticate,
+  setRefreshToken,
+  setUserData,
+  setuserRole,
+} from '../../../redux/authSlice';
 
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -50,11 +55,13 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       const response = await loginIn(values.email, values.password);
-      console.log(response)
+      console.log(response);
       setIsLoading(false);
       if (response?.status === 200) {
+        console.log(response?.data)
         dispatch(authenticate());
         dispatch(setuserRole(response.data.role));
+        dispatch(setRefreshToken(response?.data.token));
         dispatch(setUserData(response?.data));
         Toast.show({
           type: 'success',
@@ -89,116 +96,113 @@ const LoginForm = () => {
 
   return (
     <ScrollView nestedScrollEnabled={true} keyboardShouldPersistTaps={'always'}>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={loginSchema}
-          onSubmit={handleSubmit}>
-          {({
-            handleChange,
-            handleSubmit,
-            handleBlur,
-            submitForm,
-            values,
-            errors,
-            touched,
-            initialTouched,
-          }) => (
-            <View
-              style={{
-                marginTop: verticalScale(42),
-                gap: 0,
-                alignItems: 'center',
-              }}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={loginSchema}
+        onSubmit={handleSubmit}>
+        {({
+          handleChange,
+          handleSubmit,
+          handleBlur,
+          submitForm,
+          values,
+          errors,
+          touched,
+          initialTouched,
+        }) => (
+          <View
+            style={{
+              marginTop: verticalScale(42),
+              gap: 0,
+              alignItems: 'center',
+            }}>
+            <CustomInput
+              label="Email"
+              placeholder="Username"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={values.email}
+              error={errors.email}
+              touched={touched.email}
+              initialTouched={true}
+              handleChange={handleChange('email')}
+            />
+            <View style={{gap: 0, position: 'relative'}}>
               <CustomInput
-                label="Email"
-                placeholder="Username"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={values.email}
-                error={errors.email}
+                label="Password"
+                placeholder="Password"
+                value={values.password}
+                error={errors.password}
                 touched={touched.email}
                 initialTouched={true}
-                handleChange={handleChange('email')}
+                isPasswordIcon={true}
+                handleChange={handleChange('password')}
               />
-              <View style={{gap: 0, position: 'relative'}}>
-                <CustomInput
-                  label="Password"
-                  placeholder="Password"
-                  value={values.password}
-                  error={errors.password}
-                  touched={touched.email}
-                  initialTouched={true}
-                  isPasswordIcon={true}
-                  handleChange={handleChange('password')}
-                />
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('ForgetPassword')}>
-                  <Text
-                    style={[
-                      STYLES.text12,
-                      {
-                        color: '#209BCC',
-                        borderBottomWidth: 1,
-                        borderBottomColor: '#209BCC',
-                        width: horizontalScale(96),
-                        position: 'absolute',
-                        right: 0,
-                        bottom: -verticalScale(10),
-                      },
-                    ]}>
-                    Forget Password
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{marginTop: verticalScale(37), gap: 37}}>
-                <CustomButton
-                  onPress={handleSubmit}
-                  isDisabled={isLoading ? true : false}>
-                  {' '}
-                  {isLoading ? <CustomLoader /> : ' Log in'}
-                </CustomButton>
-                <CustomDivider text="Or Sign Up" />
-                <SocialIcons />
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 2,
-                  justifyContent: 'center',
-                  marginTop: verticalScale(30),
-                }}>
-                <Text style={STYLES.text14}>Don’t have an account? </Text>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('SigninScreenTwo')}>
-                  <Text
-                    style={[
-                      STYLES.text14,
-                      {
-                        fontWeight: '700',
-                        color: '#209BCC',
-                        textDecorationLine: 'underline',
-                      },
-                    ]}>
-                    Sign up
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={{marginVertical: verticalScale(47)}}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgetPassword')}>
                 <Text
                   style={[
                     STYLES.text12,
-                    {fontWeight: '500', color: '#979797'},
+                    {
+                      color: '#209BCC',
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#209BCC',
+                      width: horizontalScale(96),
+                      position: 'absolute',
+                      right: 0,
+                      bottom: -verticalScale(10),
+                    },
                   ]}>
-                  By clicking login, you agree to our{' '}
-                  <Text style={{color: '#219EBC'}}>Terms and Conditions </Text>{' '}
-                  and
-                  <Text style={{color: '#219EBC'}}> Privacy Policy </Text>
+                  Forget Password
                 </Text>
-              </View>
+              </TouchableOpacity>
             </View>
-          )}
-        </Formik>
+            <View style={{marginTop: verticalScale(37), gap: 37}}>
+              <CustomButton
+                onPress={handleSubmit}
+                isDisabled={isLoading ? true : false}>
+                {' '}
+                {isLoading ? <CustomLoader /> : ' Log in'}
+              </CustomButton>
+              <CustomDivider text="Or Sign Up" />
+              <SocialIcons />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: 2,
+                justifyContent: 'center',
+                marginTop: verticalScale(30),
+              }}>
+              <Text style={STYLES.text14}>Don’t have an account? </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('SigninScreenTwo')}>
+                <Text
+                  style={[
+                    STYLES.text14,
+                    {
+                      fontWeight: '700',
+                      color: '#209BCC',
+                      textDecorationLine: 'underline',
+                    },
+                  ]}>
+                  Sign up
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{marginVertical: verticalScale(47)}}>
+              <Text
+                style={[STYLES.text12, {fontWeight: '500', color: '#979797'}]}>
+                By clicking login, you agree to our{' '}
+                <Text style={{color: '#219EBC'}}>Terms and Conditions </Text>{' '}
+                and
+                <Text style={{color: '#219EBC'}}> Privacy Policy </Text>
+              </Text>
+            </View>
+          </View>
+        )}
+      </Formik>
     </ScrollView>
   );
 };

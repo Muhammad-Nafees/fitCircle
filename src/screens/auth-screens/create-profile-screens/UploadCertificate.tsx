@@ -59,7 +59,6 @@ const UploadCertificate = ({navigation}: any) => {
     setAddMoreImages(addMoreImages.filter((image: string) => image !== img));
   };
 
-  console.log(selectedCameraImage);
   return (
     <View style={STYLES.container}>
       <ScrollView>

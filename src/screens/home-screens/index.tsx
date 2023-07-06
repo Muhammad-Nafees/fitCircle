@@ -6,8 +6,7 @@ import {RootState} from '../../redux/store';
 
 const HomeScreen = () => {
   const userData = useSelector((state: RootState) => state.auth.user);
-
-  console.log(userData?.email);
+  console.log(userData)
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
