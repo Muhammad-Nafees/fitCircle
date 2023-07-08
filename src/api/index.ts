@@ -4,25 +4,19 @@ import {IUser} from '../interfaces/user.interface';
 import {BASE_URL} from './constant';
 
 export const loginIn = async (email: string, password: string) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/login`,
-    {
-      email,
-      password,
-    },
-  );
+  const response = await axios.post(`${BASE_URL}/users/login`, {
+    email,
+    password,
+  });
   return response;
 };
 
 export const register = async (values: CreateAccountFormValues) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/register`,
-    {
-      email: values.email.toLowerCase(),
-      phone: values.phone,
-      password: values.password,
-    },
-  );
+  const response = await axios.post(`${BASE_URL}/users/register`, {
+    email: values.email.toLowerCase(),
+    phone: values.phone,
+    password: values.password,
+  });
   return response;
 };
 
@@ -53,7 +47,7 @@ export const createProfile = async (userData: IUser) => {
   // formData.append('certificateImages', userData.certificateImages);
 
   const response = await axios.post(
-    `https://fit-circle.cyclic.app/home/createProfile`,
+    `${BASE_URL}/home/createProfile`,
     formData,
     {
       headers: {
@@ -66,40 +60,31 @@ export const createProfile = async (userData: IUser) => {
 };
 
 export const generateOtp = async (email: string) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/generate/otp`,
-    {
-      email: email.toLowerCase(),
-    },
-  );
+  const response = await axios.post(`${BASE_URL}/users/generate/otp`, {
+    email: email.toLowerCase(),
+  });
   return response;
 };
 
 export const otpValidation = async (enteredOtp: number) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/otpValidation`,
-    {
-      enteredOtp,
-    },
-  );
+  const response = await axios.post(`${BASE_URL}/users/otpValidation`, {
+    enteredOtp,
+  });
   return response;
 };
 export const resetPassword = async (newPass: string) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/resetPassword`,
-    {
-      newPass,
-    },
-  );
+  const response = await axios.post(`${BASE_URL}/users/resetPassword`, {
+    newPass,
+  });
   return response;
 };
 
 export const getInterest = async () => {
-  const response = await axios.get(`https://fit-circle.cyclic.app/interest`);
+  const response = await axios.get(`${BASE_URL}/interest`);
   return response;
 };
 
 export const getCommunities = async () => {
-  const response = await axios.get(`https://fit-circle.cyclic.app/community`);
+  const response = await axios.get(`${BASE_URL}/community`);
   return response;
 };
