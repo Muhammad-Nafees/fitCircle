@@ -11,6 +11,10 @@ import ImagePicker, {
   MediaType,
 } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
+import {setUserData} from '../../../redux/authSlice';
+import {IUser} from '../../../interfaces/user.interface';
 
 interface Props {
   onSelectProfilePicture: (picture: any) => void;
@@ -23,14 +27,25 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
   const [selectedProfileImage, setSelectedProfileImage] = useState<any | null>(
     null,
   );
+  const previousUserData = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
+  // console.log(previousUserData, 'ss');
 
   const handleUploadPhoto = (type: string) => {
     if (type == 'profile' && selectedProfileImage) {
       setSelectedProfileImage(null);
+      const partialUserData: Partial<IUser> = {
+        profileImage: null,
+      };
+      dispatch(setUserData(partialUserData));
       return;
     }
     if (type == 'cover' && selectedCoverImage) {
       setSelectedCoverImage(null);
+      const partialUserData: Partial<IUser> = {
+        coverImage: null,
+      };
+      dispatch(setUserData(partialUserData));
       return;
     }
     const options: ImageLibraryOptions = {
@@ -42,10 +57,18 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
 
     launchImageLibrary(options, (response: any) => {
       if (type == 'profile') {
+        const partialUserData: Partial<IUser> = {
+          profileImage: response.assets[0],
+        };
+        dispatch(setUserData(partialUserData));
         setSelectedProfileImage({resourcePath: response.assets[0].uri});
         onSelectProfilePicture({resourcePath: response.assets[0].uri});
       } else {
         setSelectedCoverImage({resourcePath: response.assets[0].uri});
+        const partialUserData: Partial<IUser> = {
+          coverImage: response.assets[0],
+        };
+        dispatch(setUserData(partialUserData));
       }
     });
   };

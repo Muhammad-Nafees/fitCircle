@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   StyleSheet,
+  PermissionsAndroid,
 } from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
@@ -25,12 +26,35 @@ import UploadCertificateCard from '../../../components/auth-components/create-pr
 import ImageCard from '../../../components/auth-components/create-profile/ImageCard';
 
 const UploadCertificate = ({navigation}: any) => {
-  const [selectedCameraImage, setSelectedCameraImage] = useState<any>('');
+  const [selectedCameraImage, setSelectedCameraImage] = useState('');
   const [uploadImage, setUploadImage] = useState<any>('');
   const [addMoreImages, setAddMoreImages] = useState<any>([]);
 
   const handleNavigate = () => {
     navigation.navigate('CertificateVerified');
+  };
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Camera Permission',
+          message: 'This app needs camera access to capture photos.',
+          buttonPositive: 'OK',
+          buttonNegative: 'Cancel',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Camera permission granted');
+        // Perform actions after obtaining camera permission
+      } else {
+        console.log('Camera permission denied');
+        // Handle denied permission or show an alert to the user
+      }
+    } catch (error) {
+      console.log('Error requesting camera permission:', error);
+      // Handle error, if any, while requesting camera permission
+    }
   };
 
   const handleCapture = (type: string) => {
@@ -41,16 +65,24 @@ const UploadCertificate = ({navigation}: any) => {
       maxWidth: 10000,
     };
     if (type == 'camera') {
+      requestCameraPermission();
       launchCamera(options, (response: any) => {
-        setSelectedCameraImage(response.assets[0].uri);
+        console.log(response)
+        if (response.assets) {
+          setSelectedCameraImage(response?.assets[0]?.uri);
+        }
       });
     } else if (type == 'upload') {
       launchImageLibrary(options, (response: any) => {
-        setUploadImage(response.assets[0].uri);
+        if (response.assets) {
+          setUploadImage(response?.assets[0].uri);
+        }
       });
     } else {
       launchImageLibrary(options, (response: any) => {
-        setAddMoreImages((prev: any) => [response.assets[0].uri, ...prev]);
+        if (response.assets) {
+          setAddMoreImages((prev: any) => [...prev, response?.assets[0].uri]);
+        }
       });
     }
   };

@@ -4,7 +4,7 @@ import {IUser} from '../interfaces/user.interface';
 
 const initialState: IAuth = {
   isAuthenticated: false,
-  refreshToken: null,
+  accessToken: null,
   accountType: null,
   userRole: undefined,
   user: null,
@@ -23,7 +23,7 @@ const authSlice = createSlice({
     authenticate: state => {
       state.isAuthenticated = true;
     },
-    setRefreshToken: (state, action) => {
+    setaccessToken: (state, action) => {
       state.user = action.payload;
     },
     logout: state => {
@@ -36,7 +36,7 @@ const authSlice = createSlice({
   },
 });
 
-export const {setuserRole,setRefreshToken, setAccountType, setUserData, authenticate, logout} =
+export const {setuserRole,setaccessToken, setAccountType, setUserData, authenticate, logout} =
   authSlice.actions;
 
 export default authSlice.reducer;

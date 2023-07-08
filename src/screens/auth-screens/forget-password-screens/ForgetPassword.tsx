@@ -10,7 +10,7 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import {resetPassword} from '../../../api';
+import {generateOtp} from '../../../api';
 
 interface FormValues {
   email: string;
@@ -24,7 +24,7 @@ const ForgetPassword = ({navigation}: any) => {
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      const response = await resetPassword(values.email);
+      const response = await generateOtp(values.email);
       const data = response.data;
       setIsLoading(false);
       Toast.show({

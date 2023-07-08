@@ -31,10 +31,11 @@ const SocialMediaAccount = ({navigation}: any) => {
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>();
-  console.log(previousUserData);
+  console.log(previousUserData?.selectedCommunities);
 
   const handleSubmit = async (values: FormValues) => {
     const socialMediaLinks: ISocial[] = [
+      
       {
         name: 'facebook',
         link: values.facebook,
@@ -59,7 +60,7 @@ const SocialMediaAccount = ({navigation}: any) => {
     setIsLoading(true);
 
     try {
-      const response = await createProfile(partialUserData);
+      const response = await createProfile({...partialUserData});
       const data = response?.data;
       dispatch(setUserData(data));
       setIsLoading(false);

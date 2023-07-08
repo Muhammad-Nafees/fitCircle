@@ -7,9 +7,10 @@ export interface ISocial {
 export interface IUser {
   _id?: string;
   email?: string;
-  profileImageUrl?: string;
   role?: IUserRole | undefined;
-  phone?: number | null;
+  profileImage?: any;
+  coverImage?: any;
+  phone?: string;
   firstName?: string;
   lastName?: string;
   username?: string;
@@ -19,13 +20,15 @@ export interface IUser {
   gender?: string;
   physicalInformation?: string;
   dob?: string;
-  hourlyRate?: number | null;
-  age?: number | null;
-  height?: number | null;
-  weight?: number | null;
+  hourlyRate?: string;
+  age?: string;
+  height?: string;
+  weight?: string;
   activity?: string;
   bodytype?: string;
   interest?: string[];
-  communities?: string[];
+  certificateImages?: any[];
+  selectedCommunities?: string[];
   socialMediaLinks?: ISocial[];
+
 }

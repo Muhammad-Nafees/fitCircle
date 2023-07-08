@@ -13,9 +13,11 @@ import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {resetPassword} from '../../../api';
+import {generateOtp, otpValidation, resetPassword} from '../../../api';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const OtpScreen = ({navigation, route}: any) => {
+  console.log(route?.params?.email)
   const inputRefs = useRef<Array<TextInput | null>>([]);
   const [otp, setOtp] = useState<string[]>(Array());
   const accountType = useSelector((state: RootState) => state.auth.accountType);
@@ -23,47 +25,71 @@ const OtpScreen = ({navigation, route}: any) => {
   const [email, setEmail] = useState<string | undefined>('');
   const [generatedOtp, setGeneratedOtp] = useState(null);
   const [isDisable, setIsDisable] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
+  console.log(accountType)
 
   const [secondsRemaining, setSecondsRemaining] = useState(60);
   useEffect(() => {
     if (accountType == 'signup') {
       setEmail(userData?.email);
     } else {
-      setEmail(route?.params.email);
+      setEmail(route?.params?.email);
     }
     setGeneratedOtp(route?.params.otp);
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
-    if (convertOtpIntoNumber == generatedOtp) {
-      if (accountType == 'signup') {
+    setIsLoading(true);
+    try {
+      const response = await otpValidation(convertOtpIntoNumber);
+      if (response?.status == 200) {
+        setIsLoading(false);
+        setSecondsRemaining(0);
         Toast.show({
           type: 'success',
-          text1: 'OTP verified.',
-          text2: 'Account has been created!',
+          text1: 'OTP verified!',
+          text2: 'Account Created Successfully!'
         });
-        navigation.navigate('AccountVerified');
+        if (accountType == 'signup') {
+          Toast.show({
+            type: 'success',
+            text1: 'OTP verified!',
+            text2: 'Account Created Successfully!'
+          });
+          navigation.navigate('AccountVerified');
+        } else {
+          Toast.show({
+            type: 'success',
+            text1: 'OTP verified!',
+          });
+          navigation.navigate('CreateNewPassword');
+        }
+      }
+    } catch (error: any) {
+      console.log(error.response.data);
+      if (error?.response.status == 500) {
+        Toast.show({
+          type: 'error',
+          text1: 'Invalid OTP!',
+          text2: 'Please enter valid otp.',
+        });
       } else {
         Toast.show({
-          type: 'success',
-          text1: 'Success!',
-          text2: 'OTP verified.',
+          type: 'error',
+          text1: 'Server Error',
+          text2: 'Plese try again later!',
         });
-        navigation.navigate('CreateNewPassword', {otp: convertOtpIntoNumber});
       }
-    } else {
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid OTP!',
-        text2: 'Please enter valid otp.',
-      });
+      setIsLoading(false);
     }
   };
   const handleResendOtp = async () => {
+    setIsResendLoading(true);
     try {
-      const response = await resetPassword(email as string);
+      const response = await generateOtp(email as string);
       const newOtp = response.data;
       setGeneratedOtp(newOtp);
       setSecondsRemaining(60);
@@ -73,11 +99,13 @@ const OtpScreen = ({navigation, route}: any) => {
         text1: 'Success!',
         text2: 'New Otp generated!',
       });
+      setIsResendLoading(false);
     } catch (error: any) {
       Toast.show({
         type: 'error',
         text1: 'Server Error',
       });
+      setIsResendLoading(false);
     }
   };
   useEffect(() => {
@@ -171,7 +199,7 @@ const OtpScreen = ({navigation, route}: any) => {
                         textDecorationLine: 'underline',
                       }}>
                       {' '}
-                      Resend OTP
+                      {isResendLoading ? <CustomLoader /> : 'Resend OTP'}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -183,9 +211,9 @@ const OtpScreen = ({navigation, route}: any) => {
                 marginTop: verticalScale(50),
               }}>
               <CustomButton
-                isDisabled={secondsRemaining == 0 ? true : false}
+                isDisabled={secondsRemaining == 0 || isLoading ? true : false}
                 onPress={handleSubmit}>
-                Verify
+                {isLoading ? <CustomLoader /> : 'Verify'}
               </CustomButton>
             </View>
           </View>

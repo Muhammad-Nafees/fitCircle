@@ -10,7 +10,7 @@ import CustomPhoneInput from '../../../components/shared-components/CustomPhoneI
 import {register} from '../../../api';
 import {
   authenticate,
-  setRefreshToken,
+  setaccessToken,
   setUserData,
 } from '../../../redux/authSlice';
 import Toast from 'react-native-toast-message';
@@ -42,7 +42,7 @@ const CreateAccount = ({navigation}: any) => {
         setIsLoading(false);
         console.log(response?.data)
         dispatch(authenticate());
-        dispatch(setRefreshToken(response?.data.token));
+        dispatch(setaccessToken(response?.data.token));
         Toast.show({
           type: 'success',
           text1: 'User Registered Successfully!',

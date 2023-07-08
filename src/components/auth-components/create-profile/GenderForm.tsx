@@ -16,14 +16,15 @@ import {RootState} from '../../../redux/store';
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
+  console.log(previousUserData)
 
   const dispatch = useDispatch();
 
   const initialValues: IUser = {
     gender: '',
-    age: null,
-    height: null,
-    weight: null,
+    age: '',
+    height: '',
+    weight: '',
     bodytype: '',
     activity: '',
   };

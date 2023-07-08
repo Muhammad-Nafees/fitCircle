@@ -31,6 +31,8 @@ type NavigationProp = NativeStackNavigationProp<
 const CreateProfileForm = ({profilePicture}: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
+  const data = useSelector((state: RootState) => state.auth.user);
+
   const dispatch = useDispatch();
 
   const initialValues: IUser = {
@@ -39,16 +41,24 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     lastName: '',
     username: '',
     bio: '',
-    phone: null,
+    phone: '',
     country: '',
     city: '',
     gender: '',
+    age: '',
+    activity: '',
+    bodytype: '',
+    height: '',
+    weight: '',
     physicalInformation: '',
     dob: '',
-    hourlyRate: null,
+    hourlyRate: '',
+    profileImage: null,
+    coverImage: null,
   };
   const handleSubmit = (values: IUser) => {
-    const partialUserData: Omit<IUser, 'userRole'> = {
+    const partialUserData: Partial<IUser> = {
+      role: userRole,
       firstName: values.firstName,
       lastName: values.lastName,
       username: values.username,
@@ -57,11 +67,19 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       country: values.country,
       city: values.city,
       gender: values.gender,
+      age: values.age,
+      activity: values.activity,
+      bodytype: values.bodytype,
+      height: values.height,
+      weight: values.weight,
       physicalInformation: values.physicalInformation,
       dob: values.dob,
       hourlyRate: values.hourlyRate,
+      profileImage: data?.profileImage,
+      coverImage: data?.coverImage,
     };
-    dispatch(setUserData({...partialUserData, role: userRole}));
+
+    dispatch(setUserData({...partialUserData}));
 
     if (userRole == 'user')
       navigation.navigate('GenderScreen', {

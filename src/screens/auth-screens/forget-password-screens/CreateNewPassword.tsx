@@ -10,7 +10,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import {createNewPasswordSchema} from '../../../validations';
-import {otpValidation} from '../../../api';
+import {otpValidation, resetPassword} from '../../../api';
 
 interface FormValues {
   newPassword: string;
@@ -26,9 +26,8 @@ const CreateNewPassword = ({navigation, route}: any) => {
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      const response = await otpValidation(
-        route.params.otp,
-        values.newPassword,
+      const response = await resetPassword(
+        values.newPassword
       );
       if (response?.status == 200) {
         setIsLoading(false);
@@ -56,7 +55,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
             Create New Password
           </Text>
           <Text style={[STYLES.text12, {fontWeight: '400'}]}>
-            ake a new password that’s different with your old password.
+            Make a new password that’s different with your old password.
           </Text>
         </View>
         <Formik

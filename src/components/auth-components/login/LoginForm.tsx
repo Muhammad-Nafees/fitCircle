@@ -27,7 +27,7 @@ import {loginIn} from '../../../api';
 import {useDispatch} from 'react-redux';
 import {
   authenticate,
-  setRefreshToken,
+  setaccessToken,
   setUserData,
   setuserRole,
 } from '../../../redux/authSlice';
@@ -61,7 +61,7 @@ const LoginForm = () => {
         console.log(response?.data)
         dispatch(authenticate());
         dispatch(setuserRole(response.data.role));
-        dispatch(setRefreshToken(response?.data.token));
+        dispatch(setaccessToken(response?.data.token));
         dispatch(setUserData(response?.data));
         Toast.show({
           type: 'success',
