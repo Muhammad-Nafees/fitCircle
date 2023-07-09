@@ -29,10 +29,10 @@ const CustomPhoneInput = ({
   >(false);
   const [isError, setIsError] = useState('');
   useEffect(() => {
-    if (value == '') {
+    if (touched && value === '') {
       setIsError('Phone number is required!');
     }
-  }, [value]);
+  }, [touched, value]);
   return (
     <View
       style={{

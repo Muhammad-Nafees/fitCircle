@@ -2,7 +2,10 @@ import * as Yup from 'yup';
 
 export const loginSchema = Yup.object().shape({
   email: Yup.string()
-    .matches(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[cC][oO][mM]$/, 'Invalid email')
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+[a-zA-Z]{2,}$/,
+      'Invalid email',
+    )
     .required('Email is required'),
   password: Yup.string()
     .required('Password is required')
@@ -11,7 +14,10 @@ export const loginSchema = Yup.object().shape({
 
 export const signupSchema = Yup.object().shape({
   email: Yup.string()
-    .matches(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[cC][oO][mM]$/, 'Invalid email')
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+[a-zA-Z]{2,}$/,
+      'Invalid email',
+    )
     .required('Email is required'),
   phone: Yup.string().required('Phone number is required!'),
   password: Yup.string()
@@ -41,13 +47,13 @@ export const profileSchema = Yup.object().shape({
     'Physical Information is required!',
   ),
   dob: Yup.string()
-  .matches(
-    /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/,
-    'Invalid date format. Must be mm/dd/yyyy',
-  )
-  .required(),
+    .matches(
+      /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/,
+      'Invalid date format. Must be mm/dd/yyyy',
+    )
+    .required(),
 
-    hourlyRate: Yup.string().when('userRole', (st: any, schema: any) => {
+  hourlyRate: Yup.string().when('userRole', (st: any, schema: any) => {
     return st && st[0] === 'trainer'
       ? Yup.string().required()
       : Yup.string().strip();
@@ -56,7 +62,9 @@ export const profileSchema = Yup.object().shape({
 
 export const genderSchema = Yup.object().shape({
   gender: Yup.string().required('Select gender'),
-  age: Yup.string().required('Age is required'),
+  age: Yup.number()
+    .required('Age is required')
+    .min(14, 'Age must be greater than 14'),
   height: Yup.string().required('Height is required'),
   weight: Yup.string().required('Weight is required'),
   bodytype: Yup.string().required('Select Body Type'),
@@ -65,7 +73,10 @@ export const genderSchema = Yup.object().shape({
 
 export const forgetPasswordSchema = Yup.object().shape({
   email: Yup.string()
-    .matches(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[cC][oO][mM]$/, 'Invalid email')
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+[a-zA-Z]{2,}$/,
+      'Invalid email',
+    )
     .required('Email is required'),
 });
 

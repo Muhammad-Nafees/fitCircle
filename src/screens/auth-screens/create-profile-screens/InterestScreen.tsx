@@ -34,10 +34,6 @@ const InterestScreen = ({navigation}: any) => {
 
       try {
         const response = await getInterest();
-        Toast.show({
-          type: 'success',
-          text1: 'Data populated successfully!',
-        });
         setInterest(response?.data);
         setIsLoading(false);
       } catch (error) {

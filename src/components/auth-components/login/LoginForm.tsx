@@ -58,7 +58,7 @@ const LoginForm = () => {
       console.log(response);
       setIsLoading(false);
       if (response?.status === 200) {
-        console.log(response?.data)
+        console.log(response?.data);
         dispatch(authenticate());
         dispatch(setuserRole(response.data.role));
         dispatch(setaccessToken(response?.data.token));
@@ -68,7 +68,7 @@ const LoginForm = () => {
           text1: 'Login Successful!',
           text2: 'Welcome!',
         });
-        navigation.navigate('HomeScreen');
+        navigation.navigate('HomeModule');
       }
     } catch (error: any) {
       setIsLoading(false);

@@ -23,6 +23,7 @@ import ChooseVerificationType from '../screens/auth-screens/create-profile-scree
 import HomeScreen from '../screens/home-screens';
 import ForgetPassword from '../screens/auth-screens/forget-password-screens/ForgetPassword';
 import CreateNewPassword from '../screens/auth-screens/forget-password-screens/CreateNewPassword';
+import HomeTabNavigator from './HomeModuleNavigator';
 
 const Stack = createStackNavigator();
 
@@ -40,7 +41,7 @@ const AuthStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="SplashScreen">
+      initialRouteName="GenderScreen">
       {/* // initialRouteName="SplashScreen">  */}
       <Stack.Screen
         name="SplashScreen"
@@ -100,8 +101,8 @@ const AuthStackNavigator = () => {
       />
       <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
       <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
-
-    </Stack.Navigator>
+      <Stack.Screen name="HomeModule" component={HomeTabNavigator} />
+    </Stack.Navigator>  
   );
 };
 

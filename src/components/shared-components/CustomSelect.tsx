@@ -1,25 +1,25 @@
-import {View, Text, StyleSheet} from 'react-native';
+import React from 'react';
+import {View, Text} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {useEffect} from 'react';
 
 interface Props {
   defaultValue?: string;
   selectedValue?: string;
-  values: any;
+  values: string[];
   label: string;
-  error?: any;
-  styles?: any;
+  error?: string;
+  styles?: object;
   backgroundColor?: string;
   width?: string | number;
   height?: number;
   isIcon?: boolean;
-  setFieldValue: any;
+  setFieldValue: (field: string, value: string) => void;
+  fontColor?: string;
 }
 
-export const CustomSelect = ({
+export const CustomSelect: React.FC<Props> = ({
   defaultValue,
   label,
   selectedValue,
@@ -31,16 +31,19 @@ export const CustomSelect = ({
   isIcon = true,
   setFieldValue,
   styles,
-}: Props) => {
+  fontColor,
+}) => {
+  const field = label.toLowerCase().replace(/\s/g, '');
+
   return (
     <View style={[{gap: 8}, styles]}>
       <Text>
-        {<Text style={STYLES.text12}>{label != 'unit' && label}</Text>}
+        {label !== 'unit' && <Text style={STYLES.text12}>{label}</Text>}
       </Text>
       <SelectDropdown
         data={values}
         onSelect={(selectedItem, index) => {
-          setFieldValue(label.toLocaleLowerCase(), selectedItem);
+          setFieldValue(field, selectedItem); 
         }}
         renderDropdownIcon={() =>
           isIcon && <Icon name="chevron-down-outline" color="grey" size={24} />
@@ -57,22 +60,17 @@ export const CustomSelect = ({
         rowStyle={{borderBottomWidth: 0, backgroundColor: '#FBFBFB'}}
         buttonTextStyle={{
           fontSize: 14,
-          color: 'rgba(68, 68, 68, 0.5)',
+          color: fontColor ? fontColor : '#000000',
           textAlign: 'left',
         }}
         buttonStyle={{
-          height: height ? verticalScale(height) : verticalScale(45),
+          height: height ? height : 45,
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '78%',
         }}
       />
       {error ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 2,
-          }}>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
           <Icon name="alert-circle" size={22} color="white" />
           <Text style={STYLES.text12}>{error}</Text>
         </View>

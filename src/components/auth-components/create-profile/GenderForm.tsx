@@ -16,7 +16,7 @@ import {RootState} from '../../../redux/store';
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData)
+  console.log(previousUserData);
 
   const dispatch = useDispatch();
 
@@ -62,7 +62,7 @@ const GenderForm = () => {
         <>
           <View style={styles.formContainer}>
             <View style={styles.line} />
-            <View style={{marginTop: 30, alignItems: 'center'}}>
+            <View style={{marginTop: verticalScale(30), alignItems: 'center'}}>
               <CustomSelect
                 label="Gender"
                 values={['Male', 'Female']}
@@ -82,8 +82,13 @@ const GenderForm = () => {
                 handleChange={handleChange('age')}
                 // extraStyles={{width: 52}}
               />
-              <View style={{flexDirection: 'row', gap: horizontalScale(13)}}>
-                <View style={{position: 'relative'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: horizontalScale(13),
+                  marginHorizontal: horizontalScale(42),
+                }}>
+                <View style={{flex: 1}}>
                   <CustomInput
                     label="Height"
                     placeholder=""
@@ -93,9 +98,18 @@ const GenderForm = () => {
                     initialTouched={true}
                     keyboardType="numeric"
                     handleChange={handleChange('height')}
-                    extraStyles={{width: horizontalScale(140),paddingRight: horizontalScale(45)}}
+                    extraStyles={{
+                      width: '100%',
+                    }}
                   />
-                  <View style={{position: 'absolute', right: 0}}>
+                  <View
+                    style={{
+                      position: 'absolute',
+                      right: horizontalScale(0),
+                      top: verticalScale(9),
+                      height: '100%',
+                      justifyContent: 'center',
+                    }}>
                     <CustomSelect
                       label="unit"
                       defaultValue="Ft"
@@ -106,10 +120,11 @@ const GenderForm = () => {
                       width={50}
                       height={50.6}
                       isIcon={false}
+                      fontColor="#fff"
                     />
                   </View>
                 </View>
-                <View style={{position: 'relative'}}>
+                <View style={{flex: 1}}>
                   <CustomInput
                     label="Weight"
                     placeholder=""
@@ -119,9 +134,16 @@ const GenderForm = () => {
                     initialTouched={true}
                     keyboardType="numeric"
                     handleChange={handleChange('weight')}
-                    extraStyles={{width: horizontalScale(140)}}
+                    extraStyles={{width: '100%'}}
                   />
-                  <View style={{position: 'absolute', right: 0}}>
+                  <View
+                    style={{
+                      position: 'absolute',
+                      right: horizontalScale(0),
+                      top: verticalScale(9),
+                      height: '100%',
+                      justifyContent: 'center',
+                    }}>
                     <CustomSelect
                       label="unit"
                       defaultValue="Kg"
@@ -132,6 +154,7 @@ const GenderForm = () => {
                       width={50}
                       height={50.6}
                       isIcon={false}
+                      fontColor="#fff"
                     />
                   </View>
                 </View>
@@ -148,9 +171,8 @@ const GenderForm = () => {
                 error={errors.activity}
                 setFieldValue={setFieldValue}
               />
-
               <CustomSelect
-                label="BodyType"
+                label="Body Type"
                 values={['Mesomorph', 'Ectomorph', 'Endomorph']}
                 selectedValue={values.bodytype}
                 error={errors.bodytype}
@@ -176,8 +198,8 @@ export default GenderForm;
 
 const styles = StyleSheet.create({
   line: {
-    width: 60,
-    height: 3,
+    width: horizontalScale(60),
+    height: verticalScale(3),
     backgroundColor: 'white',
     borderRadius: 30,
   },
@@ -187,7 +209,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(54),
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
-    paddingVertical: 10,
+    paddingVertical: verticalScale(10),
     alignItems: 'center',
   },
 });

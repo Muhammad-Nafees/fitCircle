@@ -16,7 +16,7 @@ const VerifyScreen = ({navigation}: any) => {
         type: 'success',
         text1: 'Welcome To Fit Circle!',
       });
-      navigation.navigate('HomeScreen');
+      navigation.navigate('HomeModule');
     }
   };
   return (

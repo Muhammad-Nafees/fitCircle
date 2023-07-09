@@ -135,7 +135,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               handleChange={handleChange('username')}
             />
             <CustomInput
-              extraStyles={{height: 120}}
               label="Add bio"
               placeholder="Type here..."
               value={values.bio}
@@ -152,7 +151,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               touched={touched.phone}
               handleChange={handleChange('phone')}
             />
-
             <CustomSelect
               label="Country"
               selectedValue={values.country}

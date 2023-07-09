@@ -155,14 +155,14 @@ export default CreateAccount;
 
 const styles = StyleSheet.create({
   formContainer: {
-    marginTop: verticalScale(62),
+    marginTop: verticalScale(50),
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 4,
   },
 
   button: {
-    marginTop: verticalScale(120),
+    marginTop: verticalScale(125),
     paddingHorizontal: horizontalScale(27),
     paddingBottom: verticalScale(20),
   },

@@ -37,14 +37,9 @@ const CommunitiesScreen = ({navigation}: any) => {
   useEffect(() => {
     const fetchCommunities = async () => {
       setIsLoading(true);
-
       try {
         const response = await getCommunities();
         console.log();
-        Toast.show({
-          type: 'success',
-          text1: 'Data populated successfully!',
-        });
         setCommunities(response?.data);
         setIsLoading(false);
       } catch (error) {
@@ -55,7 +50,6 @@ const CommunitiesScreen = ({navigation}: any) => {
         });
       }
     };
-
     fetchCommunities();
   }, []);
 
@@ -69,11 +63,19 @@ const CommunitiesScreen = ({navigation}: any) => {
   };
 
   const handleSelect = (communityName: string, _id: string) => {
-    if (selectedCommunities.some((item: any) => item._id === _id)) {
+    const isSelected = selectedCommunities.some(
+      (item: any) => item._id === _id,
+    );
+
+    if (isSelected) {
       const filteredCommunities = selectedCommunities.filter(
         (item: any) => item._id !== _id,
       );
+      const filteredCommunitiesName = selectedCommunitiesName.filter(
+        (name: string) => name !== communityName,
+      );
       setSelectedCommunities(filteredCommunities);
+      setSelectedCommunitiesName(filteredCommunitiesName);
     } else {
       setSelectedCommunities((prev: any) => [...prev, {communityName, _id}]);
       setSelectedCommunitiesName((prev: any) => [...prev, communityName]);
@@ -82,40 +84,44 @@ const CommunitiesScreen = ({navigation}: any) => {
 
   const renderCommunity = ({item}: {item: any}) => {
     return (
-      <View
-        style={{
-          marginTop: 16,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-          <Image
-            source={{uri: item.photo}}
-            style={{width: 50, height: 50, borderRadius: 25}}
-          />
-          <View style={{gap: 5}}>
-            <Text style={STYLES.text14}>{item.name}</Text>
-            <Text style={[STYLES.text12, {fontWeight: '400', opacity: 0.4}]}>
-              {item.members.length} member
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity
+      <TouchableOpacity onPress={() => handleSelect(item.name, item._id)}>
+        <View
           style={{
-            width: 20,
-            height: 20,
-            borderWidth: 2,
-            borderColor: 'white',
+            marginTop: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+            <Image
+              source={{uri: item.photo}}
+              style={{width: 50, height: 50, borderRadius: 25}}
+            />
+            <View style={{gap: 5}}>
+              <Text style={STYLES.text14}>{item.name}</Text>
+              <Text style={[STYLES.text12, {fontWeight: '400', opacity: 0.4}]}>
+                {item.members.length} member
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={{
+              width: 20,
+              height: 20,
+              borderWidth: 2,
+              borderColor: 'white',
 
-            backgroundColor: selectedCommunities.some(
-              (list: any) => list._id === item._id,
-            )
-              ? '#209BCC'
-              : 'transparent',
-          }}
-          onPress={() => handleSelect(item.name, item._id)}></TouchableOpacity>
-      </View>
+              backgroundColor: selectedCommunities.some(
+                (list: any) => list._id === item._id,
+              )
+                ? '#209BCC'
+                : 'transparent',
+            }}
+            onPress={() =>
+              handleSelect(item.name, item._id)
+            }></TouchableOpacity>
+        </View>
+      </TouchableOpacity>
     );
   };
 
