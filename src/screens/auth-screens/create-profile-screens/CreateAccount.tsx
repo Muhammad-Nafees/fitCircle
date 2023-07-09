@@ -38,10 +38,9 @@ const CreateAccount = ({navigation}: any) => {
     setIsLoading(true);
     try {
       const response = await register(values);
-      console.log(response);
       if (response?.status === 200) {
         setIsLoading(false);
-        console.log(response?.data);
+        console.log(response?.data)
         dispatch(authenticate());
         dispatch(setaccessToken(response?.data.token));
         Toast.show({

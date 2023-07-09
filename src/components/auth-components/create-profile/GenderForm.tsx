@@ -159,7 +159,6 @@ const GenderForm = () => {
                   </View>
                 </View>
               </View>
-
               <CustomSelect
                 label="Activity"
                 values={[

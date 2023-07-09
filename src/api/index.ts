@@ -85,7 +85,6 @@ export const getInterest = async () => {
 };
 
 export const getCommunities = async () => {
-  // const response = await axios.get(`${BASE_URL}/community`);
   const response = await axios.get(`${BASE_URL}/community`);
   return response;
 };
