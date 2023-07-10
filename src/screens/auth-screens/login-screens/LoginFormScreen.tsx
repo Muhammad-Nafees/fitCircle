@@ -31,6 +31,7 @@ const LoginFormScreen = () => {
                 // top: verticalScale(111),
                 paddingLeft: horizontalScale(14),
                 marginBottom: verticalScale(30),
+                paddingTop:3,
               },
             ]}>
             LOGIN

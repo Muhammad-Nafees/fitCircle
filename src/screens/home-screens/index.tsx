@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -16,35 +17,44 @@ const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const onChangeSearch = (query: string) => setSearchQuery(query);
-  // console.log(userData);
+  console.log(userData);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <View style={styles.headerContainer}>
-          <Avatar.Text size={34} label="SA" />
-          <Searchbar
-            placeholder="Search..."
-            onChangeText={onChangeSearch}
-            value={searchQuery}
-            style={styles.searchbar}
-            placeholderTextColor="#cccdcc"
-            iconColor="#cccdcc"
-          />
-        </View>
-        <View style={styles.topContainerButtons}>
-          <TouchableOpacity style={[styles.button]}>
-            <Text style={styles.button1Text}>My Circle</Text>
-            <Text style={styles.button2Text}>Creator</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.bottomContainer}>
-        <ScrollView>
-          <CustomPost />
-          <CustomPost />
-        </ScrollView>
-      </View>
+    // <View style={styles.container}>
+    //   <View style={styles.topContainer}>
+    //     <View style={styles.headerContainer}>
+    //       <Avatar.Text size={34} label="SA" />
+    //       <Searchbar
+    //         placeholder="Search..."
+    //         onChangeText={onChangeSearch}
+    //         value={searchQuery}
+    //         style={styles.searchbar}
+    //         placeholderTextColor="#cccdcc"
+    //         iconColor="#cccdcc"
+    //       />
+    //     </View>
+    //     <View style={styles.topContainerButtons}>
+    //       <TouchableOpacity style={[styles.button]}>
+    //         <Text style={styles.button1Text}>My Circle</Text>
+    //         <Text style={styles.button2Text}>Creator</Text>
+    //       </TouchableOpacity>
+    //     </View>
+    //   </View>
+    //   <View style={styles.bottomContainer}>
+    //     <ScrollView>
+    //       <CustomPost />
+    //       <CustomPost />
+    //     </ScrollView>
+    //   </View>
+    // </View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#353535',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white'}}>Home Screen Coming Soon</Text>
     </View>
   );
 };

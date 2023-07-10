@@ -1,6 +1,6 @@
-import {useState} from 'react';
-import {Text, View, StyleSheet} from 'react-native';
-import {verticalScale} from '../../../utils/metrics';
+import {useEffect, useState} from 'react';
+import {Text, View, StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {Formik} from 'formik';
 import CustomInput from '../../shared-components/CustomInput';
 import CustomPhoneInput from '../../shared-components/CustomPhoneInput';
@@ -15,6 +15,10 @@ import {profileSchema} from '../../../validations';
 import {setUserData} from '../../../redux/authSlice';
 import {IUserRole} from '../../../interfaces/auth.interface';
 import {IUser} from '../../../interfaces/user.interface';
+import {getCities, getCountries} from '../../../api';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {format} from 'date-fns';
 
 const countries = ['Country1', 'Country2', 'Country3', 'Country4'];
 const cities = ['City1', 'City2', 'City4', 'City4'];
@@ -32,6 +36,60 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
   const data = useSelector((state: RootState) => state.auth.user);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [allCountries, setAllCountries] = useState<any | null>([]);
+  const [allCities, setAllCities] = useState([]);
+  const [country, setCountry] = useState();
+  const [countryCode, setCountryCode] = useState();
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await getCountries();
+        const countries = response?.data.countries;
+        const countryCodes = Object.keys(countries);
+        const extractedData = countryCodes.map(countryCode => {
+          const country = countries[countryCode];
+          return {
+            code: countryCode,
+            name: country?.name || '',
+          };
+        });
+        setAllCountries(extractedData);
+      } catch (error:any) {
+        console.log('Error fetching countries:', error.response);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    const getCountryCode = async (selectedCountry: string) => {
+      const country = allCountries.find(
+        (country: any) => country.name === selectedCountry,
+      );
+      setCountryCode(country.code);
+    };
+    if (country) {
+      getCountryCode(country);
+    }
+  }, [country]);
+
+  useEffect(() => {
+    const fetchCities = async (countryCode: string) => {
+      try {
+        const response = await getCities(countryCode);
+        const cities = response?.data;
+        setAllCities(cities);
+      } catch (error: any) {
+        console.log('Error fetching cities:', error.response);
+      }
+    };
+    if (countryCode) {
+      fetchCities(countryCode);
+    }
+  }, [countryCode]);
 
   const dispatch = useDispatch();
 
@@ -141,28 +199,36 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               error={errors.bio}
               touched={touched.bio}
               initialTouched={true}
+              multiline
               handleChange={handleChange('bio')}
+              textAlignVertical="top"
+              extraStyles={{height: verticalScale(130)}}
             />
             <CustomPhoneInput
               setFieldValue={setFieldValue}
               label="Phone Number"
               value={values.phone}
-              error={errors.phone}
-              touched={touched.phone}
+              // error={errors.phone}
+              // touched={touched.phone}
               handleChange={handleChange('phone')}
             />
             <CustomSelect
               label="Country"
               selectedValue={values.country}
-              values={countries}
+              values={allCountries.map((countries: any) => countries.name)}
               error={errors.country}
+              initialTouched={true}
+              setCountry={setCountry}
+              touched={touched.country}
               setFieldValue={setFieldValue}
             />
             <CustomSelect
               label="City"
               selectedValue={values.city}
-              values={cities}
+              values={allCities}
               error={errors.city}
+              initialTouched={true}
+              touched={touched.city}
               setFieldValue={setFieldValue}
             />
             {userRole == 'trainer' && (
@@ -170,6 +236,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                 label="Gender"
                 selectedValue={values.gender}
                 values={['Male', 'Female']}
+                initialTouched={true}
+                touched={touched.gender}
                 error={errors.gender}
                 setFieldValue={setFieldValue}
               />
@@ -183,15 +251,41 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               initialTouched={true}
               handleChange={handleChange('physicalInformation')}
             />
-            <CustomInput
-              label="Date of birth"
-              placeholder="01/01/2023"
-              value={values.dob}
-              error={errors.dob}
-              touched={touched.dob}
-              initialTouched={true}
-              handleChange={handleChange('dob')}
-            />
+            <TouchableWithoutFeedback
+              onPress={() => setDatePickerVisible(true)}>
+              <View style={{position: 'relative'}}>
+                <CustomInput
+                  label="Date of birth"
+                  placeholder="01/01/2023"
+                  value={values.dob}
+                  error={errors.dob}
+                  touched={touched.dob}
+                  initialTouched={true}
+                  handleChange={handleChange('dob')}
+                />
+                <Icon
+                  name="calendar-outline"
+                  size={23}
+                  color="black"
+                  style={{
+                    position: 'absolute',
+                    right: horizontalScale(18),
+                    top: verticalScale(37),
+                  }}
+                />
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="date"
+                  onConfirm={(e: any) => {
+                    const formattedDate = format(e, 'dd/MM/yyyy');
+                    setFieldValue('dob', formattedDate);
+                    setDatePickerVisible(false);
+                  }}
+                  onCancel={() => setDatePickerVisible(false)}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+
             {userRole == 'trainer' && (
               <CustomInput
                 label="Hourly Rate"

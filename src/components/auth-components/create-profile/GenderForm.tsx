@@ -16,7 +16,7 @@ import {RootState} from '../../../redux/store';
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData);
+  console.log(previousUserData?.profileImage);
 
   const dispatch = useDispatch();
 
@@ -68,6 +68,8 @@ const GenderForm = () => {
                 values={['Male', 'Female']}
                 selectedValue={values.gender}
                 error={errors.gender}
+                initialTouched={true}
+                touched={touched.gender}
                 setFieldValue={setFieldValue}
               />
 
@@ -106,7 +108,7 @@ const GenderForm = () => {
                     style={{
                       position: 'absolute',
                       right: horizontalScale(0),
-                      top: verticalScale(9),
+                      top: -verticalScale(3),
                       height: '100%',
                       justifyContent: 'center',
                     }}>
@@ -115,16 +117,15 @@ const GenderForm = () => {
                       defaultValue="Ft"
                       values={['Ft', 'm']}
                       setFieldValue={setFieldValue}
-                      styles={{position: 'relative', bottom: verticalScale(7)}}
                       backgroundColor="#209BCC"
                       width={50}
-                      height={50.6}
+                      height={verticalScale(50.5)}
                       isIcon={false}
                       fontColor="#fff"
                     />
                   </View>
                 </View>
-                <View style={{flex: 1}}>
+                <View style={{flex: 1, position: 'relative'}}>
                   <CustomInput
                     label="Weight"
                     placeholder=""
@@ -140,7 +141,7 @@ const GenderForm = () => {
                     style={{
                       position: 'absolute',
                       right: horizontalScale(0),
-                      top: verticalScale(9),
+                      top: -verticalScale(3),
                       height: '100%',
                       justifyContent: 'center',
                     }}>
@@ -148,11 +149,10 @@ const GenderForm = () => {
                       label="unit"
                       defaultValue="Kg"
                       values={['Kg', 'lb']}
-                      styles={{position: 'relative', bottom: verticalScale(7)}}
                       backgroundColor="#209BCC"
                       setFieldValue={setFieldValue}
                       width={50}
-                      height={50.6}
+                      height={verticalScale(50.5)}
                       isIcon={false}
                       fontColor="#fff"
                     />
@@ -169,6 +169,8 @@ const GenderForm = () => {
                 ]}
                 selectedValue={values.activity}
                 error={errors.activity}
+                initialTouched={true}
+                touched={touched.activity}
                 setFieldValue={setFieldValue}
               />
               <CustomSelect
@@ -176,6 +178,8 @@ const GenderForm = () => {
                 values={['Mesomorph', 'Ectomorph', 'Endomorph']}
                 selectedValue={values.bodytype}
                 error={errors.bodytype}
+                initialTouched={true}
+                touched={touched.bodytype}
                 setFieldValue={setFieldValue}
               />
             </View>

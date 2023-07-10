@@ -4,6 +4,7 @@ import SelectDropdown from 'react-native-select-dropdown';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+
 interface Props {
   defaultValue?: string;
   selectedValue?: string;
@@ -14,7 +15,10 @@ interface Props {
   backgroundColor?: string;
   width?: string | number;
   height?: number;
+  initialTouched?: boolean;
+  touched?: boolean;
   isIcon?: boolean;
+  setCountry?: any;
   setFieldValue: (field: string, value: string) => void;
   fontColor?: string;
 }
@@ -30,6 +34,8 @@ export const CustomSelect: React.FC<Props> = ({
   height,
   isIcon = true,
   setFieldValue,
+  touched,
+  setCountry,
   styles,
   fontColor,
 }) => {
@@ -41,13 +47,17 @@ export const CustomSelect: React.FC<Props> = ({
         {label !== 'unit' && <Text style={STYLES.text12}>{label}</Text>}
       </Text>
       <SelectDropdown
-        data={values}
+        data={values ? values : ['Loading...']}
         onSelect={(selectedItem, index) => {
-          setFieldValue(field, selectedItem); 
+          setFieldValue(field, selectedItem),
+            setCountry && setCountry(selectedItem);
         }}
         renderDropdownIcon={() =>
           isIcon && <Icon name="chevron-down-outline" color="grey" size={24} />
         }
+        // search
+        // searchPlaceHolder={'Search here'}
+        // searchPlaceHolderColor={'#000'}
         defaultButtonText={defaultValue ? defaultValue : 'Select'}
         rowTextStyle={{color: '#9B9B9B', position: 'absolute', left: 0}}
         selectedRowTextStyle={{color: 'black', position: 'absolute', left: 0}}
@@ -69,7 +79,7 @@ export const CustomSelect: React.FC<Props> = ({
           width: width ? width : '78%',
         }}
       />
-      {error ? (
+      {error && touched ? (
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
           <Icon name="alert-circle" size={22} color="white" />
           <Text style={STYLES.text12}>{error}</Text>

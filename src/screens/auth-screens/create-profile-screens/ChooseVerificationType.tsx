@@ -13,6 +13,7 @@ const ChooseVerificationType = ({navigation}: any) => {
   const [verificationType, setVerificationType] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userData = useSelector((state: RootState) => state.auth.user);
+  console.log(userData,"Sa")
   const email = userData?.email;
 
   const handleSubmit = async (type: string) => {
@@ -23,6 +24,7 @@ const ChooseVerificationType = ({navigation}: any) => {
     }
     try {
       setIsLoading(true);
+      console.log(email,"email")
       const response = await generateOtp(email as string);
       const data = response.data;
       Toast.show({
@@ -32,7 +34,7 @@ const ChooseVerificationType = ({navigation}: any) => {
       navigation.navigate('OtpScreen', {otp: data});
       setIsLoading(false);
     } catch (error: any) {
-      if (error.response.status == 409) {
+      if (error?.response.status == 409) {
         Toast.show({
           type: 'error',
           text1: 'User does not exist!',

@@ -1,7 +1,12 @@
 import {useState} from 'react';
 
-import {StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
-import {Text, TextInput} from 'react-native-paper';
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+  TextInput,
+} from 'react-native';
+import {Text} from 'react-native-paper';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -16,22 +21,15 @@ interface Props {
   keyboardType?: 'default' | 'numeric' | 'email-address';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   extraStyles?: any;
+  multiline?: boolean;
   isPasswordIcon?: boolean;
+  textAlignVertical?: string;
   handleChange: (e: any) => void;
 }
 
 const CustomInput = ({...props}: Props) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-
-  const theme = {
-    colors: {
-      text: '#000',
-      placeholder: 'rgba(68, 68, 68, 0.5)',
-      primary: props.error && props.initialTouched ? 'red' : '#209BCC',
-    },
-    roundness: 0, // Border radius value
-  };
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -49,28 +47,24 @@ const CustomInput = ({...props}: Props) => {
     props.handleChange(text);
   };
 
-  const inputStyle = {
-    ...styles.input,
-    // borderColor: isFocused
-    //   ? 'transparent'
-    //   : props.touched && props.error
-    //   ? 'red'
-    //   : 'transparent',
-  };
-
   return (
     <View style={{position: 'relative'}}>
       <Text style={STYLES.text12}>{props.label}</Text>
       <TextInput
-        style={[inputStyle, STYLES.text14, , props.extraStyles]}
+        style={[
+          styles.input,
+          STYLES.text14,
+          {color: '#000', fontWeight: '400'},
+          props.extraStyles,
+        ]}
         placeholder={isFocused ? '' : props.placeholder}
         value={props.value}
+        multiline={props.multiline ? props.multiline : false}
         onChangeText={handleChangeText}
-        underlineColor={'transparent'}
         secureTextEntry={props.isPasswordIcon && !passwordVisible}
-        theme={theme}
         keyboardType={props.keyboardType}
         numberOfLines={1} // Add this line
+        textAlignVertical={props.textAlignVertical === 'top' ? 'top' : 'center'}
         autoCapitalize={props.autoCapitalize}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
@@ -92,7 +86,7 @@ const CustomInput = ({...props}: Props) => {
           <Text style={STYLES.text12}>{props.error}</Text>
         </View>
       ) : (
-        <View style={{height: 25}} />
+        <View style={{height: 35}} />
       )}
 
       {props.isPasswordIcon && (
@@ -113,10 +107,14 @@ export default CustomInput;
 
 const styles = StyleSheet.create({
   input: {
+    // textAlignVertical: 'top',
     width: horizontalScale(294),
     height: verticalScale(50),
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: horizontalScale(10),
   },
   icon: {
     position: 'absolute',

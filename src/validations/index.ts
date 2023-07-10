@@ -31,10 +31,19 @@ export const signupSchema = Yup.object().shape({
 
 export const profileSchema = Yup.object().shape({
   userRole: Yup.string().oneOf(['user', 'trainer']),
-  firstName: Yup.string().required('First Name is required'),
-  lastName: Yup.string().required('Last Name is required'),
-  username: Yup.string().required('Username is required'),
-  bio: Yup.string().required('Bio is required'),
+  firstName: Yup.string()
+    .required('First Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+
+  lastName: Yup.string()
+    .required('Last Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+  username: Yup.string()
+    .required('Username is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+  bio: Yup.string()
+    .required('Bio is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
   phone: Yup.string().required('Phone number is required'),
   country: Yup.string().required('Select country'),
   city: Yup.string().required('Select city'),
@@ -43,19 +52,19 @@ export const profileSchema = Yup.object().shape({
       ? Yup.string().required()
       : Yup.string().strip();
   }),
-  physicalInformation: Yup.string().required(
-    'Physical Information is required!',
-  ),
+  physicalInformation: Yup.string()
+    .required('Physical Information is required!')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
   dob: Yup.string()
     .matches(
-      /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/,
-      'Invalid date format. Must be mm/dd/yyyy',
+      /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+      'Invalid date format. Must be dd/mm/yyyy',
     )
     .required(),
 
   hourlyRate: Yup.string().when('userRole', (st: any, schema: any) => {
     return st && st[0] === 'trainer'
-      ? Yup.string().required()
+      ? Yup.string().required().min(1, 'Hourly Rate is required')
       : Yup.string().strip();
   }),
 });

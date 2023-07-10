@@ -55,10 +55,8 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       const response = await loginIn(values.email, values.password);
-      console.log(response);
       setIsLoading(false);
       if (response?.status === 200) {
-        console.log(response?.data);
         dispatch(authenticate());
         dispatch(setuserRole(response.data.role));
         dispatch(setaccessToken(response?.data.token));
@@ -68,7 +66,7 @@ const LoginForm = () => {
           text1: 'Login Successful!',
           text2: 'Welcome!',
         });
-        navigation.navigate('HomeModule');
+        navigation.navigate('HomeScreen');
       }
     } catch (error: any) {
       setIsLoading(false);

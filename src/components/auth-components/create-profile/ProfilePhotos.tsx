@@ -34,6 +34,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
   const handleUploadPhoto = (type: string) => {
     if (type == 'profile' && selectedProfileImage) {
       setSelectedProfileImage(null);
+      onSelectProfilePicture(null);
       const partialUserData: Partial<IUser> = {
         profileImage: null,
       };
@@ -56,9 +57,14 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
     };
 
     launchImageLibrary(options, (response: any) => {
+      console.log(response);
       if (type == 'profile') {
         const partialUserData: Partial<IUser> = {
-          profileImage: response.assets[0],
+          profileImage: {
+            uri: response.assets[0].uri,
+            name: response.assets[0].fileName,
+            type: response.assets[0].type,
+          },
         };
         dispatch(setUserData(partialUserData));
         setSelectedProfileImage({resourcePath: response.assets[0].uri});
@@ -66,7 +72,11 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
       } else {
         setSelectedCoverImage({resourcePath: response.assets[0].uri});
         const partialUserData: Partial<IUser> = {
-          coverImage: response.assets[0],
+          coverImage: {
+            uri: response.assets[0].uri,
+            name: response.assets[0].fileName, // or undefined
+            type: response.assets[0].type, // or undefined
+          },
         };
         dispatch(setUserData(partialUserData));
       }

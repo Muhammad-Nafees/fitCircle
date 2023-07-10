@@ -1,6 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Text, View} from 'react-native';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import {Field} from 'formik';
 import PhoneInput from 'react-native-phone-number-input';
@@ -11,7 +15,7 @@ interface Props {
   label?: string;
   value: any;
   error?: string;
-  touched: boolean | undefined;
+  touched?: boolean ;
   handleChange: (number: string) => void;
 }
 
@@ -53,7 +57,11 @@ const CustomPhoneInput = ({
               fontSize: 12,
               color: '#000',
             }}
-            codeTextStyle={{fontSize: 11, color: '#000'}}
+            codeTextStyle={{
+              fontSize: moderateScale(12),
+              marginTop: -verticalScale(2),
+              color: '#000',
+            }}
             containerStyle={{
               height: verticalScale(48),
               width: horizontalScale(290),

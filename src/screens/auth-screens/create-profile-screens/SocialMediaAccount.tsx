@@ -31,7 +31,6 @@ const SocialMediaAccount = ({navigation}: any) => {
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>();
-  console.log(previousUserData?.selectedCommunities);
 
   const handleSubmit = async (values: FormValues) => {
     const socialMediaLinks: ISocial[] = [
@@ -60,6 +59,7 @@ const SocialMediaAccount = ({navigation}: any) => {
     setIsLoading(true);
 
     try {
+      console.log("try")
       const response = await createProfile({...partialUserData});
       const data = response?.data;
       dispatch(setUserData(data));
@@ -71,7 +71,7 @@ const SocialMediaAccount = ({navigation}: any) => {
       });
       navigation.navigate('ChooseVerificationType');
     } catch (error: any) {
-      console.log(error.response.data);
+      console.log(error.response.status);
       setIsLoading(false);
       Toast.show({
         type: 'error',

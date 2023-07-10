@@ -22,7 +22,6 @@ const InterestScreen = ({navigation}: any) => {
   const [selectedInterestName, setSelectedInterestName] = useState<string[]>(
     [],
   );
-  console.log(useSelector((state: RootState) => state.auth.user));
   const [interests, setInterest] = useState<IInterest[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const previousUserData = useSelector((state: RootState) => state.auth.user);

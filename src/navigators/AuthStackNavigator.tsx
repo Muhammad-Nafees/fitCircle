@@ -7,7 +7,6 @@ import SplashScreen from '../screens';
 import SignInScreenOne from '../screens/auth-screens/signin-screens/SigninScreenOne';
 import SignInScreenTwo from '../screens/auth-screens/signin-screens/SigninScreenTwo';
 import LoginFormScreen from '../screens/auth-screens/login-screens/LoginFormScreen';
-import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormScreen';
 import CreateAccount from '../screens/auth-screens/create-profile-screens/CreateAccount';
 import {horizontalScale, verticalScale} from '../utils/metrics';
 import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
@@ -41,7 +40,7 @@ const AuthStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="GenderScreen">
+      initialRouteName="SplashScreen">
       {/* // initialRouteName="SplashScreen">  */}
       <Stack.Screen
         name="SplashScreen"
@@ -63,11 +62,11 @@ const AuthStackNavigator = () => {
         component={LoginFormScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="SignupFormScreen"
         component={SignupFormScreen}
         options={{headerShown: false}}
-      />
+      /> */}
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
       <Stack.Screen
         name="CreateProfile"

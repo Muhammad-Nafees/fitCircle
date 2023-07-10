@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {CreateAccountFormValues} from '../screens/auth-screens/create-profile-screens/CreateAccount';
-import {IUser} from '../interfaces/user.interface';
+import {ISocial, IUser} from '../interfaces/user.interface';
 import {BASE_URL} from './constant';
 
 export const loginIn = async (email: string, password: string) => {
@@ -21,6 +21,7 @@ export const register = async (values: CreateAccountFormValues) => {
 };
 
 export const createProfile = async (userData: IUser) => {
+  console.log(userData.profileImage);
   const formData = new FormData();
   formData.append('firstName', userData.firstName);
   formData.append('lastName', userData.lastName);
@@ -41,9 +42,14 @@ export const createProfile = async (userData: IUser) => {
   formData.append('hourlyRate', userData.hourlyRate);
   formData.append('interest', userData.interest);
   formData.append('selectedCommunities', userData.selectedCommunities);
-  formData.append('socialMediaLinks', []);
-  // formData.append('profileImage', userData.profileImage);
-  // formData.append('coverImage', userData.coverImage);
+  if (userData?.socialMediaLinks) {
+    userData.socialMediaLinks.forEach((link: ISocial, index: number) => {
+      formData.append(`socialMediaLinks[${index}][name]`, link.name);
+      formData.append(`socialMediaLinks[${index}][link]`, link.link);
+    });
+  }
+  formData.append('profileImage', userData.profileImage);
+  formData.append('coverImage', userData.coverImage);
   // formData.append('certificateImages', userData.certificateImages);
 
   const response = await axios.post(
@@ -86,5 +92,15 @@ export const getInterest = async () => {
 
 export const getCommunities = async () => {
   const response = await axios.get(`${BASE_URL}/community`);
+  return response;
+};
+
+export const getCountries = async () => {
+  const response = await axios.get(`${BASE_URL}/countries`);
+  return response;
+};
+
+export const getCities = async (country: string) => {
+  const response = await axios.get(`${BASE_URL}/cities/${country}`);
   return response;
 };

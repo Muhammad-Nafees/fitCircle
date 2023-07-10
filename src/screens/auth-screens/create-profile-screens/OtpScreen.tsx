@@ -57,7 +57,7 @@ const OtpScreen = ({navigation, route}: any) => {
           Toast.show({
             type: 'success',
             text1: 'OTP verified!',
-            text2: 'Account Created Successfully!'
+          text2: 'Account Created Successfully!'
           });
           navigation.navigate('AccountVerified');
         } else {
@@ -251,5 +251,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#FBFBFB',
     textAlign: 'center',
+    color: 'black'
+
   },
 });

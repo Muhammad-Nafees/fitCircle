@@ -4,13 +4,19 @@ export interface ISocial {
   link: string;
 }
 
+export interface FileData {
+  uri: string;
+  name: string;
+  type: string;
+}
+
 export interface IUser {
   _id?: string;
   email?: string;
   role?: IUserRole | undefined;
-  profileImage?: any;
-  coverImage?: any;
-  phone?: string;
+  profileImage?: FileData | null;
+  coverImage?: FileData | null;
+  phone?: any;
   firstName?: string;
   lastName?: string;
   username?: string;
@@ -30,5 +36,4 @@ export interface IUser {
   certificateImages?: any[];
   selectedCommunities?: string[];
   socialMediaLinks?: ISocial[];
-
 }

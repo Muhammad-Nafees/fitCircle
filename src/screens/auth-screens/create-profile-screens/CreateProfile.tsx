@@ -14,7 +14,7 @@ const CreateProfile = ({navigation}: any) => {
   };
 
   return (
-    <View style={[STYLES.container, {paddingHorizontal: 0}]}>
+    <View style={[STYLES.container, {paddingHorizontal: 0, paddingTop: 0}]}>
       <ScrollView>
         <View
           style={{
