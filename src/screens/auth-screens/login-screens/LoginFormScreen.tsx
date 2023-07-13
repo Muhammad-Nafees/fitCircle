@@ -18,7 +18,7 @@ import {BlurView} from '@react-native-community/blur';
 
 const LoginFormScreen = () => {
   return (
-    <ScrollView keyboardShouldPersistTaps="always">
+    <ScrollView keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
       <ImageBackground
         source={require('../../../../assets/images/backgroundImage2.jpg')}
         style={{flex: 1}}>
@@ -30,7 +30,7 @@ const LoginFormScreen = () => {
                 // position: 'absolute',
                 // top: verticalScale(111),
                 paddingLeft: horizontalScale(14),
-                marginBottom: verticalScale(30),
+                marginBottom: verticalScale(0),
                 paddingTop:3,
               },
             ]}>
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    maxHeight: verticalScale(600),
+    maxHeight: verticalScale(630),
     // overflow: 'scroll',
     // zIndex: 1,
     marginTop: 20,

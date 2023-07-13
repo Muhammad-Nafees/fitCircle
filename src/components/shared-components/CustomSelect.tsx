@@ -74,15 +74,15 @@ export const CustomSelect: React.FC<Props> = ({
           textAlign: 'left',
         }}
         buttonStyle={{
-          height: height ? height : 45,
+          height: height ? height : 48,
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
-          width: width ? width : '78%',
+          width: width ? width : '85%',
         }}
       />
       {error && touched ? (
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
-          <Icon name="alert-circle" size={22} color="white" />
-          <Text style={STYLES.text12}>{error}</Text>
+          <Icon name="alert-circle" size={22} color="red" />
+          <Text style={[STYLES.text12,{color: 'red'}]}>{error}</Text>
         </View>
       ) : (
         <View style={{height: 25}} />

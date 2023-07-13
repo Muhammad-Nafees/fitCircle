@@ -15,7 +15,7 @@ interface Props {
   label?: string;
   value: any;
   error?: string;
-  touched?: boolean ;
+  touched?: boolean;
   handleChange: (number: string) => void;
 }
 
@@ -49,7 +49,7 @@ const CustomPhoneInput = ({
         {() => (
           <PhoneInput
             ref={phoneInput}
-            defaultCode="PK"
+            defaultCode="US"
             textInputStyle={{
               height: 20,
               width: 20,
@@ -59,12 +59,12 @@ const CustomPhoneInput = ({
             }}
             codeTextStyle={{
               fontSize: moderateScale(12),
-              marginTop: -verticalScale(2),
+              marginTop: -verticalScale(4),
               color: '#000',
             }}
             containerStyle={{
               height: verticalScale(48),
-              width: horizontalScale(290),
+              width: horizontalScale(320),
               backgroundColor: 'white',
             }}
             value={value}
@@ -90,8 +90,10 @@ const CustomPhoneInput = ({
             alignItems: 'center',
             gap: 2,
           }}>
-          <Icon name="alert-circle" size={22} color="white" />
-          <Text style={STYLES.text12}>{error ? error : isError}</Text>
+          <Icon name="alert-circle" size={22} color="red" />
+          <Text style={[STYLES.text12, {color: 'red'}]}>
+            {error ? error : isError}
+          </Text>
         </View>
       ) : (
         <View style={{height: 25}} />

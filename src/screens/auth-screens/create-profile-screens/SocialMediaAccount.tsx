@@ -29,12 +29,12 @@ const SocialMediaAccount = ({navigation}: any) => {
   };
 
   const previousUserData = useSelector((state: RootState) => state.auth.user);
+  console.log(previousUserData);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>();
 
   const handleSubmit = async (values: FormValues) => {
     const socialMediaLinks: ISocial[] = [
-      
       {
         name: 'facebook',
         link: values.facebook,
@@ -56,32 +56,14 @@ const SocialMediaAccount = ({navigation}: any) => {
       ...previousUserData,
       socialMediaLinks: socialMediaLinks,
     };
-    setIsLoading(true);
-
-    try {
-      console.log("try")
-      const response = await createProfile({...partialUserData});
-      const data = response?.data;
-      dispatch(setUserData(data));
-      setIsLoading(false);
-      Toast.show({
-        type: 'success',
-        text1: 'Success!',
-        text2: 'Veriy Email To complete your profile!',
-      });
-      navigation.navigate('ChooseVerificationType');
-    } catch (error: any) {
-      console.log(error.response.status);
-      setIsLoading(false);
-      Toast.show({
-        type: 'error',
-        text1: 'Server Error!',
-      });
-    }
+    dispatch(setUserData(partialUserData));
+    navigation.navigate('ChooseVerificationType');
   };
   return (
     <View style={[STYLES.container, {justifyContent: 'space-between'}]}>
-      <ScrollView>
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        showsVerticalScrollIndicator={false}>
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
           {({
             handleChange,
@@ -142,7 +124,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                 style={{
                   marginBottom: verticalScale(40),
                   marginHorizontal: horizontalScale(30),
-                  marginTop: verticalScale(150),
+                  marginTop: verticalScale(110),
                 }}>
                 <CustomButton onPress={handleSubmit}>
                   {isLoading ? <CustomLoader /> : 'Continue'}

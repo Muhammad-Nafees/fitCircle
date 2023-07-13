@@ -10,6 +10,7 @@ export interface FileData {
   type: string;
 }
 
+
 export interface IUser {
   _id?: string;
   email?: string;

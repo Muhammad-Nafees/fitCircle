@@ -16,12 +16,12 @@ const SignInScreenTwo = ({navigation}: any) => {
   return (
     <SigninContent screen={2}>
       <CustomButton
-        extraStyles={{height: verticalScale(44)}}
+        extraStyles={{height: verticalScale(48)}}
         onPress={() => handleClick('user')}>
         I WANT TO GET IN SHAPE
       </CustomButton>
       <CustomButton
-        extraStyles={{marginTop: verticalScale(10), height: verticalScale(44)}}
+        extraStyles={{marginTop: verticalScale(10), height: verticalScale(48)}}
         onPress={() => handleClick('trainer')}>
         I AM A COACH / CREATOR
       </CustomButton>

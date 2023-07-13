@@ -12,11 +12,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setUserData} from '../../../redux/authSlice';
 import {IUser} from '../../../interfaces/user.interface';
 import {RootState} from '../../../redux/store';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData?.profileImage);
+  console.log(previousUserData, 'Dasds');
 
   const dispatch = useDispatch();
 
@@ -87,8 +88,8 @@ const GenderForm = () => {
               <View
                 style={{
                   flexDirection: 'row',
-                  gap: horizontalScale(13),
-                  marginHorizontal: horizontalScale(42),
+                  gap: horizontalScale(20),
+                  marginHorizontal: horizontalScale(28),
                 }}>
                 <View style={{flex: 1}}>
                   <CustomInput
@@ -100,28 +101,36 @@ const GenderForm = () => {
                     initialTouched={true}
                     keyboardType="numeric"
                     handleChange={handleChange('height')}
-                    extraStyles={{
-                      width: '100%',
-                    }}
+                    extraStyles={{width: horizontalScale(130)}}
                   />
                   <View
                     style={{
                       position: 'absolute',
                       right: horizontalScale(0),
-                      top: -verticalScale(3),
+                      top: -verticalScale(3.1),
                       height: '100%',
                       justifyContent: 'center',
                     }}>
                     <CustomSelect
                       label="unit"
-                      defaultValue="Ft"
-                      values={['Ft', 'm']}
+                      defaultValue="ft"
+                      values={['ft', 'm']}
                       setFieldValue={setFieldValue}
                       backgroundColor="#209BCC"
-                      width={50}
-                      height={verticalScale(50.5)}
+                      width={55}
+                      height={verticalScale(45.4)}
                       isIcon={false}
                       fontColor="#fff"
+                    />
+                    <Icon
+                      name="chevron-down-outline"
+                      color="white"
+                      size={16}
+                      style={{
+                        position: 'absolute',
+                        right: horizontalScale(8),
+                        top: verticalScale(45),
+                      }}
                     />
                   </View>
                 </View>
@@ -135,26 +144,36 @@ const GenderForm = () => {
                     initialTouched={true}
                     keyboardType="numeric"
                     handleChange={handleChange('weight')}
-                    extraStyles={{width: '100%'}}
+                    extraStyles={{width: horizontalScale(130)}}
                   />
                   <View
                     style={{
                       position: 'absolute',
                       right: horizontalScale(0),
-                      top: -verticalScale(3),
+                      top: -verticalScale(3.1),
                       height: '100%',
                       justifyContent: 'center',
                     }}>
                     <CustomSelect
                       label="unit"
-                      defaultValue="Kg"
-                      values={['Kg', 'lb']}
+                      defaultValue="kg"
+                      values={['kg', 'lb']}
                       backgroundColor="#209BCC"
                       setFieldValue={setFieldValue}
-                      width={50}
-                      height={verticalScale(50.5)}
+                      width={60}
+                      height={verticalScale(45.4)}
                       isIcon={false}
                       fontColor="#fff"
+                    />
+                    <Icon
+                      name="chevron-down-outline"
+                      color="white"
+                      size={16}
+                      style={{
+                        position: 'absolute',
+                        right: horizontalScale(8),
+                        top: verticalScale(45),
+                      }}
                     />
                   </View>
                 </View>
@@ -163,7 +182,7 @@ const GenderForm = () => {
                 label="Activity"
                 values={[
                   'Physical Activity',
-                  'Physical FItness',
+                  'Physical Fitness',
                   'Exercise',
                   'Sedentary',
                 ]}

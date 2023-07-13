@@ -147,7 +147,7 @@ const LoginForm = () => {
                       borderBottomColor: '#209BCC',
                       width: horizontalScale(96),
                       position: 'absolute',
-                      right: 0,
+                      left: 0,
                       bottom: -verticalScale(10),
                     },
                   ]}>

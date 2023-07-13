@@ -5,8 +5,8 @@ import {BASE_URL} from './constant';
 
 export const loginIn = async (email: string, password: string) => {
   const response = await axios.post(`${BASE_URL}/users/login`, {
-    email,
-    password,
+    email: email.toLowerCase(),
+    password: password,
   });
   return response;
 };
@@ -21,7 +21,7 @@ export const register = async (values: CreateAccountFormValues) => {
 };
 
 export const createProfile = async (userData: IUser) => {
-  console.log(userData.profileImage);
+  console.log(userData, 'Dasd');
   const formData = new FormData();
   formData.append('firstName', userData.firstName);
   formData.append('lastName', userData.lastName);
@@ -48,8 +48,8 @@ export const createProfile = async (userData: IUser) => {
       formData.append(`socialMediaLinks[${index}][link]`, link.link);
     });
   }
-  formData.append('profileImage', userData.profileImage);
-  formData.append('coverImage', userData.coverImage);
+  // formData.append('profileImage', userData.profileImage);
+  // formData.append('coverImage', userData.coverImage);
   // formData.append('certificateImages', userData.certificateImages);
 
   const response = await axios.post(

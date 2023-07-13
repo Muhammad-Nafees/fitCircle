@@ -57,7 +57,7 @@ const OtpScreen = ({navigation, route}: any) => {
           Toast.show({
             type: 'success',
             text1: 'OTP verified!',
-          text2: 'Account Created Successfully!'
+          // text2: 'Account Created Successfully!'
           });
           navigation.navigate('AccountVerified');
         } else {
@@ -145,7 +145,7 @@ const OtpScreen = ({navigation, route}: any) => {
       <ScrollView keyboardShouldPersistTaps="always">
         <View style={{gap: 10}}>
           <Text style={[STYLES.text16, {fontWeight: '700'}]}>
-            Verify your phone
+            Verify your email
           </Text>
           <Text style={[STYLES.text12, {fontWeight: '400'}]}>
             Your email is :{' '}

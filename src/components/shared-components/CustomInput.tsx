@@ -58,6 +58,7 @@ const CustomInput = ({...props}: Props) => {
           props.extraStyles,
         ]}
         placeholder={isFocused ? '' : props.placeholder}
+        placeholderTextColor="rgba(68, 68, 68, 0.5)"
         value={props.value}
         multiline={props.multiline ? props.multiline : false}
         onChangeText={handleChangeText}
@@ -82,8 +83,8 @@ const CustomInput = ({...props}: Props) => {
             marginTop: verticalScale(7),
             marginBottom: verticalScale(4),
           }}>
-          <Icon name="alert-circle" size={22} color="white" />
-          <Text style={STYLES.text12}>{props.error}</Text>
+          <Icon name="alert-circle" size={22} color="red" />
+          <Text style={[STYLES.text12,{color: 'red'}]}>{props.error}</Text>
         </View>
       ) : (
         <View style={{height: 35}} />
@@ -92,7 +93,7 @@ const CustomInput = ({...props}: Props) => {
       {props.isPasswordIcon && (
         <TouchableWithoutFeedback onPress={togglePasswordVisibility}>
           <Icon
-            name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
+            name={passwordVisible ? 'eye-outline' : 'eye-off-outline'}
             color="black"
             size={24}
             style={styles.icon}
@@ -108,8 +109,8 @@ export default CustomInput;
 const styles = StyleSheet.create({
   input: {
     // textAlignVertical: 'top',
-    width: horizontalScale(294),
-    height: verticalScale(50),
+    width: horizontalScale(320),
+    height: verticalScale(48),
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
     justifyContent: 'center',

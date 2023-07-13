@@ -18,7 +18,7 @@ const CustomButton = ({children, extraStyles, isDisabled, onPress}: Props) => {
       <View
         style={[
           styles.button,
-          {backgroundColor: isDisabled ? '#444444' : '#13728C'},
+          {backgroundColor: isDisabled ? '#444444' : 'rgba(32, 155, 204, 1)'},
           extraStyles,
         ]}>
         <Text

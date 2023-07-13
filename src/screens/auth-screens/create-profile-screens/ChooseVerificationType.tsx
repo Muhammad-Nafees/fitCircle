@@ -13,9 +13,8 @@ const ChooseVerificationType = ({navigation}: any) => {
   const [verificationType, setVerificationType] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userData = useSelector((state: RootState) => state.auth.user);
-  console.log(userData,"Sa")
   const email = userData?.email;
-
+console.log(userData,"dasd")
   const handleSubmit = async (type: string) => {
     if (type == 'email') {
       setVerificationType('email');

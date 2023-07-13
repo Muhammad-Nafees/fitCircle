@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginTop: horizontalScale(22),
-    height: verticalScale(230),
+    height: verticalScale(200),
     backgroundColor: '#0D0D0D',
     paddingHorizontal: horizontalScale(47),
     justifyContent: 'center',

@@ -29,33 +29,12 @@ const UploadCertificate = ({navigation}: any) => {
   const [selectedCameraImage, setSelectedCameraImage] = useState('');
   const [uploadImage, setUploadImage] = useState<any>('');
   const [addMoreImages, setAddMoreImages] = useState<any>([]);
+  const [cameraPermission, setCameraPermission] = useState(false);
 
   const handleNavigate = () => {
     navigation.navigate('CertificateVerified');
   };
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'Camera Permission',
-          message: 'This app needs camera access to capture photos.',
-          buttonPositive: 'OK',
-          buttonNegative: 'Cancel',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Camera permission granted');
-        // Perform actions after obtaining camera permission
-      } else {
-        console.log('Camera permission denied');
-        // Handle denied permission or show an alert to the user
-      }
-    } catch (error) {
-      console.log('Error requesting camera permission:', error);
-      // Handle error, if any, while requesting camera permission
-    }
-  };
+
 
   const handleCapture = (type: string) => {
     const options: ImageLibraryOptions = {
@@ -65,9 +44,7 @@ const UploadCertificate = ({navigation}: any) => {
       maxWidth: 10000,
     };
     if (type == 'camera') {
-      requestCameraPermission();
       launchCamera(options, (response: any) => {
-        console.log(response)
         if (response.assets) {
           setSelectedCameraImage(response?.assets[0]?.uri);
         }

@@ -1,22 +1,47 @@
+import {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {useRoute} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
+import {createProfile} from '../../../api';
+import {setUserData} from '../../../redux/authSlice';
+import {RootState} from '../../../redux/store';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 const VerifyScreen = ({navigation}: any) => {
   const {name} = useRoute();
-  const handleNavigation = () => {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const userData = useSelector((state: RootState) => state.auth.user);
+  console.log(userData);
+  const handleNavigation = async () => {
     if (name == 'CertificateVerified') {
       navigation.navigate('InterestScreen');
     } else {
-      Toast.show({
-        type: 'success',
-        text1: 'Welcome To Fit Circle!',
-      });
-      navigation.navigate('HomeScreen');
+      setIsLoading(true);
+      try {
+        console.log('try');
+        const response = await createProfile({...userData});
+        const data = response?.data;
+        dispatch(setUserData(data));
+        setIsLoading(false);
+        navigation.navigate('HomeScreen');
+        Toast.show({
+          type: 'success',
+          text1: 'Account Created Successfully!',
+          text2: 'Welcome!',
+        });
+      } catch (error: any) {
+        console.log(error.response.data);
+        setIsLoading(false);
+        Toast.show({
+          type: 'error',
+          text1: `${error.response.data}`,
+        });
+      }
     }
   };
   return (
@@ -31,7 +56,11 @@ const VerifyScreen = ({navigation}: any) => {
             : 'Account created!'}{' '}
         </Text>
         <View style={{width: '75%', marginTop: verticalScale(25)}}>
-          <CustomButton onPress={handleNavigation}>Continue</CustomButton>
+          <CustomButton
+            isDisabled={isLoading ? true : false}
+            onPress={handleNavigation}>
+            {isLoading ? <CustomLoader /> : 'Continue'}
+          </CustomButton>
         </View>
       </View>
     </View>

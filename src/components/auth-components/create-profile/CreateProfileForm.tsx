@@ -11,7 +11,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../../../interfaces/navigation.type';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {profileSchema} from '../../../validations';
+import {createProfileSchema} from '../../../validations';
 import {setUserData} from '../../../redux/authSlice';
 import {IUserRole} from '../../../interfaces/auth.interface';
 import {IUser} from '../../../interfaces/user.interface';
@@ -35,7 +35,7 @@ type NavigationProp = NativeStackNavigationProp<
 const CreateProfileForm = ({profilePicture}: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
-  const data = useSelector((state: RootState) => state.auth.user);
+  const userData = useSelector((state: RootState) => state.auth.user);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [allCountries, setAllCountries] = useState<any | null>([]);
   const [allCities, setAllCities] = useState([]);
@@ -56,7 +56,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
           };
         });
         setAllCountries(extractedData);
-      } catch (error:any) {
+      } catch (error: any) {
         console.log('Error fetching countries:', error.response);
       }
     };
@@ -116,6 +116,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   };
   const handleSubmit = (values: IUser) => {
     const partialUserData: Partial<IUser> = {
+      ...userData,
       role: userRole,
       firstName: values.firstName,
       lastName: values.lastName,
@@ -133,8 +134,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       physicalInformation: values.physicalInformation,
       dob: values.dob,
       hourlyRate: values.hourlyRate,
-      profileImage: data?.profileImage,
-      coverImage: data?.coverImage,
+      profileImage: userData?.profileImage,
+      coverImage: userData?.coverImage,
     };
 
     dispatch(setUserData({...partialUserData}));
@@ -150,7 +151,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={profileSchema}
+      validationSchema={createProfileSchema(userRole)}
+      validationContext={{userRole: userRole}} // Provide the context here
       onSubmit={handleSubmit}>
       {({
         handleChange,
@@ -208,8 +210,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               setFieldValue={setFieldValue}
               label="Phone Number"
               value={values.phone}
-              // error={errors.phone}
-              // touched={touched.phone}
+              error={errors.phone}
+              touched={touched.phone}
               handleChange={handleChange('phone')}
             />
             <CustomSelect
@@ -269,8 +271,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                   color="black"
                   style={{
                     position: 'absolute',
-                    right: horizontalScale(18),
-                    top: verticalScale(37),
+                    right: horizontalScale(4),
+                    top: verticalScale(34),
                   }}
                 />
                 <DateTimePickerModal
@@ -293,6 +295,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                 value={values.hourlyRate}
                 error={errors.hourlyRate}
                 touched={touched.hourlyRate}
+                keyboardType="numeric"
                 initialTouched={true}
                 handleChange={handleChange('hourlyRate')}
               />

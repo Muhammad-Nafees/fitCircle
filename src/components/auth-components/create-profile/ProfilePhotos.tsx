@@ -36,17 +36,19 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
       setSelectedProfileImage(null);
       onSelectProfilePicture(null);
       const partialUserData: Partial<IUser> = {
+        ...previousUserData,
         profileImage: null,
       };
-      dispatch(setUserData(partialUserData));
+      // dispatch(setUserData(partialUserData));
       return;
     }
     if (type == 'cover' && selectedCoverImage) {
       setSelectedCoverImage(null);
       const partialUserData: Partial<IUser> = {
+        ...previousUserData,
         coverImage: null,
       };
-      dispatch(setUserData(partialUserData));
+      // dispatch(setUserData(partialUserData));
       return;
     }
     const options: ImageLibraryOptions = {
@@ -57,28 +59,34 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
     };
 
     launchImageLibrary(options, (response: any) => {
-      console.log(response);
       if (type == 'profile') {
-        const partialUserData: Partial<IUser> = {
-          profileImage: {
-            uri: response.assets[0].uri,
-            name: response.assets[0].fileName,
-            type: response.assets[0].type,
-          },
-        };
-        dispatch(setUserData(partialUserData));
-        setSelectedProfileImage({resourcePath: response.assets[0].uri});
-        onSelectProfilePicture({resourcePath: response.assets[0].uri});
-      } else {
-        setSelectedCoverImage({resourcePath: response.assets[0].uri});
-        const partialUserData: Partial<IUser> = {
-          coverImage: {
-            uri: response.assets[0].uri,
-            name: response.assets[0].fileName, // or undefined
-            type: response.assets[0].type, // or undefined
-          },
-        };
-        dispatch(setUserData(partialUserData));
+        if (response.assets) {
+          const partialUserData: Partial<IUser> = {
+            ...previousUserData,
+            profileImage: {
+              uri: response.assets[0].uri,
+              name: response.assets[0].fileName,
+              type: response.assets[0].type,
+            },
+          };
+          // dispatch(setUserData(partialUserData));
+          setSelectedProfileImage({resourcePath: response.assets[0].uri});
+          onSelectProfilePicture({resourcePath: response.assets[0].uri});
+        }
+      }
+      if (type == 'cover') {
+        if (response.assets) {
+          setSelectedCoverImage({resourcePath: response.assets[0].uri});
+          const partialUserData: Partial<IUser> = {
+            ...previousUserData,
+            coverImage: {
+              uri: response.assets[0].uri,
+              name: response.assets[0].fileName, // or undefined
+              type: response.assets[0].type, // or undefined
+            },
+          };
+          // dispatch(setUserData(partialUserData));
+        }
       }
     });
   };
