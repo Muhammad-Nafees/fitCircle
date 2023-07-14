@@ -21,6 +21,7 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import {openCamera} from 'react-native-image-crop-picker';
 import PickCertificateCard from '../../../components/auth-components/create-profile/PickCertificateCard';
 import UploadCertificateCard from '../../../components/auth-components/create-profile/UploadCertificateCard';
 import ImageCard from '../../../components/auth-components/create-profile/ImageCard';
@@ -35,8 +36,7 @@ const UploadCertificate = ({navigation}: any) => {
     navigation.navigate('CertificateVerified');
   };
 
-
-  const handleCapture = (type: string) => {
+  const handleCapture = async (type: string) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       includeBase64: false,
@@ -44,19 +44,43 @@ const UploadCertificate = ({navigation}: any) => {
       maxWidth: 10000,
     };
     if (type == 'camera') {
-      launchCamera(options, (response: any) => {
-        if (response.assets) {
-          setSelectedCameraImage(response?.assets[0]?.uri);
-        }
-      });
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Camera Permission',
+          message: 'App needs camera access to capture photos.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        openCamera({
+          width: 10000,
+          height: 10000,
+          cropping: true,
+        })
+          .then(image => {
+            if (image.path) {
+              console.log(image.path);
+              setSelectedCameraImage(image.path);
+            }
+          })
+          .catch(error => {
+            if (error.code === 'E_PICKER_CANCELLED') {
+              return false;
+            }
+          });
+      }
     } else if (type == 'upload') {
-      launchImageLibrary(options, (response: any) => {
+      await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
           setUploadImage(response?.assets[0].uri);
         }
       });
     } else {
-      launchImageLibrary(options, (response: any) => {
+      await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
           setAddMoreImages((prev: any) => [...prev, response?.assets[0].uri]);
         }

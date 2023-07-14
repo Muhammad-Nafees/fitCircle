@@ -23,7 +23,8 @@ export const STYLES = StyleSheet.create({
   text16: {
     fontSize: moderateScale(16),
     lineHeight: verticalScale(23),
-    fontWeight: '400',
+    // fontWeight: '400',
+    fontFamily: 'Gilroy-Bold',
     color: 'rgba(255, 255, 255, 0.7)',
   },
   text32: {

@@ -52,9 +52,11 @@ const LoginForm = () => {
     password: '',
   };
   const handleSubmit = async (values: FormValues) => {
+    console.log(values)
     setIsLoading(true);
     try {
       const response = await loginIn(values.email, values.password);
+      console.log(response.status,"SADs")
       setIsLoading(false);
       if (response?.status === 200) {
         dispatch(authenticate());
@@ -69,6 +71,7 @@ const LoginForm = () => {
         navigation.navigate('HomeScreen');
       }
     } catch (error: any) {
+      console.log(error)
       setIsLoading(false);
       if (error.response.status === 400) {
         Toast.show({
@@ -93,7 +96,10 @@ const LoginForm = () => {
   };
 
   return (
-    <ScrollView nestedScrollEnabled={true} keyboardShouldPersistTaps={'always'}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      nestedScrollEnabled={true}
+      keyboardShouldPersistTaps={'always'}>
       <Formik
         initialValues={initialValues}
         validationSchema={loginSchema}
@@ -145,7 +151,7 @@ const LoginForm = () => {
                       color: '#209BCC',
                       borderBottomWidth: 1,
                       borderBottomColor: '#209BCC',
-                      width: horizontalScale(96),
+                      // width: horizontalScale(),
                       position: 'absolute',
                       left: 0,
                       bottom: -verticalScale(10),

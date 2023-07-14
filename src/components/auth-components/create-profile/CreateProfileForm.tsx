@@ -271,7 +271,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                   color="black"
                   style={{
                     position: 'absolute',
-                    right: horizontalScale(4),
+                    right: horizontalScale(12),
                     top: verticalScale(34),
                   }}
                 />

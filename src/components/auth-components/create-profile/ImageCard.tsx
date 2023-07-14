@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     position: 'absolute',
     padding: 8,
-    backgroundColor: '#9B9B99',
+    backgroundColor: 'rgba(68, 68, 68, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     width: 45,

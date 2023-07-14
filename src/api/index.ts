@@ -4,7 +4,7 @@ import {ISocial, IUser} from '../interfaces/user.interface';
 import {BASE_URL} from './constant';
 
 export const loginIn = async (email: string, password: string) => {
-  const response = await axios.post(`${BASE_URL}/users/login`, {
+  const response = await axios.post(`https://fit-circle.cyclic.app/users/login`, {
     email: email.toLowerCase(),
     password: password,
   });
@@ -12,7 +12,7 @@ export const loginIn = async (email: string, password: string) => {
 };
 
 export const register = async (values: CreateAccountFormValues) => {
-  const response = await axios.post(`${BASE_URL}/users/register`, {
+  const response = await axios.post(`https://fit-circle.cyclic.app/users/register`, {
     email: values.email.toLowerCase(),
     phone: values.phone,
     password: values.password,
@@ -53,7 +53,7 @@ export const createProfile = async (userData: IUser) => {
   // formData.append('certificateImages', userData.certificateImages);
 
   const response = await axios.post(
-    `${BASE_URL}/home/createProfile`,
+    `https://fit-circle.cyclic.app/home/createProfile`,
     formData,
     {
       headers: {
@@ -66,41 +66,41 @@ export const createProfile = async (userData: IUser) => {
 };
 
 export const generateOtp = async (email: string) => {
-  const response = await axios.post(`${BASE_URL}/users/generate/otp`, {
+  const response = await axios.post(`https://fit-circle.cyclic.app/users/generate/otp`, {
     email: email.toLowerCase(),
   });
   return response;
 };
 
 export const otpValidation = async (enteredOtp: number) => {
-  const response = await axios.post(`${BASE_URL}/users/otpValidation`, {
+  const response = await axios.post(`https://fit-circle.cyclic.app/users/otpValidation`, {
     enteredOtp,
   });
   return response;
 };
 export const resetPassword = async (newPass: string) => {
-  const response = await axios.post(`${BASE_URL}/users/resetPassword`, {
+  const response = await axios.post(`https://fit-circle.cyclic.app/users/resetPassword`, {
     newPass,
   });
   return response;
 };
 
 export const getInterest = async () => {
-  const response = await axios.get(`${BASE_URL}/interest`);
+  const response = await axios.get(`https://fit-circle.cyclic.app/interest`);
   return response;
 };
 
 export const getCommunities = async () => {
-  const response = await axios.get(`${BASE_URL}/community`);
+  const response = await axios.get(`https://fit-circle.cyclic.app/community`);
   return response;
 };
 
 export const getCountries = async () => {
-  const response = await axios.get(`${BASE_URL}/countries`);
+  const response = await axios.get(`https://fit-circle.cyclic.app/countries`);
   return response;
 };
 
 export const getCities = async (country: string) => {
-  const response = await axios.get(`${BASE_URL}/cities/${country}`);
+  const response = await axios.get(`https://fit-circle.cyclic.app/cities/${country}`);
   return response;
 };

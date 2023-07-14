@@ -101,7 +101,7 @@ const AuthStackNavigator = () => {
       <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
       <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
       <Stack.Screen name="HomeModule" component={HomeTabNavigator} />
-    </Stack.Navigator>  
+    </Stack.Navigator>
   );
 };
 

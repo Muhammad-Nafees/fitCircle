@@ -31,7 +31,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
   const dispatch = useDispatch();
   // console.log(previousUserData, 'ss');
 
-  const handleUploadPhoto = (type: string) => {
+  const handleUploadPhoto = async (type: string) => {
     if (type == 'profile' && selectedProfileImage) {
       setSelectedProfileImage(null);
       onSelectProfilePicture(null);
@@ -58,7 +58,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
       maxWidth: 10000,
     };
 
-    launchImageLibrary(options, (response: any) => {
+    await launchImageLibrary(options, (response: any) => {
       if (type == 'profile') {
         if (response.assets) {
           const partialUserData: Partial<IUser> = {

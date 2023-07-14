@@ -53,7 +53,7 @@ const CustomInput = ({...props}: Props) => {
       <TextInput
         style={[
           styles.input,
-          STYLES.text14,
+          STYLES.text18,
           {color: '#000', fontWeight: '400'},
           props.extraStyles,
         ]}
@@ -110,11 +110,11 @@ const styles = StyleSheet.create({
   input: {
     // textAlignVertical: 'top',
     width: horizontalScale(320),
-    height: verticalScale(48),
+    height: verticalScale(45),
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
     paddingHorizontal: horizontalScale(10),
   },
   icon: {

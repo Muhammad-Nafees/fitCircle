@@ -18,10 +18,12 @@ import {BlurView} from '@react-native-community/blur';
 
 const LoginFormScreen = () => {
   return (
-    <ScrollView keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
+    <ScrollView
+      keyboardShouldPersistTaps="always"
+      showsVerticalScrollIndicator={false}>
       <ImageBackground
         source={require('../../../../assets/images/backgroundImage2.jpg')}
-        style={{flex: 1}}>
+        style={{flex: 1}} blurRadius={10}>
         <View style={{marginTop: verticalScale(111)}}>
           <Text
             style={[
@@ -31,14 +33,16 @@ const LoginFormScreen = () => {
                 // top: verticalScale(111),
                 paddingLeft: horizontalScale(14),
                 marginBottom: verticalScale(0),
-                paddingTop:3,
+                paddingTop: 3,
               },
             ]}>
             LOGIN
           </Text>
-          <View style={styles.container}>
-            <LoginForm />
-          </View>
+          {/* <BlurView blurType="dark" blurAmount={5} overlayColor="transparent" style={{marginTop: 20}}> */}
+            <View style={styles.container}>
+              <LoginForm />
+            </View>
+          {/* </BlurView> */}
         </View>
       </ImageBackground>
     </ScrollView>
@@ -65,7 +69,7 @@ const styles = StyleSheet.create({
     // overflow: 'scroll',
     // zIndex: 1,
     marginTop: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderTopLeftRadius: moderateScale(30),
     borderTopRightRadius: moderateScale(30),
     // justifyContent: 'center',

@@ -39,7 +39,7 @@ const VerifyScreen = ({navigation}: any) => {
         setIsLoading(false);
         Toast.show({
           type: 'error',
-          text1: `${error.response.data}`,
+          text1: 'Server Error!',
         });
       }
     }

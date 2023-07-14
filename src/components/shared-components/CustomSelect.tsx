@@ -74,7 +74,7 @@ export const CustomSelect: React.FC<Props> = ({
           textAlign: 'left',
         }}
         buttonStyle={{
-          height: height ? height : 48,
+          height: height ? height : 45,
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '85%',
         }}
