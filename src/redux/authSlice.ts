@@ -8,10 +8,7 @@ const initialState: IAuth = {
   accountType: null,
   userRole: undefined,
   user: null,
-<<<<<<< HEAD
   authorizationToken: ''
-=======
->>>>>>> main
 };
 
 const authSlice = createSlice({
@@ -30,12 +27,9 @@ const authSlice = createSlice({
     setaccessToken: (state, action) => {
       state.user = action.payload;
     },
-<<<<<<< HEAD
     setAuthorizationToken: (state, action) => {
       state.authorizationToken = action.payload;
     },
-=======
->>>>>>> main
     logout: state => {
       state.isAuthenticated = false;
       state.userRole = undefined;
@@ -46,11 +40,7 @@ const authSlice = createSlice({
   },
 });
 
-<<<<<<< HEAD
 export const {setuserRole,setaccessToken, setAccountType, setUserData, authenticate, logout,setAuthorizationToken} =
-=======
-export const {setuserRole,setaccessToken, setAccountType, setUserData, authenticate, logout} =
->>>>>>> main
   authSlice.actions;
 
 export default authSlice.reducer;

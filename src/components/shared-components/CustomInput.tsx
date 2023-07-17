@@ -1,7 +1,12 @@
 import {useState} from 'react';
 
-import {StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
-import {Text, TextInput} from 'react-native-paper';
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+  TextInput,
+} from 'react-native';
+import {Text} from 'react-native-paper';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -63,21 +68,29 @@ const CustomInput = ({...props}: Props) => {
   return (
     <View style={{position: 'relative'}}>
       <Text style={STYLES.text12}>{props.label}</Text>
-      <TextInput
-        style={[inputStyle, STYLES.text14, , props.extraStyles]}
-        placeholder={isFocused ? '' : props.placeholder}
-        value={props.value}
-        onChangeText={handleChangeText}
-        underlineColor={'transparent'}
-        secureTextEntry={props.isPasswordIcon && !passwordVisible}
-        theme={theme}
-        multiline={props.multiline ? props.multiline : false}
-        keyboardType={props.keyboardType}
-        numberOfLines={1} // Add this line
-        autoCapitalize={props.autoCapitalize}
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-      />
+      <View>
+        <TextInput
+          style={[
+            inputStyle,
+            STYLES.text14,
+            ,
+            {color: 'black', fontWeight: '400'},
+            props.extraStyles,
+          ]}
+          placeholder={isFocused ? '' : props.placeholder}
+          value={props.value}
+          onChangeText={handleChangeText}
+          underlineColorAndroid="transparent"
+          placeholderTextColor="gray"
+          secureTextEntry={props.isPasswordIcon && !passwordVisible}
+          multiline={props.multiline ? props.multiline : false}
+          keyboardType={props.keyboardType}
+          textAlignVertical="top"
+          autoCapitalize={props.autoCapitalize}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+        />
+      </View>
 
       {props.error &&
       ((props.touched && !props.value) ||
@@ -92,7 +105,7 @@ const CustomInput = ({...props}: Props) => {
             marginBottom: verticalScale(4),
           }}>
           <Icon name="alert-circle" size={22} color="red" />
-          <Text style={[STYLES.text12,{color: 'red'}]}>{props.error}</Text>
+          <Text style={[STYLES.text12, {color: 'red'}]}>{props.error}</Text>
         </View>
       ) : (
         <View style={{height: 35}} />
@@ -120,6 +133,7 @@ const styles = StyleSheet.create({
     height: verticalScale(45),
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
+    padding: 10,
   },
   icon: {
     position: 'absolute',

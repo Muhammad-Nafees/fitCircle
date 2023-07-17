@@ -23,6 +23,7 @@ import ForgetPassword from '../screens/auth-screens/forget-password-screens/Forg
 import CreateNewPassword from '../screens/auth-screens/forget-password-screens/CreateNewPassword';
 import HomeTabNavigator from './HomeModuleNavigator';
 import CreateProfileForm from '../components/auth-components/create-profile/CreateProfileForm';
+import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
 
 const Stack = createStackNavigator();
 
@@ -70,7 +71,7 @@ const AuthStackNavigator = () => {
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
       <Stack.Screen
         name="CreateProfile"
-        component={CreateProfileForm}
+        component={CreateProfile}
         options={{headerShown: false}}
       />
       <Stack.Screen name="GenderScreen" component={GenderScreen} />
@@ -100,7 +101,11 @@ const AuthStackNavigator = () => {
       />
       <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
       <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
-      <Stack.Screen name="HomeModule" component={HomeTabNavigator} options={{gestureEnabled: false}} />
+      <Stack.Screen
+        name="HomeModule"
+        component={HomeTabNavigator}
+        options={{gestureEnabled: false}}
+      />
     </Stack.Navigator>
   );
 };

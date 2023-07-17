@@ -16,27 +16,28 @@ import * as yup from 'yup';
 
 const socialMediaSchema = yup.object().shape({
   facebook: yup
-    .string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/,
-      'Invalid Facebook URL format',
-    ),
+  .string()
+  .matches(
+    /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/i,
+    'Invalid Facebook URL format'
+  ),
+
   twitter: yup
     .string()
     .matches(
-      /^(https?:\/\/)?(www\.)?twitter\.com(\/\S*)?$/,
+      /^(https?:\/\/)?(www\.)?twitter\.com(\/\S*)?$/i,
       'Invalid Twitter URL format',
     ),
   instagram: yup
     .string()
     .matches(
-      /^(https?:\/\/)?(www\.)?instagram\.com(\/\S*)?$/,
+      /^(https?:\/\/)?(www\.)?instagram\.com(\/\S*)?$/i,
       'Invalid Instagram URL format',
     ),
   tiktok: yup
     .string()
     .matches(
-      /^(https?:\/\/)?(www\.)?tiktok\.com(\/\S*)?$/,
+      /^(https?:\/\/)?(www\.)?tiktok\.com(\/\S*)?$/i,
       'Invalid TikTok URL format',
     ),
 });
@@ -118,6 +119,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     error={errors.facebook}
                     touched={touched.facebook}
                     initialTouched={true}
+                    autoCapitalize='none'
                     handleChange={handleChange('facebook')}
                   />
                   <CustomInput
@@ -127,6 +129,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     error={errors.instagram}
                     touched={touched.instagram}
                     initialTouched={true}
+                    autoCapitalize='none'
                     handleChange={handleChange('instagram')}
                   />
                   <CustomInput
@@ -136,6 +139,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     error={errors.twitter}
                     touched={touched.twitter}
                     initialTouched={true}
+                    autoCapitalize='none'
                     handleChange={handleChange('twitter')}
                   />
                   <CustomInput
@@ -145,6 +149,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     error={errors.tiktok}
                     touched={touched.tiktok}
                     initialTouched={true}
+                    autoCapitalize='none'
                     handleChange={handleChange('tiktok')}
                   />
                 </View>

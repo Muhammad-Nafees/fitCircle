@@ -1,8 +1,6 @@
 import axios from 'axios';
 import {CreateAccountFormValues} from '../screens/auth-screens/create-profile-screens/CreateAccount';
 import {ISocial, IUser} from '../interfaces/user.interface';
-<<<<<<< HEAD
-
 
 export const loginIn = async (email: string, password: string) => {
   const response = await axios.post(
@@ -12,20 +10,10 @@ export const loginIn = async (email: string, password: string) => {
       password: password,
     },
   );
-=======
-import {BASE_URL} from './constant';
-
-export const loginIn = async (email: string, password: string) => {
-  const response = await axios.post(`https://fit-circle.cyclic.app/users/login`, {
-    email: email.toLowerCase(),
-    password: password,
-  });
->>>>>>> main
   return response;
 };
 
 export const register = async (values: CreateAccountFormValues) => {
-<<<<<<< HEAD
   const response = await axios.post(
     `https://fit-circle.cyclic.app/users/register`,
     {
@@ -34,21 +22,13 @@ export const register = async (values: CreateAccountFormValues) => {
       password: values.password,
     },
   );
-=======
-  const response = await axios.post(`https://fit-circle.cyclic.app/users/register`, {
-    email: values.email.toLowerCase(),
-    phone: values.phone,
-    password: values.password,
-  });
->>>>>>> main
   return response;
 };
 
-export const createProfile = async (userData: IUser) => {
-<<<<<<< HEAD
-=======
-  console.log(userData, 'Dasd');
->>>>>>> main
+export const createProfile = async (
+  userData: IUser,
+  authorizationToken: string,
+) => {
   const formData = new FormData();
   formData.append('firstName', userData.firstName);
   formData.append('lastName', userData.lastName);
@@ -85,10 +65,7 @@ export const createProfile = async (userData: IUser) => {
     {
       headers: {
         'Content-Type': 'multipart/form-data', // Add the Content-Type header with the value "multipart/form-data"
-<<<<<<< HEAD
-        Authorization: `${userData.authorizationToken}`, // Include the authorization token in the headers
-=======
->>>>>>> main
+        Authorization: `${authorizationToken}`, // Include the authorization token in the headers
       },
     },
   );
@@ -97,23 +74,16 @@ export const createProfile = async (userData: IUser) => {
 };
 
 export const generateOtp = async (email: string) => {
-<<<<<<< HEAD
   const response = await axios.post(
     `https://fit-circle.cyclic.app/users/generate/otp`,
     {
       email: email.toLowerCase(),
     },
   );
-=======
-  const response = await axios.post(`https://fit-circle.cyclic.app/users/generate/otp`, {
-    email: email.toLowerCase(),
-  });
->>>>>>> main
   return response;
 };
 
 export const otpValidation = async (enteredOtp: number) => {
-<<<<<<< HEAD
   const response = await axios.post(
     `https://fit-circle.cyclic.app/users/otpValidation`,
     {
@@ -129,17 +99,6 @@ export const resetPassword = async (newPass: string) => {
       newPass,
     },
   );
-=======
-  const response = await axios.post(`https://fit-circle.cyclic.app/users/otpValidation`, {
-    enteredOtp,
-  });
-  return response;
-};
-export const resetPassword = async (newPass: string) => {
-  const response = await axios.post(`https://fit-circle.cyclic.app/users/resetPassword`, {
-    newPass,
-  });
->>>>>>> main
   return response;
 };
 
@@ -159,12 +118,8 @@ export const getCountries = async () => {
 };
 
 export const getCities = async (country: string) => {
-<<<<<<< HEAD
   const response = await axios.get(
     `https://fit-circle.cyclic.app/cities/${country}`,
   );
-=======
-  const response = await axios.get(`https://fit-circle.cyclic.app/cities/${country}`);
->>>>>>> main
   return response;
 };

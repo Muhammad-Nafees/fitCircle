@@ -11,13 +11,9 @@ const GenderScreen = ({navigation, route}: any) => {
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
-      <ScrollView>
+       <ScrollView>
         <View style={styles.imageContainer}>
-<<<<<<< HEAD
           {route.params?.profilePicture == undefined ? (
-=======
-          {route.params.profilePicture == undefined ? (
->>>>>>> main
             <View style={styles.image} />
           ) : (
             <Image
@@ -28,7 +24,7 @@ const GenderScreen = ({navigation, route}: any) => {
               style={{width: 142, height: 142, borderRadius: 71}}
             />
           )}
-        </View>
+        </View> 
         <GenderForm />
       </ScrollView>
     </View>

@@ -14,7 +14,7 @@ const ChooseVerificationType = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userData = useSelector((state: RootState) => state.auth.user);
   const email = userData?.email;
-console.log(userData,"dasd")
+  console.log(userData, 'dasd');
   const handleSubmit = async (type: string) => {
     if (type == 'email') {
       setVerificationType('email');
@@ -23,7 +23,7 @@ console.log(userData,"dasd")
     }
     try {
       setIsLoading(true);
-      console.log(email,"email")
+      console.log(email, 'email');
       const response = await generateOtp(email as string);
       const data = response.data;
       Toast.show({
@@ -123,8 +123,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(32),
     paddingVertical: verticalScale(16),
   },
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> main

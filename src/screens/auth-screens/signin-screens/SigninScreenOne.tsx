@@ -19,11 +19,7 @@ const SignInScreenOne = ({navigation}: any) => {
   return (
     <SigninContent>
       <CustomButton
-<<<<<<< HEAD
-        extraStyles={{height: verticalScale(44)}}
-=======
         extraStyles={{height: verticalScale(48)}}
->>>>>>> main
         onPress={handleCreateAccount}>
         CREATE ACCOUNT
       </CustomButton>

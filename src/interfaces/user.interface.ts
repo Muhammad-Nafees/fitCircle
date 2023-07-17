@@ -10,13 +10,7 @@ export interface FileData {
   type: string;
 }
 
-<<<<<<< HEAD
 export interface IUser {
-  authorizationToken?: string;
-=======
-
-export interface IUser {
->>>>>>> main
   _id?: string;
   email?: string;
   role?: IUserRole | undefined;

@@ -34,11 +34,7 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     paddingHorizontal: horizontalScale(20),
-<<<<<<< HEAD
     color: '#cccccc',
-=======
-    color: 'rgba(255, 255, 255, 0.66)',
->>>>>>> main
     fontFamily: 'GeneralSans-Medium'
   },
 });

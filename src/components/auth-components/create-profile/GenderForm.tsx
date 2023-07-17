@@ -1,9 +1,12 @@
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
-
 import {Formik} from 'formik';
 import {CustomSelect} from '../../shared-components/CustomSelect';
 import CustomInput from '../../shared-components/CustomInput';
-import {horizontalScale, verticalScale} from '../../../utils/metrics';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../utils/metrics';
 import CustomButton from '../../shared-components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import {InterestScreenNavigationProp} from '../../../interfaces/navigation.type';
@@ -12,11 +15,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setUserData} from '../../../redux/authSlice';
 import {IUser} from '../../../interfaces/user.interface';
 import {RootState} from '../../../redux/store';
+import Icon from 'react-native-vector-icons/Ionicons';
+import DropdownTextInput from '../../shared-components/CustomDropdownInput';
 
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData);
+  console.log(previousUserData, 'Dasds');
 
   const dispatch = useDispatch();
 
@@ -68,9 +73,10 @@ const GenderForm = () => {
                 values={['Male', 'Female']}
                 selectedValue={values.gender}
                 error={errors.gender}
+                initialTouched={true}
+                touched={touched.gender}
                 setFieldValue={setFieldValue}
               />
-
               <CustomInput
                 label="Age"
                 placeholder=""
@@ -80,85 +86,31 @@ const GenderForm = () => {
                 initialTouched={true}
                 keyboardType="numeric"
                 handleChange={handleChange('age')}
-                // extraStyles={{width: 52}}
               />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: horizontalScale(13),
-                  marginHorizontal: horizontalScale(42),
-                }}>
-                <View style={{flex: 1}}>
-                  <CustomInput
-                    label="Height"
-                    placeholder=""
+              <View style={styles.inputRow}>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Height</Text>
+                  <DropdownTextInput
                     value={values.height}
+                    options={['ft', 'm']}
+                    defaultOption="ft"
+                    handleChange={handleChange('height')}
                     error={errors.height}
                     touched={touched.height}
                     initialTouched={true}
-                    keyboardType="numeric"
-                    handleChange={handleChange('height')}
-                    extraStyles={{
-                      width: '100%',
-                    }}
                   />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      right: horizontalScale(0),
-                      height: '100%',
-                      justifyContent: 'center',
-                      top: verticalScale(2.5)
-                    }}>
-                    <CustomSelect
-                      label="unit"
-                      defaultValue="Ft"
-                      values={['Ft', 'm']}
-                      setFieldValue={setFieldValue}
-                      styles={{position: 'relative', bottom: verticalScale(7)}}
-                      backgroundColor="#209BCC"
-                      width={50}
-                      height={verticalScale(45)}
-                      isIcon={false}
-                      fontColor="#fff"
-                    />
-                  </View>
                 </View>
-                <View style={{flex: 1}}>
-                  <CustomInput
-                    label="Weight"
-                    placeholder=""
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Weight</Text>
+                  <DropdownTextInput
                     value={values.weight}
+                    options={['kg', 'lb']}
+                    defaultOption="kg"
+                    handleChange={handleChange('weight')}
                     error={errors.weight}
                     touched={touched.weight}
                     initialTouched={true}
-                    keyboardType="numeric"
-                    handleChange={handleChange('weight')}
-                    extraStyles={{width: '100%'}}
                   />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      right: horizontalScale(0),
-                      height: '100%',
-                      justifyContent: 'center',
-                      top: verticalScale(2.5)
-
-                    }}>
-                      
-                    <CustomSelect
-                      label="unit"
-                      defaultValue="Kg"
-                      values={['Kg', 'lb']}
-                      styles={{position: 'relative', bottom: verticalScale(7)}}
-                      backgroundColor="#209BCC"
-                      setFieldValue={setFieldValue}
-                      width={50}
-                      height={verticalScale(45)}
-                      isIcon={false}
-                      fontColor="#fff"
-                    />
-                  </View>
                 </View>
               </View>
 
@@ -166,28 +118,29 @@ const GenderForm = () => {
                 label="Activity"
                 values={[
                   'Physical Activity',
-                  'Physical FItness',
+                  'Physical Fitness',
                   'Exercise',
                   'Sedentary',
                 ]}
                 selectedValue={values.activity}
                 error={errors.activity}
+                initialTouched={true}
+                touched={touched.activity}
                 setFieldValue={setFieldValue}
               />
+
               <CustomSelect
                 label="Body Type"
                 values={['Mesomorph', 'Ectomorph', 'Endomorph']}
                 selectedValue={values.bodytype}
                 error={errors.bodytype}
+                initialTouched={true}
+                touched={touched.bodytype}
                 setFieldValue={setFieldValue}
               />
             </View>
-            <View
-              style={{
-                width: '100%',
-                paddingHorizontal: horizontalScale(40),
-                marginVertical: verticalScale(60),
-              }}>
+
+            <View style={styles.buttonContainer}>
               <CustomButton onPress={handleSubmit}>Continue</CustomButton>
             </View>
           </View>
@@ -214,5 +167,27 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     paddingVertical: verticalScale(10),
     alignItems: 'center',
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: moderateScale(20),
+    marginHorizontal: horizontalScale(30),
+    zIndex: 1000,
+  },
+  inputContainer: {
+    flex: 3,
+  },
+  label: {
+    fontSize: moderateScale(12),
+    lineHeight: verticalScale(17),
+    fontWeight: '700',
+    color: '#ffffff',
+  },
+  buttonContainer: {
+    width: '100%',
+    paddingHorizontal: horizontalScale(40),
+    marginVertical: verticalScale(60),
   },
 });

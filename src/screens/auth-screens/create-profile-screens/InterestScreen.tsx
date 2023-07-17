@@ -22,10 +22,7 @@ const InterestScreen = ({navigation}: any) => {
   const [selectedInterestName, setSelectedInterestName] = useState<string[]>(
     [],
   );
-<<<<<<< HEAD
   console.log(useSelector((state: RootState) => state.auth.user));
-=======
->>>>>>> main
   const [interests, setInterest] = useState<IInterest[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
@@ -43,7 +40,7 @@ const InterestScreen = ({navigation}: any) => {
         setIsLoading(false);
         Toast.show({
           type: 'error',
-          text1: 'Network Error!',
+          text1: 'Server Error!',
         });
       }
     };

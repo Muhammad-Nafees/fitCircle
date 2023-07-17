@@ -97,7 +97,7 @@ const UploadCertificate = ({navigation}: any) => {
       <ScrollView>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <Text style={[STYLES.text16, {fontWeight: '700'}]}>
-            Upload Cerrtificates
+            Upload Certificates
           </Text>
           <TouchableOpacity onPress={handleNavigate}>
             <Text
@@ -145,7 +145,7 @@ const UploadCertificate = ({navigation}: any) => {
             marginVertical: verticalScale(42),
             marginHorizontal: horizontalScale(30),
           }}>
-          <CustomButton onPress={() => navigation.navigate('VerifyScreen')}>Continue</CustomButton>
+          <CustomButton onPress={() => navigation.navigate('CertificateVerified')}>Continue</CustomButton>
         </View>
       </ScrollView>
     </View>

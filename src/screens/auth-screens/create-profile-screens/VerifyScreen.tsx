@@ -16,6 +16,12 @@ const VerifyScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const userData = useSelector((state: RootState) => state.auth.user);
+  const authToken = useSelector(
+    (state: RootState) => state.auth.authorizationToken,
+  );
+  console.log(userData)
+  console.log(authToken)
+
   console.log(userData);
   const handleNavigation = async () => {
     if (name == 'CertificateVerified') {
@@ -24,9 +30,10 @@ const VerifyScreen = ({navigation}: any) => {
       setIsLoading(true);
       try {
         console.log('try');
-        const response = await createProfile({...userData});
+        const response = await createProfile({...userData}, authToken);
         const data = response?.data;
-l        dispatch(setUserData(data));
+        console.log(response)
+        // dispatch(setUserData(data));
         setIsLoading(false);
         navigation.navigate('HomeScreen');
         Toast.show({

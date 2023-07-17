@@ -46,7 +46,7 @@ const CommunitiesScreen = ({navigation}: any) => {
         setIsLoading(false);
         Toast.show({
           type: 'error',
-          text1: 'Network Error!',
+          text1: 'Server Error!',
         });
       }
     };
