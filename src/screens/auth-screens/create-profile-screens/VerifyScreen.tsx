@@ -26,7 +26,7 @@ const VerifyScreen = ({navigation}: any) => {
         console.log('try');
         const response = await createProfile({...userData});
         const data = response?.data;
-        dispatch(setUserData(data));
+l        dispatch(setUserData(data));
         setIsLoading(false);
         navigation.navigate('HomeScreen');
         Toast.show({
@@ -92,8 +92,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> main
