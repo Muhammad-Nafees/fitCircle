@@ -1,0 +1,125 @@
+import {useSelector} from 'react-redux';
+import * as Yup from 'yup';
+import {RootState} from '../redux/store';
+
+export const loginSchema = Yup.object().shape({
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+      'Invalid email',
+    )
+    .required('Email is required'),
+  password: Yup.string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters long'),
+});
+
+export const signupSchema = Yup.object().shape({
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+      'Invalid email',
+    )
+    .required('Email is required'),
+  phone: Yup.string().required('Phone number is required!'),
+  password: Yup.string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters long'),
+  confirmPassword: Yup.string()
+    .min(8, 'Confirm password must be at least 8 characters')
+    .required('Confirm Password is required')
+    .oneOf([Yup.ref('password')], 'Password must be same'),
+});
+
+export const createProfileSchema = (userRole: any) => {
+  return Yup.object().shape({
+    firstName: Yup.string()
+      .required('First Name is required')
+      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+
+    lastName: Yup.string()
+      .required('Last Name is required')
+      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    username: Yup.string()
+      .required('Username is required')
+      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    bio: Yup.string()
+      .required('Bio is required')
+      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    phone: Yup.string().required('Phone number is required'),
+    country: Yup.string().required('Select country'),
+    city: Yup.string().required('Select city'),
+    gender: Yup.string().test({
+      name: 'gender',
+      exclusive: true,
+      message: 'Gender is required',
+      test: value => {
+        if (userRole === 'trainer') {
+          return value !== undefined && value !== '';
+        }
+        return true;
+      },
+    }),
+    physicalInformation: Yup.string()
+      .required('Physical Information is required!')
+      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    dob: Yup.string()
+      .matches(
+        /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+        'Invalid date format. Must be dd/mm/yyyy',
+      )
+      .required(),
+    hourlyRate: Yup.string().test({
+      name: 'hourlyRate',
+      exclusive: true,
+      message: 'Hourly rate is required!',
+      test: function (value) {
+        if (userRole === 'trainer') {
+          if (value === '0') {
+            return this.createError({
+              path: 'hourlyRate',
+              message: 'Rate should be greater than 0',
+            });
+          }
+          return value !== undefined;
+        }
+        return true;
+      },
+    }),
+  });
+};
+
+export const genderSchema = Yup.object().shape({
+  gender: Yup.string().required('Select gender'),
+  age: Yup.number()
+    .required('Age is required')
+    .min(14, 'Age must be greater than 14'),
+  height: Yup.string()
+    .required('Height is required')
+    .test('not-zero', 'Height must not be zero', value => value !== '0'),
+
+  weight: Yup.string()
+    .required('Weight is required')
+    .test('not-zero', 'Weight must not be zero', value => value !== '0'),
+  bodytype: Yup.string().required('Select Body Type'),
+  activity: Yup.string().required('Select Activity'),
+});
+
+export const forgetPasswordSchema = Yup.object().shape({
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+      'Invalid email',
+    )
+    .required('Email is required'),
+});
+
+export const createNewPasswordSchema = Yup.object().shape({
+  newPassword: Yup.string()
+    .required('New Password is required')
+    .min(8, 'Password must be at least 8 characters long'),
+  confirmNewPassword: Yup.string()
+    .min(8, 'Confirm password must be at least 8 characters')
+    .required('Confirm Password is required')
+    .oneOf([Yup.ref('newPassword')], 'Password must be same'),
+});

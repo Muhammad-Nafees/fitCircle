@@ -1,0 +1,38 @@
+diff --git a/node_modules/react-native-phone-number-input/lib/index.js b/node_modules/react-native-phone-number-input/lib/index.js
+index b89c388..43c4a0b 100644
+--- a/node_modules/react-native-phone-number-input/lib/index.js
++++ b/node_modules/react-native-phone-number-input/lib/index.js
+@@ -202,6 +202,9 @@ export default class PhoneInput extends PureComponent {
+             )}
+             {!disableArrowIcon && (
+               <React.Fragment>
++                <Text
++                  style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
++                >{`+${code}`}</Text>
+                 {renderDropdownImage
+                   ? renderDropdownImage
+                   : this.renderDropdownImage()}
+@@ -214,11 +217,6 @@ export default class PhoneInput extends PureComponent {
+               textContainerStyle ? textContainerStyle : {},
+             ]}
+           >
+-            {code && layout === "first" && (
+-              <Text
+-                style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
+-              >{`+${code}`}</Text>
+-            )}
+             <TextInput
+               style={[styles.numberText, textInputStyle ? textInputStyle : {}]}
+               placeholder={placeholder ? placeholder : "Phone Number"}
+diff --git a/node_modules/react-native-phone-number-input/lib/styles.d.ts b/node_modules/react-native-phone-number-input/lib/styles.d.ts
+index c6bd19e..9e7d2d3 100644
+--- a/node_modules/react-native-phone-number-input/lib/styles.d.ts
++++ b/node_modules/react-native-phone-number-input/lib/styles.d.ts
+@@ -11,6 +11,7 @@ declare const styles: {
+         justifyContent: "center";
+         flexDirection: "row";
+         alignItems: "center";
++        marginLeft: number;
+     };
+     shadow: {
+         shadowColor: string;
