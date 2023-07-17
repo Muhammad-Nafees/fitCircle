@@ -123,4 +123,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(32),
     paddingVertical: verticalScale(16),
   },
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> main

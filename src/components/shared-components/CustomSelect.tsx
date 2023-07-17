@@ -3,7 +3,11 @@ import {View, Text} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
+<<<<<<< HEAD
 import {verticalScale} from '../../utils/metrics';
+=======
+
+>>>>>>> main
 
 interface Props {
   defaultValue?: string;
@@ -74,7 +78,11 @@ export const CustomSelect: React.FC<Props> = ({
           textAlign: 'left',
         }}
         buttonStyle={{
+<<<<<<< HEAD
           height: height ? height : verticalScale(45),
+=======
+          height: height ? height : 45,
+>>>>>>> main
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '85%',
         }}
@@ -82,7 +90,11 @@ export const CustomSelect: React.FC<Props> = ({
       {error && touched ? (
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
           <Icon name="alert-circle" size={22} color="red" />
+<<<<<<< HEAD
           <Text style={[STYLES.text12, {color: 'red'}]}>{error}</Text>
+=======
+          <Text style={[STYLES.text12,{color: 'red'}]}>{error}</Text>
+>>>>>>> main
         </View>
       ) : (
         <View style={{height: 25}} />

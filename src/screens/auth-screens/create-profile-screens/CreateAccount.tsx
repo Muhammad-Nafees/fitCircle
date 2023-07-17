@@ -11,12 +11,22 @@ import {register} from '../../../api';
 import {
   authenticate,
   setaccessToken,
+<<<<<<< HEAD
   setAuthorizationToken,
   setUserData,
 } from '../../../redux/authSlice';
 import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+=======
+  setUserData,
+} from '../../../redux/authSlice';
+import Toast from 'react-native-toast-message';
+import {useDispatch, useSelector} from 'react-redux';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
+import {IUser} from '../../../interfaces/user.interface';
+import {RootState} from '../../../redux/store';
+>>>>>>> main
 
 export interface CreateAccountFormValues {
   email: string;
@@ -27,6 +37,10 @@ export interface CreateAccountFormValues {
 
 const CreateAccount = ({navigation}: any) => {
   const dispatch = useDispatch();
+<<<<<<< HEAD
+=======
+  console.log(useSelector((state: RootState) => state.auth.user?.email));
+>>>>>>> main
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const initialValues: CreateAccountFormValues = {
     email: '',
@@ -41,9 +55,19 @@ const CreateAccount = ({navigation}: any) => {
       console.log('first');
       if (response?.status === 200) {
         setIsLoading(false);
+<<<<<<< HEAD
         console.log(response?.data.email);
         dispatch(authenticate());
         dispatch(setUserData({email: response?.data.email,authorizationToken: response?.headers.authorization}));
+=======
+        console.log(response?.data.email)
+        dispatch(authenticate());
+        dispatch(setUserData({email: response?.data.email}));
+        Toast.show({
+          type: 'success',
+          text1: 'User Registered Successfully!',
+        });
+>>>>>>> main
         navigation.navigate('CreateProfile');
       }
     } catch (error: any) {
@@ -161,7 +185,11 @@ const styles = StyleSheet.create({
   },
 
   button: {
+<<<<<<< HEAD
     marginTop: verticalScale(125),
+=======
+    marginTop: verticalScale(90),
+>>>>>>> main
     paddingHorizontal: horizontalScale(27),
     paddingBottom: verticalScale(20),
   },

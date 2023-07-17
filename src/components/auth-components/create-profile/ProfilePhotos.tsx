@@ -84,7 +84,6 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
       // dispatch(setUserData(partialUserData));
       return;
     }
-
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       includeBase64: false,

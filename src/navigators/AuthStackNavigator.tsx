@@ -9,7 +9,6 @@ import SignInScreenTwo from '../screens/auth-screens/signin-screens/SigninScreen
 import LoginFormScreen from '../screens/auth-screens/login-screens/LoginFormScreen';
 import CreateAccount from '../screens/auth-screens/create-profile-screens/CreateAccount';
 import {horizontalScale, verticalScale} from '../utils/metrics';
-import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
 import GenderScreen from '../screens/auth-screens/create-profile-screens/GenderScreen';
 import CustomHeader from '../components/shared-components/CustomHeader';
 import InterestScreen from '../screens/auth-screens/create-profile-screens/InterestScreen';
@@ -23,6 +22,7 @@ import HomeScreen from '../screens/home-screens';
 import ForgetPassword from '../screens/auth-screens/forget-password-screens/ForgetPassword';
 import CreateNewPassword from '../screens/auth-screens/forget-password-screens/CreateNewPassword';
 import HomeTabNavigator from './HomeModuleNavigator';
+import CreateProfileForm from '../components/auth-components/create-profile/CreateProfileForm';
 
 const Stack = createStackNavigator();
 
@@ -46,7 +46,6 @@ const AuthStackNavigator = () => {
         name="SplashScreen"
         component={SplashScreen}
         options={{headerShown: false}}
-
       />
       <Stack.Screen
         name="SigninScreenOne"
@@ -71,7 +70,7 @@ const AuthStackNavigator = () => {
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
       <Stack.Screen
         name="CreateProfile"
-        component={CreateProfile}
+        component={CreateProfileForm}
         options={{headerShown: false}}
       />
       <Stack.Screen name="GenderScreen" component={GenderScreen} />

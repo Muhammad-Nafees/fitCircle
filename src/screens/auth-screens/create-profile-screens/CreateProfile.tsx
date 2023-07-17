@@ -14,8 +14,13 @@ const CreateProfile = ({navigation}: any) => {
   };
 
   return (
+<<<<<<< HEAD
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView>
+=======
+    <View style={[STYLES.container, {paddingHorizontal: 0, paddingTop: 0}]}>
+      <ScrollView keyboardShouldPersistTaps="always">
+>>>>>>> main
         <View
           style={{
             position: 'relative',
