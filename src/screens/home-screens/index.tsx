@@ -34,7 +34,7 @@ const HomeScreen = () => {
   };
 
   const handleProfileNavigtion = () => {
-    
+    navigation.navigate('ProfileScreen', {posts: posts});
   };
   useEffect(() => {
     setIsRefreshing(true);
