@@ -14,12 +14,11 @@ const ChooseVerificationType = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userData = useSelector((state: RootState) => state.auth.user);
   const email = userData?.email;
-  console.log(userData, 'dasd');
   const handleSubmit = async (type: string) => {
     if (type == 'email') {
-      setVerificationType('email');
+      await setVerificationType('email');
     } else {
-      setVerificationType('phone');
+      await setVerificationType('phone');
     }
     try {
       setIsLoading(true);
@@ -30,7 +29,10 @@ const ChooseVerificationType = ({navigation}: any) => {
         type: 'success',
         text1: 'User Verified!',
       });
-      navigation.navigate('OtpScreen', {otp: data});
+      navigation.navigate('OtpScreen', {
+        otp: data,
+        verificationType: type,
+      });
       setIsLoading(false);
     } catch (error: any) {
       if (error?.response.status == 409) {

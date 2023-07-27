@@ -21,7 +21,6 @@ const socialMediaSchema = yup.object().shape({
     /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/i,
     'Invalid Facebook URL format'
   ),
-
   twitter: yup
     .string()
     .matches(
@@ -121,6 +120,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     initialTouched={true}
                     autoCapitalize='none'
                     handleChange={handleChange('facebook')}
+                    isFirstLetterLowercase={true}
                   />
                   <CustomInput
                     label="Instagram"
@@ -131,6 +131,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     initialTouched={true}
                     autoCapitalize='none'
                     handleChange={handleChange('instagram')}
+                    isFirstLetterLowercase={true}
                   />
                   <CustomInput
                     label="Twitter"
@@ -141,6 +142,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     initialTouched={true}
                     autoCapitalize='none'
                     handleChange={handleChange('twitter')}
+                    isFirstLetterLowercase={true}
                   />
                   <CustomInput
                     label="Tiktok"
@@ -151,6 +153,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     initialTouched={true}
                     autoCapitalize='none'
                     handleChange={handleChange('tiktok')}
+                    isFirstLetterLowercase={true}
                   />
                 </View>
               </View>

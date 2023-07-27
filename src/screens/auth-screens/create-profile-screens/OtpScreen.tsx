@@ -17,34 +17,41 @@ import {generateOtp, otpValidation, resetPassword} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const OtpScreen = ({navigation, route}: any) => {
-  console.log(route?.params?.email);
   const inputRefs = useRef<Array<TextInput | null>>([]);
   const [otp, setOtp] = useState<string[]>(Array());
   const accountType = useSelector((state: RootState) => state.auth.accountType);
   const userData = useSelector((state: RootState) => state.auth.user);
   const [email, setEmail] = useState<string | undefined>('');
+  const [phone, setPhone] = useState<string | undefined>('');
   const [generatedOtp, setGeneratedOtp] = useState(null);
-  const [isDisable, setIsDisable] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
-  console.log(accountType);
+  const [verificationType, setVerificationType] = useState('');
 
   const [secondsRemaining, setSecondsRemaining] = useState(60);
   useEffect(() => {
-    if (accountType == 'signup') {
+    setVerificationType(route?.params?.verificationType);
+    if (accountType === 'signup') {
       setEmail(userData?.email);
+      setPhone(userData?.phone);
     } else {
-      setEmail(route?.params?.email);
+      if (route?.params?.verificationType === 'phone') {
+        setPhone(userData?.phone);
+        setEmail('');
+      } else {
+        setEmail(route?.params?.email);
+        setPhone('');
+      }
     }
-    setGeneratedOtp(route?.params.otp);
-  }, []);
+    setGeneratedOtp(route?.params?.otp);
+  }, [route?.params?.verificationType]);
 
   const handleSubmit = async () => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
     setIsLoading(true);
     try {
-      const response = await otpValidation(convertOtpIntoNumber);
+      const response = await otpValidation(convertOtpIntoNumber, email);
       if (response?.status == 200) {
         setIsLoading(false);
         setSecondsRemaining(0);
@@ -57,7 +64,6 @@ const OtpScreen = ({navigation, route}: any) => {
           Toast.show({
             type: 'success',
             text1: 'OTP verified!',
-            // text2: 'Account Created Successfully!'
           });
           navigation.navigate('AccountVerified');
         } else {
@@ -65,7 +71,7 @@ const OtpScreen = ({navigation, route}: any) => {
             type: 'success',
             text1: 'OTP verified!',
           });
-          navigation.navigate('CreateNewPassword');
+          navigation.navigate('CreateNewPassword', {email: email});
         }
       }
     } catch (error: any) {
@@ -117,8 +123,7 @@ const OtpScreen = ({navigation, route}: any) => {
         secondsRemaining <= 1 && clearInterval(interval);
         return secondsRemaining - 1;
       });
-    }, 1000); //each count lasts for a second
-    //cleanup the interval on complete
+    }, 1000);
     return () => clearInterval(interval);
   }, [secondsRemaining]);
 
@@ -145,12 +150,19 @@ const OtpScreen = ({navigation, route}: any) => {
       <ScrollView>
         <View style={{gap: 10}}>
           <Text style={[STYLES.text16, {fontWeight: '700'}]}>
-            Verify your email
+            Let's Verify You
           </Text>
-          <Text style={[STYLES.text12, {fontWeight: '400'}]}>
-            Your email is :{' '}
-            <Text style={[STYLES.text14, {fontWeight: '500'}]}>{email}</Text>
-          </Text>
+          {verificationType === 'phone' ? (
+            <Text style={[STYLES.text12, {fontWeight: '400'}]}>
+              Your phone number is :{' '}
+              <Text style={[STYLES.text14, {fontWeight: '500'}]}>{phone}</Text>
+            </Text>
+          ) : (
+            <Text style={[STYLES.text12, {fontWeight: '400'}]}>
+              Your email is :{' '}
+              <Text style={[STYLES.text14, {fontWeight: '500'}]}>{email}</Text>
+            </Text>
+          )}
           <Text style={[STYLES.text12, {fontWeight: '400'}]}>
             Verification code is :{' '}
             <Text style={[STYLES.text14, {fontWeight: '500'}]}>

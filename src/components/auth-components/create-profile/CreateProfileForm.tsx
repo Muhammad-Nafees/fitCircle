@@ -20,9 +20,6 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {format} from 'date-fns';
 
-const countries = ['Country1', 'Country2', 'Country3', 'Country4'];
-const cities = ['City1', 'City2', 'City4', 'City4'];
-
 interface Props {
   profilePicture: any;
 }
@@ -41,7 +38,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [allCities, setAllCities] = useState([]);
   const [country, setCountry] = useState();
   const [countryCode, setCountryCode] = useState();
-
+  const [usernameError, setUsernameError] = useState<string>('');
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -115,6 +112,32 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     profileImage: null,
     coverImage: null,
   };
+
+  const handleUsernameBlur = async (username: any) => {
+    try {
+      const response = await fetch(
+        'https://fit-circle.cyclic.app/users/check-username',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: username,
+          }),
+        },
+      );
+      const data = await response.json();
+      if (!data.unique) {
+        setUsernameError(data.message);
+      } else {
+        setUsernameError('');
+      }
+    } catch (error) {
+      console.log('Error checking username:', error);
+      setUsernameError('Error checking username. Please try again later.');
+    }
+  };
   const handleSubmit = (values: IUser) => {
     const partialUserData: Partial<IUser> = {
       ...userData,
@@ -138,7 +161,9 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       profileImage: userData?.profileImage,
       coverImage: userData?.coverImage,
     };
-
+    if (usernameError) {
+      return;
+    }
     dispatch(setUserData({...partialUserData}));
 
     if (userRole == 'user')
@@ -190,10 +215,11 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               label="Username"
               placeholder="Enter your username"
               value={values.username}
-              error={errors.username}
+              error={errors.username || usernameError}
               touched={touched.username}
               initialTouched={true}
               handleChange={handleChange('username')}
+              handleBlur={() => handleUsernameBlur(values.username)}
             />
             <CustomInput
               label="Add bio"
@@ -303,7 +329,13 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             )}
           </View>
           <View style={styles.button}>
-            <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+            <CustomButton
+              onPress={async () => {
+                await handleUsernameBlur(values.username);
+                handleSubmit();
+              }}>
+              Continue
+            </CustomButton>
           </View>
         </>
       )}

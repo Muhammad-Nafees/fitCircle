@@ -1,8 +1,13 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import HomeScreen from '../screens/home-screens';
+import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
+import {SearchScreen} from '../screens/home-screens/SearchScreen';
+import HomeStackNavigator from './HomeStackNavigator';
+import {ProfileScreen} from '../screens/home-screens/ProfileScreen';
+import SearchProfileScreen from '../screens/home-screens/SearchProfile';
 
 const Home = require('../../assets/icons/home-page.png');
 const Search = require('../../assets/icons/search.png');
@@ -11,9 +16,6 @@ const Message = require('../../assets/icons/chat.png');
 const Dashboard = require('../../assets/icons/dashboard.png');
 
 const Tab = createBottomTabNavigator();
-
-const SearchScreen = () => <ScreenContent title="Search" />;
-const PostScreen = () => <ScreenContent title="Post" />;
 const MessageScreen = () => <ScreenContent title="Message" />;
 const DashboardScreen = () => <ScreenContent title="Dashboard" />;
 
@@ -22,8 +24,14 @@ interface ScreenContentProps {
 }
 
 const ScreenContent = ({title}: ScreenContentProps) => (
-  <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-    <Text>{title}</Text>
+  <View
+    style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#292a2c',
+    }}>
+    <Text style={{color: '#fff'}}>{title} Screen Coming Soon!</Text>
   </View>
 );
 
@@ -47,6 +55,21 @@ const CustomTabBarButton = ({children, onPress}: any) => (
   </TouchableOpacity>
 );
 
+const CustomTabBarIcon = ({focused, icon}: any) => {
+  return (
+    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <Image
+        style={{
+          width: 24,
+          height: 24,
+          tintColor: focused ? '#fff' : '#209BCC',
+        }}
+        source={icon}
+      />
+    </View>
+  );
+};
+
 const HomeTabNavigator = () => {
   return (
     <Tab.Navigator
@@ -66,14 +89,7 @@ const HomeTabNavigator = () => {
         component={HomeScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <Image
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: focused ? '#fff' : '#209BCC',
-              }}
-              source={Home}
-            />
+            <CustomTabBarIcon focused={focused} icon={Home} />
           ),
         }}
       />
@@ -82,20 +98,13 @@ const HomeTabNavigator = () => {
         component={SearchScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <Image
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: focused ? '#fff' : '#209BCC',
-              }}
-              source={Search}
-            />
+            <CustomTabBarIcon focused={focused} icon={Search} />
           ),
         }}
       />
       <Tab.Screen
         name="Post"
-        component={PostScreen}
+        component={HomeStackNavigator}
         options={{
           tabBarIcon: ({focused}) => (
             <Image
@@ -108,12 +117,8 @@ const HomeTabNavigator = () => {
               source={Post}
             />
           ),
-          tabBarButton: props => (
-            <CustomTabBarButton
-              onPress={() => console.log('Something')}
-              {...props}
-            />
-          ),
+          tabBarStyle: {display: 'none'},
+          tabBarButton: props => <CustomTabBarButton {...props} />,
         }}
       />
       <Tab.Screen
@@ -121,14 +126,7 @@ const HomeTabNavigator = () => {
         component={MessageScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <Image
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: focused ? '#fff' : '#209BCC',
-              }}
-              source={Message}
-            />
+            <CustomTabBarIcon focused={focused} icon={Message} />
           ),
         }}
       />
@@ -137,15 +135,22 @@ const HomeTabNavigator = () => {
         component={DashboardScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <Image
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: focused ? '#fff' : '#209BCC',
-              }}
-              source={Dashboard}
-            />
+            <CustomTabBarIcon focused={focused} icon={Dashboard} />
           ),
+        }}
+      />
+      <Tab.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="SearchProfile"
+        component={SearchProfileScreen}
+        options={{
+          tabBarButton: () => null,
         }}
       />
     </Tab.Navigator>

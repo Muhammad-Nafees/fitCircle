@@ -23,7 +23,7 @@ export const STYLES = StyleSheet.create({
     fontSize: moderateScale(16),
     lineHeight: verticalScale(19),
     fontWeight: '400',
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: '#fff',
   },
   text32: {
     fontSize: moderateScale(32),

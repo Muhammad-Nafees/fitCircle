@@ -25,6 +25,8 @@ interface Props {
   isPasswordIcon?: boolean;
   textAlignVertical?: string;
   handleChange: (e: any) => void;
+  handleBlur?: () => void;
+  isFirstLetterLowercase?: boolean;
 }
 
 const CustomInput = ({...props}: Props) => {
@@ -50,6 +52,14 @@ const CustomInput = ({...props}: Props) => {
 
   const handleInputBlur = () => {
     setIsFocused(false);
+    if (props.handleBlur) {
+      props.handleBlur();
+    }
+    if (props.isFirstLetterLowercase) {
+      const lowerCasedValue =
+        props.value.charAt(0).toLowerCase() + props.value.slice(1);
+      props.handleChange(lowerCasedValue);
+    }
   };
 
   const handleChangeText = (text: string) => {

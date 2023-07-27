@@ -73,6 +73,55 @@ export const createProfile = async (
   return response;
 };
 
+export const postContent = async (postData: any, authToken: string) => {
+  try {
+    const formData = new FormData();
+    formData.append('content', postData.content);
+    formData.append('visibility', postData.visibility);
+    formData.append('hexCode', postData.hexCode);
+    if (postData.cost) {
+      formData.append('cost', postData.cost);
+    }
+    if (postData.media) {
+      const mediaUri = postData.media;
+      const isImage =
+        mediaUri.endsWith('.jpg') ||
+        mediaUri.endsWith('.jpeg') ||
+        mediaUri.endsWith('.png');
+      const isVideo = mediaUri.endsWith('.mp4') || mediaUri.endsWith('.mov');
+      console.log(isVideo);
+      if (isImage) {
+        const type = 'image/jpeg';
+        formData.append('media', {
+          uri: mediaUri,
+          type: type,
+          name: `image_${Date.now()}.jpg`,
+        });
+      } else if (isVideo) {
+        const type = 'video/mp4';
+        formData.append('media', {
+          uri: mediaUri,
+          type: type,
+          name: `video_${Date.now()}.mp4`,
+        });
+      }
+    }
+    const response = await axios.post(
+      'https://fit-circle.cyclic.app/posts/create',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `${authToken}`,
+        },
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const generateOtp = async (email: string) => {
   const response = await axios.post(
     `https://fit-circle.cyclic.app/users/generate/otp`,
@@ -83,20 +132,28 @@ export const generateOtp = async (email: string) => {
   return response;
 };
 
-export const otpValidation = async (enteredOtp: number) => {
+export const otpValidation = async (
+  enteredOtp: number,
+  email: string | undefined,
+) => {
   const response = await axios.post(
     `https://fit-circle.cyclic.app/users/otpValidation`,
     {
       enteredOtp,
+      email,
     },
   );
   return response;
 };
-export const resetPassword = async (newPass: string) => {
+export const resetPassword = async (
+  newPass: string,
+  email: string | undefined,
+) => {
   const response = await axios.post(
     `https://fit-circle.cyclic.app/users/resetPassword`,
     {
       newPass,
+      email,
     },
   );
   return response;

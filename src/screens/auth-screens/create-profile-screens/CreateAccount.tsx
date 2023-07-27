@@ -1,5 +1,11 @@
 import React, {useRef, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+} from 'react-native';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomInput from '../../../components/shared-components/CustomInput';
@@ -72,82 +78,78 @@ const CreateAccount = ({navigation}: any) => {
     }
   };
   return (
-    <View style={STYLES.container}>
-      <ScrollView
-        keyboardShouldPersistTaps="always"
-        showsVerticalScrollIndicator={false}>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={signupSchema}
-          onSubmit={handleSubmit}>
-          {({
-            handleChange,
-            handleSubmit,
-            handleBlur,
-            submitForm,
-            values,
-            errors,
-            touched,
-            initialTouched,
-            setFieldValue,
-          }) => (
-            <>
-              <Text style={[STYLES.text16, {fontWeight: '700'}]}>
-                Create Account
-              </Text>
+    <ScrollView style={STYLES.container} keyboardShouldPersistTaps="always">
+      <Formik
+        initialValues={initialValues}
+        validationSchema={signupSchema}
+        onSubmit={handleSubmit}>
+        {({
+          handleChange,
+          handleSubmit,
+          handleBlur,
+          submitForm,
+          values,
+          errors,
+          touched,
+          initialTouched,
+          setFieldValue,
+        }) => (
+          <>
+            <Text style={[STYLES.text16, {fontWeight: '700'}]}>
+              Create Account
+            </Text>
 
-              <View style={styles.formContainer}>
-                <CustomInput
-                  label="Email"
-                  placeholder="lincolnsmith@gmail.com"
-                  value={values.email}
-                  error={errors.email}
-                  touched={touched.email}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  initialTouched={true}
-                  handleChange={handleChange('email')}
-                />
-                <CustomPhoneInput
-                  value={values.phone}
-                  error={errors.phone}
-                  touched={touched.phone}
-                  handleChange={handleChange('phone')}
-                  setFieldValue={setFieldValue}
-                />
-                <CustomInput
-                  label="Password"
-                  placeholder="Password"
-                  value={values.password}
-                  error={errors.password}
-                  touched={touched.password}
-                  isPasswordIcon={true}
-                  initialTouched={true}
-                  handleChange={handleChange('password')}
-                />
-                <CustomInput
-                  label="Re-Enter Password"
-                  placeholder="Re-Enter Password"
-                  value={values.confirmPassword}
-                  error={errors.confirmPassword}
-                  isPasswordIcon={true}
-                  touched={touched.confirmPassword}
-                  initialTouched={true}
-                  handleChange={handleChange('confirmPassword')}
-                />
-              </View>
-              <View style={styles.button}>
-                <CustomButton
-                  onPress={handleSubmit}
-                  isDisabled={isLoading ? true : false}>
-                  {isLoading ? <CustomLoader /> : 'Continue'}{' '}
-                </CustomButton>
-              </View>
-            </>
-          )}
-        </Formik>
-      </ScrollView>
-    </View>
+            <View style={styles.formContainer}>
+              <CustomInput
+                label="Email"
+                placeholder="lincolnsmith@gmail.com"
+                value={values.email}
+                error={errors.email}
+                touched={touched.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                initialTouched={true}
+                handleChange={handleChange('email')}
+              />
+              <CustomPhoneInput
+                value={values.phone}
+                error={errors.phone}
+                touched={touched.phone}
+                handleChange={handleChange('phone')}
+                setFieldValue={setFieldValue}
+              />
+              <CustomInput
+                label="Password"
+                placeholder="Password"
+                value={values.password}
+                error={errors.password}
+                touched={touched.password}
+                isPasswordIcon={true}
+                initialTouched={true}
+                handleChange={handleChange('password')}
+              />
+              <CustomInput
+                label="Re-Enter Password"
+                placeholder="Re-Enter Password"
+                value={values.confirmPassword}
+                error={errors.confirmPassword}
+                isPasswordIcon={true}
+                touched={touched.confirmPassword}
+                initialTouched={true}
+                handleChange={handleChange('confirmPassword')}
+              />
+            </View>
+            <View style={styles.button}>
+              <CustomButton
+                onPress={handleSubmit}
+                isDisabled={isLoading ? true : false}>
+                {isLoading ? <CustomLoader /> : 'Continue'}{' '}
+              </CustomButton>
+            </View>
+          </>
+        )}
+      </Formik>
+    </ScrollView>
   );
 };
 

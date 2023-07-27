@@ -40,9 +40,7 @@ export const createProfileSchema = (userRole: any) => {
     lastName: Yup.string()
       .required('Last Name is required')
       .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
-    username: Yup.string()
-      .required('Username is required')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    username: Yup.string().required('Username is required'),
     bio: Yup.string()
       .required('Bio is required')
       .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),

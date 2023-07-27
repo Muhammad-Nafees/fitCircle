@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ScrollView, View} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {Text} from 'react-native';
@@ -19,16 +19,20 @@ interface FormValues {
 
 const CreateNewPassword = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string | undefined>('');
   const initialValues: FormValues = {
     newPassword: '',
     confirmNewPassword: '',
   };
+
+  useEffect(() => {
+    setEmail(route?.params.email);
+  }, []);
+
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      const response = await resetPassword(
-        values.newPassword
-      );
+      const response = await resetPassword(values.newPassword, email);
       if (response?.status == 200) {
         setIsLoading(false);
         Toast.show({
@@ -37,7 +41,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
         });
         navigation.navigate('LoginFormScreen');
       }
-    } catch (error:any) {
+    } catch (error: any) {
       Toast.show({
         type: 'error',
         text1: 'Server Error',

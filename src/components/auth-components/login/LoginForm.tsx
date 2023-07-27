@@ -24,13 +24,16 @@ import {useState} from 'react';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../shared-components/CustomLoader';
 import {loginIn} from '../../../api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import {
   authenticate,
   setaccessToken,
+  setAuthorizationToken,
   setUserData,
   setuserRole,
 } from '../../../redux/authSlice';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -55,11 +58,11 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       const response = await loginIn(values.email, values.password);
-      console.log(response);
       setIsLoading(false);
       if (response?.status === 200) {
-        console.log(response?.data);
         dispatch(authenticate());
+        dispatch(setAuthorizationToken(response?.headers.authorization));
+        storeData(response?.headers.authorization);
         dispatch(setuserRole(response.data.role));
         dispatch(setaccessToken(response?.data.token));
         dispatch(setUserData(response?.data));
@@ -94,6 +97,14 @@ const LoginForm = () => {
     }
   };
 
+  const storeData = async (value: any) => {
+    try {
+      await AsyncStorage.setItem('authToken', value);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <ScrollView
       nestedScrollEnabled={true}
@@ -121,7 +132,7 @@ const LoginForm = () => {
             }}>
             <CustomInput
               label="Email"
-              placeholder="Username"
+              placeholder="Email"
               keyboardType="email-address"
               autoCapitalize="none"
               value={values.email}

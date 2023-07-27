@@ -8,10 +8,9 @@ import GenderForm from '../../../components/auth-components/create-profile/Gende
 import {useSelector} from 'react-redux';
 
 const GenderScreen = ({navigation, route}: any) => {
-
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
-       <ScrollView>
+      <ScrollView>
         <View style={styles.imageContainer}>
           {route.params?.profilePicture == undefined ? (
             <View style={styles.image} />
@@ -24,7 +23,7 @@ const GenderScreen = ({navigation, route}: any) => {
               style={{width: 142, height: 142, borderRadius: 71}}
             />
           )}
-        </View> 
+        </View>
         <GenderForm />
       </ScrollView>
     </View>
