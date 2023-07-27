@@ -6,8 +6,6 @@ import HomeScreen from '../screens/home-screens';
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
-import {ProfileScreen} from '../screens/home-screens/ProfileScreen';
-import SearchProfileScreen from '../screens/home-screens/SearchProfile';
 
 const Home = require('../../assets/icons/home-page.png');
 const Search = require('../../assets/icons/search.png');
@@ -137,20 +135,6 @@ const HomeTabNavigator = () => {
           tabBarIcon: ({focused}) => (
             <CustomTabBarIcon focused={focused} icon={Dashboard} />
           ),
-        }}
-      />
-      <Tab.Screen
-        name="ProfileScreen"
-        component={ProfileScreen}
-        options={{
-          tabBarButton: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="SearchProfile"
-        component={SearchProfileScreen}
-        options={{
-          tabBarButton: () => null,
         }}
       />
     </Tab.Navigator>
