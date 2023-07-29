@@ -37,7 +37,6 @@ export const SearchScreen = () => {
       if (searchQuery.trim() !== '') {
         const endpoint = `home/search/${searchQuery}`;
         const response = await axiosInstance.get(endpoint);
-        console.log('API Response:', response.data);
         setIsLoading(false);
         setSearchData(response.data);
       }
@@ -69,7 +68,7 @@ export const SearchScreen = () => {
 
   const renderItem = ({item}: any) => (
     <View style={styles.searchResultContainer}>
-      <UserSearch username={item.username} email={item.email} />
+      <UserSearch username={item.username} email={item.email} id={item._id} />
     </View>
   );
 

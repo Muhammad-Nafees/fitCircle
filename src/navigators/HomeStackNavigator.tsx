@@ -8,7 +8,7 @@ import PaymentScreen from '../screens/home-screens/PaymentScreen';
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
 import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
-import {ProfileScreen} from '../screens/home-screens/ProfileScreen';
+import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 const HomeStackNavigator = () => {

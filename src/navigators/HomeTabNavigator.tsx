@@ -6,8 +6,8 @@ import HomeScreen from '../screens/home-screens';
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
-import {ProfileScreen} from '../screens/home-screens/ProfileScreen';
-import SearchProfileScreen from '../screens/home-screens/SearchProfile';
+import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
+import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 
 const Home = require('../../assets/icons/home-page.png');
 const Search = require('../../assets/icons/search.png');
