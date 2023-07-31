@@ -113,6 +113,7 @@ const LoginForm = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={loginSchema}
+        validateOnChange={false}
         onSubmit={handleSubmit}>
         {({
           handleChange,

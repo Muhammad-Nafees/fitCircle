@@ -57,7 +57,7 @@ export const SearchScreen = () => {
   };
 
   const handleFilterSelection = (option: any) => {
-    setSelectedFilter(option);
+    setSelectedFilter(option.toLowerCase());
     setIsSearchActive(false);
   };
 
@@ -65,7 +65,7 @@ export const SearchScreen = () => {
     navigation.goBack();
   };
 
-  let placeholderText = selectedFilter ? `Select ${selectedFilter}` : 'Search';
+  let placeholderText = selectedFilter ? `Search ${selectedFilter} ...` : 'Search';
 
   const renderItem = ({item}: any) => (
     <View style={styles.searchResultContainer}>
@@ -109,7 +109,13 @@ export const SearchScreen = () => {
                     key={index}
                     style={styles.dropdownItem}
                     onPress={() => handleFilterSelection(option)}>
-                    <Text style={styles.dropdownItemText}>{option}</Text>
+                    <Text
+                      style={[
+                        styles.dropdownItemText,
+                        index === 2 ? {borderBottomWidth: 0} : null,
+                      ]}>
+                      {option}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -191,14 +197,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   dropdownItem: {
-    paddingVertical: verticalScale(8),
+    paddingVertical: verticalScale(5),
   },
   dropdownItemText: {
     color: 'white',
     fontSize: 14,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.6,
     borderColor: '#fff',
-    paddingBottom: verticalScale(8),
+    paddingBottom: verticalScale(6),
   },
   submitButton: {
     color: '#0193c0',

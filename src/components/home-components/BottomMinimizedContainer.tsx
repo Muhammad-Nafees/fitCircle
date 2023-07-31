@@ -40,10 +40,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     width: '100%',
     justifyContent: 'flex-end',
-    flex: 0.5,
     flexDirection: 'row',
     paddingHorizontal: horizontalScale(16),
     alignItems: 'center',
+    paddingVertical: 30,
   },
   bottomMinimizedTextContainer: {
     flex: 1,

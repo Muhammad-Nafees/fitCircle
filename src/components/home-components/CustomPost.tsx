@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import {Avatar} from 'react-native-paper';
 import Modal from 'react-native-modal';
@@ -14,11 +15,13 @@ const Like = require('../../../assets/icons/like.png');
 const LikeFilled = require('../../../assets/icons/likeFilled.png');
 const Share = require('../../../assets/icons/share.png');
 const CommentIcon = require('../../../assets/icons/comment.png');
+const OptionIcon = require('../../../assets/icons/customPostOption.png');
 import CustomButton from '../shared-components/CustomButton';
 import axiosInstance from '../../api/interceptor';
 import {Comment} from './Comment';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 
+const width = Dimensions.get('window').width;
 interface CustomPostProps {
   userId: string;
   post: {
@@ -65,12 +68,24 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
     const postTime = new Date(createdAt).getTime();
     const currentTime = new Date().getTime();
     const timeDifference = currentTime - postTime;
-    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-    if (hours < 24) {
-      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
-    } else {
-      const days = Math.floor(hours / 24);
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    if (months > 0) {
+      return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+    } else if (weeks > 0) {
+      return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+    } else if (days > 0) {
       return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+    } else if (hours > 0) {
+      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+    } else if (minutes > 0) {
+      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+    } else {
+      return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
     }
   };
 
@@ -130,7 +145,6 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
         console.error('Error while commenting on the post:', error);
       });
   };
-
   return (
     <View>
       <View
@@ -148,12 +162,20 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
             style={styles.avatarText}
           />
         )}
-        <View style={styles.postTextContainer}>
-          <Text style={styles.postName}>{username}</Text>
-          <View style={styles.postDetails}>
-            <Text style={styles.postId}>{email}</Text>
-            <Text style={styles.postTime}>{getTimeDifference()}</Text>
+        <View style={styles.postParentContainer}>
+          <View style={styles.postTextContainer}>
+            <Text style={styles.postName}>{username}</Text>
+            <View style={styles.postDetails}>
+              <Text style={styles.postId}>{email}</Text>
+              <Text style={styles.postTime}>{getTimeDifference()}</Text>
+            </View>
           </View>
+          <TouchableOpacity>
+            <Image
+              source={OptionIcon}
+              style={{width: 24, height: 35, tintColor: '#fff'}}
+            />
+          </TouchableOpacity>
         </View>
       </View>
       {isContentLocked && (
@@ -249,6 +271,11 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
 };
 
 const styles = StyleSheet.create({
+  postParentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: width - horizontalScale(65),
+  },
   postContainer: {
     flexDirection: 'row',
     alignItems: 'center',

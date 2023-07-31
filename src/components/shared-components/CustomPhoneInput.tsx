@@ -17,6 +17,9 @@ interface Props {
   error?: string;
   touched?: boolean;
   handleChange: (number: string) => void;
+  phoneInput: any;
+  isError: any;
+  setIsError: any;
 }
 
 const CustomPhoneInput = ({
@@ -26,13 +29,10 @@ const CustomPhoneInput = ({
   value,
   touched,
   setFieldValue,
+  phoneInput,
+  isError,
+  setIsError,
 }: Props) => {
-  const phoneInput = useRef<PhoneInput>(null);
-  const [isValidPhoneNumber, setIsValidPhoneNumber] = useState<
-    boolean | undefined
-  >(false);
-  const [isError, setIsError] = useState('');
-
   const handleCountryChange = () => {
     phoneInput.current?.setState({number: ''});
     setFieldValue('phone', '');
@@ -80,12 +80,6 @@ const CustomPhoneInput = ({
             }}
             value={value}
             onChangeText={phoneNumber => {
-              const isValid = phoneInput.current?.isValidNumber(phoneNumber);
-              if (!isValid) {
-                setIsError('Invalid phone number!');
-              } else {
-                setIsError('');
-              }
               handleChange(phoneNumber);
             }}
             onChangeCountry={handleCountryChange}

@@ -21,7 +21,7 @@ import DropdownTextInput from '../../shared-components/CustomDropdownInput';
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData, 'Dasds');
+  console.log(previousUserData?.profileImage, 'Dasds');
 
   const dispatch = useDispatch();
 
@@ -43,7 +43,6 @@ const GenderForm = () => {
       bodytype: values.bodytype,
       activity: values.activity,
     };
-
     dispatch(setUserData(partialUserData));
     navigation.navigate('InterestScreen');
   };
@@ -52,6 +51,7 @@ const GenderForm = () => {
     <Formik
       initialValues={initialValues}
       validationSchema={genderSchema}
+      validateOnChange={false}
       onSubmit={handleSubmit}>
       {({
         handleChange,

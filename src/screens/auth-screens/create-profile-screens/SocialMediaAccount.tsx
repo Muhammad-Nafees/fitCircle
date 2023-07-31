@@ -16,11 +16,11 @@ import * as yup from 'yup';
 
 const socialMediaSchema = yup.object().shape({
   facebook: yup
-  .string()
-  .matches(
-    /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/i,
-    'Invalid Facebook URL format'
-  ),
+    .string()
+    .matches(
+      /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/i,
+      'Invalid Facebook URL format',
+    ),
   twitter: yup
     .string()
     .matches(
@@ -93,6 +93,7 @@ const SocialMediaAccount = ({navigation}: any) => {
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
+          validateOnChange={false}
           validationSchema={socialMediaSchema}>
           {({
             handleChange,
@@ -118,7 +119,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     error={errors.facebook}
                     touched={touched.facebook}
                     initialTouched={true}
-                    autoCapitalize='none'
+                    autoCapitalize="none"
                     handleChange={handleChange('facebook')}
                     isFirstLetterLowercase={true}
                   />
@@ -129,7 +130,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     error={errors.instagram}
                     touched={touched.instagram}
                     initialTouched={true}
-                    autoCapitalize='none'
+                    autoCapitalize="none"
                     handleChange={handleChange('instagram')}
                     isFirstLetterLowercase={true}
                   />
@@ -140,7 +141,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     error={errors.twitter}
                     touched={touched.twitter}
                     initialTouched={true}
-                    autoCapitalize='none'
+                    autoCapitalize="none"
                     handleChange={handleChange('twitter')}
                     isFirstLetterLowercase={true}
                   />
@@ -151,7 +152,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     error={errors.tiktok}
                     touched={touched.tiktok}
                     initialTouched={true}
-                    autoCapitalize='none'
+                    autoCapitalize="none"
                     handleChange={handleChange('tiktok')}
                     isFirstLetterLowercase={true}
                   />

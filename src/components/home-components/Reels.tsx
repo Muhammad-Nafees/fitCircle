@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,17 +6,20 @@ import {
   Image,
   TouchableOpacity,
   Share,
+  Dimensions,
 } from 'react-native';
 import Video from 'react-native-video';
 import {Avatar, Button} from 'react-native-paper';
 import CustomDialog from '../shared-components/CustomDialog';
 const FavouritesIcon = require('../../../assets/icons/favourites.png');
 const ShareIcon = require('../../../assets/icons/share2.png');
-// const LockOpenIcon = require('../../../assets/icons/lock-open.png');
+const PlayIcon = require('../../../assets/icons/playIcon.png');
+const PauseIcon = require('../../../assets/icons/pauseIcon.png');
+const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-
+const {width, height} = Dimensions.get('window');
 interface ReelsProps {
   post: {
     _id: string;
@@ -24,7 +27,6 @@ interface ReelsProps {
     content?: string;
     likes: any[];
     cost: 0;
-    comments: any[];
     shares: any[];
     createdAt: string;
     user: {
@@ -33,16 +35,36 @@ interface ReelsProps {
       email?: string;
     };
   };
+  isFocused: any;
 }
 
-export const ReelsComponent = ({post}: ReelsProps) => {
-  const {_id, media, content, likes, comments, shares, createdAt, user, cost} =
-    post;
-  console.log(media);
+export const ReelsComponent = ({post, isFocused}: ReelsProps) => {
+  const {_id, media, content, likes, shares, createdAt, user, cost} = post;
   const {profileImageUrl, username, email} = user;
+  console.log(media);
   const videoRef = useRef(null);
   const isLocked = cost && cost > 0;
-  const [showDialog, setShowDialog] = useState(false);
+  const [showPlayIcon, setShowPlayIcon] = useState(true);
+  const [play, setPlay] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    let hideButtonTimer: any;
+    if (play && showPlayIcon) {
+      hideButtonTimer = setTimeout(() => {
+        setShowPlayIcon(false);
+      }, 3000);
+    }
+    return () => {
+      clearTimeout(hideButtonTimer);
+    };
+  }, [play, showPlayIcon]);
+
+  const handleVideoTouch = () => {
+    if (play && !showPlayIcon) {
+      setShowPlayIcon(true);
+    }
+  };
 
   const onBuffer = () => {
     console.log('onBuffer');
@@ -63,11 +85,7 @@ export const ReelsComponent = ({post}: ReelsProps) => {
       .catch(error => {
         console.error('Error while commenting on the post:', error);
       });
-    setShowDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setShowDialog(false);
+    navigation.navigate('FavoriteDialog');
   };
 
   const handleShareVideo = async () => {
@@ -81,7 +99,6 @@ export const ReelsComponent = ({post}: ReelsProps) => {
         } else {
         }
       } else if (result.action === Share.dismissedAction) {
-        // Dismissed
       }
     } catch (error) {
       console.error('Error sharing video:', error);
@@ -113,19 +130,45 @@ export const ReelsComponent = ({post}: ReelsProps) => {
         <View style={styles.lockedOverlay}>
           <View style={styles.lockedContainer}>
             <Text style={styles.lockedText}>{content}</Text>
-            <Text style={styles.lockedText}>This Video Is Locked</Text>
+            <TouchableOpacity style={styles.lockedButtonContainer}>
+              <Text style={{color: '#fff'}}>
+                Unlock this video for{' '}
+                <Text
+                  style={{color: '#30D298', fontWeight: '600', fontSize: 16}}>
+                  ${cost}
+                </Text>
+              </Text>
+              <View style={styles.lockedIconContainer}>
+                <Image source={LockOpenIcon} style={styles.lockIcon} />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       ) : null}
+      <View style={styles.playIconContainer}>
+        {showPlayIcon && (
+          <TouchableOpacity onPress={() => setPlay(!play)}>
+            <View style={styles.playIconBackground}>
+              <Image
+                source={play ? PauseIcon : PlayIcon}
+                style={styles.playIcon}
+              />
+            </View>
+          </TouchableOpacity>
+        )}
+      </View>
       <Video
         ref={videoRef}
         onBuffer={onBuffer}
         onError={onError}
         resizeMode="cover"
+        repeat={true}
         source={{
           uri: media,
         }}
         style={{width: '100%', height: '100%'}}
+        paused={!play}
+        onTouchStart={() => setShowPlayIcon(true)}
       />
       <View style={styles.textContentContainer}>
         <Text style={styles.textContent}>{content}</Text>
@@ -148,27 +191,18 @@ export const ReelsComponent = ({post}: ReelsProps) => {
           </TouchableOpacity>
         </View>
       </View>
-      {showDialog && (
-        <CustomDialog
-          name="Added to favorites!"
-          buttonText="Return"
-          isLoading={false}
-          isIcon={true}
-          button1Function={handleCloseDialog}
-          onContinue={() => {}}
-          navigation={null}
-        />
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    position: 'relative',
-    height: verticalScale(610),
+    height: height - verticalScale(180),
+    width: width,
     paddingBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
   },
   topLeftContent: {
     flexDirection: 'row',
@@ -243,7 +277,7 @@ const styles = StyleSheet.create({
   lockedText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '600',
     lineHeight: 24,
     marginRight: horizontalScale(30),
   },
@@ -282,6 +316,68 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     backgroundColor: '#ebebeb',
+  },
+  playIconContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '47%',
+    transform: [
+      {translateX: -horizontalScale(38) / 2},
+      {translateY: -verticalScale(41) / 2},
+    ],
+    zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playIconBackground: {
+    backgroundColor: 'rgba(141, 156, 152, 0.8)',
+    width: horizontalScale(55),
+    height: verticalScale(55),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playIcon: {
+    width: horizontalScale(38),
+    height: verticalScale(41),
+    tintColor: '#fff',
+  },
+  lockIcon: {
+    width: 18,
+    height: 18,
+    tintColor: '#fff',
+  },
+  lockedButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#209BCC',
+    borderRadius: 40,
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: horizontalScale(16),
+    marginVertical: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  lockedIconContainer: {
+    backgroundColor: '#43c1df',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginLeft: 12,
+    borderRadius: 40,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 

@@ -65,6 +65,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
         <Formik
           initialValues={initialValues}
           validationSchema={createNewPasswordSchema}
+          validateOnChange={false}
           onSubmit={handleSubmit}>
           {({
             handleChange,

@@ -23,6 +23,7 @@ import {
 import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+import PhoneInput from 'react-native-phone-number-input';
 
 export interface CreateAccountFormValues {
   email: string;
@@ -34,6 +35,18 @@ export interface CreateAccountFormValues {
 const CreateAccount = ({navigation}: any) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const phoneInput = useRef<PhoneInput>(null);
+  const [isError, setIsError] = useState('');
+
+  const phoneNumberCheck = (values: any) => {
+    const isValid = phoneInput.current?.isValidNumber(values);
+    if (!isValid) {
+      setIsError('Invalid phone number!');
+    } else {
+      setIsError('');
+    }
+  };
+
   const initialValues: CreateAccountFormValues = {
     email: '',
     phone: null,
@@ -42,6 +55,10 @@ const CreateAccount = ({navigation}: any) => {
   };
   const handleSubmit = async (values: CreateAccountFormValues) => {
     setIsLoading(true);
+    if (isError) {
+      setIsLoading(false);
+      return;
+    }
     try {
       const response = await register(values);
       console.log('first');
@@ -82,23 +99,20 @@ const CreateAccount = ({navigation}: any) => {
       <Formik
         initialValues={initialValues}
         validationSchema={signupSchema}
+        validateOnChange={false}
         onSubmit={handleSubmit}>
         {({
           handleChange,
           handleSubmit,
-          handleBlur,
-          submitForm,
           values,
           errors,
           touched,
-          initialTouched,
           setFieldValue,
         }) => (
           <>
             <Text style={[STYLES.text16, {fontWeight: '700'}]}>
               Create Account
             </Text>
-
             <View style={styles.formContainer}>
               <CustomInput
                 label="Email"
@@ -117,6 +131,9 @@ const CreateAccount = ({navigation}: any) => {
                 touched={touched.phone}
                 handleChange={handleChange('phone')}
                 setFieldValue={setFieldValue}
+                phoneInput={phoneInput}
+                setIsError={setIsError}
+                isError={isError}
               />
               <CustomInput
                 label="Password"
@@ -141,7 +158,10 @@ const CreateAccount = ({navigation}: any) => {
             </View>
             <View style={styles.button}>
               <CustomButton
-                onPress={handleSubmit}
+                onPress={async () => {
+                  await phoneNumberCheck(values.phone);
+                  handleSubmit();
+                }}
                 isDisabled={isLoading ? true : false}>
                 {isLoading ? <CustomLoader /> : 'Continue'}{' '}
               </CustomButton>
@@ -162,10 +182,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 4,
   },
-
   button: {
     marginTop: verticalScale(125),
-    paddingHorizontal: horizontalScale(27),
+    paddingHorizontal: horizontalScale(22),
     paddingBottom: verticalScale(20),
   },
 });

@@ -1,6 +1,7 @@
 import {useSelector} from 'react-redux';
 import * as Yup from 'yup';
 import {RootState} from '../redux/store';
+import moment from 'moment';
 
 export const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -66,7 +67,22 @@ export const createProfileSchema = (userRole: any) => {
         /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
         'Invalid date format. Must be dd/mm/yyyy',
       )
-      .required(),
+      .required()
+      .test('date-of-birth', 'Invalid date of birth', function (value) {
+        if (!value) {
+          return true;
+        }
+        const dateOfBirth = moment(value, 'DD/MM/YYYY');
+        const currentDate = moment();
+        if (dateOfBirth.isAfter(currentDate)) {
+          return this.createError({
+            path: 'dob',
+            message: "Date of birth can't be greater than the current date.",
+          });
+        }
+
+        return true;
+      }),
     hourlyRate: Yup.string().test({
       name: 'hourlyRate',
       exclusive: true,
@@ -91,7 +107,8 @@ export const genderSchema = Yup.object().shape({
   gender: Yup.string().required('Select gender'),
   age: Yup.number()
     .required('Age is required')
-    .min(14, 'Age must be greater than 14'),
+    .min(14, 'Age must be greater than 14')
+    .max(99, 'Age must be less than 100'),
   height: Yup.string()
     .required('Height is required')
     .test('not-zero', 'Height must not be zero', value => value !== '0'),

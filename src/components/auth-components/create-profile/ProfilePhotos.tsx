@@ -87,6 +87,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       includeBase64: false,
+      quality: 0.2,
       maxHeight: 10000,
       maxWidth: 10000,
     };
@@ -102,7 +103,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
               type: response.assets[0].type,
             },
           };
-          // dispatch(setUserData(partialUserData));
+          dispatch(setUserData({...partialUserData}));
           setSelectedProfileImage({resourcePath: response.assets[0].uri});
           onSelectProfilePicture({resourcePath: response.assets[0].uri});
         }
@@ -119,7 +120,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
               type: response.assets[0].type,
             },
           };
-          // dispatch(setUserData(partialUserData));
+          dispatch(setUserData({...partialUserData}));
         }
       });
     }
@@ -129,6 +130,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       includeBase64: false,
+      quality: 0.5,
       maxHeight: 10000,
       maxWidth: 10000,
     };
@@ -143,7 +145,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
             type: response.assets[0].type,
           },
         };
-        // dispatch(setUserData(partialUserData));
+        dispatch(setUserData({...partialUserData}));
         setSelectedProfileImage({resourcePath: response.assets[0].uri});
         onSelectProfilePicture({resourcePath: response.assets[0].uri});
       }

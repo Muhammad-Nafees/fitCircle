@@ -12,6 +12,7 @@ const ProfileIcon = require('../../../assets/icons/profile.png');
 export const PostOptionsIcon = ({
   handleCreatePostIconPress,
   handlePostOptionsIconModalClose,
+  handleVideoButtonPress,
 }: any) => {
   return (
     <View style={styles.bottomOptions}>
@@ -27,7 +28,9 @@ export const PostOptionsIcon = ({
         />
         <Text style={styles.options}>Create Post</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={handleVideoButtonPress}>
         <Image
           source={VideoIcon}
           style={{width: 24, height: 24, tintColor: '#0192c0'}}

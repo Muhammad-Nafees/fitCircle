@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Text, View, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {Formik} from 'formik';
@@ -19,6 +19,7 @@ import {getCities, getCountries} from '../../../api';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {format} from 'date-fns';
+import PhoneInput from 'react-native-phone-number-input';
 
 interface Props {
   profilePicture: any;
@@ -39,6 +40,17 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [country, setCountry] = useState();
   const [countryCode, setCountryCode] = useState();
   const [usernameError, setUsernameError] = useState<string>('');
+  const phoneInput = useRef<PhoneInput>(null);
+  const [isError, setIsError] = useState('');
+
+  const phoneNumberCheck = (values: any) => {
+    const isValid = phoneInput.current?.isValidNumber(values);
+    if (!isValid) {
+      setIsError('Invalid phone number!');
+    } else {
+      setIsError('');
+    }
+  };
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -139,6 +151,9 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     }
   };
   const handleSubmit = (values: IUser) => {
+    if(isError){
+      return;
+    }
     const partialUserData: Partial<IUser> = {
       ...userData,
       role: userRole,
@@ -179,6 +194,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       initialValues={initialValues}
       validationSchema={createProfileSchema(userRole)}
       validationContext={{userRole: userRole}} // Provide the context here
+      validateOnChange={false}
       onSubmit={handleSubmit}>
       {({
         handleChange,
@@ -219,7 +235,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               touched={touched.username}
               initialTouched={true}
               handleChange={handleChange('username')}
-              handleBlur={() => handleUsernameBlur(values.username)}
             />
             <CustomInput
               label="Add bio"
@@ -240,6 +255,9 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               error={errors.phone}
               touched={touched.phone}
               handleChange={handleChange('phone')}
+              phoneInput={phoneInput}
+              setIsError={setIsError}
+              isError={isError}
             />
             <CustomSelect
               label="Country"
@@ -332,6 +350,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             <CustomButton
               onPress={async () => {
                 await handleUsernameBlur(values.username);
+                await phoneNumberCheck(values.phone);
                 handleSubmit();
               }}>
               Continue

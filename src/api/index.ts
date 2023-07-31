@@ -49,15 +49,15 @@ export const createProfile = async (
   formData.append('hourlyRate', userData.hourlyRate);
   formData.append('interest', userData.interest);
   formData.append('selectedCommunities', userData.selectedCommunities);
+  formData.append('profileImage', userData.profileImage);
+  formData.append('coverImage', userData.coverImage);
+  formData.append('certificateImages', userData.certificateImages);
   if (userData?.socialMediaLinks) {
     userData.socialMediaLinks.forEach((link: ISocial, index: number) => {
       formData.append(`socialMediaLinks[${index}][name]`, link.name);
       formData.append(`socialMediaLinks[${index}][link]`, link.link);
     });
   }
-  // formData.append('profileImage', userData.profileImage);
-  // formData.append('coverImage', userData.coverImage);
-  // formData.append('certificateImages', userData.certificateImages);
 
   const response = await axios.post(
     `https://fit-circle.cyclic.app/home/createProfile`,
