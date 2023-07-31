@@ -2,13 +2,10 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import {View} from 'react-native';
 import {horizontalScale, verticalScale} from '../utils/metrics';
-import PaymentScreen from '../screens/home-screens/PaymentScreen';
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
 import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
-import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 const HomeStackNavigator = () => {
@@ -25,11 +22,6 @@ const HomeStackNavigator = () => {
       <Stack.Screen
         name="AddPostScreen"
         component={AddPostScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="PaymentScreen"
-        component={PaymentScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen

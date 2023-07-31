@@ -31,7 +31,10 @@ const ForgetPassword = ({navigation}: any) => {
         type: 'success',
         text1: 'User Verified!',
       });
-      navigation.navigate('OtpScreen', {otp: data, email: values.email.toLowerCase()});
+      navigation.navigate('OtpScreen', {
+        otp: data,
+        email: values.email.toLowerCase(),
+      });
     } catch (error: any) {
       if (error.response.status == 409) {
         Toast.show({
@@ -60,6 +63,7 @@ const ForgetPassword = ({navigation}: any) => {
       <Formik
         initialValues={initialValues}
         validationSchema={forgetPasswordSchema}
+        validateOnChange={false}
         onSubmit={handleSubmit}>
         {({
           handleChange,

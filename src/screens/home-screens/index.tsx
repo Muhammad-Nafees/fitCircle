@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -17,10 +18,15 @@ import {ReelsComponent} from '../../components/home-components/Reels';
 import {useNavigation} from '@react-navigation/native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 const SearchIcon = require('../../../assets/icons/search.png');
+import Carousel from 'react-native-reanimated-carousel';
+const NotificationIcon = require('../../../assets/icons/notification.png');
 
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 const HomeScreen = () => {
   const userData = useSelector((state: RootState) => state.auth.user);
-  const profileImageUrl = userData?.profileImage;
+  console.log(userData);
+  const profileImageUrl = userData?.profileImageUrl;
   const username = userData?.username;
   const [userId, setUserId] = useState(userData?._id);
   const [posts, setPosts] = useState([]);
@@ -28,20 +34,25 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [listKey, setListKey] = useState<number>(0);
+  const [filteredVideos, setFilteredVideos] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSearchBarFocus = () => {
     navigation.navigate('Search');
   };
 
-  const handleProfileNavigtion = () => {
-    navigation.navigate('ProfileScreen', {posts: posts});
-  };
   useEffect(() => {
     setIsRefreshing(true);
     fetchPosts();
     setUserId(userData?._id);
-    handleButtonPress('Creator');
   }, []);
+
+  useEffect(() => {
+    const videoPosts = posts.filter(
+      post => post.media && post.media.endsWith('.mp4'),
+    );
+    setFilteredVideos(videoPosts);
+  }, [posts]);
 
   const fetchPosts = async () => {
     try {
@@ -65,28 +76,18 @@ const HomeScreen = () => {
     setSelectedButton(button);
   };
 
-  const renderItem = ({item}: {item: any}) => {
-    const visibility = item.visibility;
-    if (
-      (selectedButton === 'My Circle' &&
-        (visibility === 'followers' || visibility === 'subscribers')) ||
-      (selectedButton === 'Creator' && visibility === 'public')
-    ) {
-      if (item.media && item.media.endsWith('.mp4')) {
-        return <ReelsComponent post={item} />;
-      } else {
-        return <CustomPost post={item} userId={userId} />;
-      }
-    } else {
+  const renderCustomPost = ({item}: any) => {
+    if (item && item.media && item.media.endsWith('.mp4')) {
       return null;
     }
+    return <CustomPost post={item} userId={userId} />;
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={handleProfileNavigtion}>
+          <TouchableOpacity>
             {profileImageUrl ? (
               <Avatar.Image size={40} source={{uri: profileImageUrl}} />
             ) : (
@@ -106,48 +107,88 @@ const HomeScreen = () => {
             />
           </View>
         </View>
-        <View style={styles.topContainerButtons}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View></View>
+          <View></View>
+          <View></View>
+          <View style={styles.topContainerButtons}>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                selectedButton === 'Creator'
+                  ? {backgroundColor: '#019acd'}
+                  : {},
+              ]}>
+              <TouchableOpacity onPress={() => handleButtonPress('My Circle')}>
+                <Text
+                  style={[
+                    styles.button1Text,
+                    selectedButton === 'My Circle'
+                      ? {backgroundColor: '#019acd'}
+                      : {color: '#444444'},
+                  ]}>
+                  My Circle
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleButtonPress('Creator')}>
+                <Text
+                  style={[
+                    styles.button2Text,
+                    selectedButton === 'Creator'
+                      ? {backgroundColor: '#019acd'}
+                      : {color: '#444444'},
+                  ]}>
+                  Creator
+                </Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
-            style={[
-              styles.button,
-              selectedButton === 'Creator' ? {backgroundColor: '#019acd'} : {},
-            ]}>
-            <TouchableOpacity onPress={() => handleButtonPress('My Circle')}>
-              <Text
-                style={[
-                  styles.button1Text,
-                  selectedButton === 'My Circle'
-                    ? {backgroundColor: '#019acd'}
-                    : {},
-                ]}>
-                My Circle
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleButtonPress('Creator')}>
-              <Text
-                style={[
-                  styles.button2Text,
-                  selectedButton === 'Creator'
-                    ? {backgroundColor: '#019acd'}
-                    : {},
-                ]}>
-                Creator
-              </Text>
-            </TouchableOpacity>
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginHorizontal: 15,
+              marginTop: 15,
+            }}>
+            <Image
+              source={NotificationIcon}
+              style={{width: 24, height: 24, tintColor: '#fff'}}
+            />
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.bottomContainer}>
-        {isRefreshing && <ActivityIndicator size="large" />}
-        {!isRefreshing && (
+        {isRefreshing ? (
+          <ActivityIndicator size="large" color="#ffffff" />
+        ) : selectedButton === 'My Circle' ? (
           <FlatList
             data={posts}
-            renderItem={renderItem}
+            renderItem={renderCustomPost}
             keyExtractor={item => item._id}
             key={listKey}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
             onRefresh={() => handleRefresh()}
             refreshing={isRefreshing}
           />
+        ) : (
+          <View style={{flex: 1}}>
+            <Carousel
+              loop
+              width={width}
+              height={height - verticalScale(185)}
+              windowSize={2}
+              vertical={true}
+              data={filteredVideos}
+              onSnapToItem={setCurrentIndex}
+              renderItem={({item, index}: any) => (
+                <ReelsComponent
+                  post={item}
+                  isFocused={currentIndex === index}
+                />
+              )}
+            />
+          </View>
         )}
       </View>
     </View>
@@ -210,7 +251,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    marginHorizontal: horizontalScale(20),
+    marginHorizontal: horizontalScale(5),
   },
   searchIcon: {
     width: horizontalScale(20),
@@ -223,7 +264,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2c2d2f',
-    paddingHorizontal: horizontalScale(40),
+    paddingHorizontal: horizontalScale(25),
     width: '85%',
   },
 });

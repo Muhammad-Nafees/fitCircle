@@ -36,17 +36,18 @@ import Toast from 'react-native-toast-message';
 import {postContent} from '../../api';
 import {RootState} from '../../redux/store';
 import VideoPreviewScreen from './VideoPreviewScreen';
+import {ScrollView} from 'react-native';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 
-export const AddPostScreen = () => {
+export const AddPostScreen = ({route}: any) => {
   const navigation = useNavigation();
   const authToken = useSelector(
     (state: RootState) => state.auth.authorizationToken,
   );
   const userData = useSelector((state: RootState) => state.auth.user);
-  const profileImageUrl = userData?.profileImage;
+  const profileImageUrl = userData?.profileImageUrl;
   const username = userData?.username;
   const [selectedOption, setSelectedOption] = useState('Public');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -167,6 +168,21 @@ export const AddPostScreen = () => {
     });
   };
 
+  const handleVideoLibrary = () => {
+    setVideoUri(null);
+    setMediaUri(null);
+    setTextInputBackgroundColor('transparent');
+    const options: ImageLibraryOptions = {
+      mediaType: 'video',
+    };
+  
+    launchImageLibrary(options, (response: ImagePickerResponse) => {
+      if (!response.didCancel && !response.errorMessage && response.assets) {
+        setVideoUri(response.assets[0].uri);
+      }
+    });
+  };
+
   const handleCaptureButtonPress = () => {
     setVideoUri(null);
     setMediaUri(null);
@@ -192,7 +208,7 @@ export const AddPostScreen = () => {
     const options: CameraOptions = {
       mediaType: 'video',
       videoQuality: 'low',
-      durationLimit: 15,
+      durationLimit: 60,
       saveToPhotos: true,
     };
     launchCamera(options, (response: ImagePickerResponse) => {
@@ -206,7 +222,7 @@ export const AddPostScreen = () => {
     setMediaUri(null);
     setTextInputValue('');
     setVideoUri(null);
-    navigation.goBack();
+    navigation.navigate('Home');
   };
 
   useEffect(() => {
@@ -214,7 +230,7 @@ export const AddPostScreen = () => {
     setTextInputValue('');
     setMediaUri(null);
     requestCameraPermission();
-  }, []);
+  }, [route]);
 
   const requestCameraPermission = async () => {
     try {
@@ -275,57 +291,64 @@ export const AddPostScreen = () => {
             placeholderTextColor="white"
           />
         </View>
-        <View style={styles.topContainer}>
-          <View style={styles.avatarContainer}>
-            {profileImageUrl ? (
-              <Avatar.Image size={40} source={{uri: profileImageUrl}} />
-            ) : (
-              <Avatar.Text
-                size={40}
-                label={username ? username[0].toUpperCase() : 'SA'}
-              />
-            )}
-            <TouchableOpacity
-              style={styles.avatarButton}
-              onPress={handleAvatarButtonPress}>
-              <Text style={{color: 'white', textAlign: 'center', fontSize: 10}}>
-                {selectedOption}
-              </Text>
-              <Image
-                source={ArrowDownIcon}
-                style={{
-                  width: 12,
-                  height: 12,
-                  tintColor: 'white',
-                  marginTop: 2,
-                }}
-              />
-            </TouchableOpacity>
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          showsVerticalScrollIndicator={false}>
+          <View style={styles.topContainer}>
+            <View style={styles.avatarContainer}>
+              {profileImageUrl ? (
+                <Avatar.Image size={40} source={{uri: profileImageUrl}} />
+              ) : (
+                <Avatar.Text
+                  size={40}
+                  label={username ? username[0].toUpperCase() : 'SA'}
+                />
+              )}
+              <TouchableOpacity
+                style={styles.avatarButton}
+                onPress={handleAvatarButtonPress}>
+                <Text
+                  style={{color: 'white', textAlign: 'center', fontSize: 10}}>
+                  {selectedOption}
+                </Text>
+                <Image
+                  source={ArrowDownIcon}
+                  style={{
+                    width: 12,
+                    height: 12,
+                    tintColor: 'white',
+                    marginTop: 2,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+            <TextInput
+              style={[
+                styles.textInputColor,
+                {backgroundColor: textInputBackgroundColor},
+                textInputBackgroundColor ? {height: 150} : null,
+              ]}
+              placeholder="What do you want to talk about?"
+              placeholderTextColor="white"
+              value={textInputValue}
+              multiline
+              onChangeText={text => setTextInputValue(text)}
+              textAlignVertical={'top'}
+            />
+            <View style={styles.postContainer}>
+              {mediaUri && !videoUri && (
+                <View style={styles.mediaContainer}>
+                  <Image source={{uri: mediaUri}} style={styles.media} />
+                </View>
+              )}
+            </View>
           </View>
-          <TextInput
-            style={[
-              styles.textInputColor,
-              {backgroundColor: textInputBackgroundColor},
-            ]}
-            placeholder="What do you want to talk about?"
-            placeholderTextColor="white"
-            value={textInputValue}
-            multiline
-            onChangeText={text => setTextInputValue(text)}
-            textAlignVertical={'top'}
-          />
-          <View style={styles.postContainer}>
-            {mediaUri && !videoUri && (
-              <View style={styles.mediaContainer}>
-                <Image source={{uri: mediaUri}} style={styles.media} />
-              </View>
-            )}
-          </View>
-        </View>
+        </ScrollView>
         <View style={styles.modalContainer}>
           <Modal
             isVisible={isModalVisible}
             style={styles.bottomModal}
+            onBackdropPress={() => setIsModalVisible(false)}
             backdropOpacity={0.3}>
             <View style={styles.modal}>
               <WhoCanSeeThisPost
@@ -339,6 +362,7 @@ export const AddPostScreen = () => {
           <Modal
             isVisible={isComponentMounted}
             style={styles.bottomModal}
+            onBackdropPress={handlePostOptionsIconModalClose}
             backdropOpacity={0.3}>
             <View style={styles.modal}>
               <PostOptionsIcon
@@ -346,37 +370,41 @@ export const AddPostScreen = () => {
                 handlePostOptionsIconModalClose={
                   handlePostOptionsIconModalClose
                 }
+                handleVideoButtonPress={handleVideoButtonPress}
               />
             </View>
           </Modal>
           <Modal
             isVisible={isCreatePostIconModalVisible}
             style={styles.bottomModal}
+            onBackdropPress={() => setIsCreatePostIconModalVisible(false)}
             backdropOpacity={0.3}>
             <View style={styles.modal}>
               <CreatePostIcon
                 handlePhotoButtonPress={handlePhotoButtonPress}
-                handleVideoButtonPress={handleVideoButtonPress}
+                handleVideoButtonPress={handleVideoLibrary}
                 handleCreatePostIconPress={handleCreatePostIconPress}
                 handleCaptureButtonPress={handleCaptureButtonPress}
               />
             </View>
           </Modal>
         </View>
-        <ColorSelectionSlider
-          colors={[
-            '#CC5252',
-            '#88BD91',
-            '#654848',
-            '#AF3E3E',
-            '#42A883',
-            '#00FF00',
-            '#0000FF',
-            '#FFFF00',
-            '#FF00FF',
-          ]}
-          onColorSelected={handleColorSelected}
-        />
+        {!mediaUri && (
+          <ColorSelectionSlider
+            colors={[
+              '#CC5252',
+              '#88BD91',
+              '#654848',
+              '#AF3E3E',
+              '#42A883',
+              '#00FF00',
+              '#0000FF',
+              '#FFFF00',
+              '#FF00FF',
+            ]}
+            onColorSelected={handleColorSelected}
+          />
+        )}
         <BottomMinimizedContainer
           handlePhotoButtonPress={handlePhotoButtonPress}
           handleVideoButtonPress={handleVideoButtonPress}

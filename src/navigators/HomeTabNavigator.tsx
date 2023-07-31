@@ -1,19 +1,22 @@
 import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {
+  createBottomTabNavigator,
+  useBottomTabBarHeight,
+} from '@react-navigation/bottom-tabs';
+import {View, Text, Image, StyleSheet, Animated} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import HomeScreen from '../screens/home-screens';
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
-import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
-import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
+import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
 
 const Home = require('../../assets/icons/home-page.png');
-const Search = require('../../assets/icons/search.png');
+const Search = require('../../assets/icons/searchTab.png');
 const Post = require('../../assets/icons/post.png');
 const Message = require('../../assets/icons/chat.png');
 const Dashboard = require('../../assets/icons/dashboard.png');
+const Wave = require('../../assets/wave.png');
 
 const Tab = createBottomTabNavigator();
 const MessageScreen = () => <ScreenContent title="Message" />;
@@ -41,6 +44,7 @@ const CustomTabBarButton = ({children, onPress}: any) => (
       top: -32,
       justifyContent: 'center',
       alignItems: 'center',
+      zIndex: 1000,
     }}
     onPress={onPress}>
     <View
@@ -57,15 +61,32 @@ const CustomTabBarButton = ({children, onPress}: any) => (
 
 const CustomTabBarIcon = ({focused, icon}: any) => {
   return (
-    <View style={{justifyContent: 'center', alignItems: 'center'}}>
-      <Image
-        style={{
-          width: 24,
-          height: 24,
-          tintColor: focused ? '#fff' : '#209BCC',
-        }}
-        source={icon}
-      />
+    <View>
+      {focused && (
+        <View
+          style={{
+            position: 'relative',
+            top: -21,
+            left: 0,
+            right: 0,
+            zIndex: -1,
+          }}>
+          <Image
+            source={Wave}
+            style={{width: 100, height: 13, tintColor: '#3EB6E6'}}
+          />
+        </View>
+      )}
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Image
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: focused ? '#fff' : '#209BCC',
+          }}
+          source={icon}
+        />
+      </View>
     </View>
   );
 };
@@ -89,7 +110,9 @@ const HomeTabNavigator = () => {
         component={HomeScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <CustomTabBarIcon focused={focused} icon={Home} />
+            <View>
+              <CustomTabBarIcon focused={focused} icon={Home} />
+            </View>
           ),
         }}
       />
@@ -140,16 +163,10 @@ const HomeTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="ProfileScreen"
-        component={ProfileScreen}
+        name="FavoriteDialog"
+        component={FavoriteDialogScreen}
         options={{
-          tabBarButton: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="SearchProfile"
-        component={SearchProfileScreen}
-        options={{
+          tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
       />

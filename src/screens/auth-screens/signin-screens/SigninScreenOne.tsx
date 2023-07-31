@@ -1,7 +1,7 @@
 import {useDispatch} from 'react-redux';
 import SigninContent from '../../../components/auth-components/login/SigninContent';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import {verticalScale} from '../../../utils/metrics';
+import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {setAccountType} from '../../../redux/authSlice';
 
 const SignInScreenOne = ({navigation}: any) => {
@@ -19,7 +19,7 @@ const SignInScreenOne = ({navigation}: any) => {
   return (
     <SigninContent>
       <CustomButton
-        extraStyles={{height: verticalScale(48)}}
+        extraStyles={{height: verticalScale(50)}}
         onPress={handleCreateAccount}>
         CREATE ACCOUNT
       </CustomButton>
