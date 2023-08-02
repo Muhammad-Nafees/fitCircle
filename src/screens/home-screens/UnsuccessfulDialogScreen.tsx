@@ -14,7 +14,7 @@ const SuccessfulDialog = ({navigation}: any) => {
         <View style={styles.icon}>
           <Image source={Icon} style={styles.iconImage} />
         </View>
-        <Text style={[STYLES.text14, {marginTop: 2}]}>Payment Successful</Text>
+        <Text style={[STYLES.text14, {marginTop: 2}]}>Payment Unsuccessful</Text>
         <View style={{width: '75%', marginTop: verticalScale(25)}}>
           <CustomButton onPress={handleNavigation}>Return</CustomButton>
         </View>

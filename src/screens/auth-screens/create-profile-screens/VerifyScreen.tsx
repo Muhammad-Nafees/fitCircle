@@ -16,11 +16,12 @@ const VerifyScreen = ({navigation}: any) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const userData = useSelector((state: RootState) => state.auth.user);
+  const isPendingDialog = name === 'CertificateVerified';
   const authToken = useSelector(
     (state: RootState) => state.auth.authorizationToken,
   );
-  console.log(userData)
-  console.log(authToken)
+  console.log(userData);
+  console.log(authToken);
 
   console.log(userData);
   const handleNavigation = async () => {
@@ -32,7 +33,7 @@ const VerifyScreen = ({navigation}: any) => {
         console.log('try');
         const response = await createProfile({...userData}, authToken);
         const data = response?.data;
-        console.log(response)
+        console.log(response);
         // dispatch(setUserData(data));
         setIsLoading(false);
         navigation.navigate('HomeScreen');
@@ -51,17 +52,30 @@ const VerifyScreen = ({navigation}: any) => {
       }
     }
   };
+
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
-        <View style={styles.icon}>
-          <Icon name="checkmark-outline" color="white" size={24} />
-        </View>
-        <Text style={[STYLES.text14, {marginTop: 2}]}>
-          {name == 'CertificateVerified'
-            ? 'Certificate Verified!'
-            : 'Account created!'}{' '}
-        </Text>
+      <View style={[styles.card, isPendingDialog && {height: 230, width: 300}]}>
+        {!isPendingDialog && (
+          <View style={styles.icon}>
+            <Icon name="checkmark-outline" color="white" size={24} />
+          </View>
+        )}
+        {isPendingDialog ? (
+          <View style={{marginHorizontal: 30}}>
+            <Text style={styles.text2}>
+              "Your Account Is Currently Under Review and Verification"
+            </Text>
+            <Text style={styles.text3}>
+              Once the account is approved and verified, you can have full
+              access to the Creator Features of FitCircle.
+            </Text>
+          </View>
+        ) : (
+          <Text style={[STYLES.text14, {marginTop: 2}]}>
+            Account created!{' '}
+          </Text>
+        )}
         <View style={{width: '75%', marginTop: verticalScale(25)}}>
           <CustomButton
             isDisabled={isLoading ? true : false}
@@ -98,5 +112,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#30D298',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  text2: {
+    color: '#DA995D',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
+    paddingVertical: 15,
+  },
+  text3: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: '#fff',
+    textAlign: 'justify',
   },
 });

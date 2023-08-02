@@ -82,6 +82,7 @@ const SocialMediaAccount = ({navigation}: any) => {
     ];
     const partialUserData: Partial<IUser> = {
       ...previousUserData,
+      role: 'user',
       socialMediaLinks: socialMediaLinks,
     };
     dispatch(setUserData(partialUserData));

@@ -45,7 +45,7 @@ export const createProfile = async (
   formData.append('weight', userData.weight);
   formData.append('activity', userData.activity);
   formData.append('bodyType', userData.bodytype);
-  formData.append('role', userData.role);
+  formData.append('role', 'user');
   formData.append('hourlyRate', userData.hourlyRate);
   formData.append('interest', userData.interest);
   formData.append('selectedCommunities', userData.selectedCommunities);

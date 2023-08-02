@@ -66,10 +66,11 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
         <View
           style={{
             position: 'relative',
-            top: -21,
+            top: -27,
             left: 0,
             right: 0,
             zIndex: -1,
+            marginBottom: -12,
           }}>
           <Image
             source={Wave}

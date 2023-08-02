@@ -1,23 +1,41 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/shared-components/CustomButton';
-import {verticalScale} from '../../utils/metrics';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
 
-const FavoriteDialogScreen = ({navigation}: any) => {
+const FavoriteDialogScreen = ({navigation, route}: any) => {
+  const [buttonText, setButtonText] = useState(
+    route.name === 'FavoriteDialog' ? 'Return' : 'Log In',
+  );
+  const [message, setMessage] = useState(
+    route.name === 'FavoriteDialog'
+      ? 'Added to favorites!'
+      : 'Password Changed Successfully',
+  );
+
   const buttonFunction = () => {
-    navigation.goBack();
+    if (route.name === 'FavoriteDialog') {
+      navigation.goBack();
+    } else {
+      navigation.navigate('LoginFormScreen');
+    }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
         <View style={styles.icon}>
           <Icon name="checkmark-outline" color="white" size={24} />
         </View>
-        <Text style={[styles.text, {marginTop: 2}]}>Added to favorites!</Text>
+        <Text style={[styles.text, {marginTop: 2}]}>{message}</Text>
         <View style={{width: '75%', marginTop: verticalScale(10)}}>
           <View style={styles.buttonContainer}>
-            <CustomButton onPress={buttonFunction}>Return</CustomButton>
+            <CustomButton onPress={buttonFunction}>{buttonText}</CustomButton>
           </View>
         </View>
       </View>
@@ -41,16 +59,16 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   icon: {
-    width: 34,
-    height: 34,
+    width: horizontalScale(34),
+    height: verticalScale(34),
     borderRadius: 17,
     backgroundColor: '#30D298',
     justifyContent: 'center',
     alignItems: 'center',
   },
   closeButton: {
-    marginTop: 20,
-    padding: 10,
+    marginTop: verticalScale(20),
+    padding: moderateScale(10),
   },
   closeButtonText: {
     color: 'white',
@@ -66,7 +84,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   buttonContainer: {
-    marginVertical: 10,
+    marginVertical: verticalScale(10),
   },
 });
 

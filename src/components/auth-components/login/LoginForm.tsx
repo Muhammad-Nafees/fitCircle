@@ -154,7 +154,7 @@ const LoginForm = () => {
                 handleChange={handleChange('password')}
               />
               <TouchableOpacity
-                onPress={() => navigation.navigate('ForgetPassword')}>
+                onPress={() => navigation.navigate('ForgetPasswordEmail')}>
                 <Text
                   style={[
                     STYLES.text12,
@@ -175,6 +175,7 @@ const LoginForm = () => {
             <View style={{marginTop: verticalScale(37), gap: 37}}>
               <CustomButton
                 onPress={handleSubmit}
+                extraStyles={{height: verticalScale(50)}}
                 isDisabled={isLoading ? true : false}>
                 {' '}
                 {isLoading ? <CustomLoader /> : ' Log in'}

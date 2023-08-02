@@ -9,8 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import Video from 'react-native-video';
-import {Avatar, Button} from 'react-native-paper';
-import CustomDialog from '../shared-components/CustomDialog';
+import {Avatar} from 'react-native-paper';
 const FavouritesIcon = require('../../../assets/icons/favourites.png');
 const ShareIcon = require('../../../assets/icons/share2.png');
 const PlayIcon = require('../../../assets/icons/playIcon.png');
@@ -28,6 +27,7 @@ interface ReelsProps {
     likes: any[];
     cost: 0;
     shares: any[];
+    favorites: any[];
     createdAt: string;
     user: {
       profileImageUrl?: string;
@@ -36,17 +36,27 @@ interface ReelsProps {
     };
   };
   isFocused: any;
+  userId: string;
 }
 
-export const ReelsComponent = ({post, isFocused}: ReelsProps) => {
-  const {_id, media, content, likes, shares, createdAt, user, cost} = post;
+export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
+  const {_id, media, content, likes, shares, createdAt, user, cost, favorites} =
+    post;
   const {profileImageUrl, username, email} = user;
   console.log(media);
   const videoRef = useRef(null);
   const isLocked = cost && cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
   const [play, setPlay] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const isCurrentUserFavorited = favorites.some(
+      favorite => favorite._id === userId,
+    );
+    setIsFavorited(isCurrentUserFavorited);
+  }, [favorites]);
 
   useEffect(() => {
     let hideButtonTimer: any;
@@ -178,7 +188,10 @@ export const ReelsComponent = ({post, isFocused}: ReelsProps) => {
           <TouchableOpacity
             style={styles.iconItemContainer}
             onPress={handleFavoritePress}>
-            <Image source={FavouritesIcon} style={styles.icon} />
+            <Image
+              source={FavouritesIcon}
+              style={[styles.icon, isFavorited && {tintColor: '#3EB6E6'}]}
+            />
             <Text style={styles.iconText}>Favorite</Text>
           </TouchableOpacity>
         </View>
@@ -343,8 +356,8 @@ const styles = StyleSheet.create({
     tintColor: '#fff',
   },
   lockIcon: {
-    width: 18,
-    height: 18,
+    width: horizontalScale(18),
+    height: verticalScale(18),
     tintColor: '#fff',
   },
   lockedButtonContainer: {
@@ -366,9 +379,9 @@ const styles = StyleSheet.create({
   },
   lockedIconContainer: {
     backgroundColor: '#43c1df',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    marginLeft: 12,
+    paddingHorizontal: horizontalScale(10),
+    paddingVertical: verticalScale(10),
+    marginLeft: horizontalScale(12),
     borderRadius: 40,
     shadowColor: '#000',
     shadowOffset: {
