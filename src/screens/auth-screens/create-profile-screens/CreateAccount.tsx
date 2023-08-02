@@ -27,7 +27,7 @@ import PhoneInput from 'react-native-phone-number-input';
 
 export interface CreateAccountFormValues {
   email: string;
-  phone: number | null;
+  phone: string | null;
   password: string;
   confirmPassword: string;
 }
@@ -37,6 +37,7 @@ const CreateAccount = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
+  const [phoneCode, setPhoneCode] = useState('1');
 
   const phoneNumberCheck = (values: any) => {
     const isValid = phoneInput.current?.isValidNumber(values);
@@ -60,7 +61,13 @@ const CreateAccount = ({navigation}: any) => {
       return;
     }
     try {
-      const response = await register(values);
+      const dataToSend = {
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+        phone: `+${phoneCode}${values.phone}`,
+      };
+      const response = await register(dataToSend);
       console.log('first');
       if (response?.status === 200) {
         setIsLoading(false);
@@ -134,6 +141,7 @@ const CreateAccount = ({navigation}: any) => {
                 phoneInput={phoneInput}
                 setIsError={setIsError}
                 isError={isError}
+                setPhoneCode={setPhoneCode}
               />
               <CustomInput
                 label="Password"

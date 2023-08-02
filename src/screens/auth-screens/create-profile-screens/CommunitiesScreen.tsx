@@ -57,6 +57,7 @@ const CommunitiesScreen = ({navigation}: any) => {
     const partialUserData: Partial<IUser> = {
       ...previousUserData,
       selectedCommunities: selectedCommunitiesName,
+      role: 'user',
     };
     dispatch(setUserData(partialUserData));
     navigation.navigate('SocialMediaAccount');

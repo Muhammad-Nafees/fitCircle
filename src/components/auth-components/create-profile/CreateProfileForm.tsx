@@ -39,6 +39,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [allCities, setAllCities] = useState([]);
   const [country, setCountry] = useState();
   const [countryCode, setCountryCode] = useState();
+  const [phoneCode, setPhoneCode] = useState('1');
   const [usernameError, setUsernameError] = useState<string>('');
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
@@ -151,7 +152,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     }
   };
   const handleSubmit = (values: IUser) => {
-    if(isError){
+    if (isError) {
       return;
     }
     const partialUserData: Partial<IUser> = {
@@ -161,7 +162,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       lastName: values.lastName,
       username: values.username,
       bio: values.bio,
-      phone: values.phone,
+      phone: `+${phoneCode}${values.phone}`,
       country: values.country,
       city: values.city,
       gender: values.gender,
@@ -258,6 +259,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               phoneInput={phoneInput}
               setIsError={setIsError}
               isError={isError}
+              setPhoneCode={setPhoneCode}
             />
             <CustomSelect
               label="Country"

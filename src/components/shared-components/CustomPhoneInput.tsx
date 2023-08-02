@@ -20,6 +20,7 @@ interface Props {
   phoneInput: any;
   isError: any;
   setIsError: any;
+  setPhoneCode: (code: string) => void;
 }
 
 const CustomPhoneInput = ({
@@ -32,6 +33,7 @@ const CustomPhoneInput = ({
   phoneInput,
   isError,
   setIsError,
+  setPhoneCode,
 }: Props) => {
   const handleCountryChange = () => {
     phoneInput.current?.setState({number: ''});
@@ -82,7 +84,11 @@ const CustomPhoneInput = ({
             onChangeText={phoneNumber => {
               handleChange(phoneNumber);
             }}
-            onChangeCountry={handleCountryChange}
+            onChangeCountry={country => {
+              setPhoneCode(country.callingCode[0]);
+              console.log(country.callingCode[0]);
+              handleCountryChange();
+            }}
             withShadow
           />
         )}

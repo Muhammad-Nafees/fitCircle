@@ -9,6 +9,8 @@ import {
   Image,
   ActivityIndicator,
   Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -26,7 +28,6 @@ const height = Dimensions.get('window').height;
 const HomeScreen = () => {
   const userData = useSelector((state: RootState) => state.auth.user);
   console.log(userData);
-  const profileImageUrl = userData?.profileImageUrl;
   const username = userData?.username;
   const [userId, setUserId] = useState(userData?._id);
   const [posts, setPosts] = useState([]);
@@ -36,6 +37,7 @@ const HomeScreen = () => {
   const [listKey, setListKey] = useState<number>(0);
   const [filteredVideos, setFilteredVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [profileImageUrl, setProfileImageUrl] = useState();
 
   const handleSearchBarFocus = () => {
     navigation.navigate('Search');
@@ -46,6 +48,11 @@ const HomeScreen = () => {
     fetchPosts();
     setUserId(userData?._id);
   }, []);
+
+  useEffect(() => {
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    setProfileImageUrl(imageUri);
+  }, [userData]);
 
   useEffect(() => {
     const videoPosts = posts.filter(
@@ -174,7 +181,6 @@ const HomeScreen = () => {
         ) : (
           <View style={{flex: 1}}>
             <Carousel
-              loop
               width={width}
               height={height - verticalScale(185)}
               windowSize={2}
@@ -185,6 +191,7 @@ const HomeScreen = () => {
                 <ReelsComponent
                   post={item}
                   isFocused={currentIndex === index}
+                  userId={userId}
                 />
               )}
             />

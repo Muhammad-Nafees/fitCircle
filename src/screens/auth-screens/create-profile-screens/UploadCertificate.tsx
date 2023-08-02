@@ -25,12 +25,18 @@ import {openCamera} from 'react-native-image-crop-picker';
 import PickCertificateCard from '../../../components/auth-components/create-profile/PickCertificateCard';
 import UploadCertificateCard from '../../../components/auth-components/create-profile/UploadCertificateCard';
 import ImageCard from '../../../components/auth-components/create-profile/ImageCard';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
+import {IUser} from '../../../interfaces/user.interface';
+import {setUserData} from '../../../redux/authSlice';
 
 const UploadCertificate = ({navigation}: any) => {
   const [selectedCameraImage, setSelectedCameraImage] = useState('');
   const [uploadImage, setUploadImage] = useState<any>('');
   const [addMoreImages, setAddMoreImages] = useState<any>([]);
   const [cameraPermission, setCameraPermission] = useState(false);
+  const previousUserData = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
 
   const handleNavigate = () => {
     navigation.navigate('InterestScreen');
@@ -77,8 +83,17 @@ const UploadCertificate = ({navigation}: any) => {
       await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
           setUploadImage(response?.assets[0].uri);
+          const partialUserData: Partial<IUser> = {
+            ...previousUserData,
+            certificateImages: {
+              uri: response.assets[0].uri,
+              name: response.assets[0].fileName,
+              type: response.assets[0].type,
+            },
+          };
+          dispatch(setUserData({...partialUserData}));
         }
-      }); 
+      });
     } else {
       await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
@@ -145,7 +160,10 @@ const UploadCertificate = ({navigation}: any) => {
             marginVertical: verticalScale(42),
             marginHorizontal: horizontalScale(30),
           }}>
-          <CustomButton onPress={() => navigation.navigate('CertificateVerified')}>Continue</CustomButton>
+          <CustomButton
+            onPress={() => navigation.navigate('CertificateVerified')}>
+            Continue
+          </CustomButton>
         </View>
       </ScrollView>
     </View>

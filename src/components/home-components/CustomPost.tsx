@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import {Avatar} from 'react-native-paper';
 import Modal from 'react-native-modal';
@@ -16,10 +17,12 @@ const LikeFilled = require('../../../assets/icons/likeFilled.png');
 const Share = require('../../../assets/icons/share.png');
 const CommentIcon = require('../../../assets/icons/comment.png');
 const OptionIcon = require('../../../assets/icons/customPostOption.png');
+const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 import CustomButton from '../shared-components/CustomButton';
 import axiosInstance from '../../api/interceptor';
 import {Comment} from './Comment';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+const Dot = require('../../../assets/icons/dot.png');
 
 const width = Dimensions.get('window').width;
 interface CustomPostProps {
@@ -43,7 +46,8 @@ interface CustomPostProps {
 }
 
 export const CustomPost = ({post, userId}: CustomPostProps) => {
-  const {_id, media, content, likes, createdAt, user, hexCode, cost} = post;
+  const {_id, media, content, likes, createdAt, user, hexCode, cost, comments} =
+    post;
   const {profileImageUrl, username, email} = user;
   const [isCommentModalVisible, setCommentModalVisible] = useState(false);
   const [isShareModalVisible, setShareModalVisible] = useState(false);
@@ -52,17 +56,24 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
   const [shareText, setShareText] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const [commentsData, setCommentsData] = useState([]);
-  const isContentLocked = cost && cost > 0;
+  const [isCommentPressed, setIsCommentPressed] = useState(false);
+  const isLocked = cost && cost > 0;
+
   const handleCommentPress = () => {
+    setIsCommentPressed(true);
     setCommentModalVisible(!isCommentModalVisible);
   };
   useEffect(() => {
     const isCurrentUserLiked = likes.some(like => like.user._id === userId);
     setIsLiked(isCurrentUserLiked);
   }, [likes, userId]);
+
   useEffect(() => {
-    handleCommentsRetrieve();
-  }, []);
+    if (isCommentPressed) {
+      handleCommentsRetrieve();
+      setIsCommentPressed(false);
+    }
+  }, [isCommentPressed]);
 
   const getTimeDifference = () => {
     const postTime = new Date(createdAt).getTime();
@@ -127,16 +138,34 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
       .get(`posts/comments/${_id}`)
       .then(res => {
         setCommentsData(res.data);
+        console.log(res.data);
       })
       .catch(error => {
         console.error('Error while fetching comments:', error);
       });
   };
 
-  const handleCommentPostPress = (commentText: any) => {
+  const handleCommentPostPress = (commentText: string, mediaUri: any) => {
+    if (!commentText.trim()) {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('text', commentText);
+    if (mediaUri) {
+      const mediaFile = {
+        uri: mediaUri,
+        type: 'image/jpeg',
+        name: 'comment_media.jpg',
+      };
+      formData.append('commentMedia', mediaFile);
+    }
     const apiEndpoint = `posts/comments/${_id}`;
     axiosInstance
-      .patch(apiEndpoint, {text: commentText})
+      .patch(apiEndpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       .then(response => {
         console.log('Comment Posted successfully!');
         handleCommentsRetrieve();
@@ -145,128 +174,189 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
         console.error('Error while commenting on the post:', error);
       });
   };
+  const handleReplyPostPress = (
+    commentText: string,
+    mediaUri: any,
+    commentId: any,
+  ) => {
+    if (!commentText.trim()) {
+      return;
+    }
+    console.log('Reply', commentId);
+    const formData = new FormData();
+    formData.append('text', commentText);
+    if (mediaUri) {
+      const mediaFile = {
+        uri: mediaUri,
+        type: 'image/jpeg',
+        name: 'comment_media.jpg',
+      };
+      formData.append('commentMedia', mediaFile);
+    }
+    const apiEndpoint = `/posts/${_id}/comments/${commentId}/replies`;
+    axiosInstance
+      .post(apiEndpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(response => {
+        console.log('Comment Posted successfully!');
+        handleCommentsRetrieve();
+      })
+      .catch(error => {
+        console.error('Error while commenting on the post:', error);
+      });
+  };
+
   return (
-    <View>
-      <View
-        style={[styles.postContainer, isContentLocked ? {zIndex: 1000} : null]}>
-        {profileImageUrl ? (
-          <Avatar.Image
-            size={40}
-            source={{uri: profileImageUrl}}
-            style={styles.avatarImage}
-          />
-        ) : (
-          <Avatar.Text
-            size={40}
-            label={username ? username[0].toUpperCase() : 'SA'}
-            style={styles.avatarText}
-          />
-        )}
-        <View style={styles.postParentContainer}>
-          <View style={styles.postTextContainer}>
-            <Text style={styles.postName}>{username}</Text>
-            <View style={styles.postDetails}>
-              <Text style={styles.postId}>{email}</Text>
-              <Text style={styles.postTime}>{getTimeDifference()}</Text>
-            </View>
-          </View>
-          <TouchableOpacity>
-            <Image
-              source={OptionIcon}
-              style={{width: 24, height: 35, tintColor: '#fff'}}
+    <ScrollView>
+      <View>
+        <View style={[styles.postContainer, isLocked ? {zIndex: 1000} : null]}>
+          {profileImageUrl ? (
+            <Avatar.Image
+              size={40}
+              source={{uri: profileImageUrl}}
+              style={styles.avatarImage}
             />
-          </TouchableOpacity>
-        </View>
-      </View>
-      {isContentLocked && (
-        <View style={styles.contentOverlay}>
-          <Text style={styles.lockedText}>Content Locked</Text>
-        </View>
-      )}
-      {content && (
-        <View style={[styles.content, {backgroundColor: `${hexCode}`}]}>
-          <Text style={styles.contentText}>{content}</Text>
-        </View>
-      )}
-      {media && <Image style={styles.image} source={{uri: media}} />}
-      <View
-        style={[styles.postButtons, isContentLocked ? {zIndex: 9999} : null]}>
-        <View style={styles.postButtonsContainer}>
-          <View style={styles.likesContainer}>
-            <Image style={styles.heartIcon} source={Heart} />
-            <Text style={styles.likesCount}>{`${likesCount} likes`}</Text>
-          </View>
-          <Text
-            style={styles.buttonText}>{`${commentsData.length} comments`}</Text>
-        </View>
-        <View style={styles.mediaButtons}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleLikeButtonPress}>
-            <Image
-              style={styles.heartIcon}
-              source={isLiked ? LikeFilled : Like}
+          ) : (
+            <Avatar.Text
+              size={40}
+              label={username ? username[0].toUpperCase() : 'SA'}
+              style={styles.avatarText}
             />
-            <Text style={styles.buttonText}>Like</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleCommentPress}>
-            <Image style={styles.postIcon} source={CommentIcon} />
-            <Text style={styles.buttonText}>Comment</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleShareModal}>
-            <Image style={styles.postIcon} source={Share} />
-            <Text style={styles.buttonText}>Share</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      {isCommentModalVisible && (
-        <Modal
-          isVisible={true}
-          backdropOpacity={0.3}
-          style={styles.modalContainer}>
-          <View style={styles.commentModal}>
-            <Comment
-              handleCommentPostSubmit={handleCommentPostPress}
-              comments={commentsData}
-              commentText={commentText}
-              setCommentText={setCommentText}
-              handleCommentPress={handleCommentPress}
-            />
-          </View>
-        </Modal>
-      )}
-      {isShareModalVisible && (
-        <Modal
-          isVisible={true}
-          backdropOpacity={0.3}
-          style={styles.modalContainer}>
-          <View style={styles.shareModal}>
-            <View style={styles.shareContainer}>
-              <TextInput
-                placeholder="Type here..."
-                multiline={true}
-                style={styles.shareInput}
-                textAlignVertical="top"
-                value={shareText}
-                onChangeText={setShareText}
-              />
-              <View style={styles.buttonContainer}>
-                <CustomButton
-                  extraStyles={{marginVertical: 15}}
-                  onPress={() => handleShareButtonPress(shareText)}>
-                  Share Now
-                </CustomButton>
-                <CustomButton
-                  extraStyles={{backgroundColor: 'red'}}
-                  onPress={() => setShareModalVisible(false)}>
-                  Cancel
-                </CustomButton>
+          )}
+          <View style={styles.postParentContainer}>
+            <View style={styles.postTextContainer}>
+              <Text style={styles.postName}>{username}</Text>
+              <View style={styles.postDetails}>
+                <Text style={styles.postId}>{email}</Text>
+                <Image
+                  source={Dot}
+                  style={{
+                    width: 22,
+                    height: 22,
+                    tintColor: '#666667',
+                    marginLeft: -10,
+                  }}
+                />
+                <Text style={styles.postTime}>{getTimeDifference()}</Text>
               </View>
             </View>
+            <TouchableOpacity>
+              <Image
+                source={OptionIcon}
+                style={{width: 24, height: 35, tintColor: '#fff'}}
+              />
+            </TouchableOpacity>
           </View>
-        </Modal>
-      )}
-    </View>
+        </View>
+        {isLocked ? (
+          <View style={styles.lockedOverlay}>
+            <View style={styles.lockedContainer}>
+              <Text style={styles.lockedText}>{content}</Text>
+              <TouchableOpacity style={styles.lockedButtonContainer}>
+                <Text style={{color: '#fff'}}>
+                  Unlock this video for{' '}
+                  <Text
+                    style={{color: '#30D298', fontWeight: '600', fontSize: 16}}>
+                    ${cost}
+                  </Text>
+                </Text>
+                <View style={styles.lockedIconContainer}>
+                  <Image source={LockOpenIcon} style={styles.lockIcon} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
+        {content && (
+          <View style={[styles.content, {backgroundColor: `${hexCode}`}]}>
+            <Text style={styles.contentText}>{content}</Text>
+          </View>
+        )}
+        {media && <Image style={styles.image} source={{uri: media}} />}
+        <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
+          <View style={styles.postButtonsContainer}>
+            <View style={styles.likesContainer}>
+              <Image style={styles.heartIcon} source={Heart} />
+              <Text style={styles.likesCount}>{`${likesCount} likes`}</Text>
+            </View>
+            <Text
+              style={styles.buttonText}>{`${comments.length} comments`}</Text>
+          </View>
+          <View style={styles.mediaButtons}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleLikeButtonPress}>
+              <Image
+                style={styles.heartIcon}
+                source={isLiked ? LikeFilled : Like}
+              />
+              <Text style={styles.buttonText}>Like</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleCommentPress}>
+              <Image style={styles.postIcon} source={CommentIcon} />
+              <Text style={styles.buttonText}>Comment</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handleShareModal}>
+              <Image style={styles.postIcon} source={Share} />
+              <Text style={styles.buttonText}>Share</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {isCommentModalVisible && (
+          <Modal
+            isVisible={true}
+            backdropOpacity={0}
+            style={styles.modalContainer}>
+            <View style={styles.commentModal}>
+              <Comment
+                handleCommentPostSubmit={handleCommentPostPress}
+                comments={commentsData}
+                commentText={commentText}
+                setCommentText={setCommentText}
+                handleCommentPress={handleCommentPress}
+                handleReplyPostPress={handleReplyPostPress}
+              />
+            </View>
+          </Modal>
+        )}
+        {isShareModalVisible && (
+          <Modal
+            isVisible={true}
+            backdropOpacity={0.3}
+            style={styles.modalContainer}>
+            <View style={styles.shareModal}>
+              <View style={styles.shareContainer}>
+                <TextInput
+                  placeholder="Type here..."
+                  multiline={true}
+                  style={styles.shareInput}
+                  textAlignVertical="top"
+                  value={shareText}
+                  onChangeText={setShareText}
+                />
+                <View style={styles.buttonContainer}>
+                  <CustomButton
+                    extraStyles={{marginVertical: verticalScale(15)}}
+                    onPress={() => handleShareButtonPress(shareText)}>
+                    Share Now
+                  </CustomButton>
+                  <CustomButton
+                    extraStyles={{backgroundColor: 'red'}}
+                    onPress={() => setShareModalVisible(false)}>
+                    Cancel
+                  </CustomButton>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -281,18 +371,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 15,
     marginHorizontal: 16,
-  },
-  contentOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1111,
-  },
-  lockedText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   postTextContainer: {
     marginLeft: horizontalScale(10),
@@ -311,6 +389,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   postTime: {
+    fontSize: 12,
     color: '#666667',
   },
   imageContainer: {
@@ -388,12 +467,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ebebeb',
   },
   commentModal: {
-    backgroundColor: '#292a2c',
-    borderRadius: 20,
-    height: '100%',
+    backgroundColor: '#E1E1E1',
+    height: '60%',
+    justifyContent: 'flex-end',
   },
   modalContainer: {
     margin: 0,
+    justifyContent: 'flex-end',
   },
   shareModal: {
     position: 'absolute',
@@ -410,9 +490,67 @@ const styles = StyleSheet.create({
   shareInput: {
     backgroundColor: '#fff',
     marginVertical: verticalScale(15),
+    paddingHorizontal: 10,
     height: verticalScale(140),
+    borderRadius: 16,
   },
   buttonContainer: {
     marginHorizontal: horizontalScale(20),
+  },
+  lockedOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
+  lockedText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    lineHeight: 24,
+    marginRight: horizontalScale(30),
+  },
+  lockedContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '60%',
+  },
+  lockIcon: {
+    width: 18,
+    height: 18,
+    tintColor: '#fff',
+  },
+  lockedButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#209BCC',
+    borderRadius: 40,
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: horizontalScale(16),
+    marginVertical: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  lockedIconContainer: {
+    backgroundColor: '#43c1df',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginLeft: 12,
+    borderRadius: 40,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

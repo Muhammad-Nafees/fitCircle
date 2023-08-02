@@ -37,6 +37,7 @@ import {postContent} from '../../api';
 import {RootState} from '../../redux/store';
 import VideoPreviewScreen from './VideoPreviewScreen';
 import {ScrollView} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
@@ -47,7 +48,7 @@ export const AddPostScreen = ({route}: any) => {
     (state: RootState) => state.auth.authorizationToken,
   );
   const userData = useSelector((state: RootState) => state.auth.user);
-  const profileImageUrl = userData?.profileImageUrl;
+  const [profileImageUrl, setProfileImageUrl] = useState();
   const username = userData?.username;
   const [selectedOption, setSelectedOption] = useState('Public');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -68,9 +69,23 @@ export const AddPostScreen = ({route}: any) => {
   };
 
   const handleNavigation = () => {
-    handleClose();
     navigation.navigate('Home');
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsModalVisible(false);
+      setIsComponentMounted(true);
+      setIsCreatePostIconModalVisible(false);
+      setTextInputValue('');
+      setMediaUri('');
+    }, []),
+  );
+
+  useEffect(() => {
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    setProfileImageUrl(imageUri);
+  }, [userData]);
 
   const onSelectCost = (value: number) => {
     console.log(value);
@@ -80,14 +95,6 @@ export const AddPostScreen = ({route}: any) => {
   useEffect(() => {
     setIsEnabled(checkButtonEnable());
   }, [textInputValue, mediaUri]);
-
-  const handleClose = () => {
-    setMediaUri(null);
-    setVideoUri(null);
-    setTextInputBackgroundColor('transparent');
-    setTextInputValue('');
-    setTitleInput('');
-  };
 
   const handlePostButtonPress = async () => {
     try {
@@ -116,7 +123,6 @@ export const AddPostScreen = ({route}: any) => {
           visibilityTime: 2000,
         });
         console.log('Post failed:', response.data);
-        handleClose();
         navigation.navigate('Home');
       }
     } catch (error) {
@@ -175,7 +181,7 @@ export const AddPostScreen = ({route}: any) => {
     const options: ImageLibraryOptions = {
       mediaType: 'video',
     };
-  
+
     launchImageLibrary(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
         setVideoUri(response.assets[0].uri);
@@ -224,13 +230,6 @@ export const AddPostScreen = ({route}: any) => {
     setVideoUri(null);
     navigation.navigate('Home');
   };
-
-  useEffect(() => {
-    setIsComponentMounted(true);
-    setTextInputValue('');
-    setMediaUri(null);
-    requestCameraPermission();
-  }, [route]);
 
   const requestCameraPermission = async () => {
     try {
@@ -326,7 +325,9 @@ export const AddPostScreen = ({route}: any) => {
               style={[
                 styles.textInputColor,
                 {backgroundColor: textInputBackgroundColor},
-                textInputBackgroundColor ? {height: 150} : null,
+                textInputBackgroundColor !== 'transparent'
+                  ? {height: 150}
+                  : null,
               ]}
               placeholder="What do you want to talk about?"
               placeholderTextColor="white"

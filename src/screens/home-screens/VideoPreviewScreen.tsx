@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -50,6 +50,7 @@ export const VideoPreviewScreen = ({
   ];
   const videoRef = React.useRef(null);
   const userData = useSelector((state: RootState) => state.auth.user);
+  const [profileImageUrl, setProfileImageUrl] = useState();
   const isBoostAvailable = userData?.role !== 'user';
   const [selectedOption, setSelectedOption] = useState('Public');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -78,6 +79,11 @@ export const VideoPreviewScreen = ({
     setSelectedDate(formattedDate);
     setDatePickerVisible(false);
   };
+
+  useEffect(() => {
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    setProfileImageUrl(imageUri);
+  }, [userData]);
 
   const handleClose = () => {
     setIsModalVisible(false);
@@ -187,11 +193,15 @@ export const VideoPreviewScreen = ({
   return (
     <View style={styles.container}>
       <View style={styles.topLeftContent}>
-        <Avatar.Text
-          size={40}
-          label={username ? username[0].toUpperCase() : 'SA'}
-          style={styles.avatarText}
-        />
+        {profileImageUrl ? (
+          <Avatar.Image size={40} source={{uri: profileImageUrl}} />
+        ) : (
+          <Avatar.Text
+            size={40}
+            style={styles.avatarText}
+            label={username ? username[0].toUpperCase() : 'SA'}
+          />
+        )}
         <View style={styles.postTextContainer}>
           <Text style={styles.postName}>{username}</Text>
           <Text style={styles.postId}>{email}</Text>
@@ -254,6 +264,7 @@ export const VideoPreviewScreen = ({
             isDatePickerVisible={isDatePickerVisible}
             handleBoostOptionSelect={handleBoostOptionSelect}
             handleDialog={handleDialog}
+            onBackdropPress={() => setBoostModalVisible(false)}
           />
         </View>
       </Modal>
@@ -405,7 +416,7 @@ const styles = StyleSheet.create({
     height: verticalScale(40),
     backgroundColor: '#2c2c2f',
     color: 'white',
-    paddingHorizontal: 10,
+    paddingHorizontal: horizontalScale(10),
     marginBottom: verticalScale(8),
   },
   buttonContainer: {
@@ -486,8 +497,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   cancelIcon: {
-    width: 24,
-    height: 24,
+    width: horizontalScale(24),
+    height: verticalScale(24),
     tintColor: 'white',
     position: 'absolute',
   },
