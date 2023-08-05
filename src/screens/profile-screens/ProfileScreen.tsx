@@ -163,15 +163,15 @@ export const ProfileScreen = ({navigation, route}: any) => {
           <TouchableOpacity
             style={[
               styles.optionButton,
-              selectedOption === 'Video' && styles.selectedOption,
+              selectedOption === 'Videos' && styles.selectedOption,
             ]}
-            onPress={() => setSelectedOption('Video')}>
+            onPress={() => setSelectedOption('Videos')}>
             <Text
               style={[
                 styles.optionText,
-                selectedOption === 'Video' && styles.selectedOptionText,
+                selectedOption === 'Videos' && styles.selectedOptionText,
               ]}>
-              Video
+              Videos
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -229,7 +229,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: '60%',
+    paddingBottom: '60%',
   },
   headerContainer: {
     justifyContent: 'center',
@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
   columnLabel: {
     fontSize: 10,
     color: '#209BCC',
+    textDecorationLine: 'underline',
   },
   selectionContainerParent: {
     backgroundColor: '#292a2c',
@@ -314,7 +315,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     backgroundColor: '#292a2c',
-    height: '100%',
     width: '100%',
+    height: '100%',
   },
 });
