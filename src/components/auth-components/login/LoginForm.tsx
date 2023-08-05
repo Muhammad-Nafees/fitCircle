@@ -124,6 +124,7 @@ const LoginForm = () => {
           errors,
           touched,
           initialTouched,
+          setFieldError,
         }) => (
           <View
             style={{
@@ -141,6 +142,8 @@ const LoginForm = () => {
               touched={touched.email}
               initialTouched={true}
               handleChange={handleChange('email')}
+              setFieldError={setFieldError}
+              fieldName="email"
             />
             <View style={{gap: 0, position: 'relative'}}>
               <CustomInput
@@ -152,6 +155,8 @@ const LoginForm = () => {
                 initialTouched={true}
                 isPasswordIcon={true}
                 handleChange={handleChange('password')}
+                setFieldError={setFieldError}
+                fieldName="password"
               />
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgetPasswordEmail')}>

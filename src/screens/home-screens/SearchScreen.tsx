@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import axiosInstance from '../../api/interceptor';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {UserSearch} from '../../components/home-components/UserSearch';
 import {
   horizontalScale,
@@ -30,6 +30,13 @@ export const SearchScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsLoading(false);
+      setSearchData([]);
+    }, []),
+  );
+
   const handleSearch = async () => {
     setSearchData([]);
     setIsLoading(true);
@@ -47,7 +54,7 @@ export const SearchScreen = () => {
   };
 
   const handleSearchBarBlur = () => {
-    setIsSearchActive(!isSearchActive);
+    setIsSearchActive(false);
   };
 
   const dropdownOptions = ['Nutritionist', 'Trainer', 'Other'];
@@ -65,7 +72,9 @@ export const SearchScreen = () => {
     navigation.goBack();
   };
 
-  let placeholderText = selectedFilter ? `Search ${selectedFilter} ...` : 'Search';
+  let placeholderText = selectedFilter
+    ? `Search ${selectedFilter} ...`
+    : 'Search';
 
   const renderItem = ({item}: any) => (
     <View style={styles.searchResultContainer}>
@@ -94,6 +103,7 @@ export const SearchScreen = () => {
               onChangeText={setSearchQuery}
               onBlur={handleSearchBarBlur}
               placeholderTextColor="#fff"
+              onEndEditing={handleSearch}
             />
             <TouchableOpacity
               style={styles.searchButton}
@@ -101,7 +111,7 @@ export const SearchScreen = () => {
               <Image source={FilterIcon} style={styles.icon} />
             </TouchableOpacity>
           </View>
-          {isSearchActive && (
+          {isSearchActive ? (
             <View style={styles.searchOverlay}>
               <View style={styles.dropdownContainer}>
                 {dropdownOptions.map((option, index) => (
@@ -120,7 +130,7 @@ export const SearchScreen = () => {
                 ))}
               </View>
             </View>
-          )}
+          ) : null}
         </View>
         <TouchableOpacity onPress={handleSearch}>
           <Text style={styles.submitButton}>Search</Text>

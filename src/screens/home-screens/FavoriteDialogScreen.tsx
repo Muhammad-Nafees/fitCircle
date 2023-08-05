@@ -10,12 +10,12 @@ import {
 
 const FavoriteDialogScreen = ({navigation, route}: any) => {
   const [buttonText, setButtonText] = useState(
-    route.name === 'FavoriteDialog' ? 'Return' : 'Log In',
+    route.name === 'FavoriteDialog' ? 'Return' : 'Log in',
   );
   const [message, setMessage] = useState(
     route.name === 'FavoriteDialog'
       ? 'Added to favorites!'
-      : 'Password Changed Successfully',
+      : 'Password successfully changed',
   );
 
   const buttonFunction = () => {

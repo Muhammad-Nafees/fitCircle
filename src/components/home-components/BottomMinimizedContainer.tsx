@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: horizontalScale(16),
     alignItems: 'center',
-    paddingVertical: 30,
+    paddingVertical: 27,
   },
   bottomMinimizedTextContainer: {
     flex: 1,

@@ -72,9 +72,7 @@ const VerifyScreen = ({navigation}: any) => {
             </Text>
           </View>
         ) : (
-          <Text style={[STYLES.text14, {marginTop: 2}]}>
-            Account created!{' '}
-          </Text>
+          <Text style={[STYLES.text14, {marginTop: 2}]}>Account created! </Text>
         )}
         <View style={{width: '75%', marginTop: verticalScale(25)}}>
           <CustomButton

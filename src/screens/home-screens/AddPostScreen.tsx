@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   PermissionsAndroid,
+  PanResponder,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -38,15 +39,13 @@ import {RootState} from '../../redux/store';
 import VideoPreviewScreen from './VideoPreviewScreen';
 import {ScrollView} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 
 export const AddPostScreen = ({route}: any) => {
   const navigation = useNavigation();
-  const authToken = useSelector(
-    (state: RootState) => state.auth.authorizationToken,
-  );
   const userData = useSelector((state: RootState) => state.auth.user);
   const [profileImageUrl, setProfileImageUrl] = useState();
   const username = userData?.username;
@@ -58,19 +57,11 @@ export const AddPostScreen = ({route}: any) => {
   const [textInputValue, setTextInputValue] = useState('');
   const [textInputBackgroundColor, setTextInputBackgroundColor] =
     useState('transparent');
-  const [mediaUri, setMediaUri] = useState<string | null>();
+  const [mediaUri, setMediaUri] = useState<string | null>(null);
   const [videoUri, setVideoUri] = useState<string | null>();
-  const [isEnabled, setIsEnabled] = useState(false);
   const [titleInput, setTitleInput] = useState('');
   const [costValue, setCostValue] = useState(0);
-
-  const checkButtonEnable = () => {
-    return textInputValue.length > 0 || mediaUri !== null;
-  };
-
-  const handleNavigation = () => {
-    navigation.navigate('Home');
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -79,8 +70,15 @@ export const AddPostScreen = ({route}: any) => {
       setIsCreatePostIconModalVisible(false);
       setTextInputValue('');
       setMediaUri('');
+      setTextInputBackgroundColor('transparent');
+      setIsLoading(false);
+      setTitleInput('');
     }, []),
   );
+
+  useEffect(() => {
+    requestCameraPermission();
+  }, []);
 
   useEffect(() => {
     const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
@@ -92,30 +90,49 @@ export const AddPostScreen = ({route}: any) => {
     setCostValue(value);
   };
 
-  useEffect(() => {
-    setIsEnabled(checkButtonEnable());
-  }, [textInputValue, mediaUri]);
-
   const handlePostButtonPress = async () => {
+    setIsLoading(true);
+    if (textInputValue.trim().length === 0 && !mediaUri) {
+      Toast.show({
+        type: 'error',
+        text1: 'Post Empty',
+        text2: 'Post cannot be empty. Please attach media or text',
+        visibilityTime: 2000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const postData = {
+      let postData = {
         content: textInputValue,
         media: videoUri ? videoUri : mediaUri,
-        cost: costValue > 0 ? costValue : null,
         visibility: selectedOption.toLowerCase(),
         hexCode:
           textInputBackgroundColor === 'transparent'
             ? null
             : `${textInputBackgroundColor}`,
       };
-      console.log(postData.media);
-      const response = await postContent(postData, authToken);
+
+      if (mediaUri) {
+        postData = {
+          ...postData,
+          cost: costValue > 0 ? costValue : null,
+        };
+      } else {
+        postData = {
+          ...postData,
+          cost: null,
+        };
+      }
+      const response = await postContent(postData);
       if (response.status === 200) {
         Toast.show({
           type: 'success',
           text1: 'Post successful',
           visibilityTime: 2000,
         });
+        setIsLoading(false);
       } else {
         Toast.show({
           type: 'success',
@@ -123,6 +140,7 @@ export const AddPostScreen = ({route}: any) => {
           visibilityTime: 2000,
         });
         console.log('Post failed:', response.data);
+        setIsLoading(false);
         navigation.navigate('Home');
       }
     } catch (error) {
@@ -132,6 +150,7 @@ export const AddPostScreen = ({route}: any) => {
         text1: 'Post Failed',
         visibilityTime: 2000,
       });
+      setIsLoading(false);
       navigation.navigate('Home');
     }
   };
@@ -174,6 +193,17 @@ export const AddPostScreen = ({route}: any) => {
     });
   };
 
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (evt, gestureState) => {
+        setIsComponentMounted(true);
+      },
+      onPanResponderRelease: () => {},
+      onPanResponderTerminate: () => {},
+    }),
+  ).current;
+
   const handleVideoLibrary = () => {
     setVideoUri(null);
     setMediaUri(null);
@@ -184,6 +214,7 @@ export const AddPostScreen = ({route}: any) => {
 
     launchImageLibrary(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
+        setIsCreatePostIconModalVisible(false);
         setVideoUri(response.assets[0].uri);
       }
     });
@@ -228,6 +259,8 @@ export const AddPostScreen = ({route}: any) => {
     setMediaUri(null);
     setTextInputValue('');
     setVideoUri(null);
+    setTextInputBackgroundColor('transparent');
+    setTitleInput('');
     navigation.navigate('Home');
   };
 
@@ -254,6 +287,18 @@ export const AddPostScreen = ({route}: any) => {
     }
   };
 
+  const handleCancelImage = () => {
+    setMediaUri(null);
+  };
+
+  const handleVideoNullify = () => {
+    setIsCreatePostIconModalVisible(false);
+    setVideoUri(null);
+    setMediaUri(null);
+    setTextInputBackgroundColor('transparent');
+    setTitleInput('');
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -275,10 +320,12 @@ export const AddPostScreen = ({route}: any) => {
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
               <CustomButton
-                onPress={isEnabled ? handlePostButtonPress : undefined}
-                isDisabled={!isEnabled}
-                extraStyles={{width: 56, height: 31}}>
-                Post
+                onPress={handlePostButtonPress}
+                extraStyles={{
+                  width: 56,
+                  height: 31,
+                }}>
+                {isLoading ? <CustomLoader /> : 'Post'}
               </CustomButton>
             </TouchableOpacity>
           </View>
@@ -340,6 +387,11 @@ export const AddPostScreen = ({route}: any) => {
               {mediaUri && !videoUri && (
                 <View style={styles.mediaContainer}>
                   <Image source={{uri: mediaUri}} style={styles.media} />
+                  <TouchableOpacity
+                    style={styles.cancelIconContainer}
+                    onPress={handleCancelImage}>
+                    <Image source={CancelIcon} style={styles.cancelIcon} />
+                  </TouchableOpacity>
                 </View>
               )}
             </View>
@@ -391,34 +443,39 @@ export const AddPostScreen = ({route}: any) => {
           </Modal>
         </View>
         {!mediaUri && (
-          <ColorSelectionSlider
-            colors={[
-              '#CC5252',
-              '#88BD91',
-              '#654848',
-              '#AF3E3E',
-              '#42A883',
-              '#00FF00',
-              '#0000FF',
-              '#FFFF00',
-              '#FF00FF',
-            ]}
-            onColorSelected={handleColorSelected}
-          />
+          <View style={{flex: 1, justifyContent: 'flex-end'}}>
+            <ColorSelectionSlider
+              colors={[
+                '#CC5252',
+                '#88BD91',
+                '#654848',
+                '#AF3E3E',
+                '#42A883',
+                '#00FF00',
+                '#0000FF',
+                '#FFFF00',
+                '#FF00FF',
+              ]}
+              onColorSelected={handleColorSelected}
+            />
+          </View>
         )}
-        <BottomMinimizedContainer
-          handlePhotoButtonPress={handlePhotoButtonPress}
-          handleVideoButtonPress={handleVideoButtonPress}
-          handleCaptureButtonPress={handleCaptureButtonPress}
-        />
+        <View style={styles.minimizedContainer} {...panResponder.panHandlers}>
+          <BottomMinimizedContainer
+            handlePhotoButtonPress={handlePhotoButtonPress}
+            handleVideoButtonPress={handleVideoButtonPress}
+            handleCaptureButtonPress={handleCaptureButtonPress}
+          />
+        </View>
       </View>
       {videoUri && (
         <View style={StyleSheet.absoluteFill}>
           <VideoPreviewScreen
             videoUri={videoUri}
-            email={userData?.email}
+            handleBackButtonPress={handleBackButtonPress}
             username={userData?.username}
-            handleNavigation={handleNavigation}
+            handleNavigation={handleVideoNullify}
+            setIsComponentMounted={setIsComponentMounted}
           />
         </View>
       )}
@@ -536,5 +593,20 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'black',
     justifyContent: 'center',
+  },
+  minimizedContainer: {
+    position: 'relative',
+    marginTop: 0,
+  },
+  cancelIconContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  cancelIcon: {
+    width: 20,
+    height: 20,
+    tintColor: 'white',
   },
 });

@@ -115,6 +115,7 @@ const CreateAccount = ({navigation}: any) => {
           errors,
           touched,
           setFieldValue,
+          setFieldError,
         }) => (
           <>
             <Text style={[STYLES.text16, {fontWeight: '700'}]}>
@@ -131,6 +132,8 @@ const CreateAccount = ({navigation}: any) => {
                 autoCapitalize="none"
                 initialTouched={true}
                 handleChange={handleChange('email')}
+                setFieldError={setFieldError}
+                fieldName="email"
               />
               <CustomPhoneInput
                 value={values.phone}
@@ -152,6 +155,8 @@ const CreateAccount = ({navigation}: any) => {
                 isPasswordIcon={true}
                 initialTouched={true}
                 handleChange={handleChange('password')}
+                setFieldError={setFieldError}
+                fieldName="password"
               />
               <CustomInput
                 label="Re-Enter Password"
@@ -162,6 +167,8 @@ const CreateAccount = ({navigation}: any) => {
                 touched={touched.confirmPassword}
                 initialTouched={true}
                 handleChange={handleChange('confirmPassword')}
+                setFieldError={setFieldError}
+                fieldName="confirmPassword"
               />
             </View>
             <View style={styles.button}>

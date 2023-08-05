@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
 import {STYLES} from '../../styles/globalStyles';
@@ -21,6 +21,8 @@ interface Props {
   setCountry?: any;
   setFieldValue: (field: string, value: string) => void;
   fontColor?: string;
+  fieldName: string;
+  setFieldError: (field: string, value: string) => void;
 }
 
 export const CustomSelect: React.FC<Props> = ({
@@ -38,8 +40,16 @@ export const CustomSelect: React.FC<Props> = ({
   setCountry,
   styles,
   fontColor,
+  fieldName,
+  setFieldError
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
+
+  const handleFocus = () => {
+    if (touched && error) {
+      setFieldError(fieldName, '');
+    }
+  };
 
   return (
     <View style={[{gap: 8}, styles]}>
@@ -73,13 +83,14 @@ export const CustomSelect: React.FC<Props> = ({
           color: fontColor ? fontColor : '#000000',
           textAlign: 'left',
         }}
+        onFocus={handleFocus}
         buttonStyle={{
           height: height ? height : verticalScale(45),
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '85%',
         }}
       />
-      {(error && !values) || error && touched ? (
+      {(error && !values) || (error && touched) ? (
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>
           <Icon name="alert-circle" size={22} color="red" />
           <Text style={[STYLES.text12, {color: 'red'}]}>{error}</Text>

@@ -9,23 +9,22 @@ import {
   Image,
   ActivityIndicator,
   Dimensions,
-  ScrollView,
-  KeyboardAvoidingView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {Avatar} from 'react-native-paper';
 import {CustomPost} from '../../components/home-components/CustomPost';
 import {ReelsComponent} from '../../components/home-components/Reels';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import axios from 'axios';
 const SearchIcon = require('../../../assets/icons/search.png');
 import Carousel from 'react-native-reanimated-carousel';
 const NotificationIcon = require('../../../assets/icons/notification.png');
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const HomeScreen = () => {
+const HomeScreen = ({route}: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   console.log(userData);
   const username = userData?.username;
@@ -33,23 +32,50 @@ const HomeScreen = () => {
   const [posts, setPosts] = useState([]);
   const [selectedButton, setSelectedButton] = useState('My Circle');
   const navigation = useNavigation();
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [listKey, setListKey] = useState<number>(0);
   const [filteredVideos, setFilteredVideos] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState();
+  const [isPostUploaded, setIsPostUploaded] = useState(false);
 
   const handleSearchBarFocus = () => {
     navigation.navigate('Search');
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      handleRefresh();
+    }, []),
+  );
   useEffect(() => {
-    setIsRefreshing(true);
-    fetchPosts();
-    setUserId(userData?._id);
+    handleRefresh();
   }, []);
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    fetchPosts();
+  };
+
   useEffect(() => {
+    if (isPostUploaded) {
+      setIsRefreshing(true);
+      fetchPosts();
+      setIsPostUploaded(false);
+    }
+  }, [isPostUploaded]);
+
+  useEffect(() => {
+    if (route.params?.newPostData) {
+      const newPostData = route.params?.newPostData;
+      if (newPostData) {
+        setPosts(prevPosts => [newPostData, ...prevPosts]);
+        setIsPostUploaded(true);
+      }
+    }
+  }, [route.params?.newPostData]);
+
+  useEffect(() => {
+    setUserId(userData?._id);
+    handleButtonPress('My Circle');
     const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
     setProfileImageUrl(imageUri);
   }, [userData]);
@@ -61,22 +87,23 @@ const HomeScreen = () => {
     setFilteredVideos(videoPosts);
   }, [posts]);
 
+  const API_BASE_URL = 'https://glorious-tan-gilet.cyclic.cloud/';
   const fetchPosts = async () => {
+    setIsPostUploaded(false);
     try {
-      const response = await fetch('https://fit-circle.cyclic.app/posts/');
-      const data = await response.json();
-      setPosts(data);
-      setIsRefreshing(false);
-      setListKey(prevKey => prevKey + 1);
+      const response = await axios.get(`${API_BASE_URL}/posts`);
+      const data = response.data;
+      console.log(data);
+      if (Array.isArray(data)) {
+        setPosts(data);
+      } else {
+        console.error('Invalid data format from API:', data);
+      }
     } catch (error) {
       console.error('Error fetching posts:', error);
+    } finally {
+      setIsRefreshing(false);
     }
-  };
-
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await fetchPosts();
-    setIsRefreshing(false);
   };
 
   const handleButtonPress = (button: string) => {
@@ -114,7 +141,12 @@ const HomeScreen = () => {
             />
           </View>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingBottom: 16,
+          }}>
           <View></View>
           <View></View>
           <View></View>
@@ -172,11 +204,8 @@ const HomeScreen = () => {
             data={posts}
             renderItem={renderCustomPost}
             keyExtractor={item => item._id}
-            key={listKey}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            onRefresh={() => handleRefresh()}
             refreshing={isRefreshing}
+            onRefresh={handleRefresh}
           />
         ) : (
           <View style={{flex: 1}}>
@@ -186,13 +215,10 @@ const HomeScreen = () => {
               windowSize={2}
               vertical={true}
               data={filteredVideos}
-              onSnapToItem={setCurrentIndex}
-              renderItem={({item, index}: any) => (
-                <ReelsComponent
-                  post={item}
-                  isFocused={currentIndex === index}
-                  userId={userId}
-                />
+              onSnapToItem={index => {}}
+              pagingEnabled={true}
+              renderItem={({item}: any) => (
+                <ReelsComponent post={item} isFocused={false} userId={userId} />
               )}
             />
           </View>

@@ -66,7 +66,7 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
         <View
           style={{
             position: 'relative',
-            top: -27,
+            top: -15,
             left: 0,
             right: 0,
             zIndex: -1,
@@ -78,15 +78,25 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
           />
         </View>
       )}
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Image
+      <View style={{marginHorizontal: 25}}>
+        <View
           style={{
-            width: 24,
-            height: 24,
-            tintColor: focused ? '#fff' : '#209BCC',
-          }}
-          source={icon}
-        />
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: focused ? 'rgba(168, 213, 229, 0.35)' : null,
+            borderRadius: focused ? 30 : null,
+            padding: focused ? 12 : null,
+          }}>
+          <Image
+            style={{
+              width: 24,
+              height: 24,
+              tintColor: focused ? '#fff' : '#209BCC',
+              zIndex: 9999,
+            }}
+            source={icon}
+          />
+        </View>
       </View>
     </View>
   );
@@ -122,7 +132,9 @@ const HomeTabNavigator = () => {
         component={SearchScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <CustomTabBarIcon focused={focused} icon={Search} />
+            <View>
+              <CustomTabBarIcon focused={focused} icon={Search} />
+            </View>
           ),
         }}
       />
@@ -150,7 +162,9 @@ const HomeTabNavigator = () => {
         component={MessageScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <CustomTabBarIcon focused={focused} icon={Message} />
+            <View>
+              <CustomTabBarIcon focused={focused} icon={Message} />
+            </View>
           ),
         }}
       />
@@ -159,7 +173,9 @@ const HomeTabNavigator = () => {
         component={DashboardScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <CustomTabBarIcon focused={focused} icon={Dashboard} />
+            <View>
+              <CustomTabBarIcon focused={focused} icon={Dashboard} />
+            </View>
           ),
         }}
       />

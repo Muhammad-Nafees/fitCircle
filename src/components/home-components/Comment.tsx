@@ -335,6 +335,7 @@ const styles = StyleSheet.create({
   replyButton: {
     fontSize: 10,
     fontWeight: '500',
+    color: '#888888',
   },
   repliesContainer: {
     marginLeft: 0,

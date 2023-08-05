@@ -37,11 +37,14 @@ export const Boost = ({
     <View style={styles.container}>
       <Text style={styles.title}>Choose A Boost</Text>
       {options.map((option: any) => (
-        <View style={styles.row} key={option.label}>
+        <TouchableOpacity
+          style={styles.row}
+          key={option.label}
+          onPress={() => handleBoostOptionSelect(option)}>
           {renderRadioButton(option)}
           <Text style={styles.boostText}>{option.label}</Text>
           <Text style={styles.price}>{option.price}</Text>
-        </View>
+        </TouchableOpacity>
       ))}
       <View style={styles.horizontalLine} />
       <Text style={styles.startDateText}>Start A Date</Text>
@@ -117,7 +120,9 @@ const styles = StyleSheet.create({
   input: {
     borderRadius: 10,
     marginVertical: 20,
+    paddingHorizontal: 13,
     backgroundColor: '#525154',
+    opacity: 0.2,
     color: '#fff',
   },
 });

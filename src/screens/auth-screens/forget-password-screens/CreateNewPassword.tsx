@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {Text} from 'react-native';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
@@ -9,6 +15,7 @@ import CustomLoader from '../../../components/shared-components/CustomLoader';
 import {createNewPasswordSchema} from '../../../validations';
 import {otpValidation, resetPassword} from '../../../api';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 interface FormValues {
   newPassword: string;
@@ -19,9 +26,21 @@ const CreateNewPassword = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string | undefined>('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] =
+    useState<boolean>(false);
+
   const initialValues: FormValues = {
     newPassword: '',
     confirmNewPassword: '',
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(prev => !prev);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(prev => !prev);
   };
 
   useEffect(() => {
@@ -52,7 +71,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
 
   return (
     <View style={STYLES.container}>
-      <View style={{gap: 10}}>
+      <View>
         <Text
           style={[
             STYLES.text16,
@@ -75,31 +94,46 @@ const CreateNewPassword = ({navigation, route}: any) => {
           errors,
           touched,
           initialTouched,
+          setFieldError,
         }) => (
           <View style={{flex: 1}}>
-            <View style={{marginTop: verticalScale(42), gap: 0}}>
+            <View style={{marginTop: verticalScale(25), gap: 0}}>
               <Text style={styles.label}>Create New Password</Text>
-              <TextInput
-                style={{
-                  width: horizontalScale(340),
-                  backgroundColor: 'black',
-                  color: '#fff',
-                  borderRadius: 10,
-                  height: verticalScale(55),
-                  paddingHorizontal: 16,
-                  borderWidth: focusedField === 'newPassword' ? 2 : 1,
-                  borderColor:
-                    focusedField === 'newPassword' ? 'white' : 'gray',
-                }}
-                placeholder="Type here"
-                placeholderTextColor="gray"
-                secureTextEntry={true}
-                autoCapitalize="none"
-                value={values.newPassword}
-                onChangeText={handleChange('newPassword')}
-                onFocus={() => handleFocus('newPassword')}
-                onBlur={() => setFocusedField(null)}
-              />
+              <View
+                style={[
+                  styles.textInputContainer,
+                  {
+                    borderWidth: focusedField === 'newPassword' ? 2 : 1,
+                    borderColor:
+                      focusedField === 'newPassword' ? 'white' : 'gray',
+                  },
+                ]}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Type here"
+                  placeholderTextColor="gray"
+                  secureTextEntry={!passwordVisible}
+                  autoCapitalize="none"
+                  value={values.newPassword}
+                  onChangeText={text => {
+                    handleChange('newPassword')(text);
+                    if (errors.newPassword && touched.newPassword) {
+                      setFieldError('newPassword', '');
+                    }
+                  }}
+                  onFocus={() => handleFocus('newPassword')}
+                  onBlur={() => setFocusedField(null)}
+                  textAlignVertical="bottom"
+                />
+                <TouchableOpacity onPress={togglePasswordVisibility}>
+                  <Icon
+                    name={passwordVisible ? 'eye-outline' : 'eye-off-outline'}
+                    color="black"
+                    size={24}
+                    style={styles.icon}
+                  />
+                </TouchableOpacity>
+              </View>
               {errors.newPassword && touched.newPassword ? (
                 <View
                   style={{
@@ -107,7 +141,6 @@ const CreateNewPassword = ({navigation, route}: any) => {
                     alignItems: 'center',
                     gap: 2,
                     marginTop: verticalScale(7),
-                    marginBottom: verticalScale(4),
                   }}>
                   <Icon name="alert-circle" size={22} color="red" />
                   <Text style={[STYLES.text12, {color: 'red'}]}>
@@ -115,32 +148,52 @@ const CreateNewPassword = ({navigation, route}: any) => {
                   </Text>
                 </View>
               ) : (
-                <View style={{height: 35}} />
+                <View style={{height: 30}} />
               )}
             </View>
             <View style={{gap: 0}}>
               <Text style={styles.label}>Confirm New Password</Text>
-              <TextInput
-                style={{
-                  width: horizontalScale(340),
-                  backgroundColor: 'black',
-                  color: '#fff',
-                  borderRadius: 10,
-                  height: verticalScale(55),
-                  paddingHorizontal: 16,
-                  borderWidth: focusedField === 'confirmNewPassword' ? 2 : 1,
-                  borderColor:
-                    focusedField === 'confirmNewPassword' ? 'white' : 'gray',
-                }}
-                placeholder="Type here"
-                placeholderTextColor="gray"
-                secureTextEntry={true}
-                autoCapitalize="none"
-                value={values.confirmNewPassword}
-                onChangeText={handleChange('confirmNewPassword')}
-                onFocus={() => handleFocus('confirmNewPassword')}
-                onBlur={() => setFocusedField(null)}
-              />
+              <View
+                style={[
+                  styles.textInputContainer,
+                  {
+                    borderWidth: focusedField === 'confirmNewPassword' ? 2 : 1,
+                    borderColor:
+                      focusedField === 'confirmNewPassword' ? 'white' : 'gray',
+                  },
+                ]}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Type here"
+                  placeholderTextColor="gray"
+                  secureTextEntry={!confirmPasswordVisible}
+                  autoCapitalize="none"
+                  value={values.confirmNewPassword}
+                  onChangeText={text => {
+                    handleChange('confirmNewPassword')(text);
+                    if (
+                      errors.confirmNewPassword &&
+                      touched.confirmNewPassword
+                    ) {
+                      setFieldError('confirmNewPassword', '');
+                    }
+                  }}
+                  onFocus={() => handleFocus('confirmNewPassword')}
+                  onBlur={() => setFocusedField(null)}
+                  textAlignVertical="bottom"
+                />
+                <TouchableOpacity onPress={togglePasswordVisibility}>
+                  <Icon
+                    name={
+                      confirmPasswordVisible ? 'eye-outline' : 'eye-off-outline'
+                    }
+                    color="black"
+                    size={24}
+                    style={styles.icon}
+                    onPress={toggleConfirmPasswordVisibility}
+                  />
+                </TouchableOpacity>
+              </View>
               {errors.confirmNewPassword && touched.confirmNewPassword ? (
                 <View
                   style={{
@@ -160,7 +213,8 @@ const CreateNewPassword = ({navigation, route}: any) => {
               )}
             </View>
             <View
-              style={{flex: 1, justifyContent: 'flex-end', marginBottom: 20}}>
+              style={{flex: 2, justifyContent: 'flex-end', marginBottom: 20}}>
+              {/* <View style={{height: 320}}></View> */}
               <TouchableOpacity
                 disabled={isLoading || values.confirmNewPassword.trim() === ''}
                 onPress={handleSubmit}
@@ -198,39 +252,37 @@ const CreateNewPassword = ({navigation, route}: any) => {
 };
 
 const styles = StyleSheet.create({
-  textInputContainer: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   label: {
-    position: 'absolute',
-    top: 2,
-    left: 14,
+    position: 'relative',
+    top: verticalScale(20),
+    left: horizontalScale(20),
     color: 'white',
     fontSize: 12,
     zIndex: 10,
-  },
-  textInput: {
-    flex: 1,
-    backgroundColor: 'black',
-    borderRadius: 12,
-    color: 'white',
-    borderWidth: 1,
-    borderColor: 'transparent',
-    paddingHorizontal: horizontalScale(16),
-    fontSize: 16,
-    height: verticalScale(55),
-    paddingTop: verticalScale(20),
-  },
-  focusedInput: {
-    borderColor: '#fff',
   },
   buttonContainer: {
     bottom: 0,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  textInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: horizontalScale(340),
+    backgroundColor: 'black',
+    borderRadius: 10,
+    height: verticalScale(60),
+    paddingHorizontal: horizontalScale(16),
+  },
+  textInput: {
+    flex: 1,
+    color: '#fff',
+    marginTop: 8,
+  },
+  icon: {
+    padding: 8,
+    color: 'gray',
   },
 });
 

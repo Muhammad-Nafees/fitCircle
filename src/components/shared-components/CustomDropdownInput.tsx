@@ -22,6 +22,8 @@ const DropdownTextInput = ({
   touched,
   initialTouched,
   handleChange,
+  setFieldError,
+  fieldName,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
@@ -50,6 +52,9 @@ const DropdownTextInput = ({
   const handleTextInputChange = (text: string) => {
     setTextInputValue(text);
     handleChange(text);
+    if (touched && error) {
+      setFieldError(fieldName, '');
+    }
   };
 
   return (
@@ -130,7 +135,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: horizontalScale(10),
-    color: 'black'
+    color: 'black',
   },
   icon: {
     alignItems: 'center',

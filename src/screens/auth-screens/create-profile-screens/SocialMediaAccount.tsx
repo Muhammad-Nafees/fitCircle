@@ -105,6 +105,7 @@ const SocialMediaAccount = ({navigation}: any) => {
             errors,
             touched,
             initialTouched,
+            setFieldError
           }) => (
             <>
               <View>
@@ -123,6 +124,8 @@ const SocialMediaAccount = ({navigation}: any) => {
                     autoCapitalize="none"
                     handleChange={handleChange('facebook')}
                     isFirstLetterLowercase={true}
+                    setFieldError={setFieldError}
+                    fieldName='facebook'
                   />
                   <CustomInput
                     label="Instagram"
@@ -134,6 +137,8 @@ const SocialMediaAccount = ({navigation}: any) => {
                     autoCapitalize="none"
                     handleChange={handleChange('instagram')}
                     isFirstLetterLowercase={true}
+                    setFieldError={setFieldError}
+                    fieldName='instagram'
                   />
                   <CustomInput
                     label="Twitter"
@@ -145,6 +150,8 @@ const SocialMediaAccount = ({navigation}: any) => {
                     autoCapitalize="none"
                     handleChange={handleChange('twitter')}
                     isFirstLetterLowercase={true}
+                    setFieldError={setFieldError}
+                    fieldName='twitter'
                   />
                   <CustomInput
                     label="Tiktok"
@@ -156,6 +163,8 @@ const SocialMediaAccount = ({navigation}: any) => {
                     autoCapitalize="none"
                     handleChange={handleChange('tiktok')}
                     isFirstLetterLowercase={true}
+                    setFieldError={setFieldError}
+                    fieldName='tiktok'
                   />
                 </View>
               </View>

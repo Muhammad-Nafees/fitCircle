@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^6.9.13",
     "@react-navigation/stack": "^6.3.16",
     "@reduxjs/toolkit": "^1.9.5",
+    "@thaihuynhquang/react-native-image-zoom-next": "^1.3.1",
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
     "formik": "^2.4.2",

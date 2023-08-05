@@ -23,30 +23,34 @@ const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 const BoostIcon = require('../../../assets/icons/boost.png');
 const TextIcon = require('../../../assets/icons/textIcon.png');
 import {format} from 'date-fns';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import axiosInstance from '../../api/interceptor';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 interface VideoPreviewScreenProps {
   videoUri: string;
   username?: string;
   email?: string;
   handleNavigation: () => void;
+  setIsComponentMounted: (value: boolean) => void;
+  handleBackButtonPress: () => void;
 }
 
 export const VideoPreviewScreen = ({
   videoUri,
   username,
-  email,
   handleNavigation,
+  setIsComponentMounted,
+  handleBackButtonPress,
 }: VideoPreviewScreenProps) => {
   const navigation = useNavigation();
   const options = [
-    {label: '24hours', price: '$5'},
-    {label: '72hours', price: '$10'},
-    {label: '7days', price: '$15'},
+    {label: '24hrs', price: '$5'},
+    {label: '72hrs', price: '$10'},
+    {label: '7 Days', price: '$15'},
   ];
   const videoRef = React.useRef(null);
   const userData = useSelector((state: RootState) => state.auth.user);
@@ -63,12 +67,20 @@ export const VideoPreviewScreen = ({
   const [selectedOptionInternal, setSelectedOptionInternal] = useState(
     options[0],
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const [titleInputValue, setTitleInputValue] = useState('');
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
   const handleBoostOptionSelect = (optionLabel: any) => {
     setSelectedOptionInternal(optionLabel);
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsComponentMounted(false);
+    }, []),
+  );
 
   const onSelectCost = (value: number) => {
     console.log(value);
@@ -90,10 +102,12 @@ export const VideoPreviewScreen = ({
     setBoostModalVisible(false);
     setTextModalVisible(false);
     setPayment(false);
+    setTitleInputValue('');
     setContent('');
   };
 
   const handlePostButtonPress = async () => {
+    setIsLoading(true);
     console.log(selectedOptionInternal.label);
     try {
       const formData = new FormData();
@@ -122,8 +136,10 @@ export const VideoPreviewScreen = ({
           visibilityTime: 5000,
         });
         console.log(response);
+        setIsLoading(false);
+        handleBackButtonPress();
         handleClose();
-        handleNavigation();
+        navigation.navigate('Home');
       } else {
         Toast.show({
           type: 'success',
@@ -131,8 +147,10 @@ export const VideoPreviewScreen = ({
           visibilityTime: 5000,
         });
         console.log(response);
+        setIsLoading(false);
+        handleBackButtonPress();
         handleClose();
-        handleNavigation();
+        navigation.navigate('Home');
       }
     } catch (error) {
       console.log('API call error:', error);
@@ -141,7 +159,9 @@ export const VideoPreviewScreen = ({
         text1: 'Error sharing post. Please try again!',
         visibilityTime: 5000,
       });
+      setIsLoading(false);
       handleClose();
+      handleBackButtonPress();
       handleNavigation();
     }
   };
@@ -190,6 +210,10 @@ export const VideoPreviewScreen = ({
     setShowDialog(false);
     navigation.navigate('UnsuccessfulDialog');
   };
+
+  const handleTitleInputChange = (text: string) => {
+    setTitleInputValue(text);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.topLeftContent}>
@@ -204,7 +228,9 @@ export const VideoPreviewScreen = ({
         )}
         <View style={styles.postTextContainer}>
           <Text style={styles.postName}>{username}</Text>
-          <Text style={styles.postId}>{email}</Text>
+          <Text style={styles.postId}>{`@${username
+            ?.toLowerCase()
+            ?.replace(/\s/g, '')}`}</Text>
         </View>
       </View>
       <Video
@@ -291,6 +317,7 @@ export const VideoPreviewScreen = ({
             style={styles.textInput}
             placeholder="Add title here..."
             placeholderTextColor="#fff"
+            onChangeText={handleTitleInputChange}
           />
           <TouchableOpacity
             style={styles.avatarButton}
@@ -310,7 +337,9 @@ export const VideoPreviewScreen = ({
           </TouchableOpacity>
         </View>
         <View style={styles.buttonContainer}>
-          <CustomButton onPress={handlePostButtonPress}>Share</CustomButton>
+          <CustomButton onPress={handlePostButtonPress}>
+            {isLoading ? <CustomLoader /> : 'Share'}
+          </CustomButton>
         </View>
       </View>
       {showDialog && (
@@ -355,8 +384,8 @@ const styles = StyleSheet.create({
   postId: {
     marginRight: horizontalScale(10),
     color: '#007797',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 10,
+    fontWeight: '400',
   },
   postName: {
     color: '#fff',
@@ -413,10 +442,11 @@ const styles = StyleSheet.create({
     marginRight: horizontalScale(16),
   },
   textInput: {
-    height: verticalScale(40),
+    height: verticalScale(45),
     backgroundColor: '#2c2c2f',
     color: 'white',
     paddingHorizontal: horizontalScale(10),
+    paddingVertical: verticalScale(10),
     marginBottom: verticalScale(8),
   },
   buttonContainer: {
@@ -465,7 +495,7 @@ const styles = StyleSheet.create({
   textContentContainer: {
     position: 'absolute',
     alignItems: 'center',
-    marginTop: '160%',
+    marginTop: '145%',
     marginRight: '10%',
     marginLeft: horizontalScale(20),
     zIndex: 88,

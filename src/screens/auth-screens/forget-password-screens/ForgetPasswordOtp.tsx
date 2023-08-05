@@ -27,6 +27,16 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
   const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
   const [verificationType, setVerificationType] = useState('');
 
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+  const handleInputFocus = (index: number) => {
+    setFocusedIndex(index);
+  };
+
+  const handleInputBlur = () => {
+    setFocusedIndex(null);
+  };
+
   const [secondsRemaining, setSecondsRemaining] = useState(60);
   useEffect(() => {
     setVerificationType(route?.params?.verificationType);
@@ -48,7 +58,6 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
   const handleSubmit = async () => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
-    setIsLoading(true);
     try {
       const response = await otpValidation(convertOtpIntoNumber, email);
       if (response?.status == 200) {
@@ -70,7 +79,7 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
             type: 'success',
             text1: 'OTP verified!',
           });
-          navigation.navigate('CreateNewPassword', {email: email});
+          navigation.navigate('BlankButtonRender', {email: email});
         }
       }
     } catch (error: any) {
@@ -146,91 +155,89 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
 
   return (
     <View style={STYLES.container}>
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        <View style={{flex: 1}}>
-          <View style={{gap: 10, marginVertical: 0}}>
-            <Text style={{fontWeight: '500', fontSize: 22, color: '#fff'}}>
-              Verify Your Email
+      <View style={{flex: 1}}>
+        <View style={{gap: 10, marginVertical: 0}}>
+          <Text style={{fontWeight: '500', fontSize: 22, color: '#fff'}}>
+            Verify your email
+          </Text>
+          <Text style={{fontSize: 14, fontWeight: '400', color: '#fff'}}>
+            We sent you the verification code
+          </Text>
+          <Text style={[STYLES.text12, {fontWeight: '400'}]}>
+            Verification code is :{' '}
+            <Text style={[STYLES.text14, {fontWeight: '500'}]}>
+              {generatedOtp}
             </Text>
-            <Text style={{fontSize: 14, fontWeight: '400', color: '#fff'}}>
-              We sent you the verification code
-            </Text>
-            {/* <Text style={[STYLES.text12, {fontWeight: '400'}]}>
-              Your email is :{' '}
-              <Text style={[STYLES.text14, {fontWeight: '500'}]}>{email}</Text>
-            </Text> */}
-            <Text style={[STYLES.text12, {fontWeight: '400'}]}>
-              Verification code is :{' '}
-              <Text style={[STYLES.text14, {fontWeight: '500'}]}>
-                {generatedOtp}
-              </Text>
-            </Text>
-          </View>
-          <View style={styles.inputContainer}>
-            {Array.from({length: 6}, (_, index) => (
-              <TextInput
-                key={index}
-                style={styles.input}
-                maxLength={1}
-                keyboardType="numeric"
-                secureTextEntry={!otp[index]}
-                returnKeyType="next"
-                blurOnSubmit={false}
-                ref={ref => (inputRefs.current[index] = ref)}
-                value={otp[index]}
-                onChangeText={value => handleInputChange(index, value)}
-                onKeyPress={({nativeEvent: {key}}) =>
-                  handleInputKeyPress(index, key)
-                }
-              />
-            ))}
-          </View>
+          </Text>
         </View>
-        <View style={styles.bottomContainer}>
-          <View style={{alignItems: 'center'}}>
-            {secondsRemaining !== 0 ? (
-              <Text style={STYLES.text14}>
-                <Text style={{color: '#268CAA'}}>Resend</Text> in
-                <Text style={{color: 'red'}}>{` 00:${secondsRemaining}`}</Text>
-              </Text>
-            ) : (
-              <TouchableOpacity onPress={handleResendOtp}>
-                <Text
-                  style={{
-                    color: '#209BCC',
-                    textDecorationLine: 'underline',
-                  }}>
-                  {isResendLoading ? <CustomLoader /> : 'Resend'}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          <TouchableOpacity
-            style={[
-              styles.verifyButtonContainer,
-              {
-                backgroundColor: otp.length > 0 ? '#209BCC' : 'transparent',
-                borderWidth: otp.length > 0 ? 0 : 1,
-                borderColor: 'white',
-                width: '100%',
-              },
-            ]}
-            disabled={otp.length === 0 || secondsRemaining === 0 || isLoading}
-            onPress={handleSubmit}>
-            {isLoading ? (
-              <CustomLoader />
-            ) : (
+        <View style={styles.inputContainer}>
+          {Array.from({length: 6}, (_, index) => (
+            <TextInput
+              key={index}
+              style={[
+                styles.input,
+                focusedIndex === index && {
+                  borderWidth: 1,
+                  borderColor: 'white',
+                },
+              ]}
+              maxLength={1}
+              keyboardType="numeric"
+              secureTextEntry={!otp[index]}
+              returnKeyType="next"
+              blurOnSubmit={false}
+              ref={ref => (inputRefs.current[index] = ref)}
+              value={otp[index]}
+              onChangeText={value => handleInputChange(index, value)}
+              onKeyPress={({nativeEvent: {key}}) =>
+                handleInputKeyPress(index, key)
+              }
+              onFocus={() => handleInputFocus(index)}
+              onBlur={handleInputBlur}
+            />
+          ))}
+        </View>
+      </View>
+      <View style={styles.bottomContainer}>
+        <View style={{alignItems: 'center'}}>
+          {secondsRemaining !== 0 ? (
+            <Text style={STYLES.text14}>
+              <Text style={{color: '#268CAA'}}>Resend</Text> in
+              <Text style={{color: 'red'}}>{` 00:${secondsRemaining}`}</Text>
+            </Text>
+          ) : (
+            <TouchableOpacity onPress={handleResendOtp}>
               <Text
-                style={[
-                  styles.verifyButtonText,
-                  {color: otp.length > 0 ? 'white' : 'gray'},
-                ]}>
-                Verify
+                style={{
+                  color: '#209BCC',
+                  textDecorationLine: 'underline',
+                }}>
+                {isResendLoading ? <CustomLoader /> : 'Resend'}
               </Text>
-            )}
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
         </View>
-      </ScrollView>
+        <TouchableOpacity
+          style={[
+            styles.verifyButtonContainer,
+            {
+              backgroundColor: otp.length > 0 ? '#209BCC' : 'transparent',
+              borderWidth: otp.length > 0 ? 0 : 1,
+              borderColor: 'white',
+              width: '100%',
+            },
+          ]}
+          disabled={otp.length === 0 || secondsRemaining === 0 || isLoading}
+          onPress={handleSubmit}>
+          <Text
+            style={[
+              styles.verifyButtonText,
+              {color: otp.length > 0 ? 'white' : 'gray'},
+            ]}>
+            Verify
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

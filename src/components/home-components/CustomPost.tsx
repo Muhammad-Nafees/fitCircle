@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {Avatar} from 'react-native-paper';
 import Modal from 'react-native-modal';
+import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
 const Heart = require('../../../assets/icons/heart.png');
 const Like = require('../../../assets/icons/like.png');
 const LikeFilled = require('../../../assets/icons/likeFilled.png');
@@ -22,6 +23,7 @@ import CustomButton from '../shared-components/CustomButton';
 import axiosInstance from '../../api/interceptor';
 import {Comment} from './Comment';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+
 const Dot = require('../../../assets/icons/dot.png');
 
 const width = Dimensions.get('window').width;
@@ -53,10 +55,15 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [likesCount, setLikesCount] = useState(likes.length);
+  const [commentsCount, setCommentsCount] = useState(comments.length);
   const [shareText, setShareText] = useState('');
   const [isLiked, setIsLiked] = useState(false);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [commentsData, setCommentsData] = useState([]);
   const [isCommentPressed, setIsCommentPressed] = useState(false);
+  const [isImageFullscreen, setImageFullscreen] = useState(false);
+  const dropdownOptions =
+    userId === post.user._id ? ['Edit', 'Delete'] : ['Flag'];
   const isLocked = cost && cost > 0;
 
   const handleCommentPress = () => {
@@ -97,6 +104,16 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
       return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
     } else {
       return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
+    }
+  };
+
+  const handleOptionSelect = (option: string) => {
+    setDropdownVisible(false);
+    if (userId === post.user._id) {
+      if (option === 'Edit') {
+      } else if (option === 'Delete') {
+      }
+    } else if (option === 'Flag') {
     }
   };
 
@@ -169,6 +186,7 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
       .then(response => {
         console.log('Comment Posted successfully!');
         handleCommentsRetrieve();
+        setCommentsCount(commentsCount + 1);
       })
       .catch(error => {
         console.error('Error while commenting on the post:', error);
@@ -203,10 +221,19 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
       .then(response => {
         console.log('Comment Posted successfully!');
         handleCommentsRetrieve();
+        setCommentsCount(commentsCount + 1);
       })
       .catch(error => {
         console.error('Error while commenting on the post:', error);
       });
+  };
+
+  const handleImagePress = () => {
+    setImageFullscreen(true);
+  };
+
+  const handleImageClose = () => {
+    setImageFullscreen(false);
   };
 
   return (
@@ -230,7 +257,9 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
             <View style={styles.postTextContainer}>
               <Text style={styles.postName}>{username}</Text>
               <View style={styles.postDetails}>
-                <Text style={styles.postId}>{email}</Text>
+                <Text style={styles.postId}>
+                  {`@${username?.toLowerCase()?.replace(/\s/g, '')}`}
+                </Text>
                 <Image
                   source={Dot}
                   style={{
@@ -243,12 +272,40 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
                 <Text style={styles.postTime}>{getTimeDifference()}</Text>
               </View>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setDropdownVisible(!isDropdownVisible)}>
               <Image
                 source={OptionIcon}
                 style={{width: 24, height: 35, tintColor: '#fff'}}
               />
             </TouchableOpacity>
+            {isDropdownVisible && (
+              <TouchableOpacity
+                style={styles.dropdown}
+                onPress={() => setDropdownVisible(false)}>
+                {dropdownOptions.map((option, index) => (
+                  <React.Fragment key={index}>
+                    <View
+                      style={styles.dropdownOption}
+                      onPress={() => handleOptionSelect(option)}>
+                      <Text
+                        style={{
+                          color: '#fff',
+                          textAlign: 'center',
+                          fontSize: 10,
+                          paddingVertical: 2,
+                          zIndex: 66666,
+                        }}>
+                        {option}
+                      </Text>
+                    </View>
+                    {index === 0 && dropdownOptions[index + 1] === 'Delete' && (
+                      <View style={styles.horizontalLine} />
+                    )}
+                  </React.Fragment>
+                ))}
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         {isLocked ? (
@@ -275,15 +332,22 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
             <Text style={styles.contentText}>{content}</Text>
           </View>
         )}
-        {media && <Image style={styles.image} source={{uri: media}} />}
+        {media && (
+          <TouchableOpacity onPress={handleImagePress}>
+            <Image style={styles.image} source={{uri: media}} />
+          </TouchableOpacity>
+        )}
         <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
           <View style={styles.postButtonsContainer}>
             <View style={styles.likesContainer}>
               <Image style={styles.heartIcon} source={Heart} />
-              <Text style={styles.likesCount}>{`${likesCount} likes`}</Text>
+              <Text style={styles.likesCount}>{`${likesCount} ${
+                likesCount === 1 ? 'like' : 'likes'
+              }`}</Text>
             </View>
-            <Text
-              style={styles.buttonText}>{`${comments.length} comments`}</Text>
+            <Text style={styles.buttonText}>{`${commentsCount} ${
+              commentsCount === 1 ? 'comment' : 'comments'
+            }`}</Text>
           </View>
           <View style={styles.mediaButtons}>
             <TouchableOpacity
@@ -355,6 +419,23 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
             </View>
           </Modal>
         )}
+        <Modal
+          isVisible={isImageFullscreen}
+          backdropOpacity={1}
+          onBackdropPress={() => setImageFullscreen(false)}
+          style={styles.fullscreenContainer}>
+          <TouchableOpacity
+            onPress={handleImageClose}
+            style={styles.fullscreenContainer}>
+            <ImageZoom
+              uri={media}
+              minScale={1}
+              maxScale={10}
+              style={styles.imageZoom}
+              isPinchEnabled={true}
+            />
+          </TouchableOpacity>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -402,6 +483,7 @@ const styles = StyleSheet.create({
     width: horizontalScale(380),
     height: verticalScale(300),
     alignSelf: 'center',
+    zIndex: -1,
   },
   postButtons: {
     backgroundColor: '#E1E1E1',
@@ -456,6 +538,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(16),
     paddingVertical: verticalScale(10),
     borderRadius: 10,
+    zIndex: -1,
   },
   contentText: {
     color: '#fff',
@@ -493,6 +576,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: verticalScale(140),
     borderRadius: 16,
+    color: 'black',
   },
   buttonContainer: {
     marginHorizontal: horizontalScale(20),
@@ -552,5 +636,41 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  dropdown: {
+    backgroundColor: '#444545',
+    position: 'absolute',
+    justifyContent: 'center',
+    right: 10,
+    width: width / 3.4,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    paddingBottom: 10,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    top: 30,
+  },
+  dropdownOption: {
+    color: '#fff',
+  },
+  horizontalLine: {
+    borderBottomColor: '#fff',
+    borderBottomWidth: 0.5,
+    paddingTop: verticalScale(5),
+    marginBottom: verticalScale(5),
+  },
+  fullscreenContainer: {
+    justifyContent: 'center',
+    width: width,
+    height: 400,
+    alignItems: 'center',
+    backgroundColor: 'black',
+    margin: 0,
+    padding: 0,
+  },
+  imageZoom: {
+    width: width,
+    height: 300,
   },
 });

@@ -133,7 +133,9 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
         )}
         <View style={styles.postTextContainer}>
           <Text style={styles.postName}>{username}</Text>
-          <Text style={styles.postId}>{email}</Text>
+          <Text style={styles.postId}>{`@${username
+            ?.toLowerCase()
+            ?.replace(/\s/g, '')}`}</Text>
         </View>
       </View>
       {isLocked ? (
@@ -241,7 +243,7 @@ const styles = StyleSheet.create({
   },
   textContentContainer: {
     position: 'absolute',
-    bottom: verticalScale(30),
+    bottom: verticalScale(55),
     left: horizontalScale(16),
     zIndex: 3,
     marginRight: '40%',
@@ -256,7 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     right: horizontalScale(16),
-    bottom: verticalScale(16),
+    bottom: verticalScale(25),
     paddingHorizontal: horizontalScale(5),
     zIndex: 3,
   },

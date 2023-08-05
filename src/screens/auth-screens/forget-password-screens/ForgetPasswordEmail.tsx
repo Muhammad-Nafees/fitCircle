@@ -87,6 +87,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
           errors,
           touched,
           initialTouched,
+          setFieldError
         }) => (
           <View style={{flex: 1}}>
             <View style={{marginTop: verticalScale(42), gap: 0}}>

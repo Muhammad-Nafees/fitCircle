@@ -26,6 +26,8 @@ interface Props {
   textAlignVertical?: string;
   handleChange: (e: any) => void;
   isFirstLetterLowercase?: boolean;
+  setFieldError: (name: any, error: any) => void;
+  fieldName: string;
 }
 
 const CustomInput = ({...props}: Props) => {
@@ -60,6 +62,9 @@ const CustomInput = ({...props}: Props) => {
 
   const handleChangeText = (text: string) => {
     props.handleChange(text);
+    if (props.touched && props.error) {
+      props.setFieldError(props.fieldName, '');
+    }
   };
 
   const inputStyle = {
