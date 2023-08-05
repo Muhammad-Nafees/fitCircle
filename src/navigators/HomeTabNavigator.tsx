@@ -10,6 +10,7 @@ import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
 import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
+import { ProfileScreen } from '../screens/profile-screens/ProfileScreen';
 
 const Home = require('../../assets/icons/home-page.png');
 const Search = require('../../assets/icons/searchTab.png');
@@ -168,6 +169,13 @@ const HomeTabNavigator = () => {
         component={FavoriteDialogScreen}
         options={{
           tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+       <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
           tabBarButton: () => null,
         }}
       />

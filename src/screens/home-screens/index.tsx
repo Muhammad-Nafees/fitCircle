@@ -94,7 +94,8 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <View style={styles.topContainer}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile', {posts: posts})}>
             {profileImageUrl ? (
               <Avatar.Image size={40} source={{uri: profileImageUrl}} />
             ) : (
