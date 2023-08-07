@@ -11,8 +11,10 @@ const BlankButtonRenderScreen = ({navigation, route}: any) => {
   useEffect(() => {
     if (route.params.phone) {
       setPhone(route.params.phone);
+      console.log('Button Render', route.params.phone);
     } else {
       setEmail(route.params.email);
+      console.log(route.params.email);
     }
     setTimeout(() => {
       setIsLoading(false);
@@ -24,9 +26,9 @@ const BlankButtonRenderScreen = ({navigation, route}: any) => {
 
   const handleVerify = () => {
     if (route.params.phone) {
-      navigation.navigate('CreateNewPassword', {phone: phone});
+      navigation.navigate('CreateNewPassword', {phone: route.params.phone});
     } else {
-      navigation.navigate('CreateNewPassword', {email: email});
+      navigation.navigate('CreateNewPassword', {email: route.params.email});
     }
   };
 

@@ -13,10 +13,10 @@ import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import {
-  generateOtp,
   otpValidationByPhone,
   otpValidationByEmail,
-  resetPassword,
+  generateEmailOtp,
+  generatePhoneOtp,
 } from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
@@ -92,7 +92,9 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
               type: 'success',
               text1: 'OTP verified!',
             });
-            navigation.navigate('BlankButtonRender', {phone: phone});
+            navigation.navigate('BlankButtonRender', {
+              phone: route.params.phone,
+            });
           }
         }
       } else {
@@ -119,7 +121,9 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
               type: 'success',
               text1: 'OTP verified!',
             });
-            navigation.navigate('BlankButtonRender', {email: email});
+            navigation.navigate('BlankButtonRender', {
+              email: route.params.email,
+            });
           }
         }
       }
@@ -145,12 +149,13 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
     setIsResendLoading(true);
     try {
       if (verificationType === 'phone') {
-        const response = await generateOtp('', phone);
+        console.log('phone');
+        const response = await generatePhoneOtp(route.params.phone);
         const newOtp = response.data;
         setGeneratedOtp(newOtp);
         setSecondsRemaining(60);
       } else {
-        const response = await generateOtp(email as string);
+        const response = await generateEmailOtp(route.params.email as string);
         const newOtp = response.data;
         setGeneratedOtp(newOtp);
         setSecondsRemaining(60);

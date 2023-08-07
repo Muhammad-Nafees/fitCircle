@@ -16,7 +16,7 @@ import {Formik} from 'formik';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import {generateOtp} from '../../../api';
+import {generatePhoneOtp} from '../../../api';
 import PhoneInput from 'react-native-phone-number-input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
@@ -48,7 +48,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
     }
     try {
       console.log(`${values.phone}`);
-      const response = await generateOtp('', `${values.phone}`);
+      const response = await generatePhoneOtp(values.phone);
       console.log(response);
       const data = response.data;
       setIsLoading(false);

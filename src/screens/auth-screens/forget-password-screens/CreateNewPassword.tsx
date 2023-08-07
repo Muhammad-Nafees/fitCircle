@@ -50,8 +50,10 @@ const CreateNewPassword = ({navigation, route}: any) => {
   useEffect(() => {
     if (route.params.phone) {
       setPhone(route.params.phone);
+      console.log(route.params.phone);
     } else {
       setEmail(route?.params.email);
+      console.log(route.params.email);
     }
   }, []);
 
@@ -61,7 +63,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
       if (route.params.phone) {
         const response = await resetPasswordWithPhone(
           values.newPassword,
-          email,
+          route.params.phone,
         );
         if (response?.status == 200) {
           setIsLoading(false);
@@ -70,7 +72,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
       } else {
         const response = await resetPasswordWithEmail(
           values.newPassword,
-          email,
+          route.params.email,
         );
         if (response?.status == 200) {
           setIsLoading(false);
@@ -78,12 +80,12 @@ const CreateNewPassword = ({navigation, route}: any) => {
         }
       }
     } catch (error: any) {
+      setIsLoading(false);
       Toast.show({
         type: 'error',
         text1: 'Server Error',
         text2: 'Please try again later!',
       });
-      setIsLoading(false);
     }
   };
 
@@ -287,6 +289,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: verticalScale(100),
   },
   textInputContainer: {
     flexDirection: 'row',
@@ -300,7 +303,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     color: '#fff',
-    marginTop: 8,
+    marginTop: verticalScale(12),
   },
   icon: {
     padding: 8,

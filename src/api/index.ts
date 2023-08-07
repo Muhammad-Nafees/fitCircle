@@ -132,16 +132,23 @@ export const postContent = async (postData: any) => {
   }
 };
 
-export const generateOtp = async (email?: string, phone?: string) => {
+export const generateEmailOtp = async (email: string) => {
   try {
-    let requestData = {};
-    if (email) {
-      requestData = {email: email.toLowerCase()};
-    } else if (phone) {
-      requestData = {phone};
-    } else {
-      throw new Error('Email or phone must be provided.');
-    }
+    const requestData = {email: email.toLowerCase()};
+
+    const response = await axiosInstance.post(
+      'users/generate/otp',
+      requestData,
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const generatePhoneOtp = async (phone: any) => {
+  try {
+    const requestData = {phone};
 
     const response = await axiosInstance.post(
       'users/generate/otp',

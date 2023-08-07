@@ -12,7 +12,7 @@ import {Formik} from 'formik';
 import {forgetPasswordSchema} from '../../../validations';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import {generateOtp} from '../../../api';
+import {generateEmailOtp} from '../../../api';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface FormValues {
@@ -28,7 +28,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      const response = await generateOtp(values.email);
+      const response = await generateEmailOtp(values.email);
       const data = response.data;
       setIsLoading(false);
       Toast.show({
