@@ -132,16 +132,30 @@ export const postContent = async (postData: any) => {
   }
 };
 
-export const generateOtp = async (email: string) => {
-  const response = await axiosInstance.post('users/generate/otp', {
-    email: email.toLowerCase(),
-  });
-  return response;
+export const generateOtp = async (email?: string, phone?: string) => {
+  try {
+    let requestData = {};
+    if (email) {
+      requestData = {email: email.toLowerCase()};
+    } else if (phone) {
+      requestData = {phone};
+    } else {
+      throw new Error('Email or phone must be provided.');
+    }
+
+    const response = await axiosInstance.post(
+      'users/generate/otp',
+      requestData,
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const otpValidation = async (
+export const otpValidationByEmail = async (
   enteredOtp: number,
-  email: string | undefined,
+  email: string,
 ) => {
   const response = await axiosInstance.post('users/otpValidation', {
     enteredOtp,
@@ -150,13 +164,35 @@ export const otpValidation = async (
   return response;
 };
 
-export const resetPassword = async (
+export const otpValidationByPhone = async (
+  enteredOtp: number,
+  phone: string,
+) => {
+  const response = await axiosInstance.post('users/otpValidation', {
+    enteredOtp,
+    phone,
+  });
+  return response;
+};
+
+export const resetPasswordWithEmail = async (
   newPass: string,
   email: string | undefined,
 ) => {
   const response = await axiosInstance.post('users/resetPassword', {
     newPass,
     email,
+  });
+  return response;
+};
+
+export const resetPasswordWithPhone = async (
+  newPass: string,
+  phone: string | undefined,
+) => {
+  const response = await axiosInstance.post('users/resetPassword', {
+    newPass,
+    phone,
   });
   return response;
 };

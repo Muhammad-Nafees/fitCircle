@@ -18,6 +18,7 @@ const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
   post: {
@@ -35,13 +36,11 @@ interface ReelsProps {
       email?: string;
     };
   };
-  isFocused: any;
   userId: string;
 }
 
-export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
-  const {_id, media, content, likes, shares, createdAt, user, cost, favorites} =
-    post;
+export const ReelsComponent = ({post, userId}: ReelsProps) => {
+  const {_id, media, content, user, cost, favorites} = post;
   const {profileImageUrl, username, email} = user;
   console.log(media);
   const videoRef = useRef(null);
@@ -69,12 +68,6 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
       clearTimeout(hideButtonTimer);
     };
   }, [play, showPlayIcon]);
-
-  const handleVideoTouch = () => {
-    if (play && !showPlayIcon) {
-      setShowPlayIcon(true);
-    }
-  };
 
   const onBuffer = () => {
     console.log('onBuffer');
@@ -212,8 +205,8 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: height - verticalScale(180),
     width: width,
+    height: height - verticalScale(185),
     paddingBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -393,6 +386,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  thumbnailContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    position: 'absolute',
+    zIndex: 1,
+  },
+  thumbnail: {
+    width: '100%',
+    height: '100%',
   },
 });
 

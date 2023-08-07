@@ -12,7 +12,12 @@ import Toast from 'react-native-toast-message';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {generateOtp, otpValidation, resetPassword} from '../../../api';
+import {
+  generateOtp,
+  otpValidationByPhone,
+  otpValidationByEmail,
+  resetPassword,
+} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const ForgetPasswordOtp = ({navigation, route}: any) => {
@@ -39,13 +44,17 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
 
   const [secondsRemaining, setSecondsRemaining] = useState(60);
   useEffect(() => {
-    setVerificationType(route?.params?.verificationType);
+    if (route.params.phone) {
+      setVerificationType('phone');
+      console.log(route.params.phone);
+      setPhone(route.params.phone);
+    }
     if (accountType === 'signup') {
       setEmail(userData?.email);
       setPhone(userData?.phone);
     } else {
       if (route?.params?.verificationType === 'phone') {
-        setPhone(userData?.phone);
+        setPhone(route.params.phone);
         setEmail('');
       } else {
         setEmail(route?.params?.email);
@@ -59,27 +68,59 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
     try {
-      const response = await otpValidation(convertOtpIntoNumber, email);
-      if (response?.status == 200) {
-        setIsLoading(false);
-        setSecondsRemaining(0);
-        Toast.show({
-          type: 'success',
-          text1: 'OTP verified!',
-          text2: 'Account Created Successfully!',
-        });
-        if (accountType == 'signup') {
+      if (verificationType === 'phone') {
+        const response = await otpValidationByPhone(
+          convertOtpIntoNumber,
+          route.params.phone,
+        );
+        if (response?.status == 200) {
+          setIsLoading(false);
+          setSecondsRemaining(0);
           Toast.show({
             type: 'success',
             text1: 'OTP verified!',
+            text2: 'Account Created Successfully!',
           });
-          navigation.navigate('AccountVerified');
-        } else {
+          if (accountType == 'signup') {
+            Toast.show({
+              type: 'success',
+              text1: 'OTP verified!',
+            });
+            navigation.navigate('AccountVerified');
+          } else {
+            Toast.show({
+              type: 'success',
+              text1: 'OTP verified!',
+            });
+            navigation.navigate('BlankButtonRender', {phone: phone});
+          }
+        }
+      } else {
+        const response = await otpValidationByEmail(
+          convertOtpIntoNumber,
+          email,
+        );
+        if (response?.status == 200) {
+          setIsLoading(false);
+          setSecondsRemaining(0);
           Toast.show({
             type: 'success',
             text1: 'OTP verified!',
+            text2: 'Account Created Successfully!',
           });
-          navigation.navigate('BlankButtonRender', {email: email});
+          if (accountType == 'signup') {
+            Toast.show({
+              type: 'success',
+              text1: 'OTP verified!',
+            });
+            navigation.navigate('AccountVerified');
+          } else {
+            Toast.show({
+              type: 'success',
+              text1: 'OTP verified!',
+            });
+            navigation.navigate('BlankButtonRender', {email: email});
+          }
         }
       }
     } catch (error: any) {
@@ -103,11 +144,17 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
   const handleResendOtp = async () => {
     setIsResendLoading(true);
     try {
-      const response = await generateOtp(email as string);
-      const newOtp = response.data;
-      setGeneratedOtp(newOtp);
-      setSecondsRemaining(60);
-
+      if (verificationType === 'phone') {
+        const response = await generateOtp('', phone);
+        const newOtp = response.data;
+        setGeneratedOtp(newOtp);
+        setSecondsRemaining(60);
+      } else {
+        const response = await generateOtp(email as string);
+        const newOtp = response.data;
+        setGeneratedOtp(newOtp);
+        setSecondsRemaining(60);
+      }
       Toast.show({
         type: 'success',
         text1: 'Success!',
@@ -158,7 +205,7 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
       <View style={{flex: 1}}>
         <View style={{gap: 10, marginVertical: 0}}>
           <Text style={{fontWeight: '500', fontSize: 22, color: '#fff'}}>
-            Verify your email
+            {route.params.phone ? 'Verify your phone' : 'Verify your email'}
           </Text>
           <Text style={{fontSize: 14, fontWeight: '400', color: '#fff'}}>
             We sent you the verification code

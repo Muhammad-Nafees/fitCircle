@@ -6,9 +6,14 @@ const CheckCircle = require('../../../../assets/icons/check-circle.png');
 const BlankButtonRenderScreen = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
   useEffect(() => {
-    setEmail(route.params.email);
+    if (route.params.phone) {
+      setPhone(route.params.phone);
+    } else {
+      setEmail(route.params.email);
+    }
     setTimeout(() => {
       setIsLoading(false);
       setTimeout(() => {
@@ -18,7 +23,11 @@ const BlankButtonRenderScreen = ({navigation, route}: any) => {
   }, []);
 
   const handleVerify = () => {
-    navigation.navigate('CreateNewPassword', {email: email});
+    if (route.params.phone) {
+      navigation.navigate('CreateNewPassword', {phone: phone});
+    } else {
+      navigation.navigate('CreateNewPassword', {email: email});
+    }
   };
 
   return (

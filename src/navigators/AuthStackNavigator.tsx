@@ -26,6 +26,7 @@ import CreateProfile from '../screens/auth-screens/create-profile-screens/Create
 import ForgetPasswordOtp from '../screens/auth-screens/forget-password-screens/ForgetPasswordOtp';
 import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
 import BlankButtonRenderScreen from '../screens/auth-screens/forget-password-screens/BlankButtonRender';
+import ForgetPasswordNumber from '../screens/auth-screens/forget-password-screens/ForgotPasswordNumber';
 
 const Stack = createStackNavigator();
 
@@ -103,6 +104,10 @@ const AuthStackNavigator = () => {
       <Stack.Screen
         name="ForgetPasswordEmail"
         component={ForgetPasswordEmail}
+      />
+      <Stack.Screen
+        name="ForgetPasswordNumber"
+        component={ForgetPasswordNumber}
       />
       <Stack.Screen name="ForgetPasswordOtp" component={ForgetPasswordOtp} />
       <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />

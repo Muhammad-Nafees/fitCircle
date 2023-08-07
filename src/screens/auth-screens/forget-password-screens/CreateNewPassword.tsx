@@ -13,7 +13,10 @@ import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import {createNewPasswordSchema} from '../../../validations';
-import {otpValidation, resetPassword} from '../../../api';
+import {
+  resetPasswordWithEmail,
+  resetPasswordWithPhone,
+} from '../../../api';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
@@ -27,6 +30,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
   const [email, setEmail] = useState<string | undefined>('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [phone, setPhone] = useState('');
   const [confirmPasswordVisible, setConfirmPasswordVisible] =
     useState<boolean>(false);
 
@@ -44,16 +48,34 @@ const CreateNewPassword = ({navigation, route}: any) => {
   };
 
   useEffect(() => {
-    setEmail(route?.params.email);
+    if (route.params.phone) {
+      setPhone(route.params.phone);
+    } else {
+      setEmail(route?.params.email);
+    }
   }, []);
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      const response = await resetPassword(values.newPassword, email);
-      if (response?.status == 200) {
-        setIsLoading(false);
-        navigation.navigate('PasswordChangedDialog');
+      if (route.params.phone) {
+        const response = await resetPasswordWithPhone(
+          values.newPassword,
+          email,
+        );
+        if (response?.status == 200) {
+          setIsLoading(false);
+          navigation.navigate('PasswordChangedDialog');
+        }
+      } else {
+        const response = await resetPasswordWithEmail(
+          values.newPassword,
+          email,
+        );
+        if (response?.status == 200) {
+          setIsLoading(false);
+          navigation.navigate('PasswordChangedDialog');
+        }
       }
     } catch (error: any) {
       Toast.show({

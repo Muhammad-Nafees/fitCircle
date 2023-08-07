@@ -87,7 +87,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
           errors,
           touched,
           initialTouched,
-          setFieldError
+          setFieldError,
         }) => (
           <View style={{flex: 1}}>
             <View style={{marginTop: verticalScale(42), gap: 0}}>
@@ -99,8 +99,8 @@ const ForgetPasswordEmail = ({navigation}: any) => {
                   color: '#fff',
                   borderRadius: 10,
                   height: verticalScale(50),
-                  paddingHorizontal: horizontalScale(10),
-                  borderWidth: 1,
+                  paddingHorizontal: horizontalScale(15),
+                  borderWidth: isFocused ? 1 : 0,
                   borderColor: isFocused ? 'white' : 'gray',
                 }}
                 placeholder="Type here"
@@ -108,7 +108,12 @@ const ForgetPasswordEmail = ({navigation}: any) => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={values.email}
-                onChangeText={handleChange('email')}
+                onChangeText={text => {
+                  handleChange('email')(text);
+                  if (errors.email && touched.email) {
+                    setFieldError('email', '');
+                  }
+                }}
                 onFocus={handleFocus}
               />
               {errors.email && touched.email ? (
@@ -131,7 +136,8 @@ const ForgetPasswordEmail = ({navigation}: any) => {
             </View>
             <View
               style={{flex: 1, justifyContent: 'flex-end', marginBottom: 20}}>
-              <TouchableOpacity onPress={() => console.log('Something')}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgetPasswordNumber')}>
                 <Text
                   style={{
                     textAlign: 'center',

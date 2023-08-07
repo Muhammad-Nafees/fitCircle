@@ -19,14 +19,13 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import axios from 'axios';
 const SearchIcon = require('../../../assets/icons/search.png');
-import Carousel from 'react-native-reanimated-carousel';
+import {SwiperFlatList} from 'react-native-swiper-flatlist';
 const NotificationIcon = require('../../../assets/icons/notification.png');
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 const HomeScreen = ({route}: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
-  console.log(userData);
   const username = userData?.username;
   const [userId, setUserId] = useState(userData?._id);
   const [posts, setPosts] = useState([]);
@@ -36,9 +35,19 @@ const HomeScreen = ({route}: any) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState();
   const [isPostUploaded, setIsPostUploaded] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [fetchedPosts, setFetchedPosts] = useState([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(0);
 
   const handleSearchBarFocus = () => {
     navigation.navigate('Search');
+  };
+
+  const onChangeIndex = ({index}: any) => {
+    setFocusedIndex(index);
+    console.log(index);
   };
 
   useFocusEffect(
@@ -47,18 +56,21 @@ const HomeScreen = ({route}: any) => {
     }, []),
   );
   useEffect(() => {
-    handleRefresh();
+    setIsRefreshing(true);
+    setIsLoadingMore(false);
+    setFetchedPosts([]);
+    fetchPosts(1);
   }, []);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    fetchPosts();
+    fetchPosts(1);
   };
 
   useEffect(() => {
     if (isPostUploaded) {
       setIsRefreshing(true);
-      fetchPosts();
+      fetchPosts(1);
       setIsPostUploaded(false);
     }
   }, [isPostUploaded]);
@@ -73,6 +85,10 @@ const HomeScreen = ({route}: any) => {
     }
   }, [route.params?.newPostData]);
 
+  const getVideoPosts = (allPosts: any) => {
+    return allPosts.filter(post => post.media && post.media.endsWith('.mp4'));
+  };
+
   useEffect(() => {
     setUserId(userData?._id);
     handleButtonPress('My Circle');
@@ -81,21 +97,35 @@ const HomeScreen = ({route}: any) => {
   }, [userData]);
 
   useEffect(() => {
-    const videoPosts = posts.filter(
-      post => post.media && post.media.endsWith('.mp4'),
-    );
-    setFilteredVideos(videoPosts);
+    setFilteredVideos(getVideoPosts(posts));
   }, [posts]);
 
+  useEffect(() => {
+    setFilteredVideos(getVideoPosts(fetchedPosts));
+  }, [fetchedPosts]);
+
   const API_BASE_URL = 'https://glorious-tan-gilet.cyclic.cloud/';
-  const fetchPosts = async () => {
+  const fetchPosts = async (page: number) => {
+    if (isLoadingMore) return;
     setIsPostUploaded(false);
+    setIsLoadingMore(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/posts`);
+      const response = await axios.get(`${API_BASE_URL}/posts`, {
+        params: {
+          page,
+          limit: 10,
+        },
+      });
       const data = response.data;
       console.log(data);
-      if (Array.isArray(data)) {
-        setPosts(data);
+      if (data.docs && Array.isArray(data.docs)) {
+        setHasMore(data.docs.length >= 10);
+        if (page === 1) {
+          setTotalPosts(data.total);
+          setFetchedPosts(data.docs);
+        } else {
+          setFetchedPosts(prevPosts => [...prevPosts, ...data.docs]);
+        }
       } else {
         console.error('Invalid data format from API:', data);
       }
@@ -103,6 +133,14 @@ const HomeScreen = ({route}: any) => {
       console.error('Error fetching posts:', error);
     } finally {
       setIsRefreshing(false);
+      setIsLoadingMore(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (hasMore && !isLoadingMore) {
+      const nextPage = Math.ceil(fetchedPosts.length / 10) + 1;
+      fetchPosts(nextPage);
     }
   };
 
@@ -114,7 +152,7 @@ const HomeScreen = ({route}: any) => {
     if (item && item.media && item.media.endsWith('.mp4')) {
       return null;
     }
-    return <CustomPost post={item} userId={userId} />;
+    return <CustomPost key={item._id} post={item} userId={userId} />;
   };
 
   return (
@@ -201,24 +239,32 @@ const HomeScreen = ({route}: any) => {
           <ActivityIndicator size="large" color="#ffffff" />
         ) : selectedButton === 'My Circle' ? (
           <FlatList
-            data={posts}
+            data={fetchedPosts}
             renderItem={renderCustomPost}
             keyExtractor={item => item._id}
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={2.7}
           />
         ) : (
-          <View style={{flex: 1}}>
-            <Carousel
-              width={width}
-              height={height - verticalScale(185)}
-              windowSize={2}
+          <View style={{height: height - verticalScale(185)}}>
+            <SwiperFlatList
               vertical={true}
               data={filteredVideos}
-              onSnapToItem={index => {}}
-              pagingEnabled={true}
-              renderItem={({item}: any) => (
-                <ReelsComponent post={item} isFocused={false} userId={userId} />
+              keyExtractor={item => item._id}
+              onEndReached={handleLoadMore}
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              onEndReachedThreshold={3}
+              onChangeIndex={onChangeIndex}
+              renderItem={({item, index}: any) => (
+                <ReelsComponent
+                  post={item}
+                  index={index}
+                  currIndex={focusedIndex}
+                  userId={userId}
+                />
               )}
             />
           </View>

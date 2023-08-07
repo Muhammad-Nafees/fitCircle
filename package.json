@@ -45,6 +45,7 @@
     "react-native-screens": "^3.21.1",
     "react-native-select-dropdown": "^3.3.4",
     "react-native-svg": "^13.9.0",
+    "react-native-swiper-flatlist": "^3.2.3",
     "react-native-toast-message": "^2.1.6",
     "react-native-vector-icons": "^9.2.0",
     "react-native-video": "^5.2.1",

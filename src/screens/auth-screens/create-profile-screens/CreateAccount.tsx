@@ -84,7 +84,7 @@ const CreateAccount = ({navigation}: any) => {
         Toast.show({
           type: 'error',
           text1: 'Account Already Exists!',
-          text2: 'Please try another email.',
+          text2: 'Please try another email or phone number.',
         });
       } else if (error.response.status === 500) {
         Toast.show({
@@ -143,6 +143,7 @@ const CreateAccount = ({navigation}: any) => {
                 setFieldValue={setFieldValue}
                 phoneInput={phoneInput}
                 setIsError={setIsError}
+                setFieldError={setFieldError}
                 isError={isError}
                 setPhoneCode={setPhoneCode}
               />

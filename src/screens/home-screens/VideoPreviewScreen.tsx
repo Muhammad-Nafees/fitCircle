@@ -107,6 +107,15 @@ export const VideoPreviewScreen = ({
   };
 
   const handlePostButtonPress = async () => {
+    const trimmedContent = content.trim();
+    if (trimmedContent === '') {
+      Toast.show({
+        type: 'error',
+        text1: 'Video cannot be shared without text content',
+        visibilityTime: 3000,
+      });
+      return;
+    }
     setIsLoading(true);
     console.log(selectedOptionInternal.label);
     try {

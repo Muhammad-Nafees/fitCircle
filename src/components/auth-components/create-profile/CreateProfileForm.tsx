@@ -44,12 +44,36 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
 
-  const phoneNumberCheck = (values: any) => {
+  const phoneNumberCheck = async (values: any) => {
     const isValid = phoneInput.current?.isValidNumber(values);
+    console.log(`+${phoneCode}${values}`);
     if (!isValid) {
       setIsError('Invalid phone number!');
     } else {
       setIsError('');
+      try {
+        const response = await fetch(
+          'https://glorious-tan-gilet.cyclic.cloud/users/check-phone',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              phone: `+${phoneCode}${values}`,
+            }),
+          },
+        );
+        const data = await response.json();
+        if (!data.unique) {
+          setIsError('Phone number already exists');
+        } else {
+          setIsError('');
+        }
+      } catch (error) {
+        console.log('Error checking phoneNumber:', error);
+        setIsError('Error checking phone number. Please try again later.');
+      }
     }
   };
   useEffect(() => {
@@ -79,7 +103,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       const country = allCountries.filter(
         (country: any) => country.name == selectedCountry,
       );
-
       setCountryCode(country[0].isoCode);
     };
 
@@ -142,7 +165,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       );
       const data = await response.json();
       if (!data.unique) {
-        setUsernameError(data.message);
+        setUsernameError('Username already exists');
       } else {
         setUsernameError('');
       }
@@ -267,6 +290,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               handleChange={handleChange('phone')}
               phoneInput={phoneInput}
               setIsError={setIsError}
+              setFieldError={setFieldError}
               isError={isError}
               setPhoneCode={setPhoneCode}
             />
