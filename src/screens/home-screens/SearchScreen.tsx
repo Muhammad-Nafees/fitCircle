@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -17,6 +17,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../utils/metrics';
+import {searchUser} from '../../api';
 
 const SearchIcon = require('../../../assets/icons/search.png');
 const FilterIcon = require('../../../assets/icons/filter.png');
@@ -82,6 +83,31 @@ export const SearchScreen = () => {
     </View>
   );
 
+  const search = async () => {
+    setIsLoading(true);
+    if (searchQuery.trim() === '') {
+      setSearchData([]);
+      setSearchQuery('');
+      setIsLoading(false);
+      return;
+    }
+    setSearchQuery(searchQuery);
+    try {
+      const response = await searchUser(searchQuery.toLowerCase());
+      const users = response?.data;
+      setSearchData(users);
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log('Error fetching cities:', error);
+      setIsLoading(false);
+    }
+  };
+  // useEffect(() => {
+  //   if (countryCode) {
+  //     fetchCities(countryCode);
+  //   }
+  // }, [countryCode]);
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -92,7 +118,7 @@ export const SearchScreen = () => {
           <View style={styles.searchBar}>
             <TouchableOpacity
               style={styles.searchButton}
-              onPress={handleSearch}>
+              onPress={search}>
               <Image source={SearchIcon} style={styles.icon} />
             </TouchableOpacity>
             <TextInput
@@ -103,7 +129,7 @@ export const SearchScreen = () => {
               onChangeText={setSearchQuery}
               onBlur={handleSearchBarBlur}
               placeholderTextColor="#fff"
-              onEndEditing={handleSearch}
+              // onEndEditing={handleSearch}
             />
             <TouchableOpacity
               style={styles.searchButton}
@@ -132,7 +158,7 @@ export const SearchScreen = () => {
             </View>
           ) : null}
         </View>
-        <TouchableOpacity onPress={handleSearch}>
+        <TouchableOpacity onPress={search}>
           <Text style={styles.submitButton}>Search</Text>
         </TouchableOpacity>
       </View>

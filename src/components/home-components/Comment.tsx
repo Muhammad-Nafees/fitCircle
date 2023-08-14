@@ -25,6 +25,8 @@ const SendIcon = require('../../../assets/icons/send.png');
 import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
 import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
 
+import Entypo from 'react-native-vector-icons/Entypo'
+
 interface CommentProps {
   comments: CommentItem[];
   commentText: string;
@@ -193,6 +195,18 @@ export const Comment = ({
         onPress={handleBackPress}>
         <Image source={CancelIcon} style={styles.cancelIcon} />
       </TouchableOpacity>
+
+      {
+        !comments.length ? (
+          <View style={{  alignItems: "center", marginTop: 40}}>
+            <Entypo name='chat' color={"#898c93"} size={150} />
+
+            <Text style={{ fontSize: 14, color: "#898c93", fontWeight: "500", marginTop: 10}}>No comments yet</Text>
+            <Text style={{ fontSize: 14, color: "#898c93"}}>Be the first to comment.</Text>
+
+          </View>
+        ) : null
+      }
       <ScrollView>
         {comments.map(comment => (
           <CommentItem
@@ -284,6 +298,7 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     justifyContent: 'center',
+    // backgroundColor: "red",
   },
   commentsAndInputContainer: {
     flex: 1,
@@ -318,6 +333,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#209BCC',
     padding: moderateScale(16),
     width: '100%',
+    // position: "absolute",
+    // bottom: 0,
+    // left: 0
   },
   textInput: {
     flex: 1,

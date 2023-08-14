@@ -176,7 +176,7 @@ export const VideoPreviewScreen = ({
   };
 
   const onBuffer = () => {
-    console.log('onBuffer');
+    console.log('onBuffer2');
   };
 
   const handleBoostModal = () => {

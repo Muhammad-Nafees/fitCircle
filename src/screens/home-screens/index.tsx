@@ -9,6 +9,8 @@ import {
   Image,
   ActivityIndicator,
   Dimensions,
+  Animated,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -47,20 +49,25 @@ const HomeScreen = () => {
   const [fetchedPosts, setFetchedPosts] = useState([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
+  const [Viewable, SetViewable] = React.useState<any[]>([]);
+
+  const scrollY = new Animated.Value(0);
+  const translateY = scrollY.interpolate({
+    inputRange: [0, 0],
+    outputRange: [0, -0],
+  });
 
   const handleSearchBarFocus = () => {
     navigation.navigate('Search');
   };
 
-  const handleCommentButtonPress = (
-    selectedPost: any,
-    userId: any,
-  ) => {
+  const handleCommentButtonPress = (selectedPost: any, userId: any) => {
     dispatch(setSelectedPost(selectedPost));
     navigation.navigate('CommentsScreen', {userId});
   };
 
   const onChangeIndex = ({index}: any) => {
+    console.log('🚀 ~ file: index.tsx:77 ~ onChangeIndex ~ index:', index);
     setFocusedIndex(index);
   };
   useFocusEffect(
@@ -69,12 +76,12 @@ const HomeScreen = () => {
     }, []),
   );
 
-  useEffect(() => {
-    setIsRefreshing(true);
-    setIsLoadingMore(false);
-    setFetchedPosts([]);
-    dispatch(fetchPostsStart());
-  }, []);
+  // useEffect(() => {
+  //   setIsRefreshing(true);
+  //   setIsLoadingMore(false);
+  //   setFetchedPosts([]);
+  //   dispatch(fetchPostsStart());
+  // }, []);
 
   const handleRefresh = () => {
     dispatch(setSelectedPost(null));
@@ -86,20 +93,24 @@ const HomeScreen = () => {
     return allPosts.filter(post => post.media && post.media.endsWith('.mp4'));
   };
 
-  useEffect(() => {
-    setUserId(userData?._id);
-    handleButtonPress('My Circle');
-    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-    setProfileImageUrl(imageUri);
-  }, [userData]);
+  // useEffect(() => {
+  //   setUserId(userData?._id);
+  //   handleButtonPress('My Circle');
+  //   const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+  //   setProfileImageUrl(imageUri);
+  // }, [userData]);
 
-  useEffect(() => {
-    setFilteredVideos(getVideoPosts(postsRedux));
-  }, [postsRedux]);
+  // useEffect(() => {
+  //   setFilteredVideos(getVideoPosts(postsRedux));
+  // }, [postsRedux]);
 
-  useEffect(() => {
-    setFilteredVideos(getVideoPosts(fetchedPosts));
-  }, [fetchedPosts]);
+  // useEffect(() => {
+  //   const filteredData = filteredVideos.sort(
+  //     (a, b) =>
+  //       new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
+  //   );
+  //   setFilteredVideos(filteredData);
+  // }, [filteredVideos]);
 
   const API_BASE_URL = 'http://3.128.201.197/';
   const fetchPosts = async (page: number) => {
@@ -117,9 +128,17 @@ const HomeScreen = () => {
         setHasMore(data.docs.length >= 10);
         if (page === 1) {
           setFetchedPosts(data.docs);
+
           dispatch(fetchPostsSuccess(data.docs));
+          const videoPosts = getVideoPosts(data.docs);
+
+          setFilteredVideos(videoPosts);
+          // setFilteredVideos(() => getVideoPosts(data.docs));
         } else {
-          setFetchedPosts(prevPosts => [...prevPosts, ...data.docs]);
+          const posts = [...fetchedPosts, ...data.docs];
+          setFetchedPosts(posts);
+          const videoPosts = getVideoPosts(posts);
+          setFilteredVideos(videoPosts);
           dispatch(fetchPostsSuccess(data.docs));
         }
       } else {
@@ -136,6 +155,8 @@ const HomeScreen = () => {
 
   const handleLoadMore = () => {
     if (hasMore && !isLoadingMore) {
+      console.log("loading more posts");
+      
       const nextPage = Math.ceil(fetchedPosts.length / 10) + 1;
       console.log(nextPage);
       fetchPosts(nextPage);
@@ -144,6 +165,9 @@ const HomeScreen = () => {
 
   const handleButtonPress = (button: string) => {
     setSelectedButton(button);
+    if (button === 'Creator') {
+      navigation.setOptions({tabBarStyle: {display: 'none'}});
+    }
   };
 
   const renderCustomPost = ({item}: any) => {
@@ -163,7 +187,8 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
+      <Animated.View
+        style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
           <TouchableOpacity>
             {profileImageUrl ? (
@@ -190,19 +215,21 @@ const HomeScreen = () => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             paddingBottom: 16,
+            // alignSelf: "center",
           }}>
+          {/* <View></View>
           <View></View>
-          <View></View>
-          <View></View>
+          <View></View> */}
           <View style={styles.topContainerButtons}>
-            <TouchableOpacity
+            <View
               style={[
                 styles.button,
-                selectedButton === 'Creator'
-                  ? {backgroundColor: '#019acd'}
-                  : {},
+                // selectedButton === 'Creator'
+                // ? {backgroundColor: '#019acd'}
+                // : {},
               ]}>
-              <TouchableOpacity onPress={() => handleButtonPress('My Circle')}>
+              <TouchableWithoutFeedback
+                onPress={() => handleButtonPress('My Circle')}>
                 <Text
                   style={[
                     styles.button1Text,
@@ -212,8 +239,9 @@ const HomeScreen = () => {
                   ]}>
                   My Circle
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleButtonPress('Creator')}>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={() => handleButtonPress('Creator')}>
                 <Text
                   style={[
                     styles.button2Text,
@@ -223,8 +251,8 @@ const HomeScreen = () => {
                   ]}>
                   Creator
                 </Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
+              </TouchableWithoutFeedback>
+            </View>
           </View>
           <TouchableOpacity
             style={{
@@ -239,7 +267,7 @@ const HomeScreen = () => {
             />
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
       <View style={styles.bottomContainer}>
         {isRefreshing ? (
           <ActivityIndicator size="large" color="#ffffff" />
@@ -252,13 +280,21 @@ const HomeScreen = () => {
             onRefresh={handleRefresh}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={2.7}
+            onScroll={e => {
+              scrollY.setValue(e.nativeEvent.contentOffset.y);
+            }}
           />
         ) : (
           <View
             style={{
-              height: height - verticalScale(215),
+              // height: height - verticalScale(215),
+              flex: 1,
+              // backgroundColor: '#fff',
             }}>
             <SwiperFlatList
+              onScroll={e => {
+                scrollY.setValue(e.nativeEvent.contentOffset.y);
+              }}
               vertical={true}
               data={filteredVideos}
               keyExtractor={item => item._id}
@@ -266,9 +302,10 @@ const HomeScreen = () => {
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
               onEndReachedThreshold={3}
-              onChangeIndex={onChangeIndex}
+              onChangeIndex={i => console.log(i)}
               renderItem={({item, index}: any) => (
                 <ReelsComponent
+                  viewable={Viewable}
                   post={item}
                   index={index}
                   currIndex={focusedIndex}
@@ -289,9 +326,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#353535',
   },
   topContainer: {
-    flex: 1,
-    backgroundColor: '#292b2d',
+    // flex: 1,
+    backgroundColor: '#292a2c',
     justifyContent: 'center',
+    height: 120,
   },
   bottomContainer: {
     flex: 5,
@@ -316,11 +354,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: verticalScale(16),
+    // alignSelf: "center"
+    margin: 'auto',
+    // backgroundColor: 'purple',
+    flex: 1,
+    paddingLeft: 25,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#373638',
+    // backgroundColor: '#373638',
     borderTopLeftRadius: 40,
     borderBottomRightRadius: 40,
   },
@@ -331,12 +374,16 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(5),
     paddingHorizontal: horizontalScale(33),
     color: '#fff',
+    zIndex: 999,
   },
   button2Text: {
+    backgroundColor: '#373638',
     borderBottomRightRadius: 40,
     paddingVertical: verticalScale(4),
     paddingHorizontal: horizontalScale(32),
     color: '#fff',
+    marginLeft: -20,
+    // paddingLeft: 20
   },
   input: {
     width: '100%',
