@@ -10,33 +10,40 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {Avatar} from 'react-native-paper';
 import {CustomPost} from '../../components/home-components/CustomPost';
 import {ReelsComponent} from '../../components/home-components/Reels';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {
+  fetchPostsFailure,
+  fetchPostsStart,
+  fetchPostsSuccess,
+} from '../../redux/postSlice';
 import axios from 'axios';
 const SearchIcon = require('../../../assets/icons/search.png');
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
+import {setSelectedPost} from '../../redux/postSlice';
+import {createIconSetFromFontello} from 'react-native-vector-icons';
 const NotificationIcon = require('../../../assets/icons/notification.png');
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const HomeScreen = ({route}: any) => {
+
+const HomeScreen = () => {
+  const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
+  const postsRedux = useSelector((state: RootState) => state.post.posts);
   const username = userData?.username;
   const [userId, setUserId] = useState(userData?._id);
-  const [posts, setPosts] = useState([]);
   const [selectedButton, setSelectedButton] = useState('My Circle');
   const navigation = useNavigation();
   const [filteredVideos, setFilteredVideos] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState();
-  const [isPostUploaded, setIsPostUploaded] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [totalPosts, setTotalPosts] = useState(0);
   const [fetchedPosts, setFetchedPosts] = useState([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -45,45 +52,35 @@ const HomeScreen = ({route}: any) => {
     navigation.navigate('Search');
   };
 
-  const onChangeIndex = ({index}: any) => {
-    setFocusedIndex(index);
-    console.log(index);
+  const handleCommentButtonPress = (
+    selectedPost: any,
+    userId: any,
+  ) => {
+    dispatch(setSelectedPost(selectedPost));
+    navigation.navigate('CommentsScreen', {userId});
   };
 
+  const onChangeIndex = ({index}: any) => {
+    setFocusedIndex(index);
+  };
   useFocusEffect(
     React.useCallback(() => {
       handleRefresh();
     }, []),
   );
+
   useEffect(() => {
     setIsRefreshing(true);
     setIsLoadingMore(false);
     setFetchedPosts([]);
-    fetchPosts(1);
+    dispatch(fetchPostsStart());
   }, []);
 
   const handleRefresh = () => {
+    dispatch(setSelectedPost(null));
     setIsRefreshing(true);
     fetchPosts(1);
   };
-
-  useEffect(() => {
-    if (isPostUploaded) {
-      setIsRefreshing(true);
-      fetchPosts(1);
-      setIsPostUploaded(false);
-    }
-  }, [isPostUploaded]);
-
-  useEffect(() => {
-    if (route.params?.newPostData) {
-      const newPostData = route.params?.newPostData;
-      if (newPostData) {
-        setPosts(prevPosts => [newPostData, ...prevPosts]);
-        setIsPostUploaded(true);
-      }
-    }
-  }, [route.params?.newPostData]);
 
   const getVideoPosts = (allPosts: any) => {
     return allPosts.filter(post => post.media && post.media.endsWith('.mp4'));
@@ -97,17 +94,16 @@ const HomeScreen = ({route}: any) => {
   }, [userData]);
 
   useEffect(() => {
-    setFilteredVideos(getVideoPosts(posts));
-  }, [posts]);
+    setFilteredVideos(getVideoPosts(postsRedux));
+  }, [postsRedux]);
 
   useEffect(() => {
     setFilteredVideos(getVideoPosts(fetchedPosts));
   }, [fetchedPosts]);
 
-  const API_BASE_URL = 'https://glorious-tan-gilet.cyclic.cloud/';
+  const API_BASE_URL = 'http://3.128.201.197/';
   const fetchPosts = async (page: number) => {
     if (isLoadingMore) return;
-    setIsPostUploaded(false);
     setIsLoadingMore(true);
     try {
       const response = await axios.get(`${API_BASE_URL}/posts`, {
@@ -117,17 +113,18 @@ const HomeScreen = ({route}: any) => {
         },
       });
       const data = response.data;
-      console.log(data);
       if (data.docs && Array.isArray(data.docs)) {
         setHasMore(data.docs.length >= 10);
         if (page === 1) {
-          setTotalPosts(data.total);
           setFetchedPosts(data.docs);
+          dispatch(fetchPostsSuccess(data.docs));
         } else {
           setFetchedPosts(prevPosts => [...prevPosts, ...data.docs]);
+          dispatch(fetchPostsSuccess(data.docs));
         }
       } else {
         console.error('Invalid data format from API:', data);
+        dispatch(fetchPostsFailure('Error fetching posts'));
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -140,6 +137,7 @@ const HomeScreen = ({route}: any) => {
   const handleLoadMore = () => {
     if (hasMore && !isLoadingMore) {
       const nextPage = Math.ceil(fetchedPosts.length / 10) + 1;
+      console.log(nextPage);
       fetchPosts(nextPage);
     }
   };
@@ -152,7 +150,15 @@ const HomeScreen = ({route}: any) => {
     if (item && item.media && item.media.endsWith('.mp4')) {
       return null;
     }
-    return <CustomPost key={item._id} post={item} userId={userId} />;
+    return (
+      <CustomPost
+        key={item._id}
+        post={item}
+        userId={userId}
+        countComment={item.comments.length}
+        handleCommentButtonPress={handleCommentButtonPress}
+      />
+    );
   };
 
   return (
@@ -229,7 +235,7 @@ const HomeScreen = ({route}: any) => {
             }}>
             <Image
               source={NotificationIcon}
-              style={{width: 24, height: 24, tintColor: '#fff'}}
+              style={{width: 28, height: 28, tintColor: '#fff'}}
             />
           </TouchableOpacity>
         </View>
@@ -248,7 +254,10 @@ const HomeScreen = ({route}: any) => {
             onEndReachedThreshold={2.7}
           />
         ) : (
-          <View style={{height: height - verticalScale(185)}}>
+          <View
+            style={{
+              height: height - verticalScale(215),
+            }}>
             <SwiperFlatList
               vertical={true}
               data={filteredVideos}
@@ -277,6 +286,7 @@ const HomeScreen = ({route}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#353535',
   },
   topContainer: {
     flex: 1,
@@ -297,10 +307,10 @@ const styles = StyleSheet.create({
     paddingTop: verticalScale(5),
   },
   searchbar: {
-    backgroundColor: '#2c2d2e',
+    backgroundColor: '#5a5b5c',
     borderRadius: 0,
     width: '85%',
-    height: verticalScale(34),
+    height: verticalScale(3),
   },
   topContainerButtons: {
     flexDirection: 'row',
@@ -343,6 +353,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2c2d2f',
+    marginBottom: -verticalScale(5),
     paddingHorizontal: horizontalScale(25),
     width: '85%',
   },

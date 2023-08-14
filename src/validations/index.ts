@@ -2,6 +2,7 @@ import {useSelector} from 'react-redux';
 import * as Yup from 'yup';
 import {RootState} from '../redux/store';
 import moment from 'moment';
+const currentDate = moment();
 
 export const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -31,6 +32,24 @@ export const signupSchema = Yup.object().shape({
     .required('Confirm Password is required')
     .oneOf([Yup.ref('password')], 'Password must be same'),
 });
+
+export const signUpFormSchema = Yup.object().shape({
+  name: Yup.string()
+    .required('Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+      'Invalid email',
+    )
+    .required('Email is required'),
+  phone: Yup.string().required('Phone number is required!'),
+  password: Yup.string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters long'),
+});
+
+const ageLimit = 14;
 
 export const createProfileSchema = (userRole: any) => {
   return Yup.object().shape({
@@ -73,11 +92,19 @@ export const createProfileSchema = (userRole: any) => {
           return true;
         }
         const dateOfBirth = moment(value, 'DD/MM/YYYY');
-        const currentDate = moment();
-        if (dateOfBirth.isAfter(currentDate)) {
+
+        if (!dateOfBirth.isValid()) {
           return this.createError({
             path: 'dob',
-            message: "Date of birth can't be greater than the current date.",
+            message: 'Invalid date format.',
+          });
+        }
+
+        const age = currentDate.diff(dateOfBirth, 'years');
+        if (age < ageLimit) {
+          return this.createError({
+            path: 'dob',
+            message: `Age must be greater than ${ageLimit} years.`,
           });
         }
 

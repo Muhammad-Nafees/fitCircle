@@ -141,6 +141,7 @@ export const SearchScreen = () => {
           data={searchData}
           renderItem={renderItem}
           keyExtractor={item => item._id}
+          keyboardShouldPersistTaps="handled"
         />
       )}
       {isLoading && (

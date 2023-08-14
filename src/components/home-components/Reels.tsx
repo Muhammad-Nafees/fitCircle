@@ -42,7 +42,6 @@ interface ReelsProps {
 export const ReelsComponent = ({post, userId}: ReelsProps) => {
   const {_id, media, content, user, cost, favorites} = post;
   const {profileImageUrl, username, email} = user;
-  console.log(media);
   const videoRef = useRef(null);
   const isLocked = cost && cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
@@ -174,6 +173,9 @@ export const ReelsComponent = ({post, userId}: ReelsProps) => {
         style={{width: '100%', height: '100%'}}
         paused={!play}
         onTouchStart={() => setShowPlayIcon(true)}
+        onLoad={() => {
+          videoRef.current.seek(0);
+        }}
       />
       <View style={styles.textContentContainer}>
         <Text style={styles.textContent}>{content}</Text>
@@ -206,7 +208,7 @@ export const ReelsComponent = ({post, userId}: ReelsProps) => {
 const styles = StyleSheet.create({
   container: {
     width: width,
-    height: height - verticalScale(185),
+    height: height - verticalScale(215),
     paddingBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',

@@ -20,6 +20,7 @@ import {generatePhoneOtp} from '../../../api';
 import PhoneInput from 'react-native-phone-number-input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
+import {ScrollView} from 'react-native-gesture-handler';
 
 interface FormValues {
   phone: string;
@@ -89,7 +90,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
   };
 
   return (
-    <View style={STYLES.container}>
+    <ScrollView style={STYLES.container}>
       <View style={{gap: 10}}>
         <Text
           style={[
@@ -187,6 +188,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
             ) : null}
             <View
               style={{flex: 1, justifyContent: 'flex-end', marginBottom: 20}}>
+              <View style={{height: verticalScale(360)}}></View>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgetPasswordEmail')}>
                 <Text
@@ -225,7 +227,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
           </View>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 };
 

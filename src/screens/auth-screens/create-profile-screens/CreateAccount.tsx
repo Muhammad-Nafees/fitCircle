@@ -32,12 +32,13 @@ export interface CreateAccountFormValues {
   confirmPassword: string;
 }
 
-const CreateAccount = ({navigation}: any) => {
+const CreateAccount = ({navigation, route}: any) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
   const [phoneCode, setPhoneCode] = useState('1');
+  const [countryCode, setCountryCode] = useState(route.params.countryCode);
 
   const phoneNumberCheck = (values: any) => {
     const isValid = phoneInput.current?.isValidNumber(values);
@@ -49,10 +50,10 @@ const CreateAccount = ({navigation}: any) => {
   };
 
   const initialValues: CreateAccountFormValues = {
-    email: '',
-    phone: null,
-    password: '',
-    confirmPassword: '',
+    email: route.params.email,
+    phone: route.params.phone,
+    password: route.params.password,
+    confirmPassword: route.params.password,
   };
   const handleSubmit = async (values: CreateAccountFormValues) => {
     setIsLoading(true);
@@ -118,7 +119,7 @@ const CreateAccount = ({navigation}: any) => {
           setFieldError,
         }) => (
           <>
-            <Text style={[STYLES.text16, {fontWeight: '700'}]}>
+            <Text style={[STYLES.text16, {fontWeight: '700', marginTop: 16}]}>
               Create Account
             </Text>
             <View style={styles.formContainer}>
@@ -146,6 +147,7 @@ const CreateAccount = ({navigation}: any) => {
                 setFieldError={setFieldError}
                 isError={isError}
                 setPhoneCode={setPhoneCode}
+                countryCode={countryCode}
               />
               <CustomInput
                 label="Password"
@@ -160,7 +162,7 @@ const CreateAccount = ({navigation}: any) => {
                 fieldName="password"
               />
               <CustomInput
-                label="Re-Enter Password"
+                label="Re-enter Password"
                 placeholder="Re-Enter Password"
                 value={values.confirmPassword}
                 error={errors.confirmPassword}

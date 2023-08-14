@@ -124,6 +124,17 @@ const GenderForm = () => {
               </View>
 
               <CustomSelect
+                label="Body Type"
+                values={['Mesomorph', 'Ectomorph', 'Endomorph']}
+                selectedValue={values.bodytype}
+                error={errors.bodytype}
+                initialTouched={true}
+                touched={touched.bodytype}
+                setFieldValue={setFieldValue}
+                setFieldError={setFieldError}
+                fieldName="bodytype"
+              />
+              <CustomSelect
                 label="Activity"
                 values={[
                   'Physical Activity',
@@ -138,18 +149,6 @@ const GenderForm = () => {
                 setFieldValue={setFieldValue}
                 setFieldError={setFieldError}
                 fieldName="activity"
-              />
-
-              <CustomSelect
-                label="Body Type"
-                values={['Mesomorph', 'Ectomorph', 'Endomorph']}
-                selectedValue={values.bodytype}
-                error={errors.bodytype}
-                initialTouched={true}
-                touched={touched.bodytype}
-                setFieldValue={setFieldValue}
-                setFieldError={setFieldError}
-                fieldName="bodytype"
               />
             </View>
 

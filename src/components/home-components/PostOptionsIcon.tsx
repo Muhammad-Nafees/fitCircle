@@ -1,13 +1,14 @@
 import React from 'react';
 import {TouchableOpacity, View, Image, StyleSheet, Text} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-const CreatePostIcon = require('../../../assets/icons/createpost.png');
-const ScheduleIcon = require('../../../assets/icons/schedule.png');
-const WalletIcon = require('../../../assets/icons/wallet.png');
-const VideoIcon = require('../../../assets/icons/video.png');
-const FitnessIcon = require('../../../assets/icons/fitness.png');
-const CalculatorIcon = require('../../../assets/icons/calculator.png');
-const ProfileIcon = require('../../../assets/icons/profile.png');
+import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
+import VideoSvgIcon from '../../../assets/icons/VideoIcon';
+import ProfileSvgIcon from '../../../assets/icons/ProfileIcon';
+import MealPlanSvgIcon from '../../../assets/icons/MealPlanIcon';
+import ScheduleSvgIcon from '../../../assets/icons/ScheduleIcon';
+import CalculatorSvgIcon from '../../../assets/icons/CalculatorIcon';
+import PhysicalSvgIcon from '../../../assets/icons/PhysicalIcon';
+import WalletSvgIcon from '../../../assets/icons/WalletIcon';
 
 export const PostOptionsIcon = ({
   handleCreatePostIconPress,
@@ -22,61 +23,37 @@ export const PostOptionsIcon = ({
       <TouchableOpacity
         style={styles.bottomContainerButtons}
         onPress={handleCreatePostIconPress}>
-        <Image
-          source={CreatePostIcon}
-          style={{width: 24, height: 24, tintColor: '#0192c0'}}
-        />
+        <CreatePostSvgIcon />
         <Text style={styles.options}>Create Post</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.bottomContainerButtons}
         onPress={handleVideoButtonPress}>
-        <Image
-          source={VideoIcon}
-          style={{width: 24, height: 24, tintColor: '#0192c0'}}
-        />
+        <VideoSvgIcon />
         <Text style={styles.options}>Take a video</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bottomContainerButtons}>
-        <Image
-          source={ProfileIcon}
-          style={{width: 24, height: 24, tintColor: '#0192c0'}}
-        />
+        <ProfileSvgIcon />
         <Text style={styles.options}>My profile</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bottomContainerButtons}>
-        <Image
-          source={CreatePostIcon}
-          style={{width: 24, height: 24, tintColor: '#0192c0'}}
-        />
+        <MealPlanSvgIcon />
         <Text style={styles.options}>My Meal Plan</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bottomContainerButtons}>
-        <Image
-          source={ScheduleIcon}
-          style={{width: 24, height: 24, tintColor: '#0192c0'}}
-        />
+        <ScheduleSvgIcon />
         <Text style={styles.options}>My Schedule</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bottomContainerButtons}>
-        <Image
-          source={CalculatorIcon}
-          style={{width: 24, height: 24, tintColor: '#0192c0'}}
-        />
+        <CalculatorSvgIcon />
         <Text style={styles.options}>My TDEE Calculator</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bottomContainerButtons}>
-        <Image
-          source={FitnessIcon}
-          style={{width: 24, height: 24, tintColor: '#0192c0'}}
-        />
+        <PhysicalSvgIcon />
         <Text style={styles.options}>My Physical Readiness Test</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.bottomContainerButtons}>
-        <Image
-          source={WalletIcon}
-          style={{width: 24, height: 24, tintColor: '#0192c0'}}
-        />
+        <WalletSvgIcon />
         <Text style={styles.options}>My Wallet</Text>
       </TouchableOpacity>
     </View>
@@ -88,6 +65,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(16),
     paddingVertical: verticalScale(30),
     paddingTop: verticalScale(15),
+    height: '45%',
   },
   bottomContainerButtons: {
     flexDirection: 'row',

@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://glorious-tan-gilet.cyclic.cloud/',
+  baseURL: 'http://3.128.201.197/',
 });
 
 const getData = async () => {

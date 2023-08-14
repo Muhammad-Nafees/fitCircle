@@ -22,6 +22,7 @@ interface Props {
   setIsError: any;
   setPhoneCode: (code: string) => void;
   setFieldError: any;
+  countryCode?: any;
 }
 
 const CustomPhoneInput = ({
@@ -36,6 +37,7 @@ const CustomPhoneInput = ({
   setIsError,
   setPhoneCode,
   setFieldError,
+  countryCode,
 }: Props) => {
   const handleCountryChange = () => {
     phoneInput.current?.setState({number: ''});
@@ -59,7 +61,7 @@ const CustomPhoneInput = ({
         {() => (
           <PhoneInput
             ref={phoneInput}
-            defaultCode="US"
+            defaultCode={countryCode === undefined ? 'US' : countryCode}
             textInputStyle={{
               height: 20,
               width: 20,
@@ -86,13 +88,14 @@ const CustomPhoneInput = ({
             onChangeText={phoneNumber => {
               handleChange(phoneNumber);
               if (touched && error) {
-                setIsError('');
                 setFieldError('phone', '');
+                setIsError('');
               }
             }}
+            getCountryCode={code => console.log(code)}
             onChangeCountry={country => {
               setPhoneCode(country.callingCode[0]);
-              console.log(country.callingCode[0]);
+              console.log(countryCode);
               handleCountryChange();
             }}
             withShadow

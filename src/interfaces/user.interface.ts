@@ -37,3 +37,23 @@ export interface IUser {
   selectedCommunities?: string[];
   socialMediaLinks?: ISocial[];
 }
+
+export interface IPost {
+  _id: string;
+  user: IUser;
+  content: string;
+  media: string;
+  thumbnail: string;
+  visibility: string;
+  favorites: string[];
+  cost: number | null;
+  boosted: boolean;
+  boostEndTime: string | null;
+  hexCode: string | null;
+  likes: string[];
+  comments: string[];
+  shares: string[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}

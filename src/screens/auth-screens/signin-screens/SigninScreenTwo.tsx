@@ -11,7 +11,7 @@ const SignInScreenTwo = ({navigation}: any) => {
   const handleClick = (userRole: IUserRole) => {
     dispatch(setuserRole(userRole));
     dispatch(setAccountType('signup'));
-    navigation.navigate('CreateAccount');
+    navigation.navigate('SignupFormScreen');
   };
   return (
     <SigninContent screen={2}>
@@ -21,7 +21,7 @@ const SignInScreenTwo = ({navigation}: any) => {
         I WANT TO GET IN SHAPE
       </CustomButton>
       <CustomButton
-        extraStyles={{marginTop: verticalScale(10), height: verticalScale(48)}}
+        extraStyles={{marginTop: verticalScale(18), height: verticalScale(48)}}
         onPress={() => handleClick('trainer')}>
         I AM A COACH / CREATOR
       </CustomButton>

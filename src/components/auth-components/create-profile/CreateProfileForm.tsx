@@ -52,18 +52,15 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     } else {
       setIsError('');
       try {
-        const response = await fetch(
-          'https://glorious-tan-gilet.cyclic.cloud/users/check-phone',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              phone: `+${phoneCode}${values}`,
-            }),
+        const response = await fetch('http://3.128.201.197/users/check-phone', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
+          body: JSON.stringify({
+            phone: `+${phoneCode}${values}`,
+          }),
+        });
         const data = await response.json();
         if (!data.unique) {
           setIsError('Phone number already exists');
@@ -152,7 +149,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const handleUsernameBlur = async (username: any) => {
     try {
       const response = await fetch(
-        'https://glorious-tan-gilet.cyclic.cloud/users/check-username',
+        'http://3.128.201.197/users/check-username',
         {
           method: 'POST',
           headers: {
@@ -204,7 +201,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       return;
     }
     dispatch(setUserData({...partialUserData}));
-
     if (userRole == 'user')
       navigation.navigate('GenderScreen', {
         profilePicture: profilePicture,
@@ -217,7 +213,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     <Formik
       initialValues={initialValues}
       validationSchema={createProfileSchema(userRole)}
-      validationContext={{userRole: userRole}} // Provide the context here
+      validationContext={{userRole: userRole}}
       validateOnChange={false}
       onSubmit={handleSubmit}>
       {({
@@ -231,6 +227,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
         initialTouched,
         setFieldValue,
         setFieldError,
+        resetForm,
       }) => (
         <>
           <View style={[styles.formContainer, {marginTop: verticalScale(35)}]}>
@@ -354,6 +351,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                   handleChange={handleChange('dob')}
                   setFieldError={setFieldError}
                   fieldName="dob"
+                  editable={false}
                 />
                 <Icon
                   name="calendar-outline"

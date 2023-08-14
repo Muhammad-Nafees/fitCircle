@@ -19,15 +19,20 @@ const Share = require('../../../assets/icons/share.png');
 const CommentIcon = require('../../../assets/icons/comment.png');
 const OptionIcon = require('../../../assets/icons/customPostOption.png');
 const LockOpenIcon = require('../../../assets/icons/lock-open.png');
+import {BackHandler} from 'react-native';
 import CustomButton from '../shared-components/CustomButton';
 import axiosInstance from '../../api/interceptor';
-import {Comment} from './Comment';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import Toast from 'react-native-toast-message';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const Dot = require('../../../assets/icons/dot.png');
 
 const width = Dimensions.get('window').width;
 interface CustomPostProps {
+  countComment?: any;
+  isCommentsScreenActive?: boolean;
+  handleCommentButtonPress?: (post: any, userId: string) => void;
   userId: string;
   post: {
     _id: string;
@@ -47,40 +52,50 @@ interface CustomPostProps {
   };
 }
 
-export const CustomPost = ({post, userId}: CustomPostProps) => {
-  const {_id, media, content, likes, createdAt, user, hexCode, cost, comments} =
-    post;
-  const {profileImageUrl, username, email} = user;
-  const [isCommentModalVisible, setCommentModalVisible] = useState(false);
+export const CustomPost = ({
+  post,
+  userId,
+  countComment,
+  isCommentsScreenActive,
+  handleCommentButtonPress,
+}: CustomPostProps) => {
+  const {_id, media, content, likes, createdAt, user, hexCode, cost} = post;
+  const {profileImageUrl, username} = user;
   const [isShareModalVisible, setShareModalVisible] = useState(false);
-  const [commentText, setCommentText] = useState('');
   const [likesCount, setLikesCount] = useState(likes.length);
-  const [commentsCount, setCommentsCount] = useState(comments.length);
+  const [commentsCount, setCommentsCount] = useState<number>(countComment);
   const [shareText, setShareText] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [commentsData, setCommentsData] = useState([]);
-  const [isCommentPressed, setIsCommentPressed] = useState(false);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
   const dropdownOptions =
     userId === post.user._id ? ['Edit', 'Delete'] : ['Flag'];
   const isLocked = cost && cost > 0;
 
-  const handleCommentPress = () => {
-    setIsCommentPressed(true);
-    setCommentModalVisible(!isCommentModalVisible);
-  };
   useEffect(() => {
     const isCurrentUserLiked = likes.some(like => like.user._id === userId);
     setIsLiked(isCurrentUserLiked);
   }, [likes, userId]);
 
   useEffect(() => {
-    if (isCommentPressed) {
-      handleCommentsRetrieve();
-      setIsCommentPressed(false);
-    }
-  }, [isCommentPressed]);
+    setCommentsCount(countComment);
+  }, [countComment]);
+
+  const handleCommentPress = () => {
+    handleCommentButtonPress(post, userId);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        setImageFullscreen(false);
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [isImageFullscreen]),
+  );
 
   const getTimeDifference = () => {
     const postTime = new Date(createdAt).getTime();
@@ -144,87 +159,19 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
       .patch(apiEndpoint, shareData)
       .then(response => {
         console.log('Post shared successfully!');
+        Toast.show({
+          type: 'success',
+          text1: 'Post Shared Successfully!',
+          visibilityTime: 2000,
+        });
       })
       .catch(error => {
         console.error('Error while sharing the post:', error);
-      });
-  };
-
-  const handleCommentsRetrieve = () => {
-    axiosInstance
-      .get(`posts/comments/${_id}`)
-      .then(res => {
-        setCommentsData(res.data);
-        console.log(res.data);
-      })
-      .catch(error => {
-        console.error('Error while fetching comments:', error);
-      });
-  };
-
-  const handleCommentPostPress = (commentText: string, mediaUri: any) => {
-    if (!commentText.trim()) {
-      return;
-    }
-    const formData = new FormData();
-    formData.append('text', commentText);
-    if (mediaUri) {
-      const mediaFile = {
-        uri: mediaUri,
-        type: 'image/jpeg',
-        name: 'comment_media.jpg',
-      };
-      formData.append('commentMedia', mediaFile);
-    }
-    const apiEndpoint = `posts/comments/${_id}`;
-    axiosInstance
-      .patch(apiEndpoint, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(response => {
-        console.log('Comment Posted successfully!');
-        handleCommentsRetrieve();
-        setCommentsCount(commentsCount + 1);
-      })
-      .catch(error => {
-        console.error('Error while commenting on the post:', error);
-      });
-  };
-  const handleReplyPostPress = (
-    commentText: string,
-    mediaUri: any,
-    commentId: any,
-  ) => {
-    if (!commentText.trim()) {
-      return;
-    }
-    console.log('Reply', commentId);
-    const formData = new FormData();
-    formData.append('text', commentText);
-    if (mediaUri) {
-      const mediaFile = {
-        uri: mediaUri,
-        type: 'image/jpeg',
-        name: 'comment_media.jpg',
-      };
-      formData.append('commentMedia', mediaFile);
-    }
-    const apiEndpoint = `/posts/${_id}/comments/${commentId}/replies`;
-    axiosInstance
-      .post(apiEndpoint, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(response => {
-        console.log('Comment Posted successfully!');
-        handleCommentsRetrieve();
-        setCommentsCount(commentsCount + 1);
-      })
-      .catch(error => {
-        console.error('Error while commenting on the post:', error);
+        Toast.show({
+          type: 'error',
+          text1: 'Error Sharing Post!',
+          visibilityTime: 2000,
+        });
       });
   };
 
@@ -237,207 +184,198 @@ export const CustomPost = ({post, userId}: CustomPostProps) => {
   };
 
   return (
-    <ScrollView>
-      <View>
-        <View style={[styles.postContainer, isLocked ? {zIndex: 1000} : null]}>
-          {profileImageUrl ? (
-            <Avatar.Image
-              size={40}
-              source={{uri: profileImageUrl}}
-              style={styles.avatarImage}
-            />
-          ) : (
-            <Avatar.Text
-              size={40}
-              label={username ? username[0].toUpperCase() : 'SA'}
-              style={styles.avatarText}
-            />
-          )}
-          <View style={styles.postParentContainer}>
-            <View style={styles.postTextContainer}>
-              <Text style={styles.postName}>{username}</Text>
-              <View style={styles.postDetails}>
-                <Text style={styles.postId}>
-                  {`@${username?.toLowerCase()?.replace(/\s/g, '')}`}
-                </Text>
-                <Image
-                  source={Dot}
-                  style={{
-                    width: 22,
-                    height: 22,
-                    tintColor: '#666667',
-                    marginLeft: -10,
-                  }}
-                />
-                <Text style={styles.postTime}>{getTimeDifference()}</Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              onPress={() => setDropdownVisible(!isDropdownVisible)}>
+    <View>
+      <View style={[styles.postContainer, isLocked ? {zIndex: 1000} : null]}>
+        {profileImageUrl ? (
+          <Avatar.Image
+            size={40}
+            source={{uri: profileImageUrl}}
+            style={styles.avatarImage}
+          />
+        ) : (
+          <Avatar.Text
+            size={40}
+            label={username ? username[0].toUpperCase() : 'SA'}
+            style={styles.avatarText}
+          />
+        )}
+        <View style={styles.postParentContainer}>
+          <View style={styles.postTextContainer}>
+            <Text style={styles.postName}>{username}</Text>
+            <View style={styles.postDetails}>
+              <Text style={styles.postId}>
+                {`@${username?.toLowerCase()?.replace(/\s/g, '')}`}
+              </Text>
               <Image
-                source={OptionIcon}
-                style={{width: 24, height: 35, tintColor: '#fff'}}
+                source={Dot}
+                style={{
+                  width: 22,
+                  height: 22,
+                  tintColor: '#666667',
+                  marginLeft: -10,
+                }}
               />
+              <Text style={styles.postTime}>{getTimeDifference()}</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={() => setDropdownVisible(!isDropdownVisible)}>
+            <Image
+              source={OptionIcon}
+              style={{width: 24, height: 35, tintColor: '#fff'}}
+            />
+          </TouchableOpacity>
+          {isDropdownVisible && (
+            <TouchableOpacity
+              style={styles.dropdown}
+              onPress={() => setDropdownVisible(false)}>
+              {dropdownOptions.map((option, index) => (
+                <React.Fragment key={index}>
+                  <View
+                    style={styles.dropdownOption}
+                    onPress={() => handleOptionSelect(option)}>
+                    <Text
+                      style={{
+                        color: '#fff',
+                        textAlign: 'center',
+                        fontSize: 10,
+                        paddingVertical: 2,
+                        zIndex: 66666,
+                      }}>
+                      {option}
+                    </Text>
+                  </View>
+                  {index === 0 && dropdownOptions[index + 1] === 'Delete' && (
+                    <View style={styles.horizontalLine} />
+                  )}
+                </React.Fragment>
+              ))}
             </TouchableOpacity>
-            {isDropdownVisible && (
-              <TouchableOpacity
-                style={styles.dropdown}
-                onPress={() => setDropdownVisible(false)}>
-                {dropdownOptions.map((option, index) => (
-                  <React.Fragment key={index}>
-                    <View
-                      style={styles.dropdownOption}
-                      onPress={() => handleOptionSelect(option)}>
-                      <Text
-                        style={{
-                          color: '#fff',
-                          textAlign: 'center',
-                          fontSize: 10,
-                          paddingVertical: 2,
-                          zIndex: 66666,
-                        }}>
-                        {option}
-                      </Text>
-                    </View>
-                    {index === 0 && dropdownOptions[index + 1] === 'Delete' && (
-                      <View style={styles.horizontalLine} />
-                    )}
-                  </React.Fragment>
-                ))}
-              </TouchableOpacity>
-            )}
+          )}
+        </View>
+      </View>
+      {isLocked ? (
+        <View style={styles.lockedOverlay}>
+          <View style={styles.lockedContainer}>
+            <Text style={styles.lockedText}>{content}</Text>
+            <TouchableOpacity style={styles.lockedButtonContainer}>
+              <Text style={{color: '#fff'}}>
+                Unlock this video for{' '}
+                <Text
+                  style={{color: '#30D298', fontWeight: '600', fontSize: 16}}>
+                  ${cost}
+                </Text>
+              </Text>
+              <View style={styles.lockedIconContainer}>
+                <Image source={LockOpenIcon} style={styles.lockIcon} />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-        {isLocked ? (
-          <View style={styles.lockedOverlay}>
-            <View style={styles.lockedContainer}>
-              <Text style={styles.lockedText}>{content}</Text>
-              <TouchableOpacity style={styles.lockedButtonContainer}>
-                <Text style={{color: '#fff'}}>
-                  Unlock this video for{' '}
-                  <Text
-                    style={{color: '#30D298', fontWeight: '600', fontSize: 16}}>
-                    ${cost}
-                  </Text>
-                </Text>
-                <View style={styles.lockedIconContainer}>
-                  <Image source={LockOpenIcon} style={styles.lockIcon} />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : null}
-        {content && (
-          <View style={[styles.content, {backgroundColor: `${hexCode}`}]}>
-            <Text style={styles.contentText}>{content}</Text>
-          </View>
-        )}
-        {media && (
-          <TouchableOpacity onPress={handleImagePress}>
-            <Image style={styles.image} source={{uri: media}} />
-          </TouchableOpacity>
-        )}
-        <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
-          <View style={styles.postButtonsContainer}>
-            <View style={styles.likesContainer}>
-              <Image style={styles.heartIcon} source={Heart} />
-              <Text style={styles.likesCount}>{`${likesCount} ${
-                likesCount === 1 ? 'like' : 'likes'
-              }`}</Text>
-            </View>
-            <Text style={styles.buttonText}>{`${commentsCount} ${
-              commentsCount === 1 ? 'comment' : 'comments'
+      ) : null}
+      {content && (
+        <View style={[styles.content, {backgroundColor: `${hexCode}`}]}>
+          <Text style={styles.contentText}>{content}</Text>
+        </View>
+      )}
+      {media && (
+        <TouchableOpacity onPress={handleImagePress}>
+          <Image style={styles.image} source={{uri: media}} />
+        </TouchableOpacity>
+      )}
+      <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
+        <View style={styles.postButtonsContainer}>
+          <View style={styles.likesContainer}>
+            <Image style={styles.heartIcon} source={Heart} />
+            <Text style={styles.likesCount}>{`${likesCount} ${
+              likesCount === 1 ? 'like' : 'likes'
             }`}</Text>
           </View>
-          <View style={styles.mediaButtons}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleLikeButtonPress}>
-              <Image
-                style={styles.heartIcon}
-                source={isLiked ? LikeFilled : Like}
-              />
-              <Text style={styles.buttonText}>Like</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleCommentPress}>
-              <Image style={styles.postIcon} source={CommentIcon} />
-              <Text style={styles.buttonText}>Comment</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleShareModal}>
-              <Image style={styles.postIcon} source={Share} />
-              <Text style={styles.buttonText}>Share</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.buttonText}>{`${commentsCount} ${
+            commentsCount === 1 ? 'comment' : 'comments'
+          }`}</Text>
         </View>
-        {isCommentModalVisible && (
-          <Modal
-            isVisible={true}
-            backdropOpacity={0}
-            style={styles.modalContainer}>
-            <View style={styles.commentModal}>
-              <Comment
-                handleCommentPostSubmit={handleCommentPostPress}
-                comments={commentsData}
-                commentText={commentText}
-                setCommentText={setCommentText}
-                handleCommentPress={handleCommentPress}
-                handleReplyPostPress={handleReplyPostPress}
+        <View style={styles.mediaButtons}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleLikeButtonPress}>
+            <Image
+              style={styles.heartIcon}
+              source={isLiked ? LikeFilled : Like}
+            />
+            <Text style={styles.buttonText}>Like</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleCommentPress}>
+            <Image
+              style={[
+                styles.postIcon,
+                isCommentsScreenActive === true ? {tintColor: '#209BCC'} : null,
+              ]}
+              source={CommentIcon}
+            />
+            <Text
+              style={[
+                styles.buttonText,
+                isCommentsScreenActive ? {color: '#209BCC'} : {},
+              ]}>
+              Comment
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleShareModal}>
+            <Image style={styles.postIcon} source={Share} />
+            <Text style={styles.buttonText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      {isShareModalVisible && (
+        <Modal
+          isVisible={true}
+          backdropOpacity={0.3}
+          style={styles.modalContainer}>
+          <View style={styles.shareModal}>
+            <View style={styles.shareContainer}>
+              <TextInput
+                placeholder="Type here..."
+                multiline={true}
+                style={styles.shareInput}
+                textAlignVertical="top"
+                value={shareText}
+                onChangeText={setShareText}
               />
-            </View>
-          </Modal>
-        )}
-        {isShareModalVisible && (
-          <Modal
-            isVisible={true}
-            backdropOpacity={0.3}
-            style={styles.modalContainer}>
-            <View style={styles.shareModal}>
-              <View style={styles.shareContainer}>
-                <TextInput
-                  placeholder="Type here..."
-                  multiline={true}
-                  style={styles.shareInput}
-                  textAlignVertical="top"
-                  value={shareText}
-                  onChangeText={setShareText}
-                />
-                <View style={styles.buttonContainer}>
-                  <CustomButton
-                    extraStyles={{marginVertical: verticalScale(15)}}
-                    onPress={() => handleShareButtonPress(shareText)}>
-                    Share Now
-                  </CustomButton>
-                  <CustomButton
-                    extraStyles={{backgroundColor: 'red'}}
-                    onPress={() => setShareModalVisible(false)}>
-                    Cancel
-                  </CustomButton>
-                </View>
+              <View style={styles.buttonContainer}>
+                <CustomButton
+                  extraStyles={{marginVertical: verticalScale(15)}}
+                  onPress={() => handleShareButtonPress(shareText)}>
+                  Share Now
+                </CustomButton>
+                <CustomButton
+                  extraStyles={{backgroundColor: 'red'}}
+                  onPress={() => setShareModalVisible(false)}>
+                  Cancel
+                </CustomButton>
               </View>
             </View>
-          </Modal>
-        )}
-        <Modal
-          isVisible={isImageFullscreen}
-          backdropOpacity={1}
-          onBackdropPress={() => setImageFullscreen(false)}
-          style={styles.fullscreenContainer}>
-          <TouchableOpacity
-            onPress={handleImageClose}
-            style={styles.fullscreenContainer}>
-            <ImageZoom
-              uri={media}
-              minScale={1}
-              maxScale={10}
-              style={styles.imageZoom}
-              isPinchEnabled={true}
-            />
-          </TouchableOpacity>
+          </View>
         </Modal>
-      </View>
-    </ScrollView>
+      )}
+      <Modal
+        isVisible={isImageFullscreen}
+        backdropOpacity={1}
+        onBackdropPress={() => setImageFullscreen(false)}
+        style={styles.fullscreenContainer}>
+        <TouchableOpacity
+          onPress={handleImageClose}
+          style={styles.fullscreenContainer}>
+          <ImageZoom
+            uri={media}
+            minScale={1}
+            maxScale={10}
+            style={styles.imageZoom}
+            isPinchEnabled={true}
+          />
+        </TouchableOpacity>
+      </Modal>
+    </View>
   );
 };
 
@@ -480,8 +418,8 @@ const styles = StyleSheet.create({
     marginHorizontal: horizontalScale(16),
   },
   image: {
-    width: horizontalScale(380),
-    height: verticalScale(300),
+    width: horizontalScale(370),
+    height: verticalScale(250),
     alignSelf: 'center',
     zIndex: -1,
   },
@@ -548,11 +486,6 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     backgroundColor: '#ebebeb',
-  },
-  commentModal: {
-    backgroundColor: '#E1E1E1',
-    height: '60%',
-    justifyContent: 'flex-end',
   },
   modalContainer: {
     margin: 0,

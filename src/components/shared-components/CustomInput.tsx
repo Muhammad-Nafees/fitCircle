@@ -7,7 +7,11 @@ import {
   TextInput,
 } from 'react-native';
 import {Text} from 'react-native-paper';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -28,6 +32,7 @@ interface Props {
   isFirstLetterLowercase?: boolean;
   setFieldError: (name: any, error: any) => void;
   fieldName: string;
+  editable?: boolean;
 }
 
 const CustomInput = ({...props}: Props) => {
@@ -100,6 +105,7 @@ const CustomInput = ({...props}: Props) => {
           autoCapitalize={props.autoCapitalize}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
+          editable={props.editable}
         />
       </View>
 
@@ -144,7 +150,7 @@ const styles = StyleSheet.create({
     height: verticalScale(45),
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
-    padding: 10,
+    padding: moderateScale(10),
   },
   icon: {
     position: 'absolute',

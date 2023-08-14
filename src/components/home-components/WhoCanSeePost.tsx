@@ -47,6 +47,9 @@ export const WhoCanSeeThisPost = ({
   };
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => modalClose()}
+        style={styles.topLine}></TouchableOpacity>
       <View style={styles.headingText}>
         <Text style={styles.heading1}>Who can see your post?</Text>
         <Text style={styles.paragraph1}>
@@ -116,6 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: horizontalScale(30),
     paddingBottom: verticalScale(40),
+    paddingVertical: verticalScale(10),
   },
   headingText: {
     marginTop: verticalScale(30),
@@ -173,8 +177,8 @@ const styles = StyleSheet.create({
     color: '#6097a5',
   },
   icon: {
-    width: horizontalScale(25),
-    height: verticalScale(25),
+    width: horizontalScale(29),
+    height: verticalScale(29),
     tintColor: '#fff',
   },
   input: {
@@ -186,5 +190,13 @@ const styles = StyleSheet.create({
   textInputContainer: {
     justifyContent: 'center',
     width: '100%',
+  },
+  topLine: {
+    height: verticalScale(5),
+    width: horizontalScale(58),
+    backgroundColor: 'white',
+    marginTop: verticalScale(5),
+    alignSelf: 'center',
+    borderRadius: 3,
   },
 });

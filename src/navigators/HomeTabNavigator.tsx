@@ -1,21 +1,18 @@
 import React from 'react';
-import {
-  createBottomTabNavigator,
-  useBottomTabBarHeight,
-} from '@react-navigation/bottom-tabs';
-import {View, Text, Image, StyleSheet, Animated} from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {View, Text, Image, Keyboard} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import HomeScreen from '../screens/home-screens';
-import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
 import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
+import CommentsScreen from '../screens/home-screens/CommentScreen';
+import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
+import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
+import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
+import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
 
-const Home = require('../../assets/icons/home-page.png');
-const Search = require('../../assets/icons/searchTab.png');
 const Post = require('../../assets/icons/post.png');
-const Message = require('../../assets/icons/chat.png');
-const Dashboard = require('../../assets/icons/dashboard.png');
 const Wave = require('../../assets/wave.png');
 
 const Tab = createBottomTabNavigator();
@@ -60,6 +57,7 @@ const CustomTabBarButton = ({children, onPress}: any) => (
 );
 
 const CustomTabBarIcon = ({focused, icon}: any) => {
+  const iconColor = focused ? '#fff' : '#209BCC';
   return (
     <View>
       {focused && (
@@ -87,15 +85,15 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
             borderRadius: focused ? 30 : null,
             padding: focused ? 12 : null,
           }}>
-          <Image
-            style={{
-              width: 24,
-              height: 24,
-              tintColor: focused ? '#fff' : '#209BCC',
-              zIndex: 9999,
-            }}
-            source={icon}
-          />
+          {icon === 'Home' ? (
+            <HomeSvgIcon color={iconColor} />
+          ) : icon === 'Search' ? (
+            <SearchSvgIcon color={iconColor} />
+          ) : icon === 'Message' ? (
+            <MessageSvgIcon color={iconColor} />
+          ) : (
+            <DashboardSvgIcon color={iconColor} />
+          )}
         </View>
       </View>
     </View>
@@ -103,15 +101,39 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
 };
 
 const HomeTabNavigator = () => {
+  const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+  const tabBarStyle = {
+    backgroundColor: '#3EB6E6',
+    height: 70,
+    paddingTop: isKeyboardVisible ? 40 : 0,
+  };
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        tabBarHideOnKeyboard: true,
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: '#3EB6E6',
-          height: 70,
-        },
+        tabBarStyle,
         tabBarLabelStyle: {
           color: 'transparent',
         },
@@ -122,7 +144,7 @@ const HomeTabNavigator = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View>
-              <CustomTabBarIcon focused={focused} icon={Home} />
+              <CustomTabBarIcon focused={focused} icon="Home" />
             </View>
           ),
         }}
@@ -133,7 +155,7 @@ const HomeTabNavigator = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View>
-              <CustomTabBarIcon focused={focused} icon={Search} />
+              <CustomTabBarIcon focused={focused} icon="Search" />
             </View>
           ),
         }}
@@ -163,7 +185,7 @@ const HomeTabNavigator = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View>
-              <CustomTabBarIcon focused={focused} icon={Message} />
+              <CustomTabBarIcon focused={focused} icon="Message" />
             </View>
           ),
         }}
@@ -174,7 +196,7 @@ const HomeTabNavigator = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <View>
-              <CustomTabBarIcon focused={focused} icon={Dashboard} />
+              <CustomTabBarIcon focused={focused} icon="Dashboard" />
             </View>
           ),
         }}
@@ -182,6 +204,14 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="FavoriteDialog"
         component={FavoriteDialogScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="CommentsScreen"
+        component={CommentsScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,

@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: verticalScale(16),
+    marginVertical: -30,
   },
   colorDot: {
     width: horizontalScale(36),

@@ -10,30 +10,21 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../utils/metrics';
-import {loginSchema} from '../../../validations';
+import {signUpFormSchema} from '../../../validations';
 import CustomInput from '../../shared-components/CustomInput';
 import {STYLES} from '../../../styles/globalStyles';
-import CustomDivider from '../../shared-components/CustomDivider';
-import SocialIcons from '../../shared-components/SocialIcons';
 import CustomButton from '../../shared-components/CustomButton';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../../../interfaces/navigation.type';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../shared-components/CustomLoader';
-import {loginIn} from '../../../api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
-import {
-  authenticate,
-  setaccessToken,
-  setAuthorizationToken,
-  setUserData,
-  setuserRole,
-} from '../../../redux/authSlice';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import CustomPhoneInput from '../../shared-components/CustomPhoneInput';
+import PhoneInput from 'react-native-phone-number-input';
 
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -42,67 +33,51 @@ type NavigationProp = NativeStackNavigationProp<
 >;
 
 interface FormValues {
+  name: string;
   email: string;
+  phone: string;
   password: string;
 }
 
-const LoginForm = () => {
+const SignupForm = () => {
   const navigation = useNavigation<NavigationProp>();
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
+  const phoneInput = useRef<PhoneInput>(null);
+  const [isError, setIsError] = useState('');
+  const [phoneCode, setPhoneCode] = useState('1');
+
+  const phoneNumberCheck = (values: any) => {
+    const isValid = phoneInput.current?.isValidNumber(values);
+    if (!isValid) {
+      setIsError('Invalid phone number!');
+    } else {
+      setIsError('');
+    }
+  };
+
   const initialValues: FormValues = {
+    name: '',
     email: '',
+    phone: '',
     password: '',
   };
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    try {
-      const response = await loginIn(values.email, values.password);
+    if (isError) {
       setIsLoading(false);
-      if (response?.status === 200) {
-        dispatch(authenticate());
-        dispatch(setAuthorizationToken(response?.headers.authorization));
-        storeData(response?.headers.authorization);
-        dispatch(setuserRole(response.data.role));
-        dispatch(setaccessToken(response?.data.token));
-        dispatch(setUserData(response?.data));
-        Toast.show({
-          type: 'success',
-          text1: 'Login Successful!',
-          text2: 'Welcome!',
-        });
-        navigation.navigate('HomeScreen');
-      }
-    } catch (error: any) {
-      setIsLoading(false);
-      if (error.response.status === 400) {
-        Toast.show({
-          type: 'error',
-          text1: 'Login Unsuccessfull!',
-          text2: 'Invalid email or password!',
-        });
-      } else if (error.response.status === 500) {
-        Toast.show({
-          type: 'error',
-          text1: 'Login Unsuccessfull!',
-          text2: 'Internal Server Error. Please try again later',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Login Unsuccessfull!',
-          text2: 'Network error. Please try again later',
-        });
-      }
+      return;
     }
-  };
-
-  const storeData = async (value: any) => {
-    try {
-      await AsyncStorage.setItem('authToken', value);
-    } catch (e) {
-      console.log(e);
-    }
+    const getCode = phoneInput.current?.getCountryCode();
+    console.log(getCode);
+    navigation.navigate('CreateAccount', {
+      email: values.email,
+      password: values.password,
+      phone: values.phone,
+      name: values.name,
+      phoneCode: phoneCode,
+      countryCode: getCode,
+    });
+    setIsLoading(false);
   };
 
   return (
@@ -112,18 +87,16 @@ const LoginForm = () => {
       showsVerticalScrollIndicator={false}>
       <Formik
         initialValues={initialValues}
-        validationSchema={loginSchema}
+        validationSchema={signUpFormSchema}
         validateOnChange={false}
         onSubmit={handleSubmit}>
         {({
           handleChange,
           handleSubmit,
-          handleBlur,
-          submitForm,
           values,
           errors,
           touched,
-          initialTouched,
+          setFieldValue,
           setFieldError,
         }) => (
           <View
@@ -132,6 +105,17 @@ const LoginForm = () => {
               gap: 0,
               alignItems: 'center',
             }}>
+            <CustomInput
+              label="Name"
+              placeholder="Username"
+              value={values.name}
+              error={errors.name}
+              touched={touched.name}
+              initialTouched={true}
+              handleChange={handleChange('name')}
+              setFieldError={setFieldError}
+              fieldName="name"
+            />
             <CustomInput
               label="Email"
               placeholder="Email"
@@ -144,6 +128,19 @@ const LoginForm = () => {
               handleChange={handleChange('email')}
               setFieldError={setFieldError}
               fieldName="email"
+            />
+            <CustomPhoneInput
+              label="Phone number"
+              value={values.phone}
+              error={errors.phone}
+              touched={touched.phone}
+              handleChange={handleChange('phone')}
+              setFieldValue={setFieldValue}
+              phoneInput={phoneInput}
+              setIsError={setIsError}
+              setFieldError={setFieldError}
+              isError={isError}
+              setPhoneCode={setPhoneCode}
             />
             <View style={{gap: 0, position: 'relative'}}>
               <CustomInput
@@ -158,34 +155,21 @@ const LoginForm = () => {
                 setFieldError={setFieldError}
                 fieldName="password"
               />
-              <TouchableOpacity
-                onPress={() => navigation.navigate('ForgetPasswordEmail')}>
-                <Text
-                  style={[
-                    STYLES.text12,
-                    {
-                      color: '#209BCC',
-                      borderBottomWidth: 1,
-                      borderBottomColor: '#209BCC',
-                      width: horizontalScale(96),
-                      position: 'absolute',
-                      left: 0,
-                      bottom: -verticalScale(10),
-                    },
-                  ]}>
-                  Forget Password</Text>
-              </TouchableOpacity>
             </View>
-            <View style={{marginTop: verticalScale(37), gap: 37}}>
+            <View style={{marginTop: verticalScale(15), gap: 37}}>
               <CustomButton
-                onPress={handleSubmit}
-                extraStyles={{height: verticalScale(50)}}
+                onPress={async () => {
+                  await phoneNumberCheck(values.phone);
+                  handleSubmit();
+                }}
+                extraStyles={{
+                  height: verticalScale(50),
+                  paddingHorizontal: horizontalScale(120),
+                }}
                 isDisabled={isLoading ? true : false}>
                 {' '}
-                {isLoading ? <CustomLoader /> : ' Log in'}
+                {isLoading ? <CustomLoader /> : 'Sign up'}
               </CustomButton>
-              <CustomDivider text="Or Sign Up" />
-              <SocialIcons />
             </View>
             <View
               style={{
@@ -194,7 +178,7 @@ const LoginForm = () => {
                 justifyContent: 'center',
                 marginTop: verticalScale(30),
               }}>
-              <Text style={STYLES.text14}>Don’t have an account? </Text>
+              <Text style={STYLES.text14}>Already have an account? </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('SigninScreenTwo')}>
                 <Text
@@ -210,8 +194,11 @@ const LoginForm = () => {
                 </Text>
               </TouchableOpacity>
             </View>
-
-            <View style={{marginVertical: verticalScale(47)}}>
+            <View
+              style={{
+                marginVertical: verticalScale(47),
+                marginHorizontal: horizontalScale(16),
+              }}>
               <Text
                 style={[STYLES.text12, {fontWeight: '500', color: '#979797'}]}>
                 By clicking login, you agree to our{' '}
@@ -227,7 +214,7 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default SignupForm;
 
 const styles = StyleSheet.create({
   container: {
@@ -236,6 +223,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     maxHeight: verticalScale(630),
+    flex: 1,
     // overflow: 'scroll',
     zIndex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.93)',

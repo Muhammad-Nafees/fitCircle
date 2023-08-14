@@ -6,7 +6,7 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import Toast from 'react-native-toast-message';
-import {generateOtp, resetPassword} from '../../../api';
+import {generateEmailOtp, resetPassword} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const ChooseVerificationType = ({navigation}: any) => {
@@ -23,12 +23,8 @@ const ChooseVerificationType = ({navigation}: any) => {
     try {
       setIsLoading(true);
       console.log(email, 'email');
-      const response = await generateOtp(email as string);
+      const response = await generateEmailOtp(email as string);
       const data = response.data;
-      Toast.show({
-        type: 'success',
-        text1: 'User Verified!',
-      });
       navigation.navigate('OtpScreen', {
         otp: data,
         verificationType: type,
@@ -69,7 +65,7 @@ const ChooseVerificationType = ({navigation}: any) => {
           <Text style={[STYLES.text14, {textAlign: 'center'}]}>
             Select the verification platform to continue
           </Text>
-          <View style={{gap: 20, marginTop: 10}}>
+          <View style={{gap: 24, marginTop: 18}}>
             <CustomButton
               extraStyles={{
                 backgroundColor:
@@ -81,11 +77,9 @@ const ChooseVerificationType = ({navigation}: any) => {
               onPress={() => {
                 handleSubmit('email');
               }}>
-              {verificationType == 'email' ? (
-                <CustomLoader />
-              ) : (
-                'Email Verification'
-              )}
+              {verificationType == 'email'
+                ? 'Email Verification'
+                : 'Email Verification'}
             </CustomButton>
             <CustomButton
               extraStyles={{
@@ -96,11 +90,9 @@ const ChooseVerificationType = ({navigation}: any) => {
                   verificationType == 'phone' ? 'transparent' : 'white',
               }}
               onPress={() => handleSubmit('phone')}>
-              {verificationType == 'phone' ? (
-                <CustomLoader />
-              ) : (
-                'Phone Verification'
-              )}
+              {verificationType == 'phone'
+                ? 'Phone Verification'
+                : 'Phone Verification'}
             </CustomButton>
           </View>
         </View>
@@ -117,8 +109,8 @@ const styles = StyleSheet.create({
   },
   card: {
     marginTop: horizontalScale(68),
-    width: 272,
-    height: 217,
+    width: 282,
+    height: 230,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 30,
     justifyContent: 'center',

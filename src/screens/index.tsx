@@ -21,7 +21,7 @@ const SplashScreen = ({navigation}: any) => {
       <TouchableOpacity
         style={{flex: 1, width: '70%', alignItems: 'center'}}
         onPress={() => navigation.navigate('SigninScreenOne')}>
-        <Text style={[STYLES.text12]}>GET STARTED</Text>
+        <Text style={[STYLES.text12, {paddingTop: 10}]}>GET STARTED</Text>
       </TouchableOpacity>
     </ImageBackground>
   );

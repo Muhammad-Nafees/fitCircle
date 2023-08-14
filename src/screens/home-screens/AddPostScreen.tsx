@@ -245,7 +245,7 @@ export const AddPostScreen = ({route}: any) => {
     const options: CameraOptions = {
       mediaType: 'video',
       videoQuality: 'low',
-      durationLimit: 60,
+      durationLimit: 120,
       saveToPhotos: true,
     };
     launchCamera(options, (response: ImagePickerResponse) => {
@@ -373,7 +373,7 @@ export const AddPostScreen = ({route}: any) => {
                 styles.textInputColor,
                 {backgroundColor: textInputBackgroundColor},
                 textInputBackgroundColor !== 'transparent'
-                  ? {height: 150}
+                  ? {height: 90, marginTop: 10}
                   : null,
               ]}
               placeholder="What do you want to talk about?"
@@ -497,6 +497,7 @@ const styles = StyleSheet.create({
     padding: moderateScale(8),
     flexDirection: 'row',
     justifyContent: 'space-between',
+    backgroundColor: '#282b2c',
   },
   button: {
     padding: moderateScale(8),
@@ -515,13 +516,15 @@ const styles = StyleSheet.create({
     flex: 2.5,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    paddingHorizontal: horizontalScale(16),
+    paddingHorizontal: horizontalScale(0),
   },
   avatarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginVertical: verticalScale(10),
+    marginVertical: verticalScale(1),
+    paddingHorizontal: horizontalScale(20),
+    marginTop: 10,
   },
   postContainer: {
     flex: 1,
@@ -564,12 +567,13 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 10,
     color: 'white',
-    paddingHorizontal: horizontalScale(15),
+    paddingHorizontal: horizontalScale(20),
   },
   mediaContainer: {
     marginVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: 16,
   },
   media: {
     width: horizontalScale(340),

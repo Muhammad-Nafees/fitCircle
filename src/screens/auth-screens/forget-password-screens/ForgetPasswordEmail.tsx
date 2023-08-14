@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
@@ -60,7 +61,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
   };
 
   return (
-    <View style={STYLES.container}>
+    <ScrollView style={STYLES.container}>
       <View style={{gap: 10}}>
         <Text
           style={[
@@ -136,6 +137,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
             </View>
             <View
               style={{flex: 1, justifyContent: 'flex-end', marginBottom: 20}}>
+              <View style={{height: verticalScale(300)}}></View>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgetPasswordNumber')}>
                 <Text
@@ -174,7 +176,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
           </View>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 };
 

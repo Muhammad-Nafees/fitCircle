@@ -13,12 +13,8 @@ import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import {createNewPasswordSchema} from '../../../validations';
-import {
-  resetPasswordWithEmail,
-  resetPasswordWithPhone,
-} from '../../../api';
+import {resetPasswordWithEmail, resetPasswordWithPhone} from '../../../api';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 interface FormValues {
   newPassword: string;
@@ -27,10 +23,8 @@ interface FormValues {
 
 const CreateNewPassword = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [email, setEmail] = useState<string | undefined>('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [phone, setPhone] = useState('');
   const [confirmPasswordVisible, setConfirmPasswordVisible] =
     useState<boolean>(false);
 
@@ -47,45 +41,41 @@ const CreateNewPassword = ({navigation, route}: any) => {
     setConfirmPasswordVisible(prev => !prev);
   };
 
-  useEffect(() => {
-    if (route.params.phone) {
-      setPhone(route.params.phone);
-      console.log(route.params.phone);
-    } else {
-      setEmail(route?.params.email);
-      console.log(route.params.email);
-    }
-  }, []);
-
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
+      let response;
       if (route.params.phone) {
-        const response = await resetPasswordWithPhone(
+        response = await resetPasswordWithPhone(
           values.newPassword,
           route.params.phone,
         );
-        if (response?.status == 200) {
-          setIsLoading(false);
-          navigation.navigate('PasswordChangedDialog');
-        }
       } else {
-        const response = await resetPasswordWithEmail(
+        response = await resetPasswordWithEmail(
           values.newPassword,
           route.params.email,
         );
-        if (response?.status == 200) {
-          setIsLoading(false);
-          navigation.navigate('PasswordChangedDialog');
-        }
+      }
+      setIsLoading(false);
+      if (response?.status === 200) {
+        navigation.navigate('PasswordChangedDialog');
       }
     } catch (error: any) {
       setIsLoading(false);
-      Toast.show({
-        type: 'error',
-        text1: 'Server Error',
-        text2: 'Please try again later!',
-      });
+      console.log(error.response?.status);
+      if (error.response?.status === 409) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error changing password',
+          text2: 'The new password cannot be the same as the old password',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Server Error',
+          text2: 'Please try again later!',
+        });
+      }
     }
   };
 
@@ -94,7 +84,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
   };
 
   return (
-    <View style={STYLES.container}>
+    <ScrollView style={STYLES.container}>
       <View>
         <Text
           style={[
@@ -121,7 +111,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
           setFieldError,
         }) => (
           <View style={{flex: 1}}>
-            <View style={{marginTop: verticalScale(25), gap: 0}}>
+            <View style={{marginTop: verticalScale(25), gap: 3}}>
               <Text style={styles.label}>Create New Password</Text>
               <View
                 style={[
@@ -164,7 +154,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
                     flexDirection: 'row',
                     alignItems: 'center',
                     gap: 2,
-                    marginTop: verticalScale(7),
+                    marginTop: verticalScale(3),
                   }}>
                   <Icon name="alert-circle" size={22} color="red" />
                   <Text style={[STYLES.text12, {color: 'red'}]}>
@@ -175,7 +165,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
                 <View style={{height: 30}} />
               )}
             </View>
-            <View style={{gap: 0}}>
+            <View style={{gap: 3}}>
               <Text style={styles.label}>Confirm New Password</Text>
               <View
                 style={[
@@ -224,8 +214,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
                     flexDirection: 'row',
                     alignItems: 'center',
                     gap: 2,
-                    marginTop: verticalScale(7),
-                    marginBottom: verticalScale(4),
+                    marginTop: verticalScale(3),
                   }}>
                   <Icon name="alert-circle" size={22} color="red" />
                   <Text style={[STYLES.text12, {color: 'red'}]}>
@@ -238,7 +227,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
             </View>
             <View
               style={{flex: 2, justifyContent: 'flex-end', marginBottom: 20}}>
-              {/* <View style={{height: 320}}></View> */}
+              <View style={{height: horizontalScale(300)}} />
               <TouchableOpacity
                 disabled={isLoading || values.confirmNewPassword.trim() === ''}
                 onPress={handleSubmit}
@@ -271,14 +260,14 @@ const CreateNewPassword = ({navigation, route}: any) => {
           </View>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   label: {
     position: 'relative',
-    top: verticalScale(20),
+    top: verticalScale(27),
     left: horizontalScale(20),
     color: 'white',
     fontSize: 12,
@@ -297,13 +286,13 @@ const styles = StyleSheet.create({
     width: horizontalScale(340),
     backgroundColor: 'black',
     borderRadius: 10,
-    height: verticalScale(60),
+    height: verticalScale(62),
     paddingHorizontal: horizontalScale(16),
   },
   textInput: {
     flex: 1,
     color: '#fff',
-    marginTop: verticalScale(12),
+    marginBottom: -verticalScale(10),
   },
   icon: {
     padding: 8,
