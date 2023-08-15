@@ -200,7 +200,7 @@ export const ReelsComponent = ({
         source={{
           uri: media,
         }}
-        style={{width: '100%', height: '100%', borderColor: "yellow", borderWidth: 1}}
+        style={{width: '100%', height: '100%', borderColor: "yellow", borderWidth: 0}}
         paused={!play}
         onTouchStart={() => setShowPlayIcon(true)}
         onLoad={() => {
