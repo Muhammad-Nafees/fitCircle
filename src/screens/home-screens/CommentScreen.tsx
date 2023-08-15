@@ -4,7 +4,10 @@ import {
   View,
   StyleSheet,
   Dimensions,
+  Image,
   TouchableOpacity,
+  TextInput,
+  Text
 } from 'react-native';
 import {Comment} from '../../components/home-components/Comment';
 import {CustomPost} from '../../components/home-components/CustomPost';
@@ -16,6 +19,15 @@ import {RootState} from '../../redux/store';
 import Modal from 'react-native-modal';
 import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
+import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
+import {launchImageLibrary} from 'react-native-image-picker';
+const SendIcon = require('../../../assets/icons/send.png');
+const CancelIcon = require('../../../assets/icons/cancel.png');
 
 const width = Dimensions.get('window').width;
 
@@ -31,6 +43,25 @@ const CommentsScreen = ({route, navigation}: any) => {
   const [commentScreenActive, setCommentScreenActive] = useState(false);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
   const [media, setMedia] = useState(null);
+  const [commentText, setCommentText] = useState('');
+  const [mediaUri, setMediaUri] = useState(null);
+  const [availableToComment, setAvailableToComment] = useState(false);
+
+  const handlePhotoButtonPress = () => {
+    setMediaUri(null);
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      quality: 1,
+      maxWidth: 500,
+      maxHeight: 500,
+    };
+
+    launchImageLibrary(options, (response: any) => {
+      if (!response.didCancel && !response.errorMessage && response.assets) {
+        setMediaUri(response.assets[0].uri);
+      }
+    });
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -160,14 +191,25 @@ const CommentsScreen = ({route, navigation}: any) => {
               <CustomLoader />
             </View>
           ) : (
-            <View style={{height: '100%', width: '100%'}}>
+            <View
+              style={{
+                height: '100%',
+                width: '100%',
+              }}>
               <Comment
+                available={availableToComment}
+                setAvailable={setAvailableToComment}
+                commentTxt={commentText}
+                media={mediaUri}
                 comments={comments}
+                setmedia={setMediaUri}
+                setcomment={setCommentText}
                 handleCommentPostSubmit={handleCommentPostPress}
                 handleBackPress={handleBackPress}
                 handleReplyPostPress={handleReplyPostPress}
                 handleImageOpen={handleImageOpen}
               />
+              <View style={{height: 120}} />
             </View>
           )}
         </ScrollView>
@@ -190,6 +232,70 @@ const CommentsScreen = ({route, navigation}: any) => {
           </TouchableOpacity>
         </Modal>
       </KeyboardAwareScrollView>
+      <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
+        {mediaUri && (
+          <View
+            style={{
+              backgroundColor: '#00abd2',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 10,
+                padding: 10,
+              }}>
+              <View>
+                <Text style={{color: '#fff', marginRight: 20}}>
+                  Photo Attached
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setMediaUri(null)}
+                style={{marginRight: 8}}>
+                <Image
+                  source={CancelIcon}
+                  style={{tintColor: '#fff', width: 18, height: 18}}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        <View style={styles.inputContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: '#00abd2',
+              width: '85%',
+            }}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Message"
+              placeholderTextColor="#fff"
+              value={commentText}
+              onChangeText={text => setCommentText(text)}
+            />
+            <TouchableOpacity
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingHorizontal: horizontalScale(13),
+                opacity: 0.8,
+              }}
+              onPress={handlePhotoButtonPress}>
+              <CreatePostCommentSvgIcon />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={styles.commentButton}
+            onPress={() => setAvailableToComment(prevState => !prevState)}>
+            <Image
+              source={SendIcon}
+              style={{width: 20, height: 20, tintColor: '#fff'}}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };
@@ -207,6 +313,28 @@ const styles = StyleSheet.create({
   imageZoom: {
     width: width,
     height: 300,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#209BCC',
+    padding: moderateScale(16),
+    width: '100%',
+  },
+  textInput: {
+    flex: 1,
+    color: 'white',
+    padding: moderateScale(8),
+    backgroundColor: '#00abd2',
+    position: 'relative',
+  },
+  commentButton: {
+    marginLeft: horizontalScale(5),
+    backgroundColor: '#019acd',
+    borderRadius: 10,
+    paddingVertical: verticalScale(8),
+    paddingHorizontal: horizontalScale(12),
   },
 });
 
