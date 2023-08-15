@@ -140,9 +140,9 @@ export const CustomPost = ({
   const handleLikeButtonPress = () => {
     setIsLiked(!isLiked);
     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-    const apiEndpoint = `posts/delete/64da3beb717d8e46e32f9932`;
+    const apiEndpoint = `posts/likes/${_id}`;
     axiosInstance
-      .delete(apiEndpoint)
+      .patch(apiEndpoint)
       .then(response => {
         console.log('Post liked successfully!');
       })
