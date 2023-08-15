@@ -87,10 +87,8 @@ const CustomPhoneInput = ({
             value={value}
             onChangeText={phoneNumber => {
               handleChange(phoneNumber);
-              if (touched && error) {
-                setFieldError('phone', '');
-                setIsError('');
-              }
+              setFieldError('phone', '');
+              setIsError('');
             }}
             getCountryCode={code => console.log(code)}
             onChangeCountry={country => {

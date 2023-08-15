@@ -25,7 +25,7 @@ const SendIcon = require('../../../assets/icons/send.png');
 import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
 import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
 
-import Entypo from 'react-native-vector-icons/Entypo'
+import Entypo from 'react-native-vector-icons/Entypo';
 
 interface CommentProps {
   comments: CommentItem[];
@@ -34,6 +34,7 @@ interface CommentProps {
   handleCommentPostSubmit: (commentText: string) => void;
   handleReplyPress: (commentId: string, parentCommentId?: string) => void;
   handleBackPress: () => void;
+  handleImageOpen: (imageUrl: string) => void;
   handleReplyPostPress: (
     commentText: string,
     mediaUri: any,
@@ -56,12 +57,14 @@ interface CommentItem {
   handleReplyPress: (commentId: string, parentCommentId?: string) => void;
   showReplyButton: boolean;
   isReplying: boolean;
+  handleImageOpen: (imageUrl: string) => void;
 }
 
 const CommentItem = ({
   comment,
   handleReplyPress,
   showReplyButton,
+  handleImageOpen,
 }: {
   comment: CommentItem;
   handleReplyPress: any;
@@ -108,10 +111,13 @@ const CommentItem = ({
           <Text style={styles.commentName}>{comment.user.username}</Text>
           <Text style={styles.commentText}>{comment.text}</Text>
           {comment.commentMedia && (
-            <Image
-              source={{uri: comment.commentMedia}}
-              style={styles.commentMediaImage}
-            />
+            <TouchableOpacity
+              onPress={() => handleImageOpen(comment.commentMedia)}>
+              <Image
+                source={{uri: comment.commentMedia}}
+                style={styles.commentMediaImage}
+              />
+            </TouchableOpacity>
           )}
         </View>
         <View style={{flexDirection: 'row', gap: 15}}>
@@ -146,6 +152,7 @@ export const Comment = ({
   handleCommentPostSubmit,
   handleReplyPostPress,
   handleBackPress,
+  handleImageOpen,
 }: CommentProps) => {
   const [mediaUri, setMediaUri] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
@@ -196,17 +203,24 @@ export const Comment = ({
         <Image source={CancelIcon} style={styles.cancelIcon} />
       </TouchableOpacity>
 
-      {
-        !comments.length ? (
-          <View style={{  alignItems: "center", marginTop: 40}}>
-            <Entypo name='chat' color={"#898c93"} size={150} />
+      {!comments.length ? (
+        <View style={{alignItems: 'center', marginTop: 40}}>
+          <Entypo name="chat" color={'#898c93'} size={150} />
 
-            <Text style={{ fontSize: 14, color: "#898c93", fontWeight: "500", marginTop: 10}}>No comments yet</Text>
-            <Text style={{ fontSize: 14, color: "#898c93"}}>Be the first to comment.</Text>
-
-          </View>
-        ) : null
-      }
+          <Text
+            style={{
+              fontSize: 14,
+              color: '#898c93',
+              fontWeight: '500',
+              marginTop: 10,
+            }}>
+            No comments yet
+          </Text>
+          <Text style={{fontSize: 14, color: '#898c93'}}>
+            Be the first to comment.
+          </Text>
+        </View>
+      ) : null}
       <ScrollView>
         {comments.map(comment => (
           <CommentItem
@@ -214,6 +228,7 @@ export const Comment = ({
             comment={comment}
             handleReplyPress={handleReplyButtonPress}
             showReplyButton={true}
+            handleImageOpen={handleImageOpen}
           />
         ))}
       </ScrollView>

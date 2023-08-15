@@ -40,6 +40,7 @@ interface ReelsProps {
   viewable: any;
   index: number;
   currIndex: number;
+  tabBarHeight: any;
 }
 
 export const ReelsComponent = ({
@@ -48,9 +49,11 @@ export const ReelsComponent = ({
   viewable,
   index,
   currIndex,
+  tabBarHeight,
 }: ReelsProps) => {
   // console.log("🚀 ~ file: Reels.tsx:46 ~ ReelsComponent ~ currIndex:", currIndex)
   // console.log("🚀 ~ file: Reels.tsx:46 ~ ReelsComponent ~ index:", index)
+
   const {_id, media, content, user, cost, favorites} = post;
   const {profileImageUrl, username, email} = user;
   const videoRef = useRef(null);
@@ -138,7 +141,7 @@ export const ReelsComponent = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {height: height - 120 - tabBarHeight}]}>
       <View style={styles.topLeftContent}>
         {profileImageUrl ? (
           <Avatar.Image
@@ -200,7 +203,12 @@ export const ReelsComponent = ({
         source={{
           uri: media,
         }}
-        style={{width: '100%', height: '100%', borderColor: "yellow", borderWidth: 0}}
+        style={{
+          width: '100%',
+          height: '100%',
+          borderColor: 'black',
+          borderWidth: 0,
+        }}
         paused={!play}
         onTouchStart={() => setShowPlayIcon(true)}
         onLoad={() => {
@@ -238,12 +246,7 @@ export const ReelsComponent = ({
 const styles = StyleSheet.create({
   container: {
     width: width,
-    // height: height - verticalScale(215),
-    // height: height - verticalScale(130),
-    height: height - 120,
     // paddingBottom: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'black',
   },
   topLeftContent: {

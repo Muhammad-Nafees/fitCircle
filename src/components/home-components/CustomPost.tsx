@@ -34,6 +34,7 @@ interface CustomPostProps {
   countComment?: any;
   isCommentsScreenActive?: boolean;
   handleCommentButtonPress?: (post: any, userId: string) => void;
+  handleBackPress?: () => void;
   userId: string;
   post: {
     _id: string;
@@ -58,6 +59,7 @@ export const CustomPost = ({
   userId,
   countComment,
   isCommentsScreenActive,
+  handleBackPress,
   handleCommentButtonPress,
 }: CustomPostProps) => {
   const {_id, media, content, likes, createdAt, user, hexCode, cost} = post;
@@ -138,9 +140,9 @@ export const CustomPost = ({
   const handleLikeButtonPress = () => {
     setIsLiked(!isLiked);
     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-    const apiEndpoint = `posts/likes/${_id}`;
+    const apiEndpoint = `posts/delete/64da3beb717d8e46e32f9932`;
     axiosInstance
-      .patch(apiEndpoint)
+      .delete(apiEndpoint)
       .then(response => {
         console.log('Post liked successfully!');
       })
@@ -313,7 +315,11 @@ export const CustomPost = ({
             />
             <Text style={styles.buttonText}>Like</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleCommentPress}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              isCommentsScreenActive ? handleBackPress() : handleCommentPress();
+            }}>
             <Image
               style={[
                 styles.postIcon,
@@ -485,7 +491,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(10),
     borderRadius: 10,
     zIndex: -1,
-    marginBottom: 10
+    marginBottom: 10,
   },
   contentText: {
     color: '#fff',

@@ -28,7 +28,7 @@ import axios from 'axios';
 const SearchIcon = require('../../../assets/icons/search.png');
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import {setSelectedPost} from '../../redux/postSlice';
-import {createIconSetFromFontello} from 'react-native-vector-icons';
+import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 const NotificationIcon = require('../../../assets/icons/notification.png');
 
 const width = Dimensions.get('window').width;
@@ -49,6 +49,7 @@ const HomeScreen = () => {
   const [fetchedPosts, setFetchedPosts] = useState([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
+  const tabBarHeight = useBottomTabBarHeight();
   const [Viewable, SetViewable] = React.useState<any[]>([]);
 
   const scrollY = new Animated.Value(0);
@@ -76,12 +77,12 @@ const HomeScreen = () => {
     }, []),
   );
 
-   useEffect(() => {
-     setIsRefreshing(true);
-      setIsLoadingMore(false);
+  useEffect(() => {
+    setIsRefreshing(true);
+    setIsLoadingMore(false);
     setFetchedPosts([]);
     dispatch(fetchPostsStart());
-   }, []);
+  }, []);
 
   const handleRefresh = () => {
     dispatch(setSelectedPost(null));
@@ -94,23 +95,23 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-   setUserId(userData?._id);
-     handleButtonPress('My Circle');
-     const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-     setProfileImageUrl(imageUri);
-   }, [userData]);
+    setUserId(userData?._id);
+    handleButtonPress('My Circle');
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    setProfileImageUrl(imageUri);
+  }, [userData]);
 
   useEffect(() => {
-   setFilteredVideos(getVideoPosts(postsRedux));
-   }, [postsRedux]);
+    setFilteredVideos(getVideoPosts(postsRedux));
+  }, [postsRedux]);
 
   useEffect(() => {
     const filteredData = filteredVideos.sort(
-     (a, b) =>
-       new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
-   );
-   setFilteredVideos(filteredData);
- }, [filteredVideos]);
+      (a, b) =>
+        new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
+    );
+    setFilteredVideos(filteredData);
+  }, [filteredVideos]);
 
   const API_BASE_URL = 'http://3.128.201.197/';
   const fetchPosts = async (page: number) => {
@@ -155,8 +156,8 @@ const HomeScreen = () => {
 
   const handleLoadMore = () => {
     if (hasMore && !isLoadingMore) {
-      console.log("loading more posts");
-      
+      console.log('loading more posts');
+
       const nextPage = Math.ceil(fetchedPosts.length / 10) + 1;
       console.log(nextPage);
       fetchPosts(nextPage);
@@ -165,11 +166,6 @@ const HomeScreen = () => {
 
   const handleButtonPress = (button: string) => {
     setSelectedButton(button);
-    if (button === 'Creator') {
-      navigation.setOptions({tabBarStyle: {display: 'none'}});
-    }else {
-      navigation.setOptions({tabBarStyle: {display: 'block'}});
-    }
   };
 
   const renderCustomPost = ({item}: any) => {
@@ -289,9 +285,8 @@ const HomeScreen = () => {
         ) : (
           <View
             style={{
-              // height: height - verticalScale(215),
-              flex: 1,
-              // backgroundColor: '#fff',
+              width: width,
+              height: height - 120 - tabBarHeight,
             }}>
             <SwiperFlatList
               onScroll={e => {
@@ -312,6 +307,7 @@ const HomeScreen = () => {
                   index={index}
                   currIndex={focusedIndex}
                   userId={userId}
+                  tabBarHeight={tabBarHeight}
                 />
               )}
             />

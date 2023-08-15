@@ -327,6 +327,7 @@ export const VideoPreviewScreen = ({
             placeholder="Add title here..."
             placeholderTextColor="#fff"
             onChangeText={handleTitleInputChange}
+            multiline
           />
           <TouchableOpacity
             style={styles.avatarButton}
@@ -499,6 +500,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#918f96',
     borderRadius: 15,
     marginBottom: verticalScale(10),
+    paddingLeft: verticalScale(16),
     color: 'white',
   },
   textContentContainer: {

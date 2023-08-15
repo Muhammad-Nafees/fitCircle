@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, View, Text, KeyboardAvoidingView} from 'react-native';
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import {Comment} from '../../components/home-components/Comment';
 import {CustomPost} from '../../components/home-components/CustomPost';
 import axiosInstance from '../../api/interceptor';
@@ -7,6 +13,10 @@ import CustomLoader from '../../components/shared-components/CustomLoader';
 import {useFocusEffect} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import Modal from 'react-native-modal';
+import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
+
+const width = Dimensions.get('window').width;
 
 const CommentsScreen = ({route, navigation}: any) => {
   const selectedPost = useSelector(
@@ -18,6 +28,8 @@ const CommentsScreen = ({route, navigation}: any) => {
   const [commentsCount, setCommentsCount] = useState('Loading');
   const [loading, setLoading] = useState(false);
   const [commentScreenActive, setCommentScreenActive] = useState(false);
+  const [isImageFullscreen, setImageFullscreen] = useState(false);
+  const [media, setMedia] = useState(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,6 +52,11 @@ const CommentsScreen = ({route, navigation}: any) => {
         console.error('Error while fetching comments:', error);
         setLoading(false);
       });
+  };
+
+  const handleImageOpen = (imageUri: any) => {
+    setMedia(imageUri);
+    setImageFullscreen(true);
   };
 
   const handleCommentPostPress = (commentText: string, mediaUri: any) => {
@@ -111,6 +128,11 @@ const CommentsScreen = ({route, navigation}: any) => {
       });
   };
 
+  const handleImageClose = () => {
+    setImageFullscreen(false);
+    setMedia(null);
+  };
+
   const handleBackPress = async () => {
     setCommentScreenActive(false);
     await setComments([]);
@@ -118,40 +140,75 @@ const CommentsScreen = ({route, navigation}: any) => {
   };
 
   return (
-      <View style={{flex: 1, justifyContent: "space-between"}}>
-        {selectedPost !== null && (
-          <View style={{backgroundColor: '#353535', zIndex: 10}}>
-            <CustomPost
-              post={selectedPost}
-              countComment={commentsCount}
-              userId={userId}
-              isCommentsScreenActive={commentScreenActive}
-            />
-          </View>
-        )}
-        {loading ? (
-          <View style={{marginTop: '50%'}}>
-            <CustomLoader />
-          </View>
-        ) : (
-          <View
-            style={{
-              height: '100%',
-              flex: 1,
-              // backgroundColor: 'purple',
-              // position: 'absolute',
-              // bottom: 0,
-            }}>
-            <Comment
-              comments={comments}
-              handleCommentPostSubmit={handleCommentPostPress}
-              handleBackPress={handleBackPress}
-              handleReplyPostPress={handleReplyPostPress}
-            />
-          </View>
-        )}
-      </View>
+    <View style={{flex: 1, justifyContent: 'space-between'}}>
+      {selectedPost !== null && (
+        <View style={{backgroundColor: '#353535', zIndex: 10}}>
+          <CustomPost
+            post={selectedPost}
+            countComment={commentsCount}
+            userId={userId}
+            isCommentsScreenActive={commentScreenActive}
+            handleBackPress={handleBackPress}
+          />
+        </View>
+      )}
+      {loading ? (
+        <View>
+          <CustomLoader />
+        </View>
+      ) : (
+        <View
+          style={{
+            height: '100%',
+            flex: 1,
+            // backgroundColor: 'purple',
+            // position: 'absolute',
+            // bottom: 0,
+          }}>
+          <Comment
+            comments={comments}
+            handleCommentPostSubmit={handleCommentPostPress}
+            handleBackPress={handleBackPress}
+            handleReplyPostPress={handleReplyPostPress}
+            handleImageOpen={handleImageOpen}
+          />
+        </View>
+      )}
+      <Modal
+        isVisible={isImageFullscreen}
+        backdropOpacity={1}
+        onBackdropPress={() => setImageFullscreen(false)}
+        style={styles.fullscreenContainer}>
+        <TouchableOpacity
+          onPress={handleImageClose}
+          style={styles.fullscreenContainer}>
+          <ImageZoom
+            uri={media}
+            minScale={1}
+            maxScale={10}
+            style={styles.imageZoom}
+            isPinchEnabled={true}
+          />
+        </TouchableOpacity>
+      </Modal>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  fullscreenContainer: {
+    justifyContent: 'center',
+    width: width,
+    height: 400,
+    alignItems: 'center',
+    backgroundColor: 'black',
+    margin: 0,
+    padding: 0,
+  },
+  imageZoom: {
+    width: width,
+    height: 300,
+  },
+});
 
 export default CommentsScreen;

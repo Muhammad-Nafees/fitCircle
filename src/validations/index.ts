@@ -138,11 +138,11 @@ export const genderSchema = Yup.object().shape({
     .max(99, 'Age must be less than 100'),
   height: Yup.string()
     .required('Height is required')
-    .test('not-zero', 'Height must not be zero', value => value !== '0'),
+    .test('not-zero', 'Height must not be 0', value => !/^0/.test(value)),
 
   weight: Yup.string()
     .required('Weight is required')
-    .test('not-zero', 'Weight must not be zero', value => value !== '0'),
+    .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
   bodytype: Yup.string().required('Select Body Type'),
   activity: Yup.string().required('Select Activity'),
 });
