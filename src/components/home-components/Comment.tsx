@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   KeyboardAvoidingView,
+  Dimensions,
 } from 'react-native';
 import {
   horizontalScale,
