@@ -71,6 +71,7 @@ export const VideoPreviewScreen = ({
   const [titleInputValue, setTitleInputValue] = useState('');
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
+  console.log(videoUri);
 
   const handleBoostOptionSelect = (optionLabel: any) => {
     setSelectedOptionInternal(optionLabel);
@@ -196,6 +197,10 @@ export const VideoPreviewScreen = ({
     console.log('onError');
   };
 
+  useEffect(() => {
+    videoRef.current.seek(0);
+  });
+
   const handleAvatarButtonPress = () => {
     setIsModalVisible(!isModalVisible);
   };
@@ -244,7 +249,6 @@ export const VideoPreviewScreen = ({
       </View>
       <Video
         ref={videoRef}
-        onBuffer={onBuffer}
         onError={onError}
         resizeMode="cover"
         source={{uri: videoUri}}
