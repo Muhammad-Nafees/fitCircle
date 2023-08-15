@@ -17,11 +17,11 @@ const persistConfig = {
   storage: AsyncStorage,
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+// const persistedReducer = persistReducer(persistConfig, rootReducer);
 export type RootState = ReturnType<typeof rootReducer>;
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {

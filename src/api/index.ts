@@ -217,3 +217,8 @@ export const getCities = async (country: string) => {
   const response = await axiosInstance.get(`cities/${country}`);
   return response;
 };
+
+export const searchUser = async (name: string) => {
+  const response = await axiosInstance.get(`home/search/${name}`);
+  return response;
+};

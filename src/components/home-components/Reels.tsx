@@ -36,10 +36,21 @@ interface ReelsProps {
       email?: string;
     };
   };
-  userId: string;
+  userId: string | undefined;
+  viewable: any;
+  index: number;
+  currIndex: number;
 }
 
-export const ReelsComponent = ({post, userId}: ReelsProps) => {
+export const ReelsComponent = ({
+  post,
+  userId,
+  viewable,
+  index,
+  currIndex,
+}: ReelsProps) => {
+  // console.log("🚀 ~ file: Reels.tsx:46 ~ ReelsComponent ~ currIndex:", currIndex)
+  // console.log("🚀 ~ file: Reels.tsx:46 ~ ReelsComponent ~ index:", index)
   const {_id, media, content, user, cost, favorites} = post;
   const {profileImageUrl, username, email} = user;
   const videoRef = useRef(null);
@@ -48,6 +59,25 @@ export const ReelsComponent = ({post, userId}: ReelsProps) => {
   const [play, setPlay] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const navigation = useNavigation();
+
+  // const video = React.useRef(null);
+  // const [isPlaying, setPlaying] = React.useState(false);
+
+  // useEffect(() => {
+  //   if (viewable) {
+  //     if (viewable.length) {
+  //       if (viewable[0]._id === _id) {
+  //         setPlaying(true);
+  //       } else {
+  //         setPlaying(false);
+  //       }
+  //     } else {
+  //       setPlaying(false);
+  //     }
+  //   } else {
+  //     setPlaying(false);
+  //   }
+  // }, [viewable]);
 
   useEffect(() => {
     const isCurrentUserFavorited = favorites.some(
@@ -69,7 +99,7 @@ export const ReelsComponent = ({post, userId}: ReelsProps) => {
   }, [play, showPlayIcon]);
 
   const onBuffer = () => {
-    console.log('onBuffer');
+    console.log('onBuffer1');
   };
 
   const onError = () => {
@@ -170,7 +200,7 @@ export const ReelsComponent = ({post, userId}: ReelsProps) => {
         source={{
           uri: media,
         }}
-        style={{width: '100%', height: '100%'}}
+        style={{width: '100%', height: '100%', borderColor: "yellow", borderWidth: 0}}
         paused={!play}
         onTouchStart={() => setShowPlayIcon(true)}
         onLoad={() => {
@@ -208,8 +238,10 @@ export const ReelsComponent = ({post, userId}: ReelsProps) => {
 const styles = StyleSheet.create({
   container: {
     width: width,
-    height: height - verticalScale(215),
-    paddingBottom: 10,
+    // height: height - verticalScale(215),
+    // height: height - verticalScale(130),
+    height: height - 120,
+    // paddingBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',

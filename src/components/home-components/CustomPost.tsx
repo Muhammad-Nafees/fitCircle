@@ -25,6 +25,7 @@ import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import Toast from 'react-native-toast-message';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Dot = require('../../../assets/icons/dot.png');
 
@@ -42,7 +43,7 @@ interface CustomPostProps {
     comments: any[];
     shares: any[];
     createdAt: string;
-    hexCode: any;
+    hexCode: string;
     cost: number | null;
     user: {
       profileImageUrl?: string;
@@ -60,6 +61,8 @@ export const CustomPost = ({
   handleCommentButtonPress,
 }: CustomPostProps) => {
   const {_id, media, content, likes, createdAt, user, hexCode, cost} = post;
+  let isGradient = hexCode && hexCode.includes(',');
+
   const {profileImageUrl, username} = user;
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);
@@ -273,11 +276,16 @@ export const CustomPost = ({
           </View>
         </View>
       ) : null}
-      {content && (
-        <View style={[styles.content, {backgroundColor: `${hexCode}`}]}>
-          <Text style={styles.contentText}>{content}</Text>
-        </View>
-      )}
+      {content &&
+        (!isGradient ? (
+          <View style={[styles.content, {backgroundColor: `${hexCode}`}]}>
+            <Text style={styles.contentText}>{content}</Text>
+          </View>
+        ) : (
+          <LinearGradient colors={hexCode.split(',')} style={styles.content}>
+            <Text style={styles.contentText}>{content}</Text>
+          </LinearGradient>
+        ))}
       {media && (
         <TouchableOpacity onPress={handleImagePress}>
           <Image style={styles.image} source={{uri: media}} />
@@ -477,6 +485,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(10),
     borderRadius: 10,
     zIndex: -1,
+    marginBottom: 10
   },
   contentText: {
     color: '#fff',

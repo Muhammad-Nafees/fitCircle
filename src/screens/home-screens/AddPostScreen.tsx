@@ -40,6 +40,7 @@ import VideoPreviewScreen from './VideoPreviewScreen';
 import {ScrollView} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import LinearGradient from 'react-native-linear-gradient';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
@@ -55,8 +56,9 @@ export const AddPostScreen = ({route}: any) => {
   const [isCreatePostIconModalVisible, setIsCreatePostIconModalVisible] =
     useState(false);
   const [textInputValue, setTextInputValue] = useState('');
-  const [textInputBackgroundColor, setTextInputBackgroundColor] =
-    useState('transparent');
+  const [textInputBackgroundColor, setTextInputBackgroundColor] = useState<
+    string | string[]
+  >('transparent');
   const [mediaUri, setMediaUri] = useState<string | null>(null);
   const [videoUri, setVideoUri] = useState<string | null>();
   const [titleInput, setTitleInput] = useState('');
@@ -104,14 +106,25 @@ export const AddPostScreen = ({route}: any) => {
     }
 
     try {
+      let hexCode: string;
+
+      if (!Array.isArray(textInputBackgroundColor))
+        hexCode = textInputBackgroundColor;
+      else {
+        let str = '';
+
+        textInputBackgroundColor.forEach((hex, i) => {
+          str += hex + (i === textInputBackgroundColor.length - 1 ? '' : ',');
+        });
+
+        hexCode = str;
+      }
       let postData = {
         content: textInputValue,
         media: videoUri ? videoUri : mediaUri,
         visibility: selectedOption.toLowerCase(),
         hexCode:
-          textInputBackgroundColor === 'transparent'
-            ? null
-            : `${textInputBackgroundColor}`,
+          textInputBackgroundColor === 'transparent' ? null : `${hexCode}`,
       };
 
       if (mediaUri) {
@@ -171,7 +184,7 @@ export const AddPostScreen = ({route}: any) => {
     setIsComponentMounted(false);
   };
 
-  const handleColorSelected = (color: any) => {
+  const handleColorSelected = (color: string | string[]) => {
     setTextInputBackgroundColor(color);
   };
 
@@ -368,21 +381,53 @@ export const AddPostScreen = ({route}: any) => {
                 />
               </TouchableOpacity>
             </View>
-            <TextInput
-              style={[
-                styles.textInputColor,
-                {backgroundColor: textInputBackgroundColor},
-                textInputBackgroundColor !== 'transparent'
-                  ? {height: 90, marginTop: 10}
-                  : null,
-              ]}
-              placeholder="What do you want to talk about?"
-              placeholderTextColor="white"
-              value={textInputValue}
-              multiline
-              onChangeText={text => setTextInputValue(text)}
-              textAlignVertical={'top'}
-            />
+
+            {Array.isArray(textInputBackgroundColor) ? (
+              <LinearGradient
+                colors={textInputBackgroundColor}
+                style={{
+                  width: '100%',
+                  borderRadius: 10,
+                  marginTop: 10,
+                  minHeight: 90,
+                }}>
+                <TextInput
+                  style={[
+                    styles.textInputColor,
+                    {
+                      backgroundColor: !Array.isArray(textInputBackgroundColor)
+                        ? textInputBackgroundColor
+                        : 'transparent',
+                    },
+                    {height: 90},
+                  ]}
+                  placeholder="What do you want to talk about?"
+                  placeholderTextColor="white"
+                  value={textInputValue}
+                  multiline
+                  onChangeText={text => setTextInputValue(text)}
+                  textAlignVertical={'top'}
+                />
+              </LinearGradient>
+            ) : (
+              <TextInput
+                style={[
+                  styles.textInputColor,
+                  {
+                    backgroundColor: textInputBackgroundColor ?? 'transparent',
+                  },
+                  textInputBackgroundColor !== 'transparent'
+                    ? {height: 90, marginTop: 10}
+                    : null,
+                ]}
+                placeholder="What do you want to talk about?"
+                placeholderTextColor="white"
+                value={textInputValue}
+                multiline
+                onChangeText={text => setTextInputValue(text)}
+                textAlignVertical={'top'}
+              />
+            )}
             <View style={styles.postContainer}>
               {mediaUri && !videoUri && (
                 <View style={styles.mediaContainer}>
@@ -448,11 +493,12 @@ export const AddPostScreen = ({route}: any) => {
               colors={[
                 '#CC5252',
                 '#88BD91',
+                // '#654848',
+                ['#DC8686', '#274B6C'],
                 '#654848',
                 '#AF3E3E',
                 '#42A883',
-                '#00FF00',
-                '#0000FF',
+                ['#4A8D21', '#9CE271', '#BF3A3A'],
                 '#FFFF00',
                 '#FF00FF',
               ]}

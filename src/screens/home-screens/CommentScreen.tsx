@@ -118,36 +118,39 @@ const CommentsScreen = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={{flex: 1}}>
-      {selectedPost !== null && (
-        <View style={{backgroundColor: '#353535', zIndex: 10}}>
-          <CustomPost
-            post={selectedPost}
-            countComment={commentsCount}
-            userId={userId}
-            isCommentsScreenActive={commentScreenActive}
-          />
-        </View>
-      )}
-      {loading ? (
-        <View style={{marginTop: '50%'}}>
-          <CustomLoader />
-        </View>
-      ) : (
-        <View
-          style={{
-            height: '100%',
-            flex: 1,
-          }}>
-          <Comment
-            comments={comments}
-            handleCommentPostSubmit={handleCommentPostPress}
-            handleBackPress={handleBackPress}
-            handleReplyPostPress={handleReplyPostPress}
-          />
-        </View>
-      )}
-    </View>
+      <View style={{flex: 1, justifyContent: "space-between"}}>
+        {selectedPost !== null && (
+          <View style={{backgroundColor: '#353535', zIndex: 10}}>
+            <CustomPost
+              post={selectedPost}
+              countComment={commentsCount}
+              userId={userId}
+              isCommentsScreenActive={commentScreenActive}
+            />
+          </View>
+        )}
+        {loading ? (
+          <View style={{marginTop: '50%'}}>
+            <CustomLoader />
+          </View>
+        ) : (
+          <View
+            style={{
+              height: '100%',
+              flex: 1,
+              // backgroundColor: 'purple',
+              // position: 'absolute',
+              // bottom: 0,
+            }}>
+            <Comment
+              comments={comments}
+              handleCommentPostSubmit={handleCommentPostPress}
+              handleBackPress={handleBackPress}
+              handleReplyPostPress={handleReplyPostPress}
+            />
+          </View>
+        )}
+      </View>
   );
 };
 
