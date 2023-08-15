@@ -52,6 +52,11 @@ export const VideoPreviewScreen = ({
     {label: '72hrs', price: '$10'},
     {label: '7 Days', price: '$15'},
   ];
+  const frontendToBackendMapping = {
+    '24hrs': '24hours',
+    '72hrs': '72hours',
+    '7 Days': '7days',
+  };
   const videoRef = React.useRef(null);
   const userData = useSelector((state: RootState) => state.auth.user);
   const [profileImageUrl, setProfileImageUrl] = useState();
@@ -80,6 +85,7 @@ export const VideoPreviewScreen = ({
   useFocusEffect(
     React.useCallback(() => {
       setIsComponentMounted(false);
+      videoRef.current.seek(0);
     }, []),
   );
 
@@ -128,8 +134,10 @@ export const VideoPreviewScreen = ({
         name: 'video.mp4',
         type: 'video/mp4',
       });
+      const selectedBackendOption: any =
+        frontendToBackendMapping[selectedOptionInternal.label];
       if (payment) {
-        formData.append('boostTimePeriod', selectedOptionInternal.label);
+        formData.append('boostTimePeriod', selectedBackendOption);
       }
       if (costValue && costValue > 0) {
         formData.append('cost', costValue.toString());
@@ -196,10 +204,6 @@ export const VideoPreviewScreen = ({
   const onError = () => {
     console.log('onError');
   };
-
-  useEffect(() => {
-    videoRef.current.seek(0);
-  });
 
   const handleAvatarButtonPress = () => {
     setIsModalVisible(!isModalVisible);
