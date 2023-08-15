@@ -15,6 +15,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import Modal from 'react-native-modal';
 import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const width = Dimensions.get('window').width;
 
@@ -141,56 +142,54 @@ const CommentsScreen = ({route, navigation}: any) => {
 
   return (
     <View style={{flex: 1, justifyContent: 'space-between'}}>
-      {selectedPost !== null && (
-        <View style={{backgroundColor: '#353535', zIndex: 10}}>
-          <CustomPost
-            post={selectedPost}
-            countComment={commentsCount}
-            userId={userId}
-            isCommentsScreenActive={commentScreenActive}
-            handleBackPress={handleBackPress}
-          />
-        </View>
-      )}
-      {loading ? (
-        <View>
-          <CustomLoader />
-        </View>
-      ) : (
-        <View
-          style={{
-            height: '100%',
-            flex: 1,
-            // backgroundColor: 'purple',
-            // position: 'absolute',
-            // bottom: 0,
-          }}>
-          <Comment
-            comments={comments}
-            handleCommentPostSubmit={handleCommentPostPress}
-            handleBackPress={handleBackPress}
-            handleReplyPostPress={handleReplyPostPress}
-            handleImageOpen={handleImageOpen}
-          />
-        </View>
-      )}
-      <Modal
-        isVisible={isImageFullscreen}
-        backdropOpacity={1}
-        onBackdropPress={() => setImageFullscreen(false)}
-        style={styles.fullscreenContainer}>
-        <TouchableOpacity
-          onPress={handleImageClose}
+      <KeyboardAwareScrollView>
+        {selectedPost !== null && (
+          <View style={{backgroundColor: '#353535', zIndex: -1}}>
+            <CustomPost
+              post={selectedPost}
+              countComment={commentsCount}
+              userId={userId}
+              isCommentsScreenActive={commentScreenActive}
+              handleBackPress={handleBackPress}
+            />
+          </View>
+        )}
+        <ScrollView>
+          {loading ? (
+            <View>
+              <CustomLoader />
+            </View>
+          ) : (
+            <View style={{height: '100%', width: '100%'}}>
+              <Comment
+                comments={comments}
+                handleCommentPostSubmit={handleCommentPostPress}
+                handleBackPress={handleBackPress}
+                handleReplyPostPress={handleReplyPostPress}
+                handleImageOpen={handleImageOpen}
+              />
+            </View>
+          )}
+        </ScrollView>
+        <Modal
+          onBackButtonPress={() => setImageFullscreen(false)}
+          isVisible={isImageFullscreen}
+          backdropOpacity={1}
+          onBackdropPress={() => setImageFullscreen(false)}
           style={styles.fullscreenContainer}>
-          <ImageZoom
-            uri={media}
-            minScale={1}
-            maxScale={10}
-            style={styles.imageZoom}
-            isPinchEnabled={true}
-          />
-        </TouchableOpacity>
-      </Modal>
+          <TouchableOpacity
+            onPress={handleImageClose}
+            style={styles.fullscreenContainer}>
+            <ImageZoom
+              uri={media}
+              minScale={1}
+              maxScale={10}
+              style={styles.imageZoom}
+              isPinchEnabled={true}
+            />
+          </TouchableOpacity>
+        </Modal>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

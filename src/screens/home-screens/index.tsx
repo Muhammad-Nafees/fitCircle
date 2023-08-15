@@ -156,10 +156,7 @@ const HomeScreen = () => {
 
   const handleLoadMore = () => {
     if (hasMore && !isLoadingMore) {
-      console.log('loading more posts');
-
       const nextPage = Math.ceil(fetchedPosts.length / 10) + 1;
-      console.log(nextPage);
       fetchPosts(nextPage);
     }
   };
@@ -195,6 +192,7 @@ const HomeScreen = () => {
               <Avatar.Text
                 size={40}
                 label={username ? username[0].toUpperCase() : 'SA'}
+                style={{backgroundColor: '#5e01a9'}}
               />
             )}
           </TouchableOpacity>
@@ -354,7 +352,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(16),
     // alignSelf: "center"
     margin: 'auto',
-    // backgroundColor: 'purple',
+    // backgroundColor: '#5e01a9',
     flex: 1,
     paddingLeft: 25,
   },

@@ -281,6 +281,7 @@ export const VideoPreviewScreen = ({
         )}
       </View>
       <Modal
+        onBackButtonPress={() => setIsModalVisible(false)}
         isVisible={isModalVisible}
         style={styles.bottomModal}
         backdropOpacity={0.3}>
@@ -294,6 +295,7 @@ export const VideoPreviewScreen = ({
         </View>
       </Modal>
       <Modal
+        onBackButtonPress={() => setBoostModalVisible(false)}
         isVisible={isBoostModalVisible}
         style={styles.bottomModal}
         backdropOpacity={0.3}>
@@ -312,6 +314,7 @@ export const VideoPreviewScreen = ({
         </View>
       </Modal>
       <Modal
+        onBackButtonPress={() => setTextModalVisible(false)}
         isVisible={isTextModalVisible}
         style={styles.bottomModal}
         backdropOpacity={0.3}>
@@ -415,7 +418,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   avatarText: {
-    backgroundColor: '#ebebeb',
+    backgroundColor: '#5e01a9',
   },
   avatarButton: {
     borderWidth: 1,

@@ -26,6 +26,7 @@ import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
 import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
 
 import Entypo from 'react-native-vector-icons/Entypo';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 interface CommentProps {
   comments: CommentItem[];
@@ -101,8 +102,9 @@ const CommentItem = ({
           />
         ) : (
           <Avatar.Text
-            label={comment.user?.username?.charAt(0)?.toUpperCase() || ''}
+            label={comment.user?.username?.charAt(0)?.toUpperCase() || 'SA'}
             size={40}
+            style={{backgroundColor: '#5e01a9'}}
           />
         )}
       </View>
@@ -196,7 +198,10 @@ export const Comment = ({
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="padding"
+      keyboardVerticalOffset={0}>
       <TouchableOpacity
         style={styles.cancelIconContainer}
         onPress={handleBackPress}>
@@ -206,7 +211,6 @@ export const Comment = ({
       {!comments.length ? (
         <View style={{alignItems: 'center', marginTop: 40}}>
           <Entypo name="chat" color={'#898c93'} size={150} />
-
           <Text
             style={{
               fontSize: 14,
@@ -221,7 +225,7 @@ export const Comment = ({
           </Text>
         </View>
       ) : null}
-      <ScrollView>
+      <ScrollView style={styles.commentsAndInputContainer}>
         {comments.map(comment => (
           <CommentItem
             key={comment._id}
@@ -260,7 +264,7 @@ export const Comment = ({
           </View>
         </View>
       )}
-      <KeyboardAvoidingView>
+      <View>
         <View style={styles.inputContainer}>
           <View
             style={{
@@ -295,8 +299,8 @@ export const Comment = ({
             />
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
-    </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -311,12 +315,11 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(10),
   },
   container: {
-    height: '100%',
-    justifyContent: 'center',
-    // backgroundColor: "red",
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   commentsAndInputContainer: {
-    flex: 1,
+    height: '100%',
   },
   commentsList: {
     paddingBottom: verticalScale(10),
@@ -348,9 +351,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#209BCC',
     padding: moderateScale(16),
     width: '100%',
-    // position: "absolute",
-    // bottom: 0,
-    // left: 0
   },
   textInput: {
     flex: 1,

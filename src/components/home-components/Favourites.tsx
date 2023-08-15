@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   avatarText: {
-    backgroundColor: '#ebebeb',
+    backgroundColor: '#5e01a9',
   },
   name: {
     fontSize: 10,
