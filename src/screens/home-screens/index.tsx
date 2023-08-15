@@ -76,12 +76,12 @@ const HomeScreen = () => {
     }, []),
   );
 
-  // useEffect(() => {
-  //   setIsRefreshing(true);
-  //   setIsLoadingMore(false);
-  //   setFetchedPosts([]);
-  //   dispatch(fetchPostsStart());
-  // }, []);
+   useEffect(() => {
+     setIsRefreshing(true);
+      setIsLoadingMore(false);
+    setFetchedPosts([]);
+    dispatch(fetchPostsStart());
+   }, []);
 
   const handleRefresh = () => {
     dispatch(setSelectedPost(null));
@@ -93,24 +93,24 @@ const HomeScreen = () => {
     return allPosts.filter(post => post.media && post.media.endsWith('.mp4'));
   };
 
-  // useEffect(() => {
-  //   setUserId(userData?._id);
-  //   handleButtonPress('My Circle');
-  //   const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-  //   setProfileImageUrl(imageUri);
-  // }, [userData]);
+  useEffect(() => {
+   setUserId(userData?._id);
+     handleButtonPress('My Circle');
+     const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+     setProfileImageUrl(imageUri);
+   }, [userData]);
 
-  // useEffect(() => {
-  //   setFilteredVideos(getVideoPosts(postsRedux));
-  // }, [postsRedux]);
+  useEffect(() => {
+   setFilteredVideos(getVideoPosts(postsRedux));
+   }, [postsRedux]);
 
-  // useEffect(() => {
-  //   const filteredData = filteredVideos.sort(
-  //     (a, b) =>
-  //       new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
-  //   );
-  //   setFilteredVideos(filteredData);
-  // }, [filteredVideos]);
+  useEffect(() => {
+    const filteredData = filteredVideos.sort(
+     (a, b) =>
+       new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
+   );
+   setFilteredVideos(filteredData);
+ }, [filteredVideos]);
 
   const API_BASE_URL = 'http://3.128.201.197/';
   const fetchPosts = async (page: number) => {
@@ -167,6 +167,8 @@ const HomeScreen = () => {
     setSelectedButton(button);
     if (button === 'Creator') {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
+    }else {
+      navigation.setOptions({tabBarStyle: {display: 'block'}});
     }
   };
 
