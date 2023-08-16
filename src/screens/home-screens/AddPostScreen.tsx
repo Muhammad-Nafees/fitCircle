@@ -237,6 +237,7 @@ export const AddPostScreen = ({route}: any) => {
   const handleCaptureButtonPress = async () => {
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
       Alert.alert('Permission denied', 'Allow permission to access images');
+      console.log("Camera permission denied");
       return;
     }
     setVideoUri(null);
@@ -258,7 +259,7 @@ export const AddPostScreen = ({route}: any) => {
   async function hasAndroidPermission() {
     const permission =
       Platform.Version >= '33'
-        ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+        ? PermissionsAndroid.PERMISSIONS.CAMERA
         : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
 
     const hasPermission = await PermissionsAndroid.check(permission);
@@ -513,8 +514,8 @@ export const AddPostScreen = ({route}: any) => {
             </View>
           </Modal>
         </View>
-        <View style={{paddingTop: verticalScale(40)}}>
-          {!mediaUri && (
+        {!mediaUri && (
+          <View style={{paddingTop: verticalScale(40)}}>
             <View>
               <ColorSelectionSlider
                 colors={[
@@ -531,8 +532,8 @@ export const AddPostScreen = ({route}: any) => {
                 onColorSelected={handleColorSelected}
               />
             </View>
-          )}
-        </View>
+          </View>
+        )}
         <View style={styles.minimizedContainer} {...panResponder.panHandlers}>
           <BottomMinimizedContainer
             handlePhotoButtonPress={handlePhotoButtonPress}

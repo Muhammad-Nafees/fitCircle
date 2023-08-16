@@ -204,7 +204,7 @@ export const Comment = ({
     });
   };
   const handleCommentSubmit = (a: any, b: any) => {
-    if (a.trim() !== '' && b.trim() !== '') {
+    if (a.trim() !== '' && b?.trim() !== '') {
       if (isReplying) {
         handleReplyPostPress(a, b, replyingCommentId);
       } else {
