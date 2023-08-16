@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   KeyboardAvoidingView,
+  Dimensions,
 } from 'react-native';
 import {
   horizontalScale,
@@ -26,10 +27,17 @@ import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
 import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
 
 import Entypo from 'react-native-vector-icons/Entypo';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 interface CommentProps {
   comments: CommentItem[];
   commentText: string;
+  available: boolean;
+  setAvailable: (value: boolean) => void;
+  commentTxt: string;
+  media: any;
+  setmedia: any;
+  setcomment: any;
   setCommentText: (commentText: string) => void;
   handleCommentPostSubmit: (commentText: string) => void;
   handleReplyPress: (commentId: string, parentCommentId?: string) => void;
@@ -101,8 +109,9 @@ const CommentItem = ({
           />
         ) : (
           <Avatar.Text
-            label={comment.user?.username?.charAt(0)?.toUpperCase() || ''}
+            label={comment.user?.username?.charAt(0)?.toUpperCase() || 'SA'}
             size={40}
+            style={{backgroundColor: '#5e01a9'}}
           />
         )}
       </View>
@@ -153,6 +162,12 @@ export const Comment = ({
   handleReplyPostPress,
   handleBackPress,
   handleImageOpen,
+  available,
+  setAvailable,
+  commentTxt,
+  media,
+  setmedia,
+  setcomment,
 }: CommentProps) => {
   const [mediaUri, setMediaUri] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
@@ -160,6 +175,13 @@ export const Comment = ({
     null,
   );
   const [commentText, setCommentText] = useState('');
+
+  useEffect(() => {
+    if (available) {
+      setAvailable(false);
+      handleCommentSubmit(commentTxt, media);
+    }
+  }, [available]);
 
   const handleReplyButtonPress = (commentId: string) => {
     setReplyingCommentId(commentId);
@@ -181,86 +203,89 @@ export const Comment = ({
       }
     });
   };
-  const handleCommentSubmit = () => {
-    if (commentText.trim() !== '') {
+  const handleCommentSubmit = (a: any, b: any) => {
+    if (a.trim() !== '' && b?.trim() !== '') {
       if (isReplying) {
-        handleReplyPostPress(commentText, mediaUri, replyingCommentId);
+        handleReplyPostPress(a, b, replyingCommentId);
       } else {
-        handleCommentPostSubmit(commentText, mediaUri);
+        handleCommentPostSubmit(a, b);
       }
       setIsReplying(false);
       setReplyingCommentId(null);
+      setmedia(null);
+      setcomment('');
       setMediaUri(null);
       setCommentText('');
     }
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.cancelIconContainer}
-        onPress={handleBackPress}>
-        <Image source={CancelIcon} style={styles.cancelIcon} />
-      </TouchableOpacity>
+    <>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.cancelIconContainer}
+          onPress={handleBackPress}>
+          <Image source={CancelIcon} style={styles.cancelIcon} />
+        </TouchableOpacity>
 
-      {!comments.length ? (
-        <View style={{alignItems: 'center', marginTop: 40}}>
-          <Entypo name="chat" color={'#898c93'} size={150} />
-
-          <Text
-            style={{
-              fontSize: 14,
-              color: '#898c93',
-              fontWeight: '500',
-              marginTop: 10,
-            }}>
-            No comments yet
-          </Text>
-          <Text style={{fontSize: 14, color: '#898c93'}}>
-            Be the first to comment.
-          </Text>
-        </View>
-      ) : null}
-      <ScrollView>
-        {comments.map(comment => (
-          <CommentItem
-            key={comment._id}
-            comment={comment}
-            handleReplyPress={handleReplyButtonPress}
-            showReplyButton={true}
-            handleImageOpen={handleImageOpen}
-          />
-        ))}
-      </ScrollView>
-      {mediaUri && (
-        <View
-          style={{
-            backgroundColor: '#00abd2',
-          }}>
+        {!comments.length ? (
+          <View style={{alignItems: 'center', marginTop: 40}}>
+            <Entypo name="chat" color={'#898c93'} size={150} />
+            <Text
+              style={{
+                fontSize: 14,
+                color: '#898c93',
+                fontWeight: '500',
+                marginTop: 10,
+              }}>
+              No comments yet
+            </Text>
+            <Text style={{fontSize: 14, color: '#898c93'}}>
+              Be the first to comment.
+            </Text>
+          </View>
+        ) : null}
+        <ScrollView style={styles.commentsAndInputContainer}>
+          {comments.map(comment => (
+            <CommentItem
+              key={comment._id}
+              comment={comment}
+              handleReplyPress={handleReplyButtonPress}
+              showReplyButton={true}
+              handleImageOpen={handleImageOpen}
+            />
+          ))}
+        </ScrollView>
+        {/* {media && (
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginHorizontal: 10,
-              padding: 10,
+              backgroundColor: '#00abd2',
             }}>
-            <View>
-              <Text style={{color: '#fff', marginRight: 20}}>
-                Photo Attached
-              </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 10,
+                padding: 10,
+              }}>
+              <View>
+                <Text style={{color: '#fff', marginRight: 20}}>
+                  Photo Attached
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setMediaUri(null)}
+                style={{marginRight: 8}}>
+                <Image
+                  source={CancelIcon}
+                  style={{tintColor: '#fff', width: 18, height: 18}}
+                />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              onPress={() => setMediaUri(null)}
-              style={{marginRight: 8}}>
-              <Image
-                source={CancelIcon}
-                style={{tintColor: '#fff', width: 18, height: 18}}
-              />
-            </TouchableOpacity>
           </View>
-        </View>
-      )}
-      <KeyboardAvoidingView>
+        )} */}
+      </View>
+      {/* <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
         <View style={styles.inputContainer}>
           <View
             style={{
@@ -295,8 +320,8 @@ export const Comment = ({
             />
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
-    </View>
+      </View> */}
+    </>
   );
 };
 
@@ -311,12 +336,11 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(10),
   },
   container: {
-    height: '100%',
-    justifyContent: 'center',
-    // backgroundColor: "red",
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   commentsAndInputContainer: {
-    flex: 1,
+    height: '100%',
   },
   commentsList: {
     paddingBottom: verticalScale(10),
@@ -348,9 +372,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#209BCC',
     padding: moderateScale(16),
     width: '100%',
-    // position: "absolute",
-    // bottom: 0,
-    // left: 0
   },
   textInput: {
     flex: 1,

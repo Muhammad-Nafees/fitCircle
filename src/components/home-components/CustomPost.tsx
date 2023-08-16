@@ -343,6 +343,7 @@ export const CustomPost = ({
       </View>
       {isShareModalVisible && (
         <Modal
+          onBackButtonPress={() => setShareModalVisible(false)}
           isVisible={true}
           backdropOpacity={0.3}
           style={styles.modalContainer}>
@@ -373,6 +374,7 @@ export const CustomPost = ({
         </Modal>
       )}
       <Modal
+        onBackButtonPress={() => setImageFullscreen(false)}
         isVisible={isImageFullscreen}
         backdropOpacity={1}
         onBackdropPress={() => setImageFullscreen(false)}
@@ -500,7 +502,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   avatarText: {
-    backgroundColor: '#ebebeb',
+    backgroundColor: '#5e01a9',
   },
   modalContainer: {
     margin: 0,

@@ -77,11 +77,26 @@ export const SearchScreen = () => {
     ? `Search ${selectedFilter} ...`
     : 'Search';
 
-  const renderItem = ({item}: any) => (
-    <View style={styles.searchResultContainer}>
-      <UserSearch username={item.username} email={item.email} />
-    </View>
-  );
+  const renderItem = ({item, index}: any) => {
+    const isLastItem = index === searchData.length - 1;
+    if (
+      !selectedFilter ||
+      (selectedFilter === 'nutritionist' && item.role === 'trainer') ||
+      (selectedFilter === 'trainer' && item.role === 'trainer') ||
+      (selectedFilter === 'other' && item.role === 'user')
+    ) {
+      return (
+        <View
+          style={[
+            styles.searchResultContainer,
+            isLastItem && {borderBottomWidth: 0},
+          ]}>
+          <UserSearch username={item.username} email={item.email} />
+        </View>
+      );
+    }
+    return null;
+  };
 
   const search = async () => {
     setIsLoading(true);
@@ -110,15 +125,13 @@ export const SearchScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
+      <View style={[styles.topContainer]}>
         <TouchableOpacity onPress={handleBackButtonPress}>
           <Image source={ArrowBack} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={styles.searchBarContainer}>
           <View style={styles.searchBar}>
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={search}>
+            <TouchableOpacity style={styles.searchButton} onPress={search}>
               <Image source={SearchIcon} style={styles.icon} />
             </TouchableOpacity>
             <TextInput

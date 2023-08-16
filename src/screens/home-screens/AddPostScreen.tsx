@@ -10,6 +10,7 @@ import {
   Platform,
   PermissionsAndroid,
   PanResponder,
+  Alert,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -233,7 +234,12 @@ export const AddPostScreen = ({route}: any) => {
     });
   };
 
-  const handleCaptureButtonPress = () => {
+  const handleCaptureButtonPress = async () => {
+    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+      Alert.alert('Permission denied', 'Allow permission to access images');
+      console.log("Camera permission denied");
+      return;
+    }
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
@@ -250,7 +256,26 @@ export const AddPostScreen = ({route}: any) => {
     });
   };
 
-  const handleVideoButtonPress = () => {
+  async function hasAndroidPermission() {
+    const permission =
+      Platform.Version >= '33'
+        ? PermissionsAndroid.PERMISSIONS.CAMERA
+        : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+      return true;
+    }
+
+    const status = await PermissionsAndroid.request(permission);
+    return status === 'granted';
+  }
+
+  const handleVideoButtonPress = async () => {
+    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+      Alert.alert('Permission denied', 'Allow permission to access images');
+      return;
+    }
     setIsCreatePostIconModalVisible(false);
     setVideoUri(null);
     setMediaUri(null);
@@ -381,25 +406,42 @@ export const AddPostScreen = ({route}: any) => {
                 />
               </TouchableOpacity>
             </View>
-
-            {Array.isArray(textInputBackgroundColor) ? (
-              <LinearGradient
-                colors={textInputBackgroundColor}
-                style={{
-                  width: '100%',
-                  borderRadius: 10,
-                  marginTop: 10,
-                  minHeight: 90,
-                }}>
+            <View style={styles.inputContainer}>
+              {Array.isArray(textInputBackgroundColor) ? (
+                <LinearGradient
+                  colors={textInputBackgroundColor}
+                  style={styles.coloredInput}>
+                  <TextInput
+                    style={[
+                      styles.textInputColor,
+                      {
+                        backgroundColor: !Array.isArray(
+                          textInputBackgroundColor,
+                        )
+                          ? textInputBackgroundColor
+                          : 'transparent',
+                        minHeight: 90,
+                      },
+                    ]}
+                    placeholder="What do you want to talk about?"
+                    placeholderTextColor="white"
+                    value={textInputValue}
+                    multiline
+                    onChangeText={text => setTextInputValue(text)}
+                    textAlignVertical={'top'}
+                  />
+                </LinearGradient>
+              ) : (
                 <TextInput
                   style={[
                     styles.textInputColor,
                     {
-                      backgroundColor: !Array.isArray(textInputBackgroundColor)
-                        ? textInputBackgroundColor
-                        : 'transparent',
+                      backgroundColor:
+                        textInputBackgroundColor ?? 'transparent',
                     },
-                    {height: 90},
+                    textInputBackgroundColor !== 'transparent'
+                      ? {minHeight: 90, marginTop: 10}
+                      : null,
                   ]}
                   placeholder="What do you want to talk about?"
                   placeholderTextColor="white"
@@ -408,26 +450,8 @@ export const AddPostScreen = ({route}: any) => {
                   onChangeText={text => setTextInputValue(text)}
                   textAlignVertical={'top'}
                 />
-              </LinearGradient>
-            ) : (
-              <TextInput
-                style={[
-                  styles.textInputColor,
-                  {
-                    backgroundColor: textInputBackgroundColor ?? 'transparent',
-                  },
-                  textInputBackgroundColor !== 'transparent'
-                    ? {height: 90, marginTop: 10}
-                    : null,
-                ]}
-                placeholder="What do you want to talk about?"
-                placeholderTextColor="white"
-                value={textInputValue}
-                multiline
-                onChangeText={text => setTextInputValue(text)}
-                textAlignVertical={'top'}
-              />
-            )}
+              )}
+            </View>
             <View style={styles.postContainer}>
               {mediaUri && !videoUri && (
                 <View style={styles.mediaContainer}>
@@ -444,6 +468,7 @@ export const AddPostScreen = ({route}: any) => {
         </ScrollView>
         <View style={styles.modalContainer}>
           <Modal
+            onBackButtonPress={() => setIsModalVisible(false)}
             isVisible={isModalVisible}
             style={styles.bottomModal}
             onBackdropPress={() => setIsModalVisible(false)}
@@ -458,6 +483,7 @@ export const AddPostScreen = ({route}: any) => {
             </View>
           </Modal>
           <Modal
+            onBackButtonPress={() => setIsComponentMounted(false)}
             isVisible={isComponentMounted}
             style={styles.bottomModal}
             onBackdropPress={handlePostOptionsIconModalClose}
@@ -473,6 +499,7 @@ export const AddPostScreen = ({route}: any) => {
             </View>
           </Modal>
           <Modal
+            onBackButtonPress={() => setIsCreatePostIconModalVisible(false)}
             isVisible={isCreatePostIconModalVisible}
             style={styles.bottomModal}
             onBackdropPress={() => setIsCreatePostIconModalVisible(false)}
@@ -488,22 +515,23 @@ export const AddPostScreen = ({route}: any) => {
           </Modal>
         </View>
         {!mediaUri && (
-          <View style={{flex: 1, justifyContent: 'flex-end'}}>
-            <ColorSelectionSlider
-              colors={[
-                '#CC5252',
-                '#88BD91',
-                // '#654848',
-                ['#DC8686', '#274B6C'],
-                '#654848',
-                '#AF3E3E',
-                '#42A883',
-                ['#4A8D21', '#9CE271', '#BF3A3A'],
-                '#FFFF00',
-                '#FF00FF',
-              ]}
-              onColorSelected={handleColorSelected}
-            />
+          <View style={{paddingTop: verticalScale(40)}}>
+            <View>
+              <ColorSelectionSlider
+                colors={[
+                  '#CC5252',
+                  '#88BD91',
+                  ['#DC8686', '#274B6C'],
+                  '#654848',
+                  '#AF3E3E',
+                  '#42A883',
+                  ['#4A8D21', '#9CE271', '#BF3A3A'],
+                  '#FFFF00',
+                  '#FF00FF',
+                ]}
+                onColorSelected={handleColorSelected}
+              />
+            </View>
           </View>
         )}
         <View style={styles.minimizedContainer} {...panResponder.panHandlers}>
@@ -647,6 +675,16 @@ const styles = StyleSheet.create({
   minimizedContainer: {
     position: 'relative',
     marginTop: 0,
+  },
+  inputContainer: {
+    flex: 2,
+    width: '100%',
+    marginBottom: 40,
+  },
+  coloredInput: {
+    width: '100%',
+    borderRadius: 10,
+    marginTop: 10,
   },
   cancelIconContainer: {
     position: 'absolute',
