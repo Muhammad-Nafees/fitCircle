@@ -19,6 +19,7 @@ import {CustomPost} from '../../components/home-components/CustomPost';
 import {ReelsComponent} from '../../components/home-components/Reels';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import NotificationIcon from '../../../assets/icons/NotificationIcon';
 import {
   fetchPostsFailure,
   fetchPostsStart,
@@ -29,7 +30,6 @@ const SearchIcon = require('../../../assets/icons/search.png');
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import {setSelectedPost} from '../../redux/postSlice';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
-const NotificationIcon = require('../../../assets/icons/notification.png');
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -259,10 +259,7 @@ const HomeScreen = () => {
               marginHorizontal: 15,
               marginTop: 15,
             }}>
-            <Image
-              source={NotificationIcon}
-              style={{width: 28, height: 28, tintColor: '#fff'}}
-            />
+            <NotificationIcon />
           </TouchableOpacity>
         </View>
       </Animated.View>
