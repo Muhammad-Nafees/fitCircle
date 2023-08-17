@@ -11,13 +11,13 @@ import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
+import DashboardScreen from '../screens/dashboard-screens/Dashboard';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
 
 const Tab = createBottomTabNavigator();
 const MessageScreen = () => <ScreenContent title="Message" />;
-const DashboardScreen = () => <ScreenContent title="Dashboard" />;
 
 interface ScreenContentProps {
   title: string;

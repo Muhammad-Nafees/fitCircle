@@ -180,7 +180,7 @@ const SignupForm = () => {
               }}>
               <Text style={STYLES.text14}>Already have an account? </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('SigninScreenTwo')}>
+                onPress={() => navigation.navigate('LoginFormScreen')}>
                 <Text
                   style={[
                     STYLES.text14,
@@ -190,7 +190,7 @@ const SignupForm = () => {
                       textDecorationLine: 'underline',
                     },
                   ]}>
-                  Sign up
+                  Log in
                 </Text>
               </TouchableOpacity>
             </View>
