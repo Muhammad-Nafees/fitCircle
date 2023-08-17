@@ -18,6 +18,7 @@ const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+const Wallpaper = require('../../../assets/wallpaper.jpg');
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
@@ -27,6 +28,7 @@ interface ReelsProps {
     content?: string;
     likes: any[];
     cost: 0;
+    thumbnail?: string;
     shares: any[];
     favorites: any[];
     createdAt: string;
@@ -51,36 +53,16 @@ export const ReelsComponent = ({
   currIndex,
   tabBarHeight,
 }: ReelsProps) => {
-  // console.log("🚀 ~ file: Reels.tsx:46 ~ ReelsComponent ~ currIndex:", currIndex)
-  // console.log("🚀 ~ file: Reels.tsx:46 ~ ReelsComponent ~ index:", index)
-
-  const {_id, media, content, user, cost, favorites} = post;
+  const {_id, media, content, user, cost, favorites, thumbnail} = post;
   const {profileImageUrl, username, email} = user;
   const videoRef = useRef(null);
   const isLocked = cost && cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
   const [play, setPlay] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [showThumbnail, setShowThumbnail] = useState(thumbnail !== null);
   const navigation = useNavigation();
-
-  // const video = React.useRef(null);
-  // const [isPlaying, setPlaying] = React.useState(false);
-
-  // useEffect(() => {
-  //   if (viewable) {
-  //     if (viewable.length) {
-  //       if (viewable[0]._id === _id) {
-  //         setPlaying(true);
-  //       } else {
-  //         setPlaying(false);
-  //       }
-  //     } else {
-  //       setPlaying(false);
-  //     }
-  //   } else {
-  //     setPlaying(false);
-  //   }
-  // }, [viewable]);
+  console.log(thumbnail);
 
   useEffect(() => {
     const isCurrentUserFavorited = favorites.some(
@@ -92,6 +74,7 @@ export const ReelsComponent = ({
   useEffect(() => {
     let hideButtonTimer: any;
     if (play && showPlayIcon) {
+      setShowThumbnail(false);
       hideButtonTimer = setTimeout(() => {
         setShowPlayIcon(false);
       }, 3000);
@@ -194,6 +177,11 @@ export const ReelsComponent = ({
           </TouchableOpacity>
         )}
       </View>
+      {showThumbnail && (
+        <View style={styles.thumbnailContainer}>
+          <Image source={{uri: thumbnail}} style={styles.thumbnail} />
+        </View>
+      )}
       <Video
         ref={videoRef}
         onBuffer={onBuffer}
@@ -208,6 +196,7 @@ export const ReelsComponent = ({
           height: '100%',
           borderColor: 'black',
           borderWidth: 0,
+          zIndex: 0,
         }}
         paused={!play}
         onTouchStart={() => setShowPlayIcon(true)}
@@ -246,7 +235,6 @@ export const ReelsComponent = ({
 const styles = StyleSheet.create({
   container: {
     width: width,
-    // paddingBottom: 10,
     backgroundColor: 'black',
   },
   topLeftContent: {
