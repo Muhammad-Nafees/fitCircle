@@ -237,7 +237,7 @@ export const AddPostScreen = ({route}: any) => {
   const handleCaptureButtonPress = async () => {
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
       Alert.alert('Permission denied', 'Allow permission to access images');
-      console.log("Camera permission denied");
+      console.log('Camera permission denied');
       return;
     }
     setVideoUri(null);
@@ -406,7 +406,11 @@ export const AddPostScreen = ({route}: any) => {
                 />
               </TouchableOpacity>
             </View>
-            <View style={styles.inputContainer}>
+            <View
+              style={[
+                styles.inputContainer,
+                mediaUri !== null && {marginBottom: 0},
+              ]}>
               {Array.isArray(textInputBackgroundColor) ? (
                 <LinearGradient
                   colors={textInputBackgroundColor}
