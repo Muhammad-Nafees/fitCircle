@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {STYLES} from '../../../styles/globalStyles';
-import Cameraicon from '../../../../assets/icons/Cameraicon';
+import CameraIconForm from '../../../../assets/icons/CameraIconForm';
 import ImagePicker, {
   ImagePickerResponse,
   ImageLibraryOptions,
@@ -207,7 +207,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
           {selectedProfileImage ? (
             <Icon name="trash-outline" color="white" size={20} />
           ) : (
-            <Cameraicon />
+            <CameraIconForm />
           )}
         </TouchableOpacity>
       </TouchableOpacity>

@@ -226,7 +226,7 @@ export const VideoPreviewScreen = ({
     if (payment) {
       Toast.show({
         type: 'error',
-        text1: `This post is already boosted for time period ${selectedOptionInternal.label}`,
+        text1: `This post is already boosted for ${selectedOptionInternal.label}`,
         visibilityTime: 2000,
       });
       return;
