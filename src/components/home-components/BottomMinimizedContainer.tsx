@@ -2,7 +2,7 @@ import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
 import VideoSvgIcon from '../../../assets/icons/VideoIcon';
-import CameraMinimizedIcon from '../../../assets/icons/CameraMinimizedIcon';
+import Cameraicon from '../../../assets/icons/Cameraicon';
 
 interface BottomMinimizedContainerProps {
   handlePhotoButtonPress: () => void;
@@ -27,7 +27,7 @@ export const BottomMinimizedContainer = ({
         <VideoSvgIcon />
       </TouchableOpacity>
       <TouchableOpacity onPress={handleCaptureButtonPress}>
-        <CameraMinimizedIcon />
+        <Cameraicon />
       </TouchableOpacity>
     </View>
   </View>

@@ -113,17 +113,19 @@ const HomeScreen = () => {
     setFilteredVideos(filteredData);
   }, [filteredVideos]);
 
-  const API_BASE_URL = 'http://3.128.201.197/';
   const fetchPosts = async (page: number) => {
     if (isLoadingMore) return;
     setIsLoadingMore(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/posts`, {
-        params: {
-          page,
-          limit: 10,
+      const response = await axios.get(
+        'http://fitcircle.yameenyousuf.com/posts',
+        {
+          params: {
+            page,
+            limit: 10,
+          },
         },
-      });
+      );
       const data = response.data;
       if (data.docs && Array.isArray(data.docs)) {
         setHasMore(data.docs.length >= 10);

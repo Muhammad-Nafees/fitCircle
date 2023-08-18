@@ -7,7 +7,8 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Text
+  Text,
+  BackHandler,
 } from 'react-native';
 import {Comment} from '../../components/home-components/Comment';
 import {CustomPost} from '../../components/home-components/CustomPost';
@@ -71,6 +72,17 @@ const CommentsScreen = ({route, navigation}: any) => {
       fetchComments();
     }, [selectedPost]),
   );
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress,
+    );
+
+    return () => {
+      backHandler.remove();
+    };
+  }, [comments]);
 
   const fetchComments = () => {
     axiosInstance
@@ -169,22 +181,24 @@ const CommentsScreen = ({route, navigation}: any) => {
     setCommentScreenActive(false);
     await setComments([]);
     navigation.goBack();
+    return true;
   };
 
   return (
     <View style={{flex: 1, justifyContent: 'space-between'}}>
+      {/* <KeyboardAwareScrollView> */}
+      {selectedPost !== null && (
+        <View style={{backgroundColor: '#353535', zIndex: -1}}>
+          <CustomPost
+            post={selectedPost}
+            countComment={commentsCount}
+            userId={userId}
+            isCommentsScreenActive={commentScreenActive}
+            handleBackPress={handleBackPress}
+          />
+        </View>
+      )}
       <KeyboardAwareScrollView>
-        {selectedPost !== null && (
-          <View style={{backgroundColor: '#353535', zIndex: -1}}>
-            <CustomPost
-              post={selectedPost}
-              countComment={commentsCount}
-              userId={userId}
-              isCommentsScreenActive={commentScreenActive}
-              handleBackPress={handleBackPress}
-            />
-          </View>
-        )}
         <ScrollView>
           {loading ? (
             <View>
