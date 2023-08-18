@@ -52,7 +52,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     } else {
       setIsError('');
       try {
-        const response = await fetch('http://3.128.201.197/users/check-phone', {
+        const response = await fetch('http://fitcircle.yameenyousuf.com/users/check-phone', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -149,7 +149,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const handleUsernameBlur = async (username: any) => {
     try {
       const response = await fetch(
-        'http://3.128.201.197/users/check-username',
+        'http://fitcircle.yameenyousuf.com/users/check-username',
         {
           method: 'POST',
           headers: {

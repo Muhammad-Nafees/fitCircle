@@ -78,8 +78,11 @@ const CommentsScreen = ({route, navigation}: any) => {
       'hardwareBackPress',
       handleBackPress,
     );
-    return () => backHandler.remove();
-  }, [navigation]);
+
+    return () => {
+      backHandler.remove();
+    };
+  }, [comments]);
 
   const fetchComments = () => {
     axiosInstance
