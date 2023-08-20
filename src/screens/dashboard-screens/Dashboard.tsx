@@ -8,8 +8,9 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import ReadinessTestIcon from '../../../assets/icons/ReadinessTestIcon';
 import TdeeCalculatorIcon from '../../../assets/icons/TdeeCalculatorIcon';
 import ScheduleDashboardIcon from '../../../assets/icons/ScheduleDashboardIcon';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-const DashboardScreen = () => {
+const DashboardScreen = ({navigation}: any) => {
   const options = {weekday: 'short', day: 'numeric', month: 'short'};
   const currentDate = new Date().toLocaleDateString(undefined, options);
   const userData = useSelector((state: RootState) => state.auth.user);
@@ -93,10 +94,12 @@ const DashboardScreen = () => {
             ]}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => (
-              <View style={styles.carouselItem}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ScheduleScreen')}
+                style={styles.carouselItem}>
                 {item.icon}
                 <Text style={styles.carouselItemText}>{item.text}</Text>
-              </View>
+              </TouchableOpacity>
             )}
           />
         </View>

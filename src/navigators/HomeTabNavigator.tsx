@@ -12,6 +12,8 @@ import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
 import DashboardScreen from '../screens/dashboard-screens/Dashboard';
+import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
+import ScheduleStackNavigator from './ScheduleStackNavigator';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -212,6 +214,22 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="CommentsScreen"
         component={CommentsScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="PhysicalReadiness"
+        component={PhysicalReadinessStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="ScheduleScreen"
+        component={ScheduleStackNavigator}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,

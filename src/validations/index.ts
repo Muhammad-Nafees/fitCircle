@@ -167,3 +167,39 @@ export const createNewPasswordSchema = Yup.object().shape({
     .required('Confirm Password is required')
     .oneOf([Yup.ref('newPassword')], 'Password must be same'),
 });
+
+export const PhysicalReadinessTestSchema = Yup.object().shape({
+  date: Yup.string()
+    .matches(
+      /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+      'Invalid date format. Must be dd/mm/yyyy',
+    )
+    .required('Date is required'),
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+      'Invalid email',
+    )
+    .required('Email is required'),
+  firstName: Yup.string()
+    .required('First Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+  lastName: Yup.string()
+    .required('Last Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+  address: Yup.string().required('Address is required'),
+  city: Yup.string().required('City is required'),
+  zip: Yup.string().required('ZIP code is required'),
+  homePhone: Yup.string().required('Home phone is required'),
+  cellPhone: Yup.string().required('Cell phone is required'),
+  age: Yup.number()
+    .required('Age is required')
+    .min(14, 'Age must be greater than 14')
+    .max(99, 'Age must be less than 100'),
+  height: Yup.string()
+    .required('Height is required')
+    .test('not-zero', 'Height must not be 0', value => !/^0/.test(value)),
+  weight: Yup.string()
+    .required('Weight is required')
+    .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
+});
