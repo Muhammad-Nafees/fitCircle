@@ -8,7 +8,6 @@ import {
   FlatList,
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
-import ArrowForward from '../../../assets/icons/ArrowForward';
 import moment from 'moment';
 import CustomButton from '../../components/shared-components/CustomButton';
 
@@ -134,6 +133,7 @@ const SetSchedule = ({route}) => {
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderOptionItem}
           contentContainerStyle={styles.optionsContainer}
+          showsVerticalScrollIndicator={false}
         />
         <View style={styles.buttonContainer}>
           <CustomButton

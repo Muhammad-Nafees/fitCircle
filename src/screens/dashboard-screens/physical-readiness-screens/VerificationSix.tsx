@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 
-const VerificationSix = ({navigation}: any) => {
+const VerificationSix = ({navigation, disabled}: any) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const options = [
@@ -71,13 +71,15 @@ const VerificationSix = ({navigation}: any) => {
           ))}
         </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          isDisabled={selectedOptions.length === 0}
-          onPress={() => navigation.navigate('NextScreen')}>
-          Submit
-        </CustomButton>
-      </View>
+      {disabled !== true && (
+        <View style={styles.buttonContainer}>
+          <CustomButton
+            isDisabled={selectedOptions.length === 0}
+            onPress={() => navigation.navigate('NextScreen')}>
+            Submit
+          </CustomButton>
+        </View>
+      )}
     </View>
   );
 };

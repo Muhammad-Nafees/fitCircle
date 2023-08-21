@@ -10,7 +10,7 @@ import {
   horizontalScale,
 } from '../../../utils/metrics';
 
-const VerificationFive = ({navigation}: any) => {
+const VerificationFive = ({navigation, disabled}: any) => {
   const handleSubmit = values => {
     console.log('Form values:', values);
     // Handle form submission or navigation here
@@ -81,9 +81,11 @@ const VerificationFive = ({navigation}: any) => {
                   keyboardType="numeric"
                 />
               </View>
-              <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Continue</CustomButton>
-              </View>
+              {disabled !== true && (
+                <View style={styles.button}>
+                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                </View>
+              )}
             </>
           )}
         </Formik>

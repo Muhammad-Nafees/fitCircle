@@ -12,6 +12,7 @@ import VerificationFour from '../screens/dashboard-screens/physical-readiness-sc
 import VerificationFive from '../screens/dashboard-screens/physical-readiness-screens/VerificationFive';
 import VerificationSix from '../screens/dashboard-screens/physical-readiness-screens/VerificationSix';
 import VerificationThree from '../screens/dashboard-screens/physical-readiness-screens/VerificationThree';
+import VerificationSeven from '../screens/dashboard-screens/physical-readiness-screens/VerificationSeven';
 
 const Stack = createStackNavigator();
 const PhysicalReadinessStackNavigator = () => {
@@ -28,13 +29,14 @@ const PhysicalReadinessStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="VerificationThree">
+      initialRouteName="VerificationSeven">
       <Stack.Screen name="VerificationOne" component={VerificationOne} />
       <Stack.Screen name="VerificationTwo" component={VerificationTwo} />
       <Stack.Screen name="VerificationThree" component={VerificationThree} />
       <Stack.Screen name="VerificationFour" component={VerificationFour} />
       <Stack.Screen name="VerificationFive" component={VerificationFive} />
       <Stack.Screen name="VerificationSix" component={VerificationSix} />
+      <Stack.Screen name="VerificationSeven" component={VerificationSeven} />
       <Stack.Screen
         name="SuccessfulDialog"
         component={SuccessfulDialog}

@@ -23,7 +23,7 @@ const questionTexts = [
   'Are you happy with the way you look and your health?',
 ];
 
-const VerificationOne = () => {
+const VerificationFour = () => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VerificationOne;
+export default VerificationFour;
