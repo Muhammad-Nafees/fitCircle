@@ -23,7 +23,7 @@ const questionTexts = [
   'Are you happy with the way you look and your health?',
 ];
 
-const VerificationFour = () => {
+const VerificationFour = ({disabled}: any) => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -46,18 +46,20 @@ const VerificationFour = () => {
           }}>
           {({handleSubmit, values, setFieldValue}) => (
             <>
-              <Text
-                style={[
-                  STYLES.text16,
-                  {
-                    fontWeight: '700',
-                    marginTop: 16,
-                    paddingHorizontal: 16,
-                    paddingBottom: 28,
-                  },
-                ]}>
-                Physical Activity Readiness
-              </Text>
+              {disabled !== true && (
+                <Text
+                  style={[
+                    STYLES.text16,
+                    {
+                      fontWeight: '700',
+                      marginTop: 16,
+                      paddingHorizontal: 16,
+                      paddingBottom: 28,
+                    },
+                  ]}>
+                  Physical Activity Readiness
+                </Text>
+              )}
               <View style={styles.formContainer}>
                 {questionTexts.map((text, index = 6) => (
                   <Field key={`answer${index + 1}`} name={`answer${index + 1}`}>
@@ -73,9 +75,11 @@ const VerificationFour = () => {
                   </Field>
                 ))}
               </View>
-              <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Continue</CustomButton>
-              </View>
+              {disabled !== true && (
+                <View style={styles.button}>
+                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                </View>
+              )}
             </>
           )}
         </Formik>

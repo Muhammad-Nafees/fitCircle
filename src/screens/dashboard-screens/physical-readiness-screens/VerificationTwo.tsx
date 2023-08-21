@@ -33,9 +33,11 @@ const VerificationTwo = ({disabled}: any) => {
           onSubmit={values => console.log(values)}>
           {({values, setFieldValue, handleSubmit}) => (
             <>
-              <Text style={[STYLES.text16, styles.heading]}>
-                Physical Activity Readiness
-              </Text>
+              {disabled !== true && (
+                <Text style={[STYLES.text16, styles.heading]}>
+                  Physical Activity Readiness
+                </Text>
+              )}
               <View style={styles.formContainer}>
                 {questionTexts.map((text, index) => (
                   <Field key={`answer${index + 1}`} name={`answer${index + 1}`}>

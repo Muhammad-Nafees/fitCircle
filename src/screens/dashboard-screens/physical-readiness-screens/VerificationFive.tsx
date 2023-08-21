@@ -17,7 +17,11 @@ const VerificationFive = ({navigation, disabled}: any) => {
   };
 
   return (
-    <View style={[STYLES.container, {paddingHorizontal: 0}]}>
+    <View
+      style={[
+        STYLES.container,
+        {paddingHorizontal: 0},
+      ]}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
@@ -30,27 +34,29 @@ const VerificationFive = ({navigation, disabled}: any) => {
           onSubmit={handleSubmit}>
           {({handleChange, handleSubmit, values}) => (
             <>
-              <View style={{marginTop: 16, paddingHorizontal: 16}}>
-                <Text
-                  style={[
-                    STYLES.text16,
-                    {
-                      fontWeight: '700',
+              {disabled !== true && (
+                <View style={{marginTop: 16, paddingHorizontal: 16}}>
+                  <Text
+                    style={[
+                      STYLES.text16,
+                      {
+                        fontWeight: '700',
+                        paddingBottom: 28,
+                      },
+                    ]}>
+                    Physical Activity Readiness
+                  </Text>
+                  <Text
+                    style={{
+                      fontWeight: '400',
+                      fontSize: 12,
+                      color: 'white',
                       paddingBottom: 28,
-                    },
-                  ]}>
-                  Physical Activity Readiness
-                </Text>
-                <Text
-                  style={{
-                    fontWeight: '400',
-                    fontSize: 12,
-                    color: 'white',
-                    paddingBottom: 28,
-                  }}>
-                  Please list your desired fitness goals:
-                </Text>
-              </View>
+                    }}>
+                    Please list your desired fitness goals:
+                  </Text>
+                </View>
+              )}
               <View style={styles.formContainer}>
                 <CustomInput
                   label="Desired Body Fat"
