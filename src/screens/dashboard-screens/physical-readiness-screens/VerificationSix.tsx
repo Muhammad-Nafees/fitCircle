@@ -28,28 +28,34 @@ const VerificationSix = ({navigation, disabled}: any) => {
   };
 
   return (
-    <View style={[STYLES.container, {justifyContent: 'space-between'}]}>
+    <View
+      style={[
+        STYLES.container,
+        {justifyContent: 'space-between', paddingHorizontal: 35},
+      ]}>
       <View>
-        <View style={{marginTop: 16}}>
-          <Text
-            style={[
-              STYLES.text16,
-              {
-                fontWeight: '700',
-                paddingBottom: 28,
-              },
-            ]}>
-            Physical Activity Readiness
-          </Text>
-          <Text
-            style={{
-              fontWeight: '400',
-              fontSize: 12,
-              color: 'white',
-            }}>
-            I would like to: Check Below of all that may apply.
-          </Text>
-        </View>
+        {disabled !== true && (
+          <View style={{marginTop: 16}}>
+            <Text
+              style={[
+                STYLES.text16,
+                {
+                  fontWeight: '700',
+                  paddingBottom: 28,
+                },
+              ]}>
+              Physical Activity Readiness
+            </Text>
+            <Text
+              style={{
+                fontWeight: '400',
+                fontSize: 12,
+                color: 'white',
+              }}>
+              I would like to: Check Below of all that may apply.
+            </Text>
+          </View>
+        )}
         <View style={styles.optionsContainer}>
           {options.map((option, index) => (
             <TouchableOpacity

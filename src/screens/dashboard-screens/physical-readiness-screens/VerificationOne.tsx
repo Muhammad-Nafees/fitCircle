@@ -64,18 +64,20 @@ export const VerificationOne = ({navigation, disabled}: any) => {
             setFieldError,
           }) => (
             <>
-              <Text
-                style={[
-                  STYLES.text16,
-                  {
-                    fontWeight: '700',
-                    marginTop: 16,
-                    paddingHorizontal: 16,
-                    paddingBottom: 28,
-                  },
-                ]}>
-                Physical Activity Readiness
-              </Text>
+              {disabled !== true && (
+                <Text
+                  style={[
+                    STYLES.text16,
+                    {
+                      fontWeight: '700',
+                      marginTop: 16,
+                      paddingHorizontal: 16,
+                      paddingBottom: 28,
+                    },
+                  ]}>
+                  Physical Activity Readiness
+                </Text>
+              )}
               <View style={styles.formContainer}>
                 <TouchableWithoutFeedback
                   onPress={() => setDatePickerVisible(true)}>
