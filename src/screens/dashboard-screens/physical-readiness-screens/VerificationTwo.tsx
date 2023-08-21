@@ -16,7 +16,7 @@ const questionTexts = [
   'Is there any reason, not mentioned thus far, that would not allow you to participate in a physical fitness program?',
 ];
 
-const VerificationTwo = () => {
+const VerificationTwo = ({disabled}: any) => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -51,9 +51,11 @@ const VerificationTwo = () => {
                   </Field>
                 ))}
               </View>
-              <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Continue</CustomButton>
-              </View>
+              {disabled !== true && (
+                <View style={styles.button}>
+                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                </View>
+              )}
             </>
           )}
         </Formik>

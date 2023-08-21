@@ -10,8 +10,6 @@ const CustomRadioButton = ({
   name,
 }: any) => {
   const handleSelect = (selected: string) => {
-    console.log('CustomRadioButton: name', name);
-    console.log('CustomRadioButton: selected', selected);
     setFieldValue(name, selected);
   };
 

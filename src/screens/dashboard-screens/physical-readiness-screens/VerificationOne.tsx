@@ -20,12 +20,16 @@ import {
 import {PhysicalReadinessTestSchema} from '../../../validations';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {useDispatch} from 'react-redux';
+import {setAnswers} from '../../../redux/readinessTestSlice';
 
-export const VerificationOne = ({navigation}: any) => {
+export const VerificationOne = ({navigation, disabled}: any) => {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleSubmit = () => {
-    console.log('Navigating to VerificationTwo');
+  const formSubmit = (values: any) => {
+    console.log('Form values:', values);
+    dispatch(setAnswers(values));
     navigation.navigate('VerificationTwo');
   };
 
@@ -49,7 +53,7 @@ export const VerificationOne = ({navigation}: any) => {
           }}
           validateOnChange={false}
           validationSchema={PhysicalReadinessTestSchema}
-          onSubmit={handleSubmit}>
+          onSubmit={formSubmit}>
           {({
             handleChange,
             handleSubmit,
@@ -204,14 +208,11 @@ export const VerificationOne = ({navigation}: any) => {
                   </View>
                 </View>
               </View>
-              <View style={styles.button}>
-                <CustomButton
-                  onPress={() => {
-                    navigation.navigate('VerificationTwo');
-                  }}>
-                  Continue
-                </CustomButton>
-              </View>
+              {disabled !== true && (
+                <View style={styles.button}>
+                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                </View>
+              )}
             </>
           )}
         </Formik>
