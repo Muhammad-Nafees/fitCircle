@@ -215,23 +215,3 @@ const SignupForm = () => {
 };
 
 export default SignupForm;
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    maxHeight: verticalScale(630),
-    flex: 1,
-    // overflow: 'scroll',
-    zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.93)',
-    borderTopLeftRadius: moderateScale(30),
-    borderTopRightRadius: moderateScale(30),
-    // justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: horizontalScale(30),
-    paddingTop: verticalScale(42),
-  },
-});
