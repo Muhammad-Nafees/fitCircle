@@ -7,9 +7,9 @@ import {CustomSelect} from '../../../components/shared-components/CustomSelect';
 import Slider from '@react-native-community/slider';
 import SliderThumb from '../../../../assets/icons/ColorChart';
 
-export const MacroCalculator = () => {
+export const MacroCalculator = ({navigation}: any) => {
   const handleSubmit = () => {
-    console.log('Submit');
+    navigation.navigate('Chart');
   };
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
@@ -17,7 +17,9 @@ export const MacroCalculator = () => {
         <Formik
           initialValues={{
             preset: '',
-            carbohydrates: 20,
+            carbohydrates: 0,
+            protein: 0,
+            fat: 0,
           }}
           onSubmit={handleSubmit}>
           {({
@@ -71,18 +73,95 @@ export const MacroCalculator = () => {
                     borderRadius: 0,
                   }}
                 />
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 12,
+                    fontStyle: 'italic',
+                    marginHorizontal: 35,
+                    marginTop: -18,
+                    marginBottom: 50,
+                    textAlign: 'left',
+                  }}>
+                  Note: To use a custom Macro setting, please visit our new and
+                  improved Macro Calculator
+                </Text>
+                <View style={{marginVertical: 20, marginRight: '60%'}}>
+                  <Text style={styles.heading}>Carbohydrates</Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '80%',
+                  }}>
+                  <Text style={styles.data}>
+                    {(values.carbohydrates * 100).toFixed(0)}%
+                  </Text>
+                  <Text style={styles.data}>
+                    {(values.carbohydrates * 82).toFixed(0)} grams
+                  </Text>
+                </View>
                 <Slider
-                  value={0.1}
-                  lowerLimit={0}
-                  upperLimit={100}
+                  value={values.carbohydrates}
+                  onValueChange={newValue =>
+                    setFieldValue('carbohydrates', newValue)
+                  }
                   style={{width: '85%'}}
                   thumbTintColor="#209BCC"
                   minimumTrackTintColor="#209BCC"
                   maximumTrackTintColor="#ffffff"
-                  disabled={true}
-                  thumbImage={{
-                    uri: '../../../../assets/Ellipse.png',
-                  }}
+                  disabled={false}
+                />
+                <View style={{marginVertical: 20, marginRight: '70%'}}>
+                  <Text style={styles.heading}>Protein</Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '80%',
+                  }}>
+                  <Text style={styles.data}>
+                    {(values.protein * 100).toFixed(0)}%
+                  </Text>
+                  <Text style={styles.data}>
+                    {(values.protein * 185).toFixed(0)} grams
+                  </Text>
+                </View>
+                <Slider
+                  value={values.protein}
+                  onValueChange={newValue => setFieldValue('protein', newValue)}
+                  style={{width: '85%'}}
+                  thumbTintColor="#209BCC"
+                  minimumTrackTintColor="#209BCC"
+                  maximumTrackTintColor="#ffffff"
+                  disabled={false}
+                />
+                <View style={{marginVertical: 20, marginRight: '75%'}}>
+                  <Text style={styles.heading}>Fat</Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '80%',
+                  }}>
+                  <Text style={styles.data}>
+                    {(values.fat * 100).toFixed(0)}%
+                  </Text>
+                  <Text style={styles.data}>
+                    {(values.fat * 64).toFixed(0)} grams
+                  </Text>
+                </View>
+                <Slider
+                  value={values.fat}
+                  onValueChange={newValue => setFieldValue('fat', newValue)}
+                  style={{width: '85%'}}
+                  thumbTintColor="#209BCC"
+                  minimumTrackTintColor="#209BCC"
+                  maximumTrackTintColor="#ffffff"
+                  disabled={false}
                 />
               </View>
               <View style={styles.button}>
@@ -104,5 +183,18 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(100),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
+  },
+  data: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(32, 155, 204, 1)',
+  },
+  heading: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'white',
+    textAlign: 'left',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
 });

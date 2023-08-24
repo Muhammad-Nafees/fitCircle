@@ -6,7 +6,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import SigninContent from '../../../components/auth-components/login/SigninContent';
 import {
   horizontalScale,
   moderateScale,
@@ -41,13 +40,9 @@ const SignupFormScreen = ({navigation}: any) => {
             ]}>
             Sign up
           </Text>
-          <ScrollView
-            keyboardShouldPersistTaps="always"
-            showsVerticalScrollIndicator={false}>
-            <View style={styles.container}>
-              <SignupForm />
-            </View>
-          </ScrollView>
+          <View style={styles.container}>
+            <SignupForm />
+          </View>
           {/* </BlurView> */}
         </View>
       </ImageBackground>

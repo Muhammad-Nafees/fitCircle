@@ -10,6 +10,8 @@ import {TdeeCalculator} from '../screens/dashboard-screens/tdee-calculator-scree
 import {Results} from '../screens/dashboard-screens/tdee-calculator-screens/Results';
 import {MacroCalculator} from '../screens/dashboard-screens/tdee-calculator-screens/MacroCalculator';
 import {ChartScreen} from '../screens/dashboard-screens/tdee-calculator-screens/Chart';
+import HomeTabNavigator from './HomeTabNavigator';
+import MealPlanStackNavigator from './MealPlanStackNavigator';
 
 const Stack = createStackNavigator();
 const TdeeCalculatorStackNavigator = () => {
@@ -31,6 +33,11 @@ const TdeeCalculatorStackNavigator = () => {
       <Stack.Screen name="Results" component={Results} />
       <Stack.Screen name="MacroCalculator" component={MacroCalculator} />
       <Stack.Screen name="Chart" component={ChartScreen} />
+      <Stack.Screen
+        name="DashboardScreen"
+        component={MealPlanStackNavigator}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="SuccessfulDialog"
         component={SuccessfulDialog}

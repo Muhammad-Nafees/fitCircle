@@ -5,9 +5,9 @@ import CustomInput from '../../../components/shared-components/CustomInput';
 import {verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 
-export const Results = () => {
+export const Results = ({navigation}: any) => {
   const handleSubmit = () => {
-    console.log('Submit');
+    navigation.navigate('MacroCalculator');
   };
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
@@ -85,7 +85,10 @@ export const Results = () => {
                   value={values.dailyCalories}
                   fieldName="dailyCalories"
                   editable={false}
-                  extraStyles={{backgroundColor: 'rgba(68, 68, 68, 0.5)'}}
+                  extraStyles={{
+                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  }}
                 />
                 <CustomInput
                   label="Days to reach your goal"
@@ -93,7 +96,10 @@ export const Results = () => {
                   value={values.daysToReachGoal}
                   fieldName="daysToReachGoal"
                   editable={false}
-                  extraStyles={{backgroundColor: 'rgba(68, 68, 68, 0.5)'}}
+                  extraStyles={{
+                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  }}
                 />
                 <CustomInput
                   label="Target Date (dd/mm/yyyy)"
@@ -101,7 +107,10 @@ export const Results = () => {
                   value={values.targetDate}
                   fieldName="targetDate"
                   editable={false}
-                  extraStyles={{backgroundColor: 'rgba(68, 68, 68, 0.5)'}}
+                  extraStyles={{
+                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  }}
                 />
                 <CustomInput
                   label="Your TDEE is"
@@ -109,7 +118,10 @@ export const Results = () => {
                   value={values.tdee}
                   fieldName="tdee"
                   editable={false}
-                  extraStyles={{backgroundColor: 'rgba(68, 68, 68, 0.5)'}}
+                  extraStyles={{
+                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  }}
                 />
               </View>
               <View style={styles.button}>

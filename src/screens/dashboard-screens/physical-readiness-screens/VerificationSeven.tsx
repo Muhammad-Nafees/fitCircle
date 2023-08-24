@@ -31,12 +31,16 @@ const VerificationSeven = ({navigation}: any) => {
           <VerificationFive disabled={true} />
           <VerificationSix disabled={true} />
         </View>
-        <CustomButton onPress={() => navigation.navigate('VerificationOne')}>
-          Retake
-        </CustomButton>
-        <CustomButton onPress={() => navigation.navigate('FormSaved')}>
-          Continue
-        </CustomButton>
+        <View style={{gap: 15, marginTop: 20, marginBottom: 50, marginHorizontal: 50}}>
+          <CustomButton
+            onPress={() => navigation.navigate('VerificationOne')}>
+            Retake
+          </CustomButton>
+          <CustomButton
+            onPress={() => navigation.navigate('FormSaved')}>
+            Continue
+          </CustomButton>
+        </View>
       </ScrollView>
     </View>
   );

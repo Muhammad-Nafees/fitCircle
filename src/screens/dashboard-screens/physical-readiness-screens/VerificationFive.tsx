@@ -86,7 +86,7 @@ const VerificationFive = ({navigation, disabled}: any) => {
               {disabled !== true && (
                 <View style={styles.button}>
                   <CustomButton
-                    onPress={() => navigation.navigate('VerificationFive')}>
+                    onPress={() => navigation.navigate('VerificationSix')}>
                     Continue
                   </CustomButton>
                 </View>

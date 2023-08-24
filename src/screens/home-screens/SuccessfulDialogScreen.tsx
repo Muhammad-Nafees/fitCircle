@@ -10,7 +10,11 @@ const SuccessfulDialog = ({navigation, route}: any) => {
     route.name === 'FormSaved' ? 'Form Saved!' : 'Payment Successful',
   );
   const handleNavigation = () => {
-    navigation.goBack();
+    if (route.name === 'FormSaved') {
+      navigation.navigate('DashboardScreen');
+    } else {
+      navigation.goBack();
+    }
   };
   return (
     <View style={styles.container}>

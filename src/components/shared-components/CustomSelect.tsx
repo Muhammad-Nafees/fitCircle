@@ -27,6 +27,7 @@ interface Props {
   extraRowStyle?: any;
   extraDropdownStyle?: any;
   extraSelectedRowStyle?: any;
+  starlabel?: boolean;
 }
 
 export const CustomSelect: React.FC<Props> = ({
@@ -50,6 +51,7 @@ export const CustomSelect: React.FC<Props> = ({
   extraRowStyle,
   extraDropdownStyle,
   extraSelectedRowStyle,
+  starlabel,
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
 
@@ -62,7 +64,14 @@ export const CustomSelect: React.FC<Props> = ({
   return (
     <View style={[{gap: 8}, styles]}>
       <Text>
-        {label !== 'unit' && <Text style={STYLES.text12}>{label}</Text>}
+        {label !== 'unit' && (
+          <Text style={STYLES.text12}>
+            {label}
+            {starlabel ? (
+              <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
+            ) : null}
+          </Text>
+        )}
       </Text>
       <SelectDropdown
         data={values ? values : ['Loading...']}
@@ -78,6 +87,7 @@ export const CustomSelect: React.FC<Props> = ({
           color: '#9B9B9B',
           position: 'absolute',
           left: 0,
+          flexWrap: 'wrap',
           ...extraRowTextStyle,
         }}
         selectedRowTextStyle={{color: 'black', position: 'absolute', left: 0}}

@@ -8,9 +8,9 @@ import CustomInput from '../../../components/shared-components/CustomInput';
 import {moderateScale, verticalScale} from '../../../utils/metrics';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
 
-export const TdeeCalculator = () => {
+export const TdeeCalculator = ({navigation}: any) => {
   const handleSubmit = () => {
-    console.log('Something');
+    navigation.navigate('Results');
   };
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
@@ -29,7 +29,7 @@ export const TdeeCalculator = () => {
             activityFactor: '',
           }}
           validateOnChange={false}
-          validationSchema={TdeeCalculatorSchema}
+          // validationSchema={TdeeCalculatorSchema}
           onSubmit={handleSubmit}>
           {({
             handleChange,
@@ -78,6 +78,7 @@ export const TdeeCalculator = () => {
                 />
                 <CustomInput
                   label="Age"
+                  starlabel={true}
                   placeholder=""
                   value={values.age}
                   error={errors.age}
@@ -89,7 +90,10 @@ export const TdeeCalculator = () => {
                   fieldName="age"
                 />
                 <View style={{width: '85%'}}>
-                  <Text style={styles.label}>Height</Text>
+                  <Text style={styles.label}>
+                    Height
+                    <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
+                  </Text>
                   <DropdownTextInput
                     value={values.height}
                     options={['ft', 'm']}
@@ -104,7 +108,10 @@ export const TdeeCalculator = () => {
                   />
                 </View>
                 <View style={{width: '85%'}}>
-                  <Text style={styles.label}>Weight</Text>
+                  <Text style={styles.label}>
+                    Weight
+                    <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
+                  </Text>
                   <DropdownTextInput
                     value={values.weight}
                     options={['kg', 'lb']}
@@ -120,6 +127,7 @@ export const TdeeCalculator = () => {
                 </View>
                 <CustomSelect
                   label="Goal"
+                  starlabel={true}
                   values={['Muscle Gain', 'Weight loss/cutting', 'Maintain']}
                   selectedValue={values.goal}
                   error={errors.goal}
@@ -157,7 +165,11 @@ export const TdeeCalculator = () => {
                 </View>
                 <CustomSelect
                   label="Calorie Deficit"
-                  values={['Slow TDEE (.10)', 'Moderate', 'Aggressive']}
+                  values={[
+                    'Slow                                                                              TDEE (.10)',
+                    'Moderate                                                                     TDEE (.15)',
+                    'Aggressive                                                                  TDEE (.15)',
+                  ]}
                   selectedValue={values.calorieDeficit}
                   error={errors.calorieDeficit}
                   initialTouched={true}
@@ -193,7 +205,10 @@ export const TdeeCalculator = () => {
                   setFieldValue={setFieldValue}
                   setFieldError={setFieldError}
                   fieldName="calorieDeficit"
-                  extraRowTextStyle={{color: 'white', fontSize: 12}}
+                  extraRowTextStyle={{
+                    color: 'white',
+                    fontSize: 10,
+                  }}
                   extraRowStyle={{
                     backgroundColor: 'rgba(68, 68, 68, 1)',
                   }}

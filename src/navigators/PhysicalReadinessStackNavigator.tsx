@@ -13,6 +13,7 @@ import VerificationFive from '../screens/dashboard-screens/physical-readiness-sc
 import VerificationSix from '../screens/dashboard-screens/physical-readiness-screens/VerificationSix';
 import VerificationThree from '../screens/dashboard-screens/physical-readiness-screens/VerificationThree';
 import VerificationSeven from '../screens/dashboard-screens/physical-readiness-screens/VerificationSeven';
+import HomeTabNavigator from './HomeTabNavigator';
 
 const Stack = createStackNavigator();
 const PhysicalReadinessStackNavigator = () => {
@@ -37,6 +38,11 @@ const PhysicalReadinessStackNavigator = () => {
       <Stack.Screen name="VerificationFive" component={VerificationFive} />
       <Stack.Screen name="VerificationSix" component={VerificationSix} />
       <Stack.Screen name="VerificationSeven" component={VerificationSeven} />
+      <Stack.Screen
+        name="DashboardScreen"
+        component={HomeTabNavigator}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="FormSaved"
         component={SuccessfulDialog}

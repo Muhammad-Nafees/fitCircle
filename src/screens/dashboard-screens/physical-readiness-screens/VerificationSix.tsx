@@ -31,7 +31,7 @@ const VerificationSix = ({navigation, disabled}: any) => {
     <View
       style={[
         STYLES.container,
-        {justifyContent: 'space-between', paddingHorizontal: 35},
+        {justifyContent: 'space-between', paddingHorizontal: 25},
       ]}>
       <View>
         {disabled !== true && (

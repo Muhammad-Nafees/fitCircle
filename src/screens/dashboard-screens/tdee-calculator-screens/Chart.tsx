@@ -10,7 +10,7 @@ const legends = [
   {color: '#21334E', label: 'Carb'},
 ];
 
-export const ChartScreen = () => {
+export const ChartScreen = ({navigation}: any) => {
   const widthAndHeight = 290;
   const series = [82, 64, 185];
   const sliceColor = ['#21334E', '#209BCC', '#24A3CC'];
@@ -64,7 +64,7 @@ export const ChartScreen = () => {
             ))}
           </View>
         </View>
-        <CustomButton onPress={() => console.log('Something')}>
+        <CustomButton onPress={() => navigation.navigate('DashboardScreen')}>
           Continue to Meal Plan
         </CustomButton>
       </View>
