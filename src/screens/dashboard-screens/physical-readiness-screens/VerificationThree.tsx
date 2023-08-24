@@ -38,7 +38,7 @@ const VerificationThree = ({navigation}: any) => {
       <View style={styles.buttonContainer}>
         <CustomButton
           isDisabled={initial.length === 0}
-          onPress={() => navigation.navigate('NextScreen')}>
+          onPress={() => navigation.navigate('VerificationFour')}>
           Continue
         </CustomButton>
       </View>

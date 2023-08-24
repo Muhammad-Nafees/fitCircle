@@ -17,11 +17,7 @@ const VerificationFive = ({navigation, disabled}: any) => {
   };
 
   return (
-    <View
-      style={[
-        STYLES.container,
-        {paddingHorizontal: 0},
-      ]}>
+    <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
@@ -89,7 +85,10 @@ const VerificationFive = ({navigation, disabled}: any) => {
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                  <CustomButton
+                    onPress={() => navigation.navigate('VerificationFive')}>
+                    Continue
+                  </CustomButton>
                 </View>
               )}
             </>

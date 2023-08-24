@@ -23,6 +23,10 @@ interface Props {
   fontColor?: string;
   fieldName: string;
   setFieldError: (field: string, value: string) => void;
+  extraRowTextStyle?: any;
+  extraRowStyle?: any;
+  extraDropdownStyle?: any;
+  extraSelectedRowStyle?: any;
 }
 
 export const CustomSelect: React.FC<Props> = ({
@@ -41,7 +45,11 @@ export const CustomSelect: React.FC<Props> = ({
   styles,
   fontColor,
   fieldName,
-  setFieldError
+  setFieldError,
+  extraRowTextStyle,
+  extraRowStyle,
+  extraDropdownStyle,
+  extraSelectedRowStyle,
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
 
@@ -65,19 +73,26 @@ export const CustomSelect: React.FC<Props> = ({
         renderDropdownIcon={() =>
           isIcon && <Icon name="chevron-down-outline" color="grey" size={24} />
         }
-        // search
-        // searchPlaceHolder={'Search here'}
-        // searchPlaceHolderColor={'#000'}
         defaultButtonText={defaultValue ? defaultValue : 'Select'}
-        rowTextStyle={{color: '#9B9B9B', position: 'absolute', left: 0}}
+        rowTextStyle={{
+          color: '#9B9B9B',
+          position: 'absolute',
+          left: 0,
+          ...extraRowTextStyle,
+        }}
         selectedRowTextStyle={{color: 'black', position: 'absolute', left: 0}}
         selectedRowStyle={{
           backgroundColor: '#F3F3F3',
           borderRadius: 4,
           marginVertical: 2,
           borderWidth: 0,
+          ...extraSelectedRowStyle,
         }}
-        rowStyle={{borderBottomWidth: 0, backgroundColor: '#FBFBFB'}}
+        rowStyle={{
+          borderBottomWidth: 0,
+          backgroundColor: '#FBFBFB',
+          ...extraRowStyle,
+        }}
         buttonTextStyle={{
           fontSize: 14,
           color: fontColor ? fontColor : '#000000',
@@ -89,6 +104,7 @@ export const CustomSelect: React.FC<Props> = ({
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '85%',
         }}
+        dropdownStyle={{...extraDropdownStyle}}
       />
       {(error && !values) || (error && touched) ? (
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>

@@ -12,8 +12,12 @@ import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
 import DashboardScreen from '../screens/dashboard-screens/Dashboard';
-import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
+import PhysicalReadinessStackNavigator from './PhysicalReadinessStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
+import {TdeeCalculator} from '../screens/dashboard-screens/tdee-calculator-screens/TdeeCalculator';
+import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
+import MealPlanStackNavigator from './MealPlanStackNavigator';
+import { Transaction } from '../screens/dashboard-screens/Transaction';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -230,6 +234,30 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="ScheduleScreen"
         component={ScheduleStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TdeeCalculatorScreen"
+        component={TdeeCalculatorStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="MealPlanScreen"
+        component={MealPlanStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TransactionScreen"
+        component={Transaction}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,

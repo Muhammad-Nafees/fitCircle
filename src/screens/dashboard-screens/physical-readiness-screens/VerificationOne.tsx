@@ -52,7 +52,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
             weight: '',
           }}
           validateOnChange={false}
-          validationSchema={PhysicalReadinessTestSchema}
+          // validationSchema={PhysicalReadinessTestSchema}
           onSubmit={formSubmit}>
           {({
             handleChange,
@@ -212,7 +212,10 @@ export const VerificationOne = ({navigation, disabled}: any) => {
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                  <CustomButton
+                    onPress={() => navigation.navigate('VerificationTwo')}>
+                    Continue
+                  </CustomButton>
                 </View>
               )}
             </>

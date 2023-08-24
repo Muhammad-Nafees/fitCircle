@@ -41,7 +41,7 @@ const DashboardScreen = ({navigation}: any) => {
           {
             text: 'Packages / Meal Plan',
             icon: <PackagesMealIcon />,
-            routeName: 'ScheduleScreen',
+            routeName: 'MealPlanScreen',
           },
           {
             text: 'Wallet',
@@ -63,7 +63,7 @@ const DashboardScreen = ({navigation}: any) => {
           {
             text: 'Total Daily Exercise Expenditure Calculator',
             icon: <TdeeCalculatorIcon />,
-            routeName: 'PhysicalReadiness',
+            routeName: 'TdeeCalculatorScreen',
           },
           {
             text: 'Schedule',
@@ -73,7 +73,7 @@ const DashboardScreen = ({navigation}: any) => {
         ];
 
   const renderItem = ({item}: any) => {
-    const onPress = withNavigationAction(item.routeName); // Create the onPress handler using the HOC
+    const onPress = withNavigationAction(item.routeName);
     return (
       <TouchableOpacity onPress={onPress} style={styles.carouselItem}>
         {item.icon}
@@ -224,22 +224,28 @@ const DashboardScreen = ({navigation}: any) => {
       </View>
       <View style={[styles.bottomContainer, isTrainerAvailable && {flex: 1}]}>
         <Text style={styles.transactionText}>Last Transaction</Text>
-        <CustomTransaction
-          profileImageUrl={profileImageUrl}
-          username="Sam"
-          name="Sameer Ather"
-          date={'May 4'}
-          amount="50"
-          listText="Unlocked Content"
-        />
-        <CustomTransaction
-          profileImageUrl={profileImageUrl}
-          username="Sam"
-          name="Sameer Ather"
-          date={'May 4'}
-          amount="50"
-          listText="Unlocked Content"
-        />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('TransactionScreen')}>
+          <CustomTransaction
+            profileImageUrl={profileImageUrl}
+            username="Sam"
+            name="Sameer Ather"
+            date={'May 4'}
+            amount="- $50"
+            listText="Unlocked Content"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('TransactionScreen')}>
+          <CustomTransaction
+            profileImageUrl={profileImageUrl}
+            username="Sam"
+            name="Sameer Ather"
+            date={'May 4'}
+            amount="- $50"
+            listText="Unlocked Content"
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );

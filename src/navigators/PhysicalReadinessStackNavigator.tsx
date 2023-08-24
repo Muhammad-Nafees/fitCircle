@@ -29,7 +29,7 @@ const PhysicalReadinessStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="VerificationSeven">
+      initialRouteName="VerificationOne">
       <Stack.Screen name="VerificationOne" component={VerificationOne} />
       <Stack.Screen name="VerificationTwo" component={VerificationTwo} />
       <Stack.Screen name="VerificationThree" component={VerificationThree} />
@@ -38,7 +38,7 @@ const PhysicalReadinessStackNavigator = () => {
       <Stack.Screen name="VerificationSix" component={VerificationSix} />
       <Stack.Screen name="VerificationSeven" component={VerificationSeven} />
       <Stack.Screen
-        name="SuccessfulDialog"
+        name="FormSaved"
         component={SuccessfulDialog}
         options={{headerShown: false}}
       />

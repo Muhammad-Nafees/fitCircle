@@ -24,6 +24,7 @@ const DropdownTextInput = ({
   handleChange,
   setFieldError,
   fieldName,
+  tdee,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
@@ -70,12 +71,22 @@ const DropdownTextInput = ({
         />
         <View style={styles.dropdownContainer}>
           <TouchableOpacity onPress={toggleDropdown}>
-            <View style={styles.dropdownIconContainer}>
-              <Text style={styles.selectedOptionText}>{selectedOption}</Text>
+            <View
+              style={[
+                styles.dropdownIconContainer,
+                tdee && {backgroundColor: '#fff'},
+              ]}>
+              <Text
+                style={[
+                  styles.selectedOptionText,
+                  tdee && {color: 'rgba(68, 68, 68, 0.5)'},
+                ]}>
+                {selectedOption}
+              </Text>
               <Icon
                 name="chevron-down-outline"
                 size={18}
-                color="white"
+                color={tdee ? 'rgba(68, 68, 68, 0.5)' : 'white'}
                 style={styles.icon}
               />
             </View>
@@ -166,6 +177,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#FBFBFB',
+    zIndex: 99999,
   },
   dropdownOption: {
     paddingHorizontal: horizontalScale(10),

@@ -16,7 +16,7 @@ const questionTexts = [
   'Is there any reason, not mentioned thus far, that would not allow you to participate in a physical fitness program?',
 ];
 
-const VerificationTwo = ({disabled}: any) => {
+const VerificationTwo = ({disabled, navigation}: any) => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -55,7 +55,10 @@ const VerificationTwo = ({disabled}: any) => {
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                  <CustomButton
+                    onPress={() => navigation.navigate('VerificationThree')}>
+                    Continue
+                  </CustomButton>
                 </View>
               )}
             </>
