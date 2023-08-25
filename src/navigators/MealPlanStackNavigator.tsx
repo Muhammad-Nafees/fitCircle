@@ -28,7 +28,7 @@ const MealPlanStackNavigator = () => {
       <Stack.Screen name="MealPlanThree" component={MealPlanThree} />
       <Stack.Screen name="MealPlanFour" component={MealPlanFour} />
       <Stack.Screen
-        name="SuccessfulDialog"
+        name="SuccessfulMealDialog"
         component={SuccessfulDialog}
         options={{headerShown: false}}
       />
