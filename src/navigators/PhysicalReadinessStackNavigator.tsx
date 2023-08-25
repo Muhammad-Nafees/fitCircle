@@ -31,7 +31,11 @@ const PhysicalReadinessStackNavigator = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
       initialRouteName="VerificationOne">
-      <Stack.Screen name="VerificationOne" component={VerificationOne} />
+      <Stack.Screen
+        name="VerificationOne"
+        component={VerificationOne}
+        options={{headerShown: false}}
+      />
       <Stack.Screen name="VerificationTwo" component={VerificationTwo} />
       <Stack.Screen name="VerificationThree" component={VerificationThree} />
       <Stack.Screen name="VerificationFour" component={VerificationFour} />

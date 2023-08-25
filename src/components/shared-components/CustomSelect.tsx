@@ -28,6 +28,7 @@ interface Props {
   extraDropdownStyle?: any;
   extraSelectedRowStyle?: any;
   starlabel?: boolean;
+  placeholder?: string;
 }
 
 export const CustomSelect: React.FC<Props> = ({
@@ -52,6 +53,7 @@ export const CustomSelect: React.FC<Props> = ({
   extraDropdownStyle,
   extraSelectedRowStyle,
   starlabel,
+  placeholder,
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
 
@@ -76,9 +78,10 @@ export const CustomSelect: React.FC<Props> = ({
       <SelectDropdown
         data={values ? values : ['Loading...']}
         onSelect={(selectedItem, index) => {
-          setFieldValue(field, selectedItem),
-            setCountry && setCountry(selectedItem);
+          setFieldValue(field, selectedItem), console.log(field);
+          setCountry && setCountry(selectedItem);
         }}
+        placeholder={placeholder}
         renderDropdownIcon={() =>
           isIcon && <Icon name="chevron-down-outline" color="grey" size={24} />
         }
@@ -103,6 +106,7 @@ export const CustomSelect: React.FC<Props> = ({
           backgroundColor: '#FBFBFB',
           ...extraRowStyle,
         }}
+        defaultValue={'Gender'}
         buttonTextStyle={{
           fontSize: 14,
           color: fontColor ? fontColor : '#000000',

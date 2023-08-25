@@ -216,7 +216,7 @@ export const TdeeCalculatorSchema = Yup.object().shape({
   weight: Yup.string()
     .required('Weight is required')
     .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
-  goal: Yup.string().required('Select goal'),
+  goal: Yup.string().required('Goal is required'),
   startDate: Yup.string()
     .matches(
       /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
@@ -226,6 +226,6 @@ export const TdeeCalculatorSchema = Yup.object().shape({
   goalWeight: Yup.string()
     .required('Goal weight is required')
     .test('not-zero', 'Goal weight must not be 0', value => !/^0/.test(value)),
-  calorieDeficit: Yup.string().required('Calorie deficit is required'),
-  activityFactor: Yup.string().required('Select activity factor'),
+  caloriedeficit: Yup.string().required('Calorie deficit is required'),
+  activityfactor: Yup.string().required('Activity Factor is required'),
 });

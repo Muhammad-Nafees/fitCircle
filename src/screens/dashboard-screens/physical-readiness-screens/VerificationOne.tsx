@@ -24,6 +24,7 @@ import {useDispatch} from 'react-redux';
 import {setAnswers} from '../../../redux/readinessTestSlice';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 import PhoneInput from 'react-native-phone-number-input';
+import CustomHeader from '../../../components/shared-components/CustomHeader';
 
 export const VerificationOne = ({navigation, disabled}: any) => {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -40,6 +41,13 @@ export const VerificationOne = ({navigation, disabled}: any) => {
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
+      <View style={{paddingBottom: 10}}>
+        <CustomHeader
+          onPress={() =>
+            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
+          }
+        />
+      </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
@@ -197,7 +205,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   fieldName="homePhone"
                 />
                 <CustomPhoneInput
-                  label="Phone number"
+                  label="Cell Phone"
                   value={values.cellPhone}
                   error={errors.cellPhone}
                   touched={touched.cellPhone}
@@ -208,7 +216,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   setFieldError={setFieldError}
                   isError={isError}
                   setPhoneCode={setPhoneCode}
-                  placeholder='123-1234'
+                  placeholder="123-1234"
                 />
                 <CustomInput
                   label="Age"

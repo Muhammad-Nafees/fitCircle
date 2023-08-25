@@ -8,7 +8,7 @@ export const MealPlanOne = ({navigation}: any) => {
     <View style={styles.container}>
       <TouchableOpacity
         style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.navigate('DashboardScreen', {screen: 'Dashboard'})}>
         <Image
           source={ArrowBack}
           style={{width: 24, height: 24, tintColor: 'white'}}

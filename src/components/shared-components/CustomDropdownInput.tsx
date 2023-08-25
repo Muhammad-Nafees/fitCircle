@@ -24,6 +24,7 @@ const DropdownTextInput = ({
   handleChange,
   setFieldError,
   fieldName,
+  placeholder,
   tdee,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -66,6 +67,7 @@ const DropdownTextInput = ({
           onChangeText={handleTextInputChange}
           style={styles.textInput}
           onFocus={handleInputFocus}
+          placeholder={placeholder}
           onBlur={handleInputBlur}
           keyboardType="numeric"
         />

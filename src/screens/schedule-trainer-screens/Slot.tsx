@@ -6,10 +6,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  Dimensions,
 } from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
+
+const {width, height} = Dimensions.get('window');
 
 export const Slot = ({navigation}: any) => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -77,7 +80,12 @@ export const Slot = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View>
-        <Image source={ArrowBackIcon} style={styles.arrowBack} />
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
+          }>
+          <Image source={ArrowBackIcon} style={styles.arrowBack} />
+        </TouchableOpacity>
         <Text style={styles.heading}>Schedule</Text>
       </View>
       <TouchableOpacity
@@ -88,13 +96,15 @@ export const Slot = ({navigation}: any) => {
           <ArrowForward />
         </View>
       </TouchableOpacity>
-      <FlatList
-        data={filteredCarouselData}
-        renderItem={renderCarouselItem}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={styles.carouselContainer}
-        numColumns={3}
-      />
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+        <FlatList
+          data={filteredCarouselData}
+          renderItem={renderCarouselItem}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.carouselContainer}
+          numColumns={3}
+        />
+      </View>
     </View>
   );
 };
@@ -147,8 +157,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#209BCC',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 110,
-    height: 110,
+    width: width - 282,
+    height: height - 715,
     marginVertical: 5,
     marginHorizontal: 5,
     borderRadius: 10,

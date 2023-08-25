@@ -7,6 +7,7 @@ import {CustomSelect} from '../../../components/shared-components/CustomSelect';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {moderateScale, verticalScale} from '../../../utils/metrics';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
+import CustomHeader from '../../../components/shared-components/CustomHeader';
 
 export const TdeeCalculator = ({navigation}: any) => {
   const handleSubmit = () => {
@@ -14,9 +15,15 @@ export const TdeeCalculator = ({navigation}: any) => {
   };
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
+      <View style={{paddingBottom: 10}}>
+        <CustomHeader
+          onPress={() =>
+            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
+          }
+        />
+      </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
-          const
           initialValues={{
             gender: '',
             age: '',
@@ -25,11 +32,11 @@ export const TdeeCalculator = ({navigation}: any) => {
             goal: '',
             startDate: '',
             goalWeight: '',
-            calorieDeficit: '',
-            activityFactor: '',
+            caloriedeficit: '',
+            activityfactor: '',
           }}
           validateOnChange={false}
-          // validationSchema={TdeeCalculatorSchema}
+          validationSchema={TdeeCalculatorSchema}
           onSubmit={handleSubmit}>
           {({
             handleChange,
@@ -56,6 +63,7 @@ export const TdeeCalculator = ({navigation}: any) => {
               <View style={styles.formContainer}>
                 <CustomSelect
                   label="Gender"
+                  placeholder="Gender"
                   values={['Male', 'Female']}
                   selectedValue={values.gender}
                   error={errors.gender}
@@ -79,7 +87,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                 <CustomInput
                   label="Age"
                   starlabel={true}
-                  placeholder=""
+                  placeholder="Type here"
                   value={values.age}
                   error={errors.age}
                   touched={touched.age}
@@ -97,6 +105,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                   <DropdownTextInput
                     value={values.height}
                     options={['ft', 'm']}
+                    placeholder="Type here"
                     defaultOption="ft"
                     handleChange={handleChange('height')}
                     error={errors.height}
@@ -115,6 +124,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                   <DropdownTextInput
                     value={values.weight}
                     options={['kg', 'lb']}
+                    placeholder="Type here"
                     defaultOption="kg"
                     handleChange={handleChange('weight')}
                     error={errors.weight}
@@ -127,6 +137,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                 </View>
                 <CustomSelect
                   label="Goal"
+                  placeholder="Choose here"
                   starlabel={true}
                   values={['Muscle Gain', 'Weight loss/cutting', 'Maintain']}
                   selectedValue={values.goal}
@@ -148,10 +159,22 @@ export const TdeeCalculator = ({navigation}: any) => {
                     borderRadius: 0,
                   }}
                 />
+                <CustomInput
+                  label="Start Date (dd/mm/yyyy)"
+                  placeholder="Type here"
+                  value={values.startDate}
+                  error={errors.startDate}
+                  touched={touched.startDate}
+                  initialTouched={true}
+                  handleChange={handleChange('startDate')}
+                  setFieldError={setFieldError}
+                  fieldName="startDate"
+                />
                 <View style={{width: '85%'}}>
                   <Text style={styles.label}>Goal Weight</Text>
                   <DropdownTextInput
                     value={values.weight}
+                    placeholder="Type here"
                     options={['kg', 'lb']}
                     defaultOption="kg"
                     handleChange={handleChange('weight')}
@@ -165,15 +188,17 @@ export const TdeeCalculator = ({navigation}: any) => {
                 </View>
                 <CustomSelect
                   label="Calorie Deficit"
+                  placeholder="Choose here"
+                  starlabel={false}
                   values={[
                     'Slow                                                                              TDEE (.10)',
                     'Moderate                                                                     TDEE (.15)',
                     'Aggressive                                                                  TDEE (.15)',
                   ]}
-                  selectedValue={values.calorieDeficit}
-                  error={errors.calorieDeficit}
+                  selectedValue={values.goal}
+                  error={errors.caloriedeficit}
                   initialTouched={true}
-                  touched={touched.calorieDeficit}
+                  touched={touched.caloriedeficit}
                   setFieldValue={setFieldValue}
                   setFieldError={setFieldError}
                   fieldName="calorieDeficit"
@@ -191,6 +216,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                 />
                 <CustomSelect
                   label="Activity Factor"
+                  placeholder="Choose here"
                   values={[
                     'Sedentary (Little or no exercise)',
                     'Lightly active (Light exercise/sports 3-5 days a week)',
@@ -198,13 +224,13 @@ export const TdeeCalculator = ({navigation}: any) => {
                     'Very active (Hard exercise/sports 6-7 days a week)',
                     'Extra active (Hard exercise/sports 6-7 days a week, plus physical job)',
                   ]}
-                  selectedValue={values.calorieDeficit}
-                  error={errors.calorieDeficit}
+                  selectedValue={values.activityfactor}
+                  error={errors.activityfactor}
                   initialTouched={true}
-                  touched={touched.calorieDeficit}
+                  touched={touched.activityfactor}
                   setFieldValue={setFieldValue}
                   setFieldError={setFieldError}
-                  fieldName="calorieDeficit"
+                  fieldName="activityFactor"
                   extraRowTextStyle={{
                     color: 'white',
                     fontSize: 10,

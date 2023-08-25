@@ -11,7 +11,7 @@ const SuccessfulDialog = ({navigation, route}: any) => {
   );
   const handleNavigation = () => {
     if (route.name === 'FormSaved') {
-      navigation.navigate('DashboardScreen');
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
     } else {
       navigation.goBack();
     }
