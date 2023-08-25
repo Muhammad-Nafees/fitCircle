@@ -14,12 +14,11 @@ import {
 import HeaderBackArrow from '../../../components/shared-components/HeaderBackArrow';
 import {STYLES} from '../../../styles/globalStyles';
 import SignupForm from '../../../components/auth-components/signup/SignupForm';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const SignupFormScreen = ({navigation}: any) => {
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="always"
-      showsVerticalScrollIndicator={false}>
+    <KeyboardAwareScrollView>
       <ImageBackground
         source={require('../../../../assets/images/backgroundImage2.jpg')}
         style={{flex: 1}}
@@ -46,7 +45,7 @@ const SignupFormScreen = ({navigation}: any) => {
           {/* </BlurView> */}
         </View>
       </ImageBackground>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 
