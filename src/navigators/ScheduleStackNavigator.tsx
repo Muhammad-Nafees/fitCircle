@@ -9,6 +9,7 @@ import CustomHeader from '../components/shared-components/CustomHeader';
 import {verticalScale} from '../utils/metrics';
 import {Slot} from '../screens/schedule-trainer-screens/Slot';
 import SetSchedule from '../screens/schedule-trainer-screens/SetSchedule';
+import HomeTabNavigator from './HomeTabNavigator';
 
 const Stack = createStackNavigator();
 const ScheduleStackNavigator = () => {
@@ -26,6 +27,11 @@ const ScheduleStackNavigator = () => {
       <Stack.Screen
         name="SuccessfulDialog"
         component={SuccessfulDialog}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="DashboardScreen"
+        component={HomeTabNavigator}
         options={{headerShown: false}}
       />
       <Stack.Screen

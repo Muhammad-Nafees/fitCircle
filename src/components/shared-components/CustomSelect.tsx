@@ -23,6 +23,12 @@ interface Props {
   fontColor?: string;
   fieldName: string;
   setFieldError: (field: string, value: string) => void;
+  extraRowTextStyle?: any;
+  extraRowStyle?: any;
+  extraDropdownStyle?: any;
+  extraSelectedRowStyle?: any;
+  starlabel?: boolean;
+  placeholder?: string;
 }
 
 export const CustomSelect: React.FC<Props> = ({
@@ -41,7 +47,13 @@ export const CustomSelect: React.FC<Props> = ({
   styles,
   fontColor,
   fieldName,
-  setFieldError
+  setFieldError,
+  extraRowTextStyle,
+  extraRowStyle,
+  extraDropdownStyle,
+  extraSelectedRowStyle,
+  starlabel,
+  placeholder,
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
 
@@ -54,30 +66,47 @@ export const CustomSelect: React.FC<Props> = ({
   return (
     <View style={[{gap: 8}, styles]}>
       <Text>
-        {label !== 'unit' && <Text style={STYLES.text12}>{label}</Text>}
+        {label !== 'unit' && (
+          <Text style={STYLES.text12}>
+            {label}
+            {starlabel ? (
+              <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
+            ) : null}
+          </Text>
+        )}
       </Text>
       <SelectDropdown
         data={values ? values : ['Loading...']}
         onSelect={(selectedItem, index) => {
-          setFieldValue(field, selectedItem),
-            setCountry && setCountry(selectedItem);
+          setFieldValue(field, selectedItem), console.log(field);
+          setCountry && setCountry(selectedItem);
         }}
+        placeholder={placeholder}
         renderDropdownIcon={() =>
           isIcon && <Icon name="chevron-down-outline" color="grey" size={24} />
         }
-        // search
-        // searchPlaceHolder={'Search here'}
-        // searchPlaceHolderColor={'#000'}
         defaultButtonText={defaultValue ? defaultValue : 'Select'}
-        rowTextStyle={{color: '#9B9B9B', position: 'absolute', left: 0}}
+        rowTextStyle={{
+          color: '#9B9B9B',
+          position: 'absolute',
+          left: 0,
+          flexWrap: 'wrap',
+          ...extraRowTextStyle,
+        }}
         selectedRowTextStyle={{color: 'black', position: 'absolute', left: 0}}
         selectedRowStyle={{
           backgroundColor: '#F3F3F3',
           borderRadius: 4,
           marginVertical: 2,
           borderWidth: 0,
+          ...extraSelectedRowStyle,
         }}
-        rowStyle={{borderBottomWidth: 0, backgroundColor: '#FBFBFB'}}
+        rowStyle={{
+          borderBottomWidth: 0,
+          backgroundColor: '#FBFBFB',
+          ...extraRowStyle,
+        }}
+        defaultValue={'Gender'}
         buttonTextStyle={{
           fontSize: 14,
           color: fontColor ? fontColor : '#000000',
@@ -89,6 +118,7 @@ export const CustomSelect: React.FC<Props> = ({
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '85%',
         }}
+        dropdownStyle={{...extraDropdownStyle}}
       />
       {(error && !values) || (error && touched) ? (
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>

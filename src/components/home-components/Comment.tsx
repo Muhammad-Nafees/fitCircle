@@ -38,6 +38,8 @@ interface CommentProps {
   media: any;
   setmedia: any;
   setcomment: any;
+  isReplying: any;
+  setIsReplying: any;
   setCommentText: (commentText: string) => void;
   handleCommentPostSubmit: (commentText: string) => void;
   handleReplyPress: (commentId: string, parentCommentId?: string) => void;
@@ -168,9 +170,10 @@ export const Comment = ({
   media,
   setmedia,
   setcomment,
+  isReplying,
+  setIsReplying,
 }: CommentProps) => {
   const [mediaUri, setMediaUri] = useState(null);
-  const [isReplying, setIsReplying] = useState(false);
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(
     null,
   );
@@ -188,21 +191,6 @@ export const Comment = ({
     setIsReplying(true);
   };
 
-  const handlePhotoButtonPress = () => {
-    setMediaUri(null);
-    const options: ImageLibraryOptions = {
-      mediaType: 'photo',
-      quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
-    };
-
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
-      }
-    });
-  };
   const handleCommentSubmit = (a: any, b: any) => {
     if (a.trim() !== '' && b?.trim() !== '') {
       if (isReplying) {

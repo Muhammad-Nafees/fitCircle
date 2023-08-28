@@ -8,7 +8,7 @@ import VerificationFive from './VerificationFive';
 import VerificationSix from './VerificationSix';
 import CustomButton from '../../../components/shared-components/CustomButton';
 
-const VerificationSeven = () => {
+const VerificationSeven = ({navigation}: any) => {
   return (
     <View style={{backgroundColor: '#292A2C'}}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -31,12 +31,16 @@ const VerificationSeven = () => {
           <VerificationFive disabled={true} />
           <VerificationSix disabled={true} />
         </View>
-        <CustomButton onPress={() => console.log('Something')}>
-          Retake
-        </CustomButton>
-        <CustomButton onPress={() => console.log('Continue')}>
-          Continue
-        </CustomButton>
+        <View style={{gap: 15, marginTop: 20, marginBottom: 50, marginHorizontal: 50}}>
+          <CustomButton
+            onPress={() => navigation.navigate('VerificationOne')}>
+            Retake
+          </CustomButton>
+          <CustomButton
+            onPress={() => navigation.navigate('FormSaved')}>
+            Continue
+          </CustomButton>
+        </View>
       </ScrollView>
     </View>
   );

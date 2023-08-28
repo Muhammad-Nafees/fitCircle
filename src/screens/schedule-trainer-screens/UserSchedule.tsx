@@ -10,24 +10,34 @@ import {
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment';
 import CustomButton from '../../components/shared-components/CustomButton';
+import {CustomScheduleTime} from '../../components/dashboard-components/CustomScheduleTime';
+import {RootState} from '../../redux/store';
+import {useSelector} from 'react-redux';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
 const SetSchedule = ({route, navigation}: any) => {
-  const {selectedMonth} = route.params;
-
+  const currentMonth = moment().format('YYYY-MM-DD');
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [profileImageUrl, setProfileImageUrl] = useState();
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const [userId, setUserId] = useState(userData?._id);
+
+  useEffect(() => {
+    setUserId(userData?._id);
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    setProfileImageUrl(imageUri);
+  }, [userData]);
 
   const customDatesStyles = {};
-  customDatesStyles[selectedMonth] = {textStyle: {color: '#fff'}};
+  customDatesStyles[currentMonth] = {textStyle: {color: '#fff'}};
 
   const saturdayAndSundayStyle = {
     textStyle: {color: 'red'},
     containerStyle: {backgroundColor: 'transparent'},
   };
   for (let i = 0; i < 31; i++) {
-    const currentDate = new Date(selectedMonth);
+    const currentDate = new Date(currentMonth);
     currentDate.setDate(i + 1);
     if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
       customDatesStyles[currentDate] = saturdayAndSundayStyle;
@@ -46,63 +56,10 @@ const SetSchedule = ({route, navigation}: any) => {
     ? formatDate(selectedDate)
     : formatDate(new Date());
 
-  const generateTimeSlots = () => {
-    const currentTime = moment().add(1, 'hour').startOf('hour');
-    const endTime = moment().set({
-      hour: 24,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
-    const timeSlots = [];
-
-    while (currentTime.isBefore(endTime)) {
-      const startTime = currentTime.clone();
-      const endTime = currentTime.add(1, 'hour');
-      const formattedSlot = `${startTime.format('h:mmA')} - ${endTime.format(
-        'h:mmA',
-      )}`;
-      timeSlots.push(formattedSlot);
-    }
-
-    return timeSlots;
-  };
-
-  const options = generateTimeSlots();
-
-  const handleSelectOption = option => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter(item => item !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
-  };
-
-  const renderOptionItem = ({item}) => {
-    const isSelected = selectedOptions.includes(item);
-    return (
-      <TouchableOpacity
-        style={[styles.optionItem, isSelected && styles.selectedOption]}
-        onPress={() => handleSelectOption(item)}>
-        <Text style={styles.optionTime}>{item}</Text>
-        <View style={styles.optionCheckboxContainer}>
-          <View
-            style={[
-              styles.optionCheckbox,
-              {
-                backgroundColor: isSelected ? '#209BCC' : 'transparent',
-              },
-            ]}
-          />
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <View style={{flex: 1, paddingHorizontal: 10, paddingBottom: 10}}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
           <Image source={ArrowBackIcon} style={styles.arrowBack} />
         </TouchableOpacity>
         <Text style={styles.heading}>My Schedule</Text>
@@ -130,20 +87,13 @@ const SetSchedule = ({route, navigation}: any) => {
       </View>
       <View style={styles.bottomContainer}>
         <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
-        <FlatList
-          data={options}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderOptionItem}
-          contentContainerStyle={styles.optionsContainer}
-          showsVerticalScrollIndicator={false}
+        <CustomScheduleTime
+          profileImageUrl={profileImageUrl}
+          name="Sameer Ather"
+          timeSlot="1:00 PM- 2:00 PM"
+          exercise="Back and Triceps"
+          username="Sam"
         />
-        <View style={styles.buttonContainer}>
-          <CustomButton
-            isDisabled={selectedOptions.length === 0}
-            extraStyles={{paddingHorizontal: 110}}>
-            Set Schedule
-          </CustomButton>
-        </View>
       </View>
     </View>
   );

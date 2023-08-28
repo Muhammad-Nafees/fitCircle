@@ -31,7 +31,7 @@ const VerificationSix = ({navigation, disabled}: any) => {
     <View
       style={[
         STYLES.container,
-        {justifyContent: 'space-between', paddingHorizontal: 35},
+        {justifyContent: 'space-between', paddingHorizontal: 25},
       ]}>
       <View>
         {disabled !== true && (
@@ -81,7 +81,7 @@ const VerificationSix = ({navigation, disabled}: any) => {
         <View style={styles.buttonContainer}>
           <CustomButton
             isDisabled={selectedOptions.length === 0}
-            onPress={() => navigation.navigate('NextScreen')}>
+            onPress={() => navigation.navigate('VerificationSeven')}>
             Submit
           </CustomButton>
         </View>

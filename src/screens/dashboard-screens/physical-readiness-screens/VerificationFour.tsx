@@ -10,26 +10,46 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../utils/metrics';
+<<<<<<< HEAD
 
 const questionTexts = [
   'Do you ever feel weak, fatigued, or sluggish?',
+=======
+import CustomInput from '../../../components/shared-components/CustomInput';
+
+const questionTexts = [
+>>>>>>> feat-dashboard-sameer
   'Do you know how many calories you eat in a day?',
   'Do you eat breakfast?',
   'Are you taking supplements? (i.e. vitamins, amino acids, protein shakes, etc.)',
   'Do you need several cups of coffee to keep you going throughout the day?',
   'Do you often experience digestive difficulties?',
   'Proper nutrition can increase the body’s ability to enhance physical and mental performance by up to 80%. Do you feel that a properly structured nutrition and exercise program would benefit you?',
+<<<<<<< HEAD
+=======
+];
+
+const questionTexts2 = [
+>>>>>>> feat-dashboard-sameer
   'Have you reached and maintained your goals?',
   'Are you happy with the way you look and your health?',
 ];
 
+<<<<<<< HEAD
 const VerificationFour = ({disabled}: any) => {
+=======
+const VerificationFour = ({disabled, navigation}: any) => {
+>>>>>>> feat-dashboard-sameer
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
             answer7: '',
+<<<<<<< HEAD
+=======
+            mealsEat: '',
+>>>>>>> feat-dashboard-sameer
             answer8: '',
             answer9: '',
             answer10: '',
@@ -38,13 +58,30 @@ const VerificationFour = ({disabled}: any) => {
             answer13: '',
             answer14: '',
             answer15: '',
+<<<<<<< HEAD
+=======
+            durationExercise: '',
+            seriousness: '',
+>>>>>>> feat-dashboard-sameer
           }}
           validateOnChange={false}
           validationSchema={PhysicalReadinessTestSchema}
           onSubmit={values => {
             console.log('Form values:', values);
           }}>
+<<<<<<< HEAD
           {({handleSubmit, values, setFieldValue}) => (
+=======
+          {({
+            handleChange,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            setFieldValue,
+            setFieldError,
+          }) => (
+>>>>>>> feat-dashboard-sameer
             <>
               {disabled !== true && (
                 <Text
@@ -61,7 +98,34 @@ const VerificationFour = ({disabled}: any) => {
                 </Text>
               )}
               <View style={styles.formContainer}>
+<<<<<<< HEAD
                 {questionTexts.map((text, index = 6) => (
+=======
+                <Field key={`answer7`} name={`answer7`}>
+                  {({field}: any) => (
+                    <CustomRadioButton
+                      text="Do you ever feel weak, fatigued, or sluggish?"
+                      value={field.value}
+                      selectedValue={values['answer7']}
+                      setFieldValue={setFieldValue}
+                      name="answer7"
+                    />
+                  )}
+                </Field>
+                <View style={{alignItems: 'center'}}>
+                  <CustomInput
+                    label="How many meals do you eat each day?"
+                    placeholder="3"
+                    value={values.mealsEat}
+                    initialTouched={true}
+                    keyboardType="numeric"
+                    handleChange={handleChange('mealsEat')}
+                    setFieldError={setFieldError}
+                    fieldName="mealsEat"
+                  />
+                </View>
+                {questionTexts.map((text, index = 7) => (
+>>>>>>> feat-dashboard-sameer
                   <Field key={`answer${index + 1}`} name={`answer${index + 1}`}>
                     {({field}: any) => (
                       <CustomRadioButton
@@ -74,10 +138,57 @@ const VerificationFour = ({disabled}: any) => {
                     )}
                   </Field>
                 ))}
+<<<<<<< HEAD
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
                   <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+=======
+                <View style={{alignItems: 'center'}}>
+                  <CustomInput
+                    label="How long have you been exercising?"
+                    placeholder="1 month"
+                    value={values.durationExercise}
+                    initialTouched={true}
+                    keyboardType="default"
+                    handleChange={handleChange('durationExercise')}
+                    setFieldError={setFieldError}
+                    fieldName="durationExercise"
+                  />
+                </View>
+                {questionTexts2.map((text, index = 13) => (
+                  <Field key={`answer${index + 1}`} name={`answer${index + 1}`}>
+                    {({field}: any) => (
+                      <CustomRadioButton
+                        text={text}
+                        value={field.value}
+                        selectedValue={values[`answer${index + 1}`]}
+                        setFieldValue={setFieldValue}
+                        name={`answer${index + 1}`}
+                      />
+                    )}
+                  </Field>
+                ))}
+                <View style={{alignItems: 'center'}}>
+                  <CustomInput
+                    label="On a scale of 1 to 10, how serious are you about achieving your goals? least 1 2 3 4 5 6 7 8 9 10 most"
+                    placeholder="9"
+                    value={values.seriousness}
+                    initialTouched={true}
+                    keyboardType="numeric"
+                    handleChange={handleChange('seriousness')}
+                    setFieldError={setFieldError}
+                    fieldName="seriousness"
+                  />
+                </View>
+              </View>
+              {disabled !== true && (
+                <View style={styles.button}>
+                  <CustomButton
+                    onPress={() => navigation.navigate('VerificationFive')}>
+                    Continue
+                  </CustomButton>
+>>>>>>> feat-dashboard-sameer
                 </View>
               )}
             </>

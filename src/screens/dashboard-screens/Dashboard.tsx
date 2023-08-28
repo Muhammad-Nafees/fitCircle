@@ -21,6 +21,8 @@ const DashboardScreen = ({navigation}: any) => {
   const isTrainerAvailable = userData?.role !== 'user';
   const username = userData?.username;
   const [profileImageUrl, setProfileImageUrl] = useState();
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
   const [userId, setUserId] = useState(userData?._id);
 
   useEffect(() => {
@@ -41,7 +43,13 @@ const DashboardScreen = ({navigation}: any) => {
           {
             text: 'Packages / Meal Plan',
             icon: <PackagesMealIcon />,
-            routeName: 'ScheduleScreen',
+            dropdown: isDropdownVisible,
+            selectOption: option => {
+              setSelectedOption(option);
+              if (option === 'Meal Plan') {
+                navigation.navigate('MealPlanScreen'); // Navigate to MealPlanScreen
+              }
+            },
           },
           {
             text: 'Wallet',
@@ -63,22 +71,49 @@ const DashboardScreen = ({navigation}: any) => {
           {
             text: 'Total Daily Exercise Expenditure Calculator',
             icon: <TdeeCalculatorIcon />,
-            routeName: 'PhysicalReadiness',
+            routeName: 'TdeeCalculatorScreen',
           },
           {
             text: 'Schedule',
             icon: <ScheduleDashboardIcon />,
-            routeName: 'ScheduleScreen',
+            routeName: 'UserSchedule',
           },
         ];
 
   const renderItem = ({item}: any) => {
-    const onPress = withNavigationAction(item.routeName); // Create the onPress handler using the HOC
+    const onPress = withNavigationAction(item.routeName);
     return (
-      <TouchableOpacity onPress={onPress} style={styles.carouselItem}>
-        {item.icon}
-        <Text style={styles.carouselItemText}>{item.text}</Text>
-      </TouchableOpacity>
+      <View>
+        <TouchableOpacity
+          onPress={
+            item.text === 'Packages / Meal Plan'
+              ? () => setIsDropdownVisible(!isDropdownVisible)
+              : withNavigationAction(item.routeName)
+          }
+          style={styles.carouselItem}>
+          {item.icon}
+          <Text style={styles.carouselItemText}>{item.text}</Text>
+        </TouchableOpacity>
+        {item.text === 'Packages / Meal Plan' &&
+          item.dropdown &&
+          isDropdownVisible && (
+            <View style={styles.dropdown}>
+              <Text
+                onPress={() => console.log('Packages')}
+                style={styles.dropdownOption}>
+                Packages
+              </Text>
+              <View style={styles.horizontalLine} />
+              <TouchableOpacity>
+                <Text
+                  onPress={() => item.selectOption('Meal Plan')}
+                  style={styles.dropdownOption}>
+                  Meal Plan
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+      </View>
     );
   };
 
@@ -158,17 +193,20 @@ const DashboardScreen = ({navigation}: any) => {
                 flexDirection: 'row',
                 marginHorizontal: horizontalScale(5),
               }}>
-              <Text
-                style={{
-                  fontSize: 10,
-                  fontWeight: '600',
-                  color: 'rgba(255, 255, 255, 0.5)',
-                }}>
-                Earning in
+              <View style={{flexDirection: 'row'}}>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  }}>
+                  Earning in
+                </Text>
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
-                    alignItems: 'center',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
                   }}>
                   <Text
                     style={{
@@ -176,14 +214,18 @@ const DashboardScreen = ({navigation}: any) => {
                       fontWeight: '600',
                       color: '#209BCC',
                     }}>
-                    {'  '}May
+                    {'  '}May{' '}
                   </Text>
                   <Image
                     source={ArrowDown}
-                    style={{width: 13, height: 13, tintColor: '#209BCC'}}
+                    style={{
+                      width: 10,
+                      height: 10,
+                      tintColor: '#209BCC',
+                    }}
                   />
                 </TouchableOpacity>
-              </Text>
+              </View>
               <Text style={{fontSize: 12, fontWeight: '600', color: '#fff'}}>
                 $0.00
               </Text>
@@ -224,22 +266,28 @@ const DashboardScreen = ({navigation}: any) => {
       </View>
       <View style={[styles.bottomContainer, isTrainerAvailable && {flex: 1}]}>
         <Text style={styles.transactionText}>Last Transaction</Text>
-        <CustomTransaction
-          profileImageUrl={profileImageUrl}
-          username="Sam"
-          name="Sameer Ather"
-          date={'May 4'}
-          amount="50"
-          listText="Unlocked Content"
-        />
-        <CustomTransaction
-          profileImageUrl={profileImageUrl}
-          username="Sam"
-          name="Sameer Ather"
-          date={'May 4'}
-          amount="50"
-          listText="Unlocked Content"
-        />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('TransactionScreen')}>
+          <CustomTransaction
+            profileImageUrl={profileImageUrl}
+            username="Sam"
+            name="Sameer Ather"
+            date={'May 4'}
+            amount="- $50"
+            listText="Unlocked Content"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('TransactionScreen')}>
+          <CustomTransaction
+            profileImageUrl={profileImageUrl}
+            username="Sam"
+            name="Sameer Ather"
+            date={'May 4'}
+            amount="- $50"
+            listText="Unlocked Content"
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -282,6 +330,7 @@ const styles = StyleSheet.create({
   scheduleInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 10,
   },
   avatarColumn: {
     marginRight: 10,
@@ -305,6 +354,7 @@ const styles = StyleSheet.create({
     flex: 0.8,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+    zIndex: -1,
   },
   carouselItem: {
     backgroundColor: '#209BCC',
@@ -330,6 +380,28 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     paddingHorizontal: 20,
     paddingVertical: 20,
+  },
+  dropdown: {
+    top: 100,
+    position: 'absolute',
+    backgroundColor: 'rgba(68, 68, 68, 1)',
+    borderRadius: 5,
+    width: 110,
+    left: 5,
+    zIndex: 9999999,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dropdownOption: {
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    fontSize: 10,
+    color: 'white',
+  },
+  horizontalLine: {
+    width: '75%',
+    height: 1,
+    backgroundColor: 'gray',
   },
 });
 

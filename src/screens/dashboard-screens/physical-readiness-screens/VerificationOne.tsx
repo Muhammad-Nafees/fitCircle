@@ -11,7 +11,7 @@ import {Formik} from 'formik';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {format} from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   horizontalScale,
   moderateScale,
@@ -22,9 +22,15 @@ import DropdownTextInput from '../../../components/shared-components/CustomDropd
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {useDispatch} from 'react-redux';
 import {setAnswers} from '../../../redux/readinessTestSlice';
+import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
+import PhoneInput from 'react-native-phone-number-input';
+import CustomHeader from '../../../components/shared-components/CustomHeader';
 
 export const VerificationOne = ({navigation, disabled}: any) => {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const phoneInput = useRef<PhoneInput>(null);
+  const [isError, setIsError] = useState('');
+  const [phoneCode, setPhoneCode] = useState('1');
   const dispatch = useDispatch();
 
   const formSubmit = (values: any) => {
@@ -35,6 +41,13 @@ export const VerificationOne = ({navigation, disabled}: any) => {
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
+      <View style={{paddingBottom: 10}}>
+        <CustomHeader
+          onPress={() =>
+            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
+          }
+        />
+      </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
@@ -52,7 +65,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
             weight: '',
           }}
           validateOnChange={false}
-          validationSchema={PhysicalReadinessTestSchema}
+          // validationSchema={PhysicalReadinessTestSchema}
           onSubmit={formSubmit}>
           {({
             handleChange,
@@ -84,7 +97,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   <View style={{position: 'relative'}}>
                     <CustomInput
                       label="Date"
-                      placeholder="Select a date"
+                      placeholder="02/28/2023"
                       value={values.date}
                       error={errors.date}
                       touched={touched.date}
@@ -118,7 +131,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                 </TouchableWithoutFeedback>
                 <CustomInput
                   label="Email"
-                  placeholder="Enter your email"
+                  placeholder="lincolnsmith@gmail.com"
                   value={values.email}
                   error={errors.email}
                   touched={touched.email}
@@ -129,7 +142,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                 />
                 <CustomInput
                   label="First Name"
-                  placeholder="Enter your first name"
+                  placeholder="Lincoln"
                   value={values.firstName}
                   error={errors.firstName}
                   touched={touched.firstName}
@@ -139,7 +152,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                 />
                 <CustomInput
                   label="Last Name"
-                  placeholder="Enter your last name"
+                  placeholder="Smith"
                   value={values.lastName}
                   error={errors.lastName}
                   touched={touched.lastName}
@@ -149,7 +162,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                 />
                 <CustomInput
                   label="Address"
-                  placeholder="Enter your address"
+                  placeholder="New York, United States"
                   value={values.address}
                   error={errors.address}
                   touched={touched.address}
@@ -159,13 +172,51 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                 />
                 <CustomInput
                   label="City"
-                  placeholder="Enter your City"
+                  placeholder="New York"
                   value={values.city}
                   error={errors.city}
                   touched={touched.city}
                   handleChange={handleChange('city')}
                   setFieldError={setFieldError}
                   fieldName="city"
+                />
+                <CustomInput
+                  label="Zip"
+                  placeholder="10001"
+                  value={values.zip}
+                  error={errors.zip}
+                  touched={touched.zip}
+                  initialTouched={true}
+                  keyboardType="numeric"
+                  handleChange={handleChange('zip')}
+                  setFieldError={setFieldError}
+                  fieldName="zip"
+                />
+                <CustomInput
+                  label="Home Phone"
+                  placeholder="(555) 555-1234"
+                  value={values.homePhone}
+                  error={errors.homePhone}
+                  touched={touched.homePhone}
+                  initialTouched={true}
+                  keyboardType="numeric"
+                  handleChange={handleChange('homePhone')}
+                  setFieldError={setFieldError}
+                  fieldName="homePhone"
+                />
+                <CustomPhoneInput
+                  label="Cell Phone"
+                  value={values.cellPhone}
+                  error={errors.cellPhone}
+                  touched={touched.cellPhone}
+                  handleChange={handleChange('cellPhone')}
+                  setFieldValue={setFieldValue}
+                  phoneInput={phoneInput}
+                  setIsError={setIsError}
+                  setFieldError={setFieldError}
+                  isError={isError}
+                  setPhoneCode={setPhoneCode}
+                  placeholder="123-1234"
                 />
                 <CustomInput
                   label="Age"
@@ -212,7 +263,10 @@ export const VerificationOne = ({navigation, disabled}: any) => {
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                  <CustomButton
+                    onPress={() => navigation.navigate('VerificationTwo')}>
+                    Continue
+                  </CustomButton>
                 </View>
               )}
             </>

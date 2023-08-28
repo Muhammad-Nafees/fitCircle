@@ -203,3 +203,29 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
     .required('Weight is required')
     .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
 });
+
+export const TdeeCalculatorSchema = Yup.object().shape({
+  gender: Yup.string().required('Select gender'),
+  age: Yup.number()
+    .required('Age is required')
+    .min(14, 'Age must be greater than 14')
+    .max(99, 'Age must be less than 100'),
+  height: Yup.string()
+    .required('Height is required')
+    .test('not-zero', 'Height must not be 0', value => !/^0/.test(value)),
+  weight: Yup.string()
+    .required('Weight is required')
+    .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
+  goal: Yup.string().required('Goal is required'),
+  startDate: Yup.string()
+    .matches(
+      /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+      'Invalid date format. Must be dd/mm/yyyy',
+    )
+    .required('Start date is required'),
+  goalWeight: Yup.string()
+    .required('Goal weight is required')
+    .test('not-zero', 'Goal weight must not be 0', value => !/^0/.test(value)),
+  caloriedeficit: Yup.string().required('Calorie deficit is required'),
+  activityfactor: Yup.string().required('Activity Factor is required'),
+});
