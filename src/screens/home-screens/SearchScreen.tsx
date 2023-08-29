@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -10,13 +10,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import axiosInstance from '../../api/interceptor';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {UserSearch} from '../../components/home-components/UserSearch';
 import {
   horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../utils/metrics';
+import {searchUser} from '../../api';
 
 const SearchIcon = require('../../../assets/icons/search.png');
 const FilterIcon = require('../../../assets/icons/filter.png');
@@ -29,6 +30,13 @@ export const SearchScreen = () => {
   const [searchData, setSearchData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsLoading(false);
+      setSearchData([]);
+    }, []),
+  );
 
   const handleSearch = async () => {
     setSearchData([]);
@@ -46,7 +54,7 @@ export const SearchScreen = () => {
   };
 
   const handleSearchBarBlur = () => {
-    setIsSearchActive(!isSearchActive);
+    setIsSearchActive(false);
   };
 
   const dropdownOptions = ['Nutritionist', 'Trainer', 'Other'];
@@ -64,25 +72,65 @@ export const SearchScreen = () => {
     navigation.goBack();
   };
 
-  let placeholderText = selectedFilter ? `Search ${selectedFilter} ...` : 'Search';
+  let placeholderText = selectedFilter
+    ? `Search ${selectedFilter} ...`
+    : 'Search';
 
-  const renderItem = ({item}: any) => (
-    <View style={styles.searchResultContainer}>
-      <UserSearch username={item.username} email={item.email} id={item._id} />
-    </View>
-  );
+  const renderItem = ({item, index}: any) => {
+    const isLastItem = index === searchData.length - 1;
+    if (
+      !selectedFilter ||
+      (selectedFilter === 'nutritionist' && item.role === 'trainer') ||
+      (selectedFilter === 'trainer' && item.role === 'trainer') ||
+      (selectedFilter === 'other' && item.role === 'user')
+    ) {
+      return (
+        <View
+          style={[
+            styles.searchResultContainer,
+            isLastItem && {borderBottomWidth: 0},
+          ]}>
+          <UserSearch username={item.username} email={item.email} />
+        </View>
+      );
+    }
+    return null;
+  };
+
+  const search = async () => {
+    setIsLoading(true);
+    if (searchQuery.trim() === '') {
+      setSearchData([]);
+      setSearchQuery('');
+      setIsLoading(false);
+      return;
+    }
+    setSearchQuery(searchQuery);
+    try {
+      const response = await searchUser(searchQuery.toLowerCase());
+      const users = response?.data;
+      setSearchData(users);
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log('Error fetching cities:', error);
+      setIsLoading(false);
+    }
+  };
+  // useEffect(() => {
+  //   if (countryCode) {
+  //     fetchCities(countryCode);
+  //   }
+  // }, [countryCode]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
+      <View style={[styles.topContainer]}>
         <TouchableOpacity onPress={handleBackButtonPress}>
           <Image source={ArrowBack} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={styles.searchBarContainer}>
           <View style={styles.searchBar}>
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={handleSearch}>
+            <TouchableOpacity style={styles.searchButton} onPress={search}>
               <Image source={SearchIcon} style={styles.icon} />
             </TouchableOpacity>
             <TextInput
@@ -93,6 +141,7 @@ export const SearchScreen = () => {
               onChangeText={setSearchQuery}
               onBlur={handleSearchBarBlur}
               placeholderTextColor="#fff"
+              // onEndEditing={handleSearch}
             />
             <TouchableOpacity
               style={styles.searchButton}
@@ -100,7 +149,7 @@ export const SearchScreen = () => {
               <Image source={FilterIcon} style={styles.icon} />
             </TouchableOpacity>
           </View>
-          {isSearchActive && (
+          {isSearchActive ? (
             <View style={styles.searchOverlay}>
               <View style={styles.dropdownContainer}>
                 {dropdownOptions.map((option, index) => (
@@ -119,9 +168,9 @@ export const SearchScreen = () => {
                 ))}
               </View>
             </View>
-          )}
+          ) : null}
         </View>
-        <TouchableOpacity onPress={handleSearch}>
+        <TouchableOpacity onPress={search}>
           <Text style={styles.submitButton}>Search</Text>
         </TouchableOpacity>
       </View>
@@ -130,6 +179,7 @@ export const SearchScreen = () => {
           data={searchData}
           renderItem={renderItem}
           keyExtractor={item => item._id}
+          keyboardShouldPersistTaps="handled"
         />
       )}
       {isLoading && (

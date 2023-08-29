@@ -7,9 +7,16 @@ interface Props {
   isDisabled?: boolean;
   extraStyles?: any;
   onPress?: () => void;
+  extraTextStyles?: any;
 }
 
-const CustomButton = ({children, extraStyles, isDisabled, onPress}: Props) => {
+const CustomButton = ({
+  children,
+  extraStyles,
+  isDisabled,
+  onPress,
+  extraTextStyles,
+}: Props) => {
   return (
     <Pressable
       style={({pressed}) => pressed && styles.pressed}
@@ -22,7 +29,11 @@ const CustomButton = ({children, extraStyles, isDisabled, onPress}: Props) => {
           extraStyles,
         ]}>
         <Text
-          style={[styles.buttonText, isDisabled && styles.disabledButtonText]}>
+          style={[
+            styles.buttonText,
+            isDisabled && styles.disabledButtonText,
+            extraTextStyles,
+          ]}>
           {children}
         </Text>
       </View>

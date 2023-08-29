@@ -18,13 +18,15 @@ import VerifyScreen from '../screens/auth-screens/create-profile-screens/VerifyS
 import OtpScreen from '../screens/auth-screens/create-profile-screens/OtpScreen';
 import UploadCertificate from '../screens/auth-screens/create-profile-screens/UploadCertificate';
 import ChooseVerificationType from '../screens/auth-screens/create-profile-screens/ChooseVerificationType';
-import HomeScreen from '../screens/home-screens';
 import ForgetPasswordEmail from '../screens/auth-screens/forget-password-screens/ForgetPasswordEmail';
 import CreateNewPassword from '../screens/auth-screens/forget-password-screens/CreateNewPassword';
-import HomeTabNavigator from './HomeTabNavigator';
 import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
 import ForgetPasswordOtp from '../screens/auth-screens/forget-password-screens/ForgetPasswordOtp';
 import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
+import BlankButtonRenderScreen from '../screens/auth-screens/forget-password-screens/BlankButtonRender';
+import ForgetPasswordNumber from '../screens/auth-screens/forget-password-screens/ForgotPasswordNumber';
+import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormScreen';
+import HomeTabNavigator from './HomeTabNavigator';
 
 const Stack = createStackNavigator();
 
@@ -63,11 +65,11 @@ const AuthStackNavigator = () => {
         component={LoginFormScreen}
         options={{headerShown: false}}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="SignupFormScreen"
         component={SignupFormScreen}
         options={{headerShown: false}}
-      /> */}
+      />
       <Stack.Screen name="CreateAccount" component={CreateAccount} />
       <Stack.Screen
         name="CreateProfile"
@@ -103,12 +105,21 @@ const AuthStackNavigator = () => {
         name="ForgetPasswordEmail"
         component={ForgetPasswordEmail}
       />
+      <Stack.Screen
+        name="ForgetPasswordNumber"
+        component={ForgetPasswordNumber}
+      />
       <Stack.Screen name="ForgetPasswordOtp" component={ForgetPasswordOtp} />
       <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
       <Stack.Screen
-        name="HomeModule"
-        component={HomeTabNavigator}
-        options={{gestureEnabled: false}}
+        name="PasswordChangedDialog"
+        component={FavoriteDialogScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="BlankButtonRender"
+        component={BlankButtonRenderScreen}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="PasswordChangedDialog"

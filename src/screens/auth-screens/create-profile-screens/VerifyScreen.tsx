@@ -11,6 +11,7 @@ import {createProfile} from '../../../api';
 import {setUserData} from '../../../redux/authSlice';
 import {RootState} from '../../../redux/store';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const VerifyScreen = ({navigation}: any) => {
   const {name} = useRoute();
   const dispatch = useDispatch();
@@ -23,6 +24,14 @@ const VerifyScreen = ({navigation}: any) => {
   console.log(userData);
   console.log(authToken);
 
+  const storeData = async (value: any) => {
+    try {
+      await AsyncStorage.setItem('authToken', value);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   console.log(userData);
   const handleNavigation = async () => {
     if (name == 'CertificateVerified') {
@@ -33,6 +42,7 @@ const VerifyScreen = ({navigation}: any) => {
         console.log('try');
         const response = await createProfile({...userData}, authToken);
         const data = response?.data;
+        storeData(authToken);
         console.log(response);
         // dispatch(setUserData(data));
         setIsLoading(false);
@@ -72,9 +82,7 @@ const VerifyScreen = ({navigation}: any) => {
             </Text>
           </View>
         ) : (
-          <Text style={[STYLES.text14, {marginTop: 2}]}>
-            Account created!{' '}
-          </Text>
+          <Text style={[STYLES.text14, {marginTop: 2}]}>Account created! </Text>
         )}
         <View style={{width: '75%', marginTop: verticalScale(25)}}>
           <CustomButton
@@ -92,7 +100,7 @@ export default VerifyScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,

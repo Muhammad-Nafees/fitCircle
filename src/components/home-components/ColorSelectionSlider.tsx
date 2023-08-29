@@ -1,24 +1,65 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Image,
+} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+const BackIcon = require('../../../assets/icons/arrow-back.png');
+const RightIcon = require('../../../assets/icons/right-arrow.png');
+import LinearGradient from 'react-native-linear-gradient';
 
 const ColorSelectionSlider = ({colors, onColorSelected}: any) => {
-  const [selectedColor, setSelectedColor] = useState(colors[0]);
+  const [selectedColor, setSelectedColor] = useState<any>();
 
-  const handleColorSelection = (color: string) => {
+  const handleColorSelection = (color: string | string[]) => {
     setSelectedColor(color);
     onColorSelected(color);
   };
 
-  const renderItem = ({item}: any) => (
+  const solidColor = (item: string, index: number) => (
     <TouchableOpacity
       style={[
         styles.colorDot,
-        {backgroundColor: item, borderWidth: item === selectedColor ? 2 : 0},
+        {
+          backgroundColor: item,
+          borderWidth: item === selectedColor ? 1 : 0,
+          borderColor: '#209BCC',
+        },
+        index === 0 && styles.firstColorDot,
+        index === colors.length - 1 && styles.lastColorDot,
       ]}
-      onPress={() => handleColorSelection(item)}
-    />
+      onPress={() => handleColorSelection(item)}>
+      {index === 0 && <Image source={BackIcon} style={styles.backIcon} />}
+      {index === colors.length - 1 && (
+        <Image source={RightIcon} style={styles.rightIcon} />
+      )}
+    </TouchableOpacity>
   );
+
+  const gradientColor = (item: string[], index: number) => (
+    <TouchableOpacity
+      style={[
+        styles.colorDot,
+        index === 0 && styles.firstColorDot,
+        index === colors.length - 1 && styles.lastColorDot,
+        {overflow: 'hidden'}
+      ]}
+      onPress={() => handleColorSelection(item)}>
+      <View style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}>
+        <LinearGradient colors={item} style={{width: '100%', height: '100%'}} />
+      </View>
+      {index === 0 && <Image source={BackIcon} style={styles.backIcon} />}
+      {index === colors.length - 1 && (
+        <Image source={RightIcon} style={styles.rightIcon} />
+      )}
+    </TouchableOpacity>
+  );
+
+  const renderItem = ({item, index}: any) =>
+    !Array.isArray(item) ? solidColor(item, index) : gradientColor(item, index);
 
   return (
     <View style={styles.container}>
@@ -38,12 +79,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: verticalScale(16),
+    marginVertical: -30,
   },
   colorDot: {
     width: horizontalScale(36),
     height: verticalScale(36),
     borderRadius: 5,
     marginHorizontal: horizontalScale(8),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  firstColorDot: {},
+  lastColorDot: {},
+  backIcon: {
+    width: horizontalScale(20),
+    height: verticalScale(20),
+  },
+  rightIcon: {
+    width: horizontalScale(20),
+    height: verticalScale(20),
   },
 });
 

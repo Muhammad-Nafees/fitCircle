@@ -7,7 +7,11 @@ import {
   TextInput,
 } from 'react-native';
 import {Text} from 'react-native-paper';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -26,6 +30,10 @@ interface Props {
   textAlignVertical?: string;
   handleChange: (e: any) => void;
   isFirstLetterLowercase?: boolean;
+  setFieldError: (name: any, error: any) => void;
+  fieldName: string;
+  editable?: boolean;
+  starlabel?: boolean;
 }
 
 const CustomInput = ({...props}: Props) => {
@@ -60,20 +68,23 @@ const CustomInput = ({...props}: Props) => {
 
   const handleChangeText = (text: string) => {
     props.handleChange(text);
+    if (props.touched && props.error) {
+      props.setFieldError(props.fieldName, '');
+    }
   };
 
   const inputStyle = {
     ...styles.input,
-    // borderColor: isFocused
-    //   ? 'transparent'
-    //   : props.touched && props.error
-    //   ? 'red'
-    //   : 'transparent',
   };
 
   return (
     <View style={{position: 'relative'}}>
-      <Text style={STYLES.text12}>{props.label}</Text>
+      <Text style={STYLES.text12}>
+        {props.label}
+        {props.starlabel ? (
+          <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
+        ) : null}
+      </Text>
       <View>
         <TextInput
           style={[
@@ -95,6 +106,7 @@ const CustomInput = ({...props}: Props) => {
           autoCapitalize={props.autoCapitalize}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
+          editable={props.editable}
         />
       </View>
 
@@ -139,7 +151,7 @@ const styles = StyleSheet.create({
     height: verticalScale(45),
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
-    padding: 10,
+    padding: moderateScale(10),
   },
   icon: {
     position: 'absolute',

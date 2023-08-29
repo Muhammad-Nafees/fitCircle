@@ -41,17 +41,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [countryCode, setCountryCode] = useState();
   const [phoneCode, setPhoneCode] = useState('1');
   const [usernameError, setUsernameError] = useState<string>('');
-  const phoneInput = useRef<PhoneInput>(null);
-  const [isError, setIsError] = useState('');
-
-  const phoneNumberCheck = (values: any) => {
-    const isValid = phoneInput.current?.isValidNumber(values);
-    if (!isValid) {
-      setIsError('Invalid phone number!');
-    } else {
-      setIsError('');
-    }
-  };
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -79,7 +68,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       const country = allCountries.filter(
         (country: any) => country.name == selectedCountry,
       );
-
       setCountryCode(country[0].isoCode);
     };
 
@@ -129,7 +117,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const handleUsernameBlur = async (username: any) => {
     try {
       const response = await fetch(
-        'https://fit-circle.cyclic.app/users/check-username',
+        'http://fitcircle.yameenyousuf.com/users/check-username',
         {
           method: 'POST',
           headers: {
@@ -142,7 +130,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       );
       const data = await response.json();
       if (!data.unique) {
-        setUsernameError(data.message);
+        setUsernameError('Username already exists');
       } else {
         setUsernameError('');
       }
@@ -181,7 +169,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       return;
     }
     dispatch(setUserData({...partialUserData}));
-
     if (userRole == 'user')
       navigation.navigate('GenderScreen', {
         profilePicture: profilePicture,
@@ -195,7 +182,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       initialValues={initialValues}
       validationSchema={createProfileSchema(userRole)}
       validationContext={{userRole: userRole}} // Provide the context here
-      validateOnChange={false}
       onSubmit={handleSubmit}>
       {({
         handleChange,
@@ -207,6 +193,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
         touched,
         initialTouched,
         setFieldValue,
+        setFieldError,
+        resetForm,
       }) => (
         <>
           <View style={[styles.formContainer, {marginTop: verticalScale(35)}]}>
@@ -218,6 +206,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               touched={touched.lastName}
               initialTouched={true}
               handleChange={handleChange('firstName')}
+              setFieldError={setFieldError}
+              fieldName="firstName"
             />
             <CustomInput
               label="Last Name"
@@ -227,6 +217,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               touched={touched.lastName}
               initialTouched={true}
               handleChange={handleChange('lastName')}
+              setFieldError={setFieldError}
+              fieldName="lastName"
             />
             <CustomInput
               label="Username"
@@ -236,6 +228,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               touched={touched.username}
               initialTouched={true}
               handleChange={handleChange('username')}
+              handleBlur={() => handleUsernameBlur(values.username)}
             />
             <CustomInput
               label="Add bio"
@@ -248,6 +241,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               handleChange={handleChange('bio')}
               textAlignVertical="top"
               extraStyles={{height: verticalScale(130)}}
+              setFieldError={setFieldError}
+              fieldName="bio"
             />
             <CustomPhoneInput
               setFieldValue={setFieldValue}
@@ -256,10 +251,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               error={errors.phone}
               touched={touched.phone}
               handleChange={handleChange('phone')}
-              phoneInput={phoneInput}
-              setIsError={setIsError}
-              isError={isError}
-              setPhoneCode={setPhoneCode}
             />
             <CustomSelect
               label="Country"
@@ -270,6 +261,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               setCountry={setCountry}
               touched={touched.country}
               setFieldValue={setFieldValue}
+              setFieldError={setFieldError}
+              fieldName="country"
             />
             <CustomSelect
               label="City"
@@ -279,6 +272,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               initialTouched={true}
               touched={touched.city}
               setFieldValue={setFieldValue}
+              setFieldError={setFieldError}
+              fieldName="city"
             />
             {userRole == 'trainer' && (
               <CustomSelect
@@ -289,6 +284,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                 touched={touched.gender}
                 error={errors.gender}
                 setFieldValue={setFieldValue}
+                setFieldError={setFieldError}
+                fieldName="gender"
               />
             )}
             <CustomInput
@@ -299,6 +296,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               touched={touched.physicalInformation}
               initialTouched={true}
               handleChange={handleChange('physicalInformation')}
+              setFieldError={setFieldError}
+              fieldName="physicalInformation"
             />
             <TouchableWithoutFeedback
               onPress={() => setDatePickerVisible(true)}>
@@ -311,6 +310,9 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                   touched={touched.dob}
                   initialTouched={true}
                   handleChange={handleChange('dob')}
+                  setFieldError={setFieldError}
+                  fieldName="dob"
+                  editable={false}
                 />
                 <Icon
                   name="calendar-outline"
@@ -328,6 +330,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                   onConfirm={(e: any) => {
                     const formattedDate = format(e, 'dd/MM/yyyy');
                     setFieldValue('dob', formattedDate);
+                    setFieldError('dob', '');
                     setDatePickerVisible(false);
                   }}
                   onCancel={() => setDatePickerVisible(false)}
@@ -345,6 +348,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                 keyboardType="numeric"
                 initialTouched={true}
                 handleChange={handleChange('hourlyRate')}
+                setFieldError={setFieldError}
+                fieldName="hourlyRate"
               />
             )}
           </View>

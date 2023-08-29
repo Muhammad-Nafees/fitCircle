@@ -1,29 +1,123 @@
+diff --git a/node_modules/react-native-phone-number-input/lib/index.d.ts b/node_modules/react-native-phone-number-input/lib/index.d.ts
+index cd625e5..44881ed 100644
+--- a/node_modules/react-native-phone-number-input/lib/index.d.ts
++++ b/node_modules/react-native-phone-number-input/lib/index.d.ts
+@@ -30,6 +30,8 @@ export interface PhoneInputProps {
+   layout?: "first" | "second";
+   filterProps?: CountryFilterProps;
+   countryPickerProps?: any;
++  onFocus?: any;
++  onBlur?:any;
+ }
+ export interface PhoneInputState {
+   code: CallingCode | undefined;
 diff --git a/node_modules/react-native-phone-number-input/lib/index.js b/node_modules/react-native-phone-number-input/lib/index.js
-index b89c388..43c4a0b 100644
+index b89c388..85b6be9 100644
 --- a/node_modules/react-native-phone-number-input/lib/index.js
 +++ b/node_modules/react-native-phone-number-input/lib/index.js
-@@ -202,6 +202,9 @@ export default class PhoneInput extends PureComponent {
-             )}
-             {!disableArrowIcon && (
-               <React.Fragment>
-+                <Text
-+                  style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
-+                >{`+${code}`}</Text>
-                 {renderDropdownImage
-                   ? renderDropdownImage
-                   : this.renderDropdownImage()}
-@@ -214,11 +217,6 @@ export default class PhoneInput extends PureComponent {
-               textContainerStyle ? textContainerStyle : {},
+@@ -9,6 +9,7 @@ import CountryPicker, {
+ } from "react-native-country-picker-modal";
+ import { PhoneNumberUtil } from "google-libphonenumber";
+ import styles from "./styles";
++const DropdownIcon = require("../../../assets/icons/drop-down.png")
+ 
+ const dropDown =
+   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAi0lEQVRYR+3WuQ6AIBRE0eHL1T83FBqU5S1szdiY2NyTKcCAzU/Y3AcBXIALcIF0gRPAsehgugDEXnYQrUC88RIgfpuJ+MRrgFmILN4CjEYU4xJgFKIa1wB6Ec24FuBFiHELwIpQxa0ALUId9wAkhCnuBdQQ5ngP4I9wxXsBDyJ9m+8y/g9wAS7ABW4giBshQZji3AAAAABJRU5ErkJggg==";
+@@ -117,7 +118,17 @@ export default class PhoneInput extends PureComponent {
+     }
+   }
+ 
+-  renderDropdownImage = () => {
++  renderDropdownImage = (props) => {
++    const {layout} = this.props;
++    if(layout==='second'){
++      return(
++        <Image
++        source={DropdownIcon}
++        resizeMode="contain"
++        style={{width: 20, height: 20, tintColor: '#fff'}}
++      />
++      )
++    }
+     return (
+       <Image
+         source={{ uri: dropDown }}
+@@ -138,6 +149,14 @@ export default class PhoneInput extends PureComponent {
+         />
+       );
+     }
++    if (layout === "second") {
++      return (
++        <Flag
++          countryCode={countryCode}
++          flagSize={24}
++        />
++      );
++    }
+     return <View />;
+   };
+ 
+@@ -154,6 +173,8 @@ export default class PhoneInput extends PureComponent {
+       flagButtonStyle,
+       containerStyle,
+       textContainerStyle,
++      onFocus,
++      onBlur,
+       renderDropdownImage,
+       countryPickerProps = {},
+       filterProps = {},
+@@ -173,7 +194,6 @@ export default class PhoneInput extends PureComponent {
+           <TouchableOpacity
+             style={[
+               styles.flagButtonView,
+-              layout === "second" ? styles.flagButtonExtraWidth : {},
+               flagButtonStyle ? flagButtonStyle : {},
+               countryPickerButtonStyle ? countryPickerButtonStyle : {},
              ]}
-           >
--            {code && layout === "first" && (
+@@ -195,13 +215,15 @@ export default class PhoneInput extends PureComponent {
+               onClose={() => this.setState({ modalVisible: false })}
+               {...countryPickerProps}
+             />
+-            {code && layout === "second" && (
 -              <Text
 -                style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
 -              >{`+${code}`}</Text>
 -            )}
-             <TextInput
-               style={[styles.numberText, textInputStyle ? textInputStyle : {}]}
-               placeholder={placeholder ? placeholder : "Phone Number"}
+             {!disableArrowIcon && (
+               <React.Fragment>
++                {
++                  layout === 'first' && (
++                    <Text
++                      style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
++                    >{`+${code}`}</Text>
++                  )
++                }
+                 {renderDropdownImage
+                   ? renderDropdownImage
+                   : this.renderDropdownImage()}
+@@ -214,7 +236,7 @@ export default class PhoneInput extends PureComponent {
+               textContainerStyle ? textContainerStyle : {},
+             ]}
+           >
+-            {code && layout === "first" && (
++            {code && layout === "second" && (
+               <Text
+                 style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
+               >{`+${code}`}</Text>
+@@ -225,10 +247,12 @@ export default class PhoneInput extends PureComponent {
+               onChangeText={this.onChangeText}
+               value={number}
+               editable={disabled ? false : true}
+-              selectionColor="black"
++              selectionColor={layout === 'first' ? "black" : 'green'}
+               keyboardAppearance={withDarkTheme ? "dark" : "default"}
+               keyboardType="number-pad"
+               autoFocus={autoFocus}
++              onFocus={onFocus}
++              onBlur={onBlur}
+               {...textInputProps}
+             />
+           </View>
 diff --git a/node_modules/react-native-phone-number-input/lib/styles.d.ts b/node_modules/react-native-phone-number-input/lib/styles.d.ts
 index c6bd19e..9e7d2d3 100644
 --- a/node_modules/react-native-phone-number-input/lib/styles.d.ts

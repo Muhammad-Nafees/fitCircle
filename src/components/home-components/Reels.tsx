@@ -18,6 +18,8 @@ const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+const Wallpaper = require('../../../assets/wallpaper.jpg');
+
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
   post: {
@@ -26,6 +28,7 @@ interface ReelsProps {
     content?: string;
     likes: any[];
     cost: 0;
+    thumbnail?: string;
     shares: any[];
     favorites: any[];
     createdAt: string;
@@ -35,13 +38,22 @@ interface ReelsProps {
       email?: string;
     };
   };
-  isFocused: any;
-  userId: string;
+  userId: string | undefined;
+  viewable: any;
+  index: number;
+  currIndex: number;
+  tabBarHeight: any;
 }
 
-export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
-  const {_id, media, content, likes, shares, createdAt, user, cost, favorites} =
-    post;
+export const ReelsComponent = ({
+  post,
+  userId,
+  viewable,
+  index,
+  currIndex,
+  tabBarHeight,
+}: ReelsProps) => {
+  const {_id, media, content, user, cost, favorites, thumbnail} = post;
   const {profileImageUrl, username, email} = user;
   console.log(media);
   const videoRef = useRef(null);
@@ -49,7 +61,9 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
   const [showPlayIcon, setShowPlayIcon] = useState(true);
   const [play, setPlay] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [showThumbnail, setShowThumbnail] = useState(thumbnail !== null);
   const navigation = useNavigation();
+  console.log(thumbnail);
 
   useEffect(() => {
     const isCurrentUserFavorited = favorites.some(
@@ -61,6 +75,7 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
   useEffect(() => {
     let hideButtonTimer: any;
     if (play && showPlayIcon) {
+      setShowThumbnail(false);
       hideButtonTimer = setTimeout(() => {
         setShowPlayIcon(false);
       }, 3000);
@@ -70,14 +85,8 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
     };
   }, [play, showPlayIcon]);
 
-  const handleVideoTouch = () => {
-    if (play && !showPlayIcon) {
-      setShowPlayIcon(true);
-    }
-  };
-
   const onBuffer = () => {
-    console.log('onBuffer');
+    console.log('onBuffer1');
   };
 
   const onError = () => {
@@ -116,7 +125,7 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {height: height - 120 - tabBarHeight}]}>
       <View style={styles.topLeftContent}>
         {profileImageUrl ? (
           <Avatar.Image
@@ -133,7 +142,9 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
         )}
         <View style={styles.postTextContainer}>
           <Text style={styles.postName}>{username}</Text>
-          <Text style={styles.postId}>{email}</Text>
+          <Text style={styles.postId}>{`@${username
+            ?.toLowerCase()
+            ?.replace(/\s/g, '')}`}</Text>
         </View>
       </View>
       {isLocked ? (
@@ -167,6 +178,11 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
           </TouchableOpacity>
         )}
       </View>
+      {showThumbnail && (
+        <View style={styles.thumbnailContainer}>
+          <Image source={{uri: thumbnail}} style={styles.thumbnail} />
+        </View>
+      )}
       <Video
         ref={videoRef}
         onBuffer={onBuffer}
@@ -176,9 +192,18 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
         source={{
           uri: media,
         }}
-        style={{width: '100%', height: '100%'}}
+        style={{
+          width: '100%',
+          height: '100%',
+          borderColor: 'black',
+          borderWidth: 0,
+          zIndex: 0,
+        }}
         paused={!play}
         onTouchStart={() => setShowPlayIcon(true)}
+        onLoad={() => {
+          videoRef.current.seek(0);
+        }}
       />
       <View style={styles.textContentContainer}>
         <Text style={styles.textContent}>{content}</Text>
@@ -210,11 +235,7 @@ export const ReelsComponent = ({post, isFocused, userId}: ReelsProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: height - verticalScale(180),
     width: width,
-    paddingBottom: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'black',
   },
   topLeftContent: {
@@ -241,7 +262,7 @@ const styles = StyleSheet.create({
   },
   textContentContainer: {
     position: 'absolute',
-    bottom: verticalScale(30),
+    bottom: verticalScale(55),
     left: horizontalScale(16),
     zIndex: 3,
     marginRight: '40%',
@@ -256,7 +277,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     right: horizontalScale(16),
-    bottom: verticalScale(16),
+    bottom: verticalScale(25),
     paddingHorizontal: horizontalScale(5),
     zIndex: 3,
   },
@@ -328,7 +349,82 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   avatarText: {
-    backgroundColor: '#ebebeb',
+    backgroundColor: '#5e01a9',
+  },
+  playIconContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '47%',
+    transform: [
+      {translateX: -horizontalScale(38) / 2},
+      {translateY: -verticalScale(41) / 2},
+    ],
+    zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playIconBackground: {
+    backgroundColor: 'rgba(141, 156, 152, 0.8)',
+    width: horizontalScale(55),
+    height: verticalScale(55),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playIcon: {
+    width: horizontalScale(38),
+    height: verticalScale(41),
+    tintColor: '#fff',
+  },
+  lockIcon: {
+    width: horizontalScale(18),
+    height: verticalScale(18),
+    tintColor: '#fff',
+  },
+  lockedButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#209BCC',
+    borderRadius: 40,
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: horizontalScale(16),
+    marginVertical: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  lockedIconContainer: {
+    backgroundColor: '#43c1df',
+    paddingHorizontal: horizontalScale(10),
+    paddingVertical: verticalScale(10),
+    marginLeft: horizontalScale(12),
+    borderRadius: 40,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  thumbnailContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    position: 'absolute',
+    zIndex: 1,
+  },
+  thumbnail: {
+    width: '100%',
+    height: '100%',
   },
   playIconContainer: {
     position: 'absolute',

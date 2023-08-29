@@ -13,7 +13,11 @@ import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {generateOtp, otpValidation, resetPassword} from '../../../api';
+import {
+  generateEmailOtp,
+  otpValidationByEmail,
+  resetPassword,
+} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const OtpScreen = ({navigation, route}: any) => {
@@ -51,7 +55,7 @@ const OtpScreen = ({navigation, route}: any) => {
     const convertOtpIntoNumber = parseInt(concatenatedString);
     setIsLoading(true);
     try {
-      const response = await otpValidation(convertOtpIntoNumber, email);
+      const response = await otpValidationByEmail(convertOtpIntoNumber, email);
       if (response?.status == 200) {
         setIsLoading(false);
         setSecondsRemaining(0);
@@ -95,7 +99,7 @@ const OtpScreen = ({navigation, route}: any) => {
   const handleResendOtp = async () => {
     setIsResendLoading(true);
     try {
-      const response = await generateOtp(email as string);
+      const response = await generateEmailOtp(email as string);
       const newOtp = response.data;
       setGeneratedOtp(newOtp);
       setSecondsRemaining(60);
@@ -202,13 +206,15 @@ const OtpScreen = ({navigation, route}: any) => {
                 </Text>
               </Text>
               <View style={{flexDirection: 'row', gap: 2}}>
-                <Text style={STYLES.text14}> Didn’t recive code?</Text>
+                <Text style={STYLES.text14}>Didn’t recive code?</Text>
                 {secondsRemaining == 0 && (
                   <TouchableOpacity onPress={handleResendOtp}>
                     <Text
                       style={{
                         color: '#209BCC',
                         textDecorationLine: 'underline',
+                        marginTop: 3,
+                        paddingHorizontal: 10,
                       }}>
                       {' '}
                       {isResendLoading ? <CustomLoader /> : 'Resend OTP'}

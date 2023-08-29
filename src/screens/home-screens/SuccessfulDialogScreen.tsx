@@ -3,10 +3,18 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {STYLES} from '../../styles/globalStyles';
 import {verticalScale} from '../../utils/metrics';
 import CustomButton from '../../components/shared-components/CustomButton';
+import {useState} from 'react';
 
-const SuccessfulDialog = ({navigation}: any) => {
+const SuccessfulDialog = ({navigation, route}: any) => {
+  const [message, setMessage] = useState(
+    route.name === 'FormSaved' ? 'Form Saved!' : 'Payment Successful',
+  );
   const handleNavigation = () => {
-    navigation.goBack();
+    if (route.name === 'FormSaved' || route.name === 'SuccessfulMealDialog') {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+    } else {
+      navigation.goBack();
+    }
   };
   return (
     <View style={styles.container}>
@@ -14,7 +22,7 @@ const SuccessfulDialog = ({navigation}: any) => {
         <View style={styles.icon}>
           <Icon name="checkmark-outline" color="white" size={24} />
         </View>
-        <Text style={[STYLES.text14, {marginTop: 2}]}>Payment Successful</Text>
+        <Text style={[STYLES.text14, {marginTop: 2}]}>{message}</Text>
         <View style={{width: '75%', marginTop: verticalScale(25)}}>
           <CustomButton onPress={handleNavigation}>Return</CustomButton>
         </View>
@@ -27,7 +35,7 @@ export default SuccessfulDialog;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,

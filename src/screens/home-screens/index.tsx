@@ -9,74 +9,161 @@ import {
   Image,
   ActivityIndicator,
   Dimensions,
-  ScrollView,
-  KeyboardAvoidingView,
+  Animated,
+  TouchableWithoutFeedback,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {Avatar} from 'react-native-paper';
 import {CustomPost} from '../../components/home-components/CustomPost';
 import {ReelsComponent} from '../../components/home-components/Reels';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import NotificationIcon from '../../../assets/icons/NotificationIcon';
+import {
+  fetchPostsFailure,
+  fetchPostsStart,
+  fetchPostsSuccess,
+} from '../../redux/postSlice';
+import axios from 'axios';
 const SearchIcon = require('../../../assets/icons/search.png');
-import Carousel from 'react-native-reanimated-carousel';
-const NotificationIcon = require('../../../assets/icons/notification.png');
+import {SwiperFlatList} from 'react-native-swiper-flatlist';
+import {setSelectedPost} from '../../redux/postSlice';
+import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 const HomeScreen = () => {
+  const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
   console.log(userData);
+  const postsRedux = useSelector((state: RootState) => state.post.posts);
   const username = userData?.username;
   const [userId, setUserId] = useState(userData?._id);
-  const [posts, setPosts] = useState([]);
   const [selectedButton, setSelectedButton] = useState('My Circle');
   const navigation = useNavigation();
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [listKey, setListKey] = useState<number>(0);
   const [filteredVideos, setFilteredVideos] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState();
+  const [hasMore, setHasMore] = useState(true);
+  const [fetchedPosts, setFetchedPosts] = useState([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const tabBarHeight = useBottomTabBarHeight();
+  const [Viewable, SetViewable] = React.useState<any[]>([]);
+
+  const scrollY = new Animated.Value(0);
+  const translateY = scrollY.interpolate({
+    inputRange: [0, 0],
+    outputRange: [0, -0],
+  });
 
   const handleSearchBarFocus = () => {
     navigation.navigate('Search');
   };
 
-  useEffect(() => {
-    setIsRefreshing(true);
-    fetchPosts();
-    setUserId(userData?._id);
-  }, []);
+  const handleCommentButtonPress = (selectedPost: any, userId: any) => {
+    dispatch(setSelectedPost(selectedPost));
+    navigation.navigate('CommentsScreen', {userId});
+  };
+
+  const onChangeIndex = ({index}: any) => {
+    console.log('🚀 ~ file: index.tsx:77 ~ onChangeIndex ~ index:', index);
+    setFocusedIndex(index);
+  };
+  useFocusEffect(
+    React.useCallback(() => {
+      handleRefresh();
+    }, []),
+  );
 
   useEffect(() => {
+    setIsRefreshing(true);
+    setIsLoadingMore(false);
+    setFetchedPosts([]);
+    dispatch(fetchPostsStart());
+  }, []);
+
+  const handleRefresh = () => {
+    dispatch(setSelectedPost(null));
+    setIsRefreshing(true);
+    fetchPosts(1);
+  };
+
+  const getVideoPosts = (allPosts: any) => {
+    return allPosts.filter(post => post.media && post.media.endsWith('.mp4'));
+  };
+
+  useEffect(() => {
+    setUserId(userData?._id);
+    handleButtonPress('My Circle');
     const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
     setProfileImageUrl(imageUri);
   }, [userData]);
 
   useEffect(() => {
-    const videoPosts = posts.filter(
-      post => post.media && post.media.endsWith('.mp4'),
-    );
-    setFilteredVideos(videoPosts);
-  }, [posts]);
+    setFilteredVideos(getVideoPosts(postsRedux));
+  }, [postsRedux]);
 
-  const fetchPosts = async () => {
+  useEffect(() => {
+    const filteredData = filteredVideos.sort(
+      (a, b) =>
+        new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
+    );
+    setFilteredVideos(filteredData);
+  }, [filteredVideos]);
+
+  const fetchPosts = async (page: number) => {
+    if (isLoadingMore) return;
+    setIsLoadingMore(true);
     try {
-      const response = await fetch('https://fit-circle.cyclic.app/posts/');
-      const data = await response.json();
-      setPosts(data);
-      setIsRefreshing(false);
-      setListKey(prevKey => prevKey + 1);
+      const response = await axios.get(
+        'http://fitcircle.yameenyousuf.com/posts',
+        {
+          params: {
+            page,
+            limit: 10,
+          },
+        },
+      );
+      const data = response.data;
+      if (data.docs && Array.isArray(data.docs)) {
+        setHasMore(data.docs.length >= 10);
+        if (page === 1) {
+          setFetchedPosts(data.docs);
+
+          dispatch(fetchPostsSuccess(data.docs));
+          const videoPosts = getVideoPosts(data.docs);
+
+          setFilteredVideos(videoPosts);
+          // setFilteredVideos(() => getVideoPosts(data.docs));
+        } else {
+          const posts = [...fetchedPosts, ...data.docs];
+          setFetchedPosts(posts);
+          const videoPosts = getVideoPosts(posts);
+          setFilteredVideos(videoPosts);
+          dispatch(fetchPostsSuccess(data.docs));
+        }
+      } else {
+        console.error('Invalid data format from API:', data);
+        dispatch(fetchPostsFailure('Error fetching posts'));
+      }
     } catch (error) {
       console.error('Error fetching posts:', error);
+    } finally {
+      setIsRefreshing(false);
+      setIsLoadingMore(false);
     }
   };
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await fetchPosts();
-    setIsRefreshing(false);
+  const handleLoadMore = () => {
+    if (hasMore && !isLoadingMore) {
+      const nextPage = Math.ceil(fetchedPosts.length / 10) + 1;
+      fetchPosts(nextPage);
+    }
   };
 
   const handleButtonPress = (button: string) => {
@@ -87,21 +174,30 @@ const HomeScreen = () => {
     if (item && item.media && item.media.endsWith('.mp4')) {
       return null;
     }
-    return <CustomPost post={item} userId={userId} />;
+    return (
+      <CustomPost
+        key={item._id}
+        post={item}
+        userId={userId}
+        countComment={item.comments.length}
+        handleCommentButtonPress={handleCommentButtonPress}
+      />
+    );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
+      <Animated.View
+        style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile', {posts: posts})}>
+          <TouchableOpacity>
             {profileImageUrl ? (
               <Avatar.Image size={40} source={{uri: profileImageUrl}} />
             ) : (
               <Avatar.Text
                 size={40}
                 label={username ? username[0].toUpperCase() : 'SA'}
+                style={{backgroundColor: '#5e01a9'}}
               />
             )}
           </TouchableOpacity>
@@ -115,19 +211,26 @@ const HomeScreen = () => {
             />
           </View>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingBottom: 16,
+            // alignSelf: "center",
+          }}>
+          {/* <View></View>
           <View></View>
-          <View></View>
-          <View></View>
+          <View></View> */}
           <View style={styles.topContainerButtons}>
-            <TouchableOpacity
+            <View
               style={[
                 styles.button,
-                selectedButton === 'Creator'
-                  ? {backgroundColor: '#019acd'}
-                  : {},
+                // selectedButton === 'Creator'
+                // ? {backgroundColor: '#019acd'}
+                // : {},
               ]}>
-              <TouchableOpacity onPress={() => handleButtonPress('My Circle')}>
+              <TouchableWithoutFeedback
+                onPress={() => handleButtonPress('My Circle')}>
                 <Text
                   style={[
                     styles.button1Text,
@@ -137,8 +240,9 @@ const HomeScreen = () => {
                   ]}>
                   My Circle
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleButtonPress('Creator')}>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={() => handleButtonPress('Creator')}>
                 <Text
                   style={[
                     styles.button2Text,
@@ -148,8 +252,8 @@ const HomeScreen = () => {
                   ]}>
                   Creator
                 </Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
+              </TouchableWithoutFeedback>
+            </View>
           </View>
           <TouchableOpacity
             style={{
@@ -158,41 +262,52 @@ const HomeScreen = () => {
               marginHorizontal: 15,
               marginTop: 15,
             }}>
-            <Image
-              source={NotificationIcon}
-              style={{width: 24, height: 24, tintColor: '#fff'}}
-            />
+            <NotificationIcon />
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
       <View style={styles.bottomContainer}>
         {isRefreshing ? (
           <ActivityIndicator size="large" color="#ffffff" />
         ) : selectedButton === 'My Circle' ? (
           <FlatList
-            data={posts}
+            data={fetchedPosts}
             renderItem={renderCustomPost}
             keyExtractor={item => item._id}
-            key={listKey}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            onRefresh={() => handleRefresh()}
             refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={2.7}
+            onScroll={e => {
+              scrollY.setValue(e.nativeEvent.contentOffset.y);
+            }}
           />
         ) : (
-          <View style={{flex: 1}}>
-            <Carousel
-              width={width}
-              height={height - verticalScale(185)}
-              windowSize={2}
+          <View
+            style={{
+              width: width,
+              height: height - 120 - tabBarHeight,
+            }}>
+            <SwiperFlatList
+              onScroll={e => {
+                scrollY.setValue(e.nativeEvent.contentOffset.y);
+              }}
               vertical={true}
               data={filteredVideos}
-              onSnapToItem={setCurrentIndex}
+              keyExtractor={item => item._id}
+              onEndReached={handleLoadMore}
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              onEndReachedThreshold={3}
+              onChangeIndex={i => console.log(i)}
               renderItem={({item, index}: any) => (
                 <ReelsComponent
+                  viewable={Viewable}
                   post={item}
-                  isFocused={currentIndex === index}
+                  index={index}
+                  currIndex={focusedIndex}
                   userId={userId}
+                  tabBarHeight={tabBarHeight}
                 />
               )}
             />
@@ -206,11 +321,13 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#353535',
   },
   topContainer: {
-    flex: 1,
-    backgroundColor: '#292b2d',
+    // flex: 1,
+    backgroundColor: '#292a2c',
     justifyContent: 'center',
+    height: 120,
   },
   bottomContainer: {
     flex: 5,
@@ -226,20 +343,25 @@ const styles = StyleSheet.create({
     paddingTop: verticalScale(5),
   },
   searchbar: {
-    backgroundColor: '#2c2d2e',
+    backgroundColor: '#5a5b5c',
     borderRadius: 0,
     width: '85%',
-    height: verticalScale(34),
+    height: verticalScale(3),
   },
   topContainerButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: verticalScale(16),
+    // alignSelf: "center"
+    margin: 'auto',
+    // backgroundColor: '#5e01a9',
+    flex: 1,
+    paddingLeft: 25,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#373638',
+    // backgroundColor: '#373638',
     borderTopLeftRadius: 40,
     borderBottomRightRadius: 40,
   },
@@ -250,12 +372,16 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(5),
     paddingHorizontal: horizontalScale(33),
     color: '#fff',
+    zIndex: 999,
   },
   button2Text: {
+    backgroundColor: '#373638',
     borderBottomRightRadius: 40,
     paddingVertical: verticalScale(4),
     paddingHorizontal: horizontalScale(32),
     color: '#fff',
+    marginLeft: -20,
+    // paddingLeft: 20
   },
   input: {
     width: '100%',
@@ -272,6 +398,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2c2d2f',
+    marginBottom: -verticalScale(5),
     paddingHorizontal: horizontalScale(25),
     width: '85%',
   },

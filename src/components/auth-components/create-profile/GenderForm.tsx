@@ -63,6 +63,7 @@ const GenderForm = () => {
         touched,
         initialTouched,
         setFieldValue,
+        setFieldError,
       }) => (
         <>
           <View style={styles.formContainer}>
@@ -76,6 +77,8 @@ const GenderForm = () => {
                 initialTouched={true}
                 touched={touched.gender}
                 setFieldValue={setFieldValue}
+                setFieldError={setFieldError}
+                fieldName="gender"
               />
               <CustomInput
                 label="Age"
@@ -86,6 +89,8 @@ const GenderForm = () => {
                 initialTouched={true}
                 keyboardType="numeric"
                 handleChange={handleChange('age')}
+                setFieldError={setFieldError}
+                fieldName="age"
               />
               <View style={styles.inputRow}>
                 <View style={styles.inputContainer}>
@@ -98,6 +103,8 @@ const GenderForm = () => {
                     error={errors.height}
                     touched={touched.height}
                     initialTouched={true}
+                    setFieldError={setFieldError}
+                    fieldName="height"
                   />
                 </View>
                 <View style={styles.inputContainer}>
@@ -110,10 +117,23 @@ const GenderForm = () => {
                     error={errors.weight}
                     touched={touched.weight}
                     initialTouched={true}
+                    setFieldError={setFieldError}
+                    fieldName="weight"
                   />
                 </View>
               </View>
 
+              <CustomSelect
+                label="Body Type"
+                values={['Mesomorph', 'Ectomorph', 'Endomorph']}
+                selectedValue={values.bodytype}
+                error={errors.bodytype}
+                initialTouched={true}
+                touched={touched.bodytype}
+                setFieldValue={setFieldValue}
+                setFieldError={setFieldError}
+                fieldName="bodytype"
+              />
               <CustomSelect
                 label="Activity"
                 values={[
@@ -127,16 +147,8 @@ const GenderForm = () => {
                 initialTouched={true}
                 touched={touched.activity}
                 setFieldValue={setFieldValue}
-              />
-
-              <CustomSelect
-                label="Body Type"
-                values={['Mesomorph', 'Ectomorph', 'Endomorph']}
-                selectedValue={values.bodytype}
-                error={errors.bodytype}
-                initialTouched={true}
-                touched={touched.bodytype}
-                setFieldValue={setFieldValue}
+                setFieldError={setFieldError}
+                fieldName="activity"
               />
             </View>
 

@@ -2,6 +2,7 @@ import {useSelector} from 'react-redux';
 import * as Yup from 'yup';
 import {RootState} from '../redux/store';
 import moment from 'moment';
+const currentDate = moment();
 
 export const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -32,6 +33,24 @@ export const signupSchema = Yup.object().shape({
     .oneOf([Yup.ref('password')], 'Password must be same'),
 });
 
+export const signUpFormSchema = Yup.object().shape({
+  name: Yup.string()
+    .required('Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+      'Invalid email',
+    )
+    .required('Email is required'),
+  phone: Yup.string().required('Phone number is required!'),
+  password: Yup.string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters long'),
+});
+
+const ageLimit = 14;
+
 export const createProfileSchema = (userRole: any) => {
   return Yup.object().shape({
     firstName: Yup.string()
@@ -41,7 +60,9 @@ export const createProfileSchema = (userRole: any) => {
     lastName: Yup.string()
       .required('Last Name is required')
       .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
-    username: Yup.string().required('Username is required'),
+    username: Yup.string()
+      .required('Username is required')
+      .matches(/^[A-Za-z0-9]+$/, 'Invalid input: No spaces allowed'),
     bio: Yup.string()
       .required('Bio is required')
       .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
@@ -73,11 +94,19 @@ export const createProfileSchema = (userRole: any) => {
           return true;
         }
         const dateOfBirth = moment(value, 'DD/MM/YYYY');
-        const currentDate = moment();
-        if (dateOfBirth.isAfter(currentDate)) {
+
+        if (!dateOfBirth.isValid()) {
           return this.createError({
             path: 'dob',
-            message: "Date of birth can't be greater than the current date.",
+            message: 'Invalid date format.',
+          });
+        }
+
+        const age = currentDate.diff(dateOfBirth, 'years');
+        if (age < ageLimit) {
+          return this.createError({
+            path: 'dob',
+            message: `Age must be greater than ${ageLimit} years.`,
           });
         }
 
@@ -111,11 +140,11 @@ export const genderSchema = Yup.object().shape({
     .max(99, 'Age must be less than 100'),
   height: Yup.string()
     .required('Height is required')
-    .test('not-zero', 'Height must not be zero', value => value !== '0'),
+    .test('not-zero', 'Height must not be 0', value => !/^0/.test(value)),
 
   weight: Yup.string()
     .required('Weight is required')
-    .test('not-zero', 'Weight must not be zero', value => value !== '0'),
+    .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
   bodytype: Yup.string().required('Select Body Type'),
   activity: Yup.string().required('Select Activity'),
 });
@@ -137,4 +166,66 @@ export const createNewPasswordSchema = Yup.object().shape({
     .min(8, 'Confirm password must be at least 8 characters')
     .required('Confirm Password is required')
     .oneOf([Yup.ref('newPassword')], 'Password must be same'),
+});
+
+export const PhysicalReadinessTestSchema = Yup.object().shape({
+  date: Yup.string()
+    .matches(
+      /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+      'Invalid date format. Must be dd/mm/yyyy',
+    )
+    .required('Date is required'),
+  email: Yup.string()
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+      'Invalid email',
+    )
+    .required('Email is required'),
+  firstName: Yup.string()
+    .required('First Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+  lastName: Yup.string()
+    .required('Last Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+  address: Yup.string().required('Address is required'),
+  city: Yup.string().required('City is required'),
+  zip: Yup.string().required('ZIP code is required'),
+  homePhone: Yup.string().required('Home phone is required'),
+  cellPhone: Yup.string().required('Cell phone is required'),
+  age: Yup.number()
+    .required('Age is required')
+    .min(14, 'Age must be greater than 14')
+    .max(99, 'Age must be less than 100'),
+  height: Yup.string()
+    .required('Height is required')
+    .test('not-zero', 'Height must not be 0', value => !/^0/.test(value)),
+  weight: Yup.string()
+    .required('Weight is required')
+    .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
+});
+
+export const TdeeCalculatorSchema = Yup.object().shape({
+  gender: Yup.string().required('Select gender'),
+  age: Yup.number()
+    .required('Age is required')
+    .min(14, 'Age must be greater than 14')
+    .max(99, 'Age must be less than 100'),
+  height: Yup.string()
+    .required('Height is required')
+    .test('not-zero', 'Height must not be 0', value => !/^0/.test(value)),
+  weight: Yup.string()
+    .required('Weight is required')
+    .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
+  goal: Yup.string().required('Goal is required'),
+  startDate: Yup.string()
+    .matches(
+      /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+      'Invalid date format. Must be dd/mm/yyyy',
+    )
+    .required('Start date is required'),
+  goalWeight: Yup.string()
+    .required('Goal weight is required')
+    .test('not-zero', 'Goal weight must not be 0', value => !/^0/.test(value)),
+  caloriedeficit: Yup.string().required('Calorie deficit is required'),
+  activityfactor: Yup.string().required('Activity Factor is required'),
 });

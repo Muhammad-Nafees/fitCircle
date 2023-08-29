@@ -1,28 +1,37 @@
 import axios from 'axios';
 import {CreateAccountFormValues} from '../screens/auth-screens/create-profile-screens/CreateAccount';
 import {ISocial, IUser} from '../interfaces/user.interface';
+import axiosInstance from './interceptor';
 
 export const loginIn = async (email: string, password: string) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/login`,
-    {
-      email: email.toLowerCase(),
-      password: password,
-    },
-  );
-  return response;
+  try {
+    const response = await axios.post(
+      'http://fitcircle.yameenyousuf.com/users/login',
+      {
+        email: email.toLowerCase(),
+        password: password,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const register = async (values: CreateAccountFormValues) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/register`,
-    {
-      email: values.email.toLowerCase(),
-      phone: values.phone,
-      password: values.password,
-    },
-  );
-  return response;
+  try {
+    const response = await axios.post(
+      'http://fitcircle.yameenyousuf.com/users/register',
+      {
+        email: values.email.toLowerCase(),
+        phone: values.phone,
+        password: values.password,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const createProfile = async (
@@ -48,7 +57,12 @@ export const createProfile = async (
   formData.append('role', 'user');
   formData.append('hourlyRate', userData.hourlyRate);
   formData.append('interest', userData.interest);
-  formData.append('selectedCommunities', userData.selectedCommunities);
+  if (userData.selectedCommunities) {
+    userData.selectedCommunities.forEach(community => {
+      formData.append('selectedCommunities[]', community);
+    });
+  }
+  console.log('API Call', userData.selectedCommunities);
   formData.append('profileImage', userData.profileImage);
   formData.append('coverImage', userData.coverImage);
   formData.append('certificateImages', userData.certificateImages);
@@ -60,20 +74,20 @@ export const createProfile = async (
   }
 
   const response = await axios.post(
-    `https://fit-circle.cyclic.app/home/createProfile`,
+    'http://fitcircle.yameenyousuf.com/home/createProfile',
     formData,
     {
       headers: {
-        'Content-Type': 'multipart/form-data', // Add the Content-Type header with the value "multipart/form-data"
-        Authorization: `${authorizationToken}`, // Include the authorization token in the headers
+        'Content-Type': 'multipart/form-data',
+        Authorization: `${authorizationToken}`,
       },
     },
   );
-
   return response;
 };
 
-export const postContent = async (postData: any, authToken: string) => {
+export const postContent = async (postData: any) => {
+  console.log('post button pressed');
   try {
     const formData = new FormData();
     formData.append('content', postData.content);
@@ -106,15 +120,25 @@ export const postContent = async (postData: any, authToken: string) => {
         });
       }
     }
-    const response = await axios.post(
-      'https://fit-circle.cyclic.app/posts/create',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `${authToken}`,
-        },
+
+    const response = await axiosInstance.post('posts/create', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const generateEmailOtp = async (email: string) => {
+  try {
+    const requestData = {email: email.toLowerCase()};
+
+    const response = await axiosInstance.post(
+      'users/generate/otp',
+      requestData,
     );
     return response;
   } catch (error) {
@@ -122,61 +146,85 @@ export const postContent = async (postData: any, authToken: string) => {
   }
 };
 
-export const generateOtp = async (email: string) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/generate/otp`,
-    {
-      email: email.toLowerCase(),
-    },
-  );
+export const generatePhoneOtp = async (phone: any) => {
+  try {
+    const requestData = {phone};
+
+    const response = await axiosInstance.post(
+      'users/generate/otp',
+      requestData,
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const otpValidationByEmail = async (
+  enteredOtp: number,
+  email: string,
+) => {
+  const response = await axiosInstance.post('users/otpValidation', {
+    enteredOtp,
+    email,
+  });
   return response;
 };
 
-export const otpValidation = async (
+export const otpValidationByPhone = async (
   enteredOtp: number,
-  email: string | undefined,
+  phone: string,
 ) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/otpValidation`,
-    {
-      enteredOtp,
-      email,
-    },
-  );
+  const response = await axiosInstance.post('users/otpValidation', {
+    enteredOtp,
+    phone,
+  });
   return response;
 };
-export const resetPassword = async (
+
+export const resetPasswordWithEmail = async (
   newPass: string,
   email: string | undefined,
 ) => {
-  const response = await axios.post(
-    `https://fit-circle.cyclic.app/users/resetPassword`,
-    {
-      newPass,
-      email,
-    },
-  );
+  const response = await axiosInstance.post('users/resetPassword', {
+    newPass,
+    email,
+  });
+  return response;
+};
+
+export const resetPasswordWithPhone = async (
+  newPass: string,
+  phone: string | undefined,
+) => {
+  const response = await axiosInstance.post('users/resetPassword', {
+    newPass,
+    phone,
+  });
   return response;
 };
 
 export const getInterest = async () => {
-  const response = await axios.get(`https://fit-circle.cyclic.app/interest`);
+  const response = await axiosInstance.get('interest');
   return response;
 };
 
 export const getCommunities = async () => {
-  const response = await axios.get(`https://fit-circle.cyclic.app/community`);
+  const response = await axiosInstance.get('community');
   return response;
 };
 
 export const getCountries = async () => {
-  const response = await axios.get(`https://fit-circle.cyclic.app/countries`);
+  const response = await axiosInstance.get('countries');
   return response;
 };
 
 export const getCities = async (country: string) => {
-  const response = await axios.get(
-    `https://fit-circle.cyclic.app/cities/${country}`,
-  );
+  const response = await axiosInstance.get(`cities/${country}`);
+  return response;
+};
+
+export const searchUser = async (name: string) => {
+  const response = await axiosInstance.get(`home/search/${name}`);
   return response;
 };

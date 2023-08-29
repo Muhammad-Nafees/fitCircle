@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  KeyboardAvoidingView,
+  Dimensions,
 } from 'react-native';
 import {
   horizontalScale,
@@ -21,15 +23,28 @@ import {
 } from 'react-native-image-picker';
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const SendIcon = require('../../../assets/icons/send.png');
-const imageLibary = require('../../../assets/icons/createpost.png');
+import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
+import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
+
+import Entypo from 'react-native-vector-icons/Entypo';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 interface CommentProps {
   comments: CommentItem[];
   commentText: string;
+  available: boolean;
+  setAvailable: (value: boolean) => void;
+  commentTxt: string;
+  media: any;
+  setmedia: any;
+  setcomment: any;
+  isReplying: any;
+  setIsReplying: any;
   setCommentText: (commentText: string) => void;
   handleCommentPostSubmit: (commentText: string) => void;
   handleReplyPress: (commentId: string, parentCommentId?: string) => void;
-  handleCommentPress: () => void;
+  handleBackPress: () => void;
+  handleImageOpen: (imageUrl: string) => void;
   handleReplyPostPress: (
     commentText: string,
     mediaUri: any,
@@ -52,12 +67,14 @@ interface CommentItem {
   handleReplyPress: (commentId: string, parentCommentId?: string) => void;
   showReplyButton: boolean;
   isReplying: boolean;
+  handleImageOpen: (imageUrl: string) => void;
 }
 
 const CommentItem = ({
   comment,
   handleReplyPress,
   showReplyButton,
+  handleImageOpen,
 }: {
   comment: CommentItem;
   handleReplyPress: any;
@@ -85,165 +102,214 @@ const CommentItem = ({
   };
 
   return (
-    <>
-      <View style={styles.rowContainer}>
-        <View style={styles.profileImageContainer}>
-          {comment.user?.profileImageUrl ? (
-            <Avatar.Image
-              source={{uri: comment.user.profileImageUrl}}
-              size={40}
-            />
-          ) : (
-            <Avatar.Text
-              label={comment.user?.username?.charAt(0)?.toUpperCase() || ''}
-              size={40}
-            />
-          )}
-        </View>
-        <View style={styles.commentsContainer}>
-          <View style={styles.commentContainer}>
-            <Text style={styles.commentName}>{comment.user.username}</Text>
-            <Text style={styles.commentText}>{comment.text}</Text>
-            {comment.commentMedia && (
+    <View style={styles.rowContainer}>
+      <View style={styles.profileImageContainer}>
+        {comment.user?.profileImageUrl ? (
+          <Avatar.Image
+            source={{uri: comment.user.profileImageUrl}}
+            size={40}
+          />
+        ) : (
+          <Avatar.Text
+            label={comment.user?.username?.charAt(0)?.toUpperCase() || 'SA'}
+            size={40}
+            style={{backgroundColor: '#5e01a9'}}
+          />
+        )}
+      </View>
+      <View style={styles.commentsContainer}>
+        <View style={styles.commentContainer}>
+          <Text style={styles.commentName}>{comment.user.username}</Text>
+          <Text style={styles.commentText}>{comment.text}</Text>
+          {comment.commentMedia && (
+            <TouchableOpacity
+              onPress={() => handleImageOpen(comment.commentMedia)}>
               <Image
                 source={{uri: comment.commentMedia}}
                 style={styles.commentMediaImage}
               />
-            )}
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={{flexDirection: 'row', gap: 15}}>
+          <View style={styles.timeContainer}>
+            <Text style={styles.timeText}>
+              {timeDifference(comment.createdAt)}
+            </Text>
           </View>
-          <View style={{flexDirection: 'row', gap: 15}}>
-            <View style={styles.timeContainer}>
-              <Text style={styles.timeText}>
-                {timeDifference(comment.createdAt)}
-              </Text>
-            </View>
-            {showReplyButton && (
-              <TouchableOpacity onPress={() => handleReplyPress(comment._id)}>
-                <Text style={styles.replyButton}>Reply</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.repliesContainer}>
-            {comment.replies?.map(reply => (
-              <CommentItem
-                key={reply._id}
-                comment={reply}
-                handleReplyPress={handleReplyPress}
-                showReplyButton={false}
-              />
-            ))}
-          </View>
+          {showReplyButton && (
+            <TouchableOpacity onPress={() => handleReplyPress(comment._id)}>
+              <Text style={styles.replyButton}>Reply</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={styles.repliesContainer}>
+          {comment.replies?.map(reply => (
+            <CommentItem
+              key={reply._id}
+              comment={reply}
+              handleReplyPress={handleReplyPress}
+              showReplyButton={false}
+            />
+          ))}
         </View>
       </View>
-    </>
+    </View>
   );
 };
 
 export const Comment = ({
   comments,
   handleCommentPostSubmit,
-  commentText,
-  setCommentText,
-  handleCommentPress,
   handleReplyPostPress,
+  handleBackPress,
+  handleImageOpen,
+  available,
+  setAvailable,
+  commentTxt,
+  media,
+  setmedia,
+  setcomment,
+  isReplying,
+  setIsReplying,
 }: CommentProps) => {
   const [mediaUri, setMediaUri] = useState(null);
-  const [isReplying, setIsReplying] = useState(false);
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(
     null,
   );
+  const [commentText, setCommentText] = useState('');
+
+  useEffect(() => {
+    if (available) {
+      setAvailable(false);
+      handleCommentSubmit(commentTxt, media);
+    }
+  }, [available]);
 
   const handleReplyButtonPress = (commentId: string) => {
     setReplyingCommentId(commentId);
     setIsReplying(true);
   };
 
-  const handlePhotoButtonPress = () => {
-    setMediaUri(null);
-    const options: ImageLibraryOptions = {
-      mediaType: 'photo',
-      quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
-    };
-
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
-      }
-    });
-  };
-  const handleCommentSubmit = () => {
-    if (commentText.trim() !== '') {
+  const handleCommentSubmit = (a: any, b: any) => {
+    if (a.trim() !== '' && b?.trim() !== '') {
       if (isReplying) {
-        handleReplyPostPress(commentText, mediaUri, replyingCommentId);
+        handleReplyPostPress(a, b, replyingCommentId);
       } else {
-        handleCommentPostSubmit(commentText, mediaUri);
+        handleCommentPostSubmit(a, b);
       }
       setIsReplying(false);
       setReplyingCommentId(null);
+      setmedia(null);
+      setcomment('');
       setMediaUri(null);
       setCommentText('');
     }
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.cancelIconContainer}
-        onPress={handleCommentPress}>
-        <Image source={CancelIcon} style={styles.cancelIcon} />
-      </TouchableOpacity>
-      <ScrollView>
-        <View style={{paddingBottom: verticalScale(10)}}>
+    <>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.cancelIconContainer}
+          onPress={handleBackPress}>
+          <Image source={CancelIcon} style={styles.cancelIcon} />
+        </TouchableOpacity>
+
+        {!comments.length ? (
+          <View style={{alignItems: 'center', marginTop: 40}}>
+            <Entypo name="chat" color={'#898c93'} size={150} />
+            <Text
+              style={{
+                fontSize: 14,
+                color: '#898c93',
+                fontWeight: '500',
+                marginTop: 10,
+              }}>
+              No comments yet
+            </Text>
+            <Text style={{fontSize: 14, color: '#898c93'}}>
+              Be the first to comment.
+            </Text>
+          </View>
+        ) : null}
+        <ScrollView style={styles.commentsAndInputContainer}>
           {comments.map(comment => (
             <CommentItem
               key={comment._id}
               comment={comment}
               handleReplyPress={handleReplyButtonPress}
               showReplyButton={true}
+              handleImageOpen={handleImageOpen}
             />
           ))}
-        </View>
-      </ScrollView>
-      <View style={styles.inputContainer}>
-        <View
-          style={{
-            flexDirection: 'row',
-            backgroundColor: '#00abd2',
-            width: '85%',
-          }}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Message"
-            placeholderTextColor="#fff"
-            value={commentText}
-            onChangeText={text => setCommentText(text)}
-          />
-          <TouchableOpacity
-            style={{justifyContent: 'center', alignItems: 'center'}}
-            onPress={handlePhotoButtonPress}>
-            <Image
-              source={imageLibary}
+        </ScrollView>
+        {/* {media && (
+          <View
+            style={{
+              backgroundColor: '#00abd2',
+            }}>
+            <View
               style={{
-                width: 21,
-                height: 21,
-                tintColor: '#8bd6e8',
-                marginRight: 10,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 10,
+                padding: 10,
+              }}>
+              <View>
+                <Text style={{color: '#fff', marginRight: 20}}>
+                  Photo Attached
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setMediaUri(null)}
+                style={{marginRight: 8}}>
+                <Image
+                  source={CancelIcon}
+                  style={{tintColor: '#fff', width: 18, height: 18}}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )} */}
+      </View>
+      {/* <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
+        <View style={styles.inputContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: '#00abd2',
+              width: '85%',
+            }}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Message"
+              placeholderTextColor="#fff"
+              value={commentText}
+              onChangeText={text => setCommentText(text)}
+            />
+            <TouchableOpacity
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingHorizontal: horizontalScale(13),
+                opacity: 0.8,
               }}
+              onPress={handlePhotoButtonPress}>
+              <CreatePostCommentSvgIcon />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={styles.commentButton}
+            onPress={() => handleCommentSubmit()}>
+            <Image
+              source={SendIcon}
+              style={{width: 20, height: 20, tintColor: '#fff'}}
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.commentButton}
-          onPress={() => handleCommentSubmit()}>
-          <Image
-            source={SendIcon}
-            style={{width: 20, height: 20, tintColor: '#fff'}}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
+      </View> */}
+    </>
   );
 };
 
@@ -258,14 +324,22 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(10),
   },
   container: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  commentsAndInputContainer: {
     height: '100%',
     justifyContent: 'center',
   },
   commentsAndInputContainer: {
     flex: 1,
   },
+  commentsList: {
+    paddingBottom: verticalScale(10),
+  },
   commentsContainer: {
     flex: 1,
+    paddingBottom: 10,
   },
   commentText: {
     color: '#444444',
@@ -296,6 +370,10 @@ const styles = StyleSheet.create({
     color: 'white',
     padding: moderateScale(8),
     backgroundColor: '#00abd2',
+<<<<<<< HEAD
+=======
+    position: 'relative',
+>>>>>>> feat-dashboard-sameer
   },
   commentButton: {
     marginLeft: horizontalScale(5),
@@ -313,7 +391,32 @@ const styles = StyleSheet.create({
   cancelIcon: {
     width: horizontalScale(24),
     height: verticalScale(24),
-    tintColor: '#fff',
+    tintColor: '#000',
+  },
+  commentMediaImage: {
+    width: 100,
+    height: 100,
+    marginTop: verticalScale(8),
+    borderRadius: 8,
+  },
+  timeContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    width: '35%',
+    marginLeft: horizontalScale(20),
+  },
+  timeText: {
+    color: '#888888',
+    fontSize: 10,
+    textAlign: 'left',
+  },
+  replyButton: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: '#888888',
+  },
+  repliesContainer: {
+    marginLeft: 0,
   },
   commentMediaImage: {
     width: 100,

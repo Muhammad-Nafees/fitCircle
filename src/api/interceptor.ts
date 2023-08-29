@@ -2,12 +2,12 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://fit-circle.cyclic.app/',
+  baseURL: 'http://fitcircle.yameenyousuf.com/',
 });
 
 const getData = async () => {
   try {
-    const authToken = await AsyncStorage.getItem('authToken'); 
+    const authToken = await AsyncStorage.getItem('authToken');
     return authToken;
   } catch (e) {
     console.log(e);
@@ -15,14 +15,14 @@ const getData = async () => {
 };
 
 axiosInstance.interceptors.request.use(
-  async (config) => {
+  async config => {
     let authToken = await getData();
     if (authToken) {
       config.headers['Authorization'] = authToken;
     }
     return config;
   },
-  (error) => {
+  error => {
     return Promise.reject(error);
   },
 );

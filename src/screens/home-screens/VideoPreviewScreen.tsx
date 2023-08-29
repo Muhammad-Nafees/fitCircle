@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  BackHandler,
 } from 'react-native';
 import Video from 'react-native-video';
 const Icon = require('../../../assets/icons/cancel.png');
@@ -20,34 +21,53 @@ import Modal from 'react-native-modal';
 import {WhoCanSeeThisPost} from '../../components/home-components/WhoCanSeePost';
 import {Boost} from '../../components/home-components/Boost';
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
-const BoostIcon = require('../../../assets/icons/boost.png');
-const TextIcon = require('../../../assets/icons/textIcon.png');
+import BoostIcon from '../../../assets/icons/BoostIcon';
+import TextIcon from '../../../assets/icons/TextIcon';
 import {format} from 'date-fns';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import axiosInstance from '../../api/interceptor';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import CustomLoader from '../../components/shared-components/CustomLoader';
+import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
+const CancelIcon = require('../../../assets/icons/cancel.png');
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+  CameraOptions,
+  launchCamera,
+  ImagePickerResponse,
+} from 'react-native-image-picker';
+import Cameraicon from '../../../assets/icons/Cameraicon';
 
 interface VideoPreviewScreenProps {
   videoUri: string;
   username?: string;
   email?: string;
   handleNavigation: () => void;
+  setIsComponentMounted: (value: boolean) => void;
+  handleBackButtonPress: () => void;
 }
 
 export const VideoPreviewScreen = ({
   videoUri,
   username,
-  email,
   handleNavigation,
+  setIsComponentMounted,
+  handleBackButtonPress,
 }: VideoPreviewScreenProps) => {
   const navigation = useNavigation();
   const options = [
-    {label: '24hours', price: '$5'},
-    {label: '72hours', price: '$10'},
-    {label: '7days', price: '$15'},
+    {label: '24hrs', price: '$5'},
+    {label: '72hrs', price: '$10'},
+    {label: '7 Days', price: '$15'},
   ];
+  const frontendToBackendMapping = {
+    '24hrs': '24hours',
+    '72hrs': '72hours',
+    '7 Days': '7days',
+  };
   const videoRef = React.useRef(null);
   const userData = useSelector((state: RootState) => state.auth.user);
   const [profileImageUrl, setProfileImageUrl] = useState();
@@ -63,12 +83,24 @@ export const VideoPreviewScreen = ({
   const [selectedOptionInternal, setSelectedOptionInternal] = useState(
     options[0],
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const [titleInputValue, setTitleInputValue] = useState('');
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
+  const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnailOpen, setThumbnailOpen] = useState(false);
+  console.log(videoUri);
 
   const handleBoostOptionSelect = (optionLabel: any) => {
     setSelectedOptionInternal(optionLabel);
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsComponentMounted(false);
+      videoRef.current.seek(0);
+    }, []),
+  );
 
   const onSelectCost = (value: number) => {
     console.log(value);
@@ -81,6 +113,20 @@ export const VideoPreviewScreen = ({
   };
 
   useEffect(() => {
+    const handleBackPress = () => {
+      handleNavigation();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress,
+    );
+    return () => {
+      backHandler.remove();
+    };
+  }, [handleNavigation]);
+
+  useEffect(() => {
     const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
     setProfileImageUrl(imageUri);
   }, [userData]);
@@ -90,10 +136,21 @@ export const VideoPreviewScreen = ({
     setBoostModalVisible(false);
     setTextModalVisible(false);
     setPayment(false);
+    setTitleInputValue('');
     setContent('');
   };
 
   const handlePostButtonPress = async () => {
+    const trimmedContent = content.trim();
+    if (trimmedContent === '') {
+      Toast.show({
+        type: 'error',
+        text1: 'Video cannot be shared without text content',
+        visibilityTime: 3000,
+      });
+      return;
+    }
+    setIsLoading(true);
     console.log(selectedOptionInternal.label);
     try {
       const formData = new FormData();
@@ -104,11 +161,20 @@ export const VideoPreviewScreen = ({
         name: 'video.mp4',
         type: 'video/mp4',
       });
+      const selectedBackendOption: any =
+        frontendToBackendMapping[selectedOptionInternal.label];
       if (payment) {
-        formData.append('boostTimePeriod', selectedOptionInternal.label);
+        formData.append('boostTimePeriod', selectedBackendOption);
       }
       if (costValue && costValue > 0) {
         formData.append('cost', costValue.toString());
+      }
+      if (thumbnail !== null) {
+        formData.append('thumbnail', {
+          uri: thumbnail,
+          type: 'image/jpeg',
+          name: `image_${Date.now()}.jpg`,
+        });
       }
       const response = await axiosInstance.post('/posts/create', formData, {
         headers: {
@@ -122,8 +188,10 @@ export const VideoPreviewScreen = ({
           visibilityTime: 5000,
         });
         console.log(response);
+        setIsLoading(false);
+        handleBackButtonPress();
         handleClose();
-        handleNavigation();
+        navigation.navigate('Home');
       } else {
         Toast.show({
           type: 'success',
@@ -131,8 +199,10 @@ export const VideoPreviewScreen = ({
           visibilityTime: 5000,
         });
         console.log(response);
+        setIsLoading(false);
+        handleBackButtonPress();
         handleClose();
-        handleNavigation();
+        navigation.navigate('Home');
       }
     } catch (error) {
       console.log('API call error:', error);
@@ -141,16 +211,26 @@ export const VideoPreviewScreen = ({
         text1: 'Error sharing post. Please try again!',
         visibilityTime: 5000,
       });
+      setIsLoading(false);
       handleClose();
+      handleBackButtonPress();
       handleNavigation();
     }
   };
 
   const onBuffer = () => {
-    console.log('onBuffer');
+    console.log('onBuffer2');
   };
 
   const handleBoostModal = () => {
+    if (payment) {
+      Toast.show({
+        type: 'error',
+        text1: `This post is already boosted for ${selectedOptionInternal.label}`,
+        visibilityTime: 2000,
+      });
+      return;
+    }
     setBoostModalVisible(!isBoostModalVisible);
   };
 
@@ -190,6 +270,45 @@ export const VideoPreviewScreen = ({
     setShowDialog(false);
     navigation.navigate('UnsuccessfulDialog');
   };
+
+  const handlePhotoButtonPress = () => {
+    setThumbnail(null);
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      quality: 1,
+      maxWidth: 500,
+      maxHeight: 500,
+    };
+
+    launchImageLibrary(options, (response: ImagePickerResponse) => {
+      if (!response.didCancel && !response.errorMessage && response.assets) {
+        setThumbnail(response.assets[0].uri);
+      }
+    });
+  };
+
+  const handleThumbnailSelect = () => {
+    setThumbnailOpen(false);
+  };
+
+  const handleCaptureButtonPress = async () => {
+    setThumbnail(null);
+    const options: CameraOptions = {
+      mediaType: 'photo',
+      quality: 1,
+      maxWidth: 500,
+      maxHeight: 500,
+    };
+    launchCamera(options, (response: ImagePickerResponse) => {
+      if (!response.didCancel && !response.errorMessage && response.assets) {
+        setThumbnail(response.assets[0].uri);
+      }
+    });
+  };
+
+  const handleTitleInputChange = (text: string) => {
+    setTitleInputValue(text);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.topLeftContent}>
@@ -204,12 +323,13 @@ export const VideoPreviewScreen = ({
         )}
         <View style={styles.postTextContainer}>
           <Text style={styles.postName}>{username}</Text>
-          <Text style={styles.postId}>{email}</Text>
+          <Text style={styles.postId}>{`@${username
+            ?.toLowerCase()
+            ?.replace(/\s/g, '')}`}</Text>
         </View>
       </View>
       <Video
         ref={videoRef}
-        onBuffer={onBuffer}
         onError={onError}
         resizeMode="cover"
         source={{uri: videoUri}}
@@ -219,25 +339,31 @@ export const VideoPreviewScreen = ({
         <Text style={styles.textContent}>{content}</Text>
       </View>
       <View style={styles.iconsContainer}>
-        <TouchableOpacity onPress={handleNavigation}>
-          <Image source={Icon} style={styles.cancelIcon} />
-        </TouchableOpacity>
         <TouchableOpacity
-          style={styles.singleIconContainer}
-          onPress={handleTextModal}>
-          <Image source={TextIcon} style={styles.icon} />
-          <Text style={styles.iconText}>Text</Text>
+          onPress={() => setThumbnailOpen(!thumbnailOpen)}
+          style={styles.singleIconContainer}>
+          <Text style={[styles.iconText]}>
+            {thumbnailOpen ? 'Back' : 'Select Thumbnail'}
+          </Text>
         </TouchableOpacity>
-        {isBoostAvailable && (
+        {!thumbnailOpen && (
+          <TouchableOpacity
+            style={styles.singleIconContainer}
+            onPress={handleTextModal}>
+            <TextIcon />
+            <Text style={styles.iconText}>Text</Text>
+          </TouchableOpacity>
+        )}
+        {isBoostAvailable && !thumbnailOpen && (
           <TouchableOpacity
             style={styles.singleIconContainer}
             onPress={handleBoostModal}>
-            <Image source={BoostIcon} style={styles.icon} />
-            <Text style={styles.iconText}>Boost</Text>
+            <BoostIcon color={payment ? '#209BCC' : 'white'} />
           </TouchableOpacity>
         )}
       </View>
       <Modal
+        onBackButtonPress={() => setIsModalVisible(false)}
         isVisible={isModalVisible}
         style={styles.bottomModal}
         backdropOpacity={0.3}>
@@ -251,9 +377,10 @@ export const VideoPreviewScreen = ({
         </View>
       </Modal>
       <Modal
+        onBackButtonPress={() => setBoostModalVisible(false)}
         isVisible={isBoostModalVisible}
         style={styles.bottomModal}
-        backdropOpacity={0.3}>
+        backdropOpacity={0.7}>
         <View style={styles.boostModal}>
           <Boost
             handleDateConfirm={handleDateConfirm}
@@ -269,6 +396,7 @@ export const VideoPreviewScreen = ({
         </View>
       </Modal>
       <Modal
+        onBackButtonPress={() => setTextModalVisible(false)}
         isVisible={isTextModalVisible}
         style={styles.bottomModal}
         backdropOpacity={0.3}>
@@ -285,34 +413,90 @@ export const VideoPreviewScreen = ({
           </View>
         </View>
       </Modal>
-      <View style={styles.bottomContainer}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Add title here..."
-            placeholderTextColor="#fff"
-          />
-          <TouchableOpacity
-            style={styles.avatarButton}
-            onPress={handleAvatarButtonPress}>
-            <Text style={{color: 'white', textAlign: 'center', fontSize: 10}}>
-              {selectedOption}
-            </Text>
-            <Image
-              source={ArrowDownIcon}
-              style={{
-                width: 12,
-                height: 12,
-                tintColor: 'white',
-                marginTop: 2,
-              }}
+      {thumbnail !== null && (
+        <View
+          style={{
+            backgroundColor: '#00abd2',
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginHorizontal: 10,
+              padding: 10,
+            }}>
+            <View>
+              <Text style={{color: '#fff', marginRight: 20}}>
+                Thumbnail Attached
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => setThumbnail(null)}
+              style={{marginRight: 8}}>
+              <Image
+                source={CancelIcon}
+                style={{tintColor: '#fff', width: 18, height: 18}}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+      {thumbnailOpen ? (
+        <View
+          style={[
+            styles.bottomContainer,
+            {paddingVertical: verticalScale(15)},
+          ]}>
+          <View style={styles.iconRow}>
+            <TouchableOpacity onPress={handlePhotoButtonPress}>
+              <CreatePostSvgIcon />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleCaptureButtonPress}>
+              <Cameraicon />
+            </TouchableOpacity>
+          </View>
+          <View>
+            <CustomButton
+              extraStyles={{paddingHorizontal: 30}}
+              onPress={handleThumbnailSelect}>
+              Select as thumbnail
+            </CustomButton>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.bottomContainer}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Add title here..."
+              placeholderTextColor="#fff"
+              onChangeText={handleTitleInputChange}
+              multiline
             />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.avatarButton}
+              onPress={handleAvatarButtonPress}>
+              <Text style={{color: 'white', textAlign: 'center', fontSize: 10}}>
+                {selectedOption}
+              </Text>
+              <Image
+                source={ArrowDownIcon}
+                style={{
+                  width: 12,
+                  height: 12,
+                  tintColor: 'white',
+                  marginTop: 2,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonContainer}>
+            <CustomButton onPress={handlePostButtonPress}>
+              {isLoading ? <CustomLoader /> : 'Share'}
+            </CustomButton>
+          </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <CustomButton onPress={handlePostButtonPress}>Share</CustomButton>
-        </View>
-      </View>
+      )}
       {showDialog && (
         <View style={styles.dialogContainer}>
           <View style={styles.dialogBox}>
@@ -355,8 +539,8 @@ const styles = StyleSheet.create({
   postId: {
     marginRight: horizontalScale(10),
     color: '#007797',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 10,
+    fontWeight: '400',
   },
   postName: {
     color: '#fff',
@@ -368,7 +552,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   avatarText: {
-    backgroundColor: '#ebebeb',
+    backgroundColor: '#5e01a9',
   },
   avatarButton: {
     borderWidth: 1,
@@ -413,10 +597,11 @@ const styles = StyleSheet.create({
     marginRight: horizontalScale(16),
   },
   textInput: {
-    height: verticalScale(40),
+    height: verticalScale(45),
     backgroundColor: '#2c2c2f',
     color: 'white',
     paddingHorizontal: horizontalScale(10),
+    paddingVertical: verticalScale(10),
     marginBottom: verticalScale(8),
   },
   buttonContainer: {
@@ -424,12 +609,17 @@ const styles = StyleSheet.create({
   },
   iconsContainer: {
     position: 'absolute',
-    top: verticalScale(16),
-    right: horizontalScale(16),
+    top: verticalScale(22),
+    right: horizontalScale(26),
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'center',
     gap: 15,
+  },
+  singleIconContainer: {
+    marginVertical: verticalScale(5),
+    alignItems: 'flex-end',
+    alignSelf: 'flex-end',
   },
   icon: {
     width: horizontalScale(40),
@@ -441,9 +631,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     alignItems: 'center',
-  },
-  singleIconContainer: {
-    marginVertical: verticalScale(15),
+    fontSize: 12,
   },
   boostModal: {
     backgroundColor: '#3a3b3d',
@@ -460,12 +648,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#918f96',
     borderRadius: 15,
     marginBottom: verticalScale(10),
+    paddingLeft: verticalScale(16),
     color: 'white',
   },
   textContentContainer: {
     position: 'absolute',
     alignItems: 'center',
-    marginTop: '160%',
+    marginTop: '145%',
     marginRight: '10%',
     marginLeft: horizontalScale(20),
     zIndex: 88,
@@ -501,6 +690,12 @@ const styles = StyleSheet.create({
     height: verticalScale(24),
     tintColor: 'white',
     position: 'absolute',
+  },
+  iconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 20,
+    marginHorizontal: 16,
   },
 });
 

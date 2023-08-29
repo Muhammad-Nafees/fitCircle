@@ -1,8 +1,8 @@
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-const PhotoIcon = require('../../../assets/icons/createpost.png');
-const VideoIcon = require('../../../assets/icons/video.png');
-const CameraIcon = require('../../../assets/icons/camera.png');
+import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
+import VideoSvgIcon from '../../../assets/icons/VideoIcon';
+import Cameraicon from '../../../assets/icons/Cameraicon';
 
 interface BottomMinimizedContainerProps {
   handlePhotoButtonPress: () => void;
@@ -21,13 +21,13 @@ export const BottomMinimizedContainer = ({
     </View>
     <View style={styles.bottomMinimizedIconsContainer}>
       <TouchableOpacity onPress={handlePhotoButtonPress}>
-        <Image source={PhotoIcon} style={styles.imageIcon} />
+        <CreatePostSvgIcon />
       </TouchableOpacity>
       <TouchableOpacity onPress={handleVideoButtonPress}>
-        <Image source={VideoIcon} style={styles.imageIcon} />
+        <VideoSvgIcon />
       </TouchableOpacity>
       <TouchableOpacity onPress={handleCaptureButtonPress}>
-        <Image source={CameraIcon} style={styles.imageIcon} />
+        <Cameraicon />
       </TouchableOpacity>
     </View>
   </View>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: horizontalScale(16),
     alignItems: 'center',
-    paddingVertical: 30,
+    paddingVertical: 27,
   },
   bottomMinimizedTextContainer: {
     flex: 1,
@@ -55,18 +55,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    gap: 8,
+    gap: 15,
   },
   bottomMinimizedContainerText: {
     color: 'white',
     fontWeight: '700',
     fontSize: 14,
     marginRight: horizontalScale(35),
-  },
-  imageIcon: {
-    width: horizontalScale(24),
-    height: verticalScale(24),
-    tintColor: '#0192c0',
-    marginHorizontal: horizontalScale(5),
   },
 });

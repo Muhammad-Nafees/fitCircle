@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
@@ -12,7 +13,7 @@ import {Formik} from 'formik';
 import {forgetPasswordSchema} from '../../../validations';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import {generateOtp} from '../../../api';
+import {generateEmailOtp} from '../../../api';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface FormValues {
@@ -28,7 +29,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      const response = await generateOtp(values.email);
+      const response = await generateEmailOtp(values.email);
       const data = response.data;
       setIsLoading(false);
       Toast.show({
@@ -60,7 +61,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
   };
 
   return (
-    <View style={STYLES.container}>
+    <ScrollView style={STYLES.container}>
       <View style={{gap: 10}}>
         <Text
           style={[
@@ -87,6 +88,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
           errors,
           touched,
           initialTouched,
+          setFieldError,
         }) => (
           <View style={{flex: 1}}>
             <View style={{marginTop: verticalScale(42), gap: 0}}>
@@ -98,8 +100,8 @@ const ForgetPasswordEmail = ({navigation}: any) => {
                   color: '#fff',
                   borderRadius: 10,
                   height: verticalScale(50),
-                  paddingHorizontal: horizontalScale(10),
-                  borderWidth: 1,
+                  paddingHorizontal: horizontalScale(15),
+                  borderWidth: isFocused ? 1 : 0,
                   borderColor: isFocused ? 'white' : 'gray',
                 }}
                 placeholder="Type here"
@@ -107,7 +109,12 @@ const ForgetPasswordEmail = ({navigation}: any) => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={values.email}
-                onChangeText={handleChange('email')}
+                onChangeText={text => {
+                  handleChange('email')(text);
+                  if (errors.email && touched.email) {
+                    setFieldError('email', '');
+                  }
+                }}
                 onFocus={handleFocus}
               />
               {errors.email && touched.email ? (
@@ -130,7 +137,9 @@ const ForgetPasswordEmail = ({navigation}: any) => {
             </View>
             <View
               style={{flex: 1, justifyContent: 'flex-end', marginBottom: 20}}>
-              <TouchableOpacity onPress={() => console.log('Something')}>
+              <View style={{height: verticalScale(300)}}></View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgetPasswordNumber')}>
                 <Text
                   style={{
                     textAlign: 'center',
@@ -167,7 +176,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
           </View>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 };
 

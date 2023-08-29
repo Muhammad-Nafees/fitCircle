@@ -9,6 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   PermissionsAndroid,
+  PanResponder,
+  Alert,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -38,15 +40,14 @@ import {RootState} from '../../redux/store';
 import VideoPreviewScreen from './VideoPreviewScreen';
 import {ScrollView} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
+import CustomLoader from '../../components/shared-components/CustomLoader';
+import LinearGradient from 'react-native-linear-gradient';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 
 export const AddPostScreen = ({route}: any) => {
   const navigation = useNavigation();
-  const authToken = useSelector(
-    (state: RootState) => state.auth.authorizationToken,
-  );
   const userData = useSelector((state: RootState) => state.auth.user);
   const [profileImageUrl, setProfileImageUrl] = useState();
   const username = userData?.username;
@@ -56,21 +57,36 @@ export const AddPostScreen = ({route}: any) => {
   const [isCreatePostIconModalVisible, setIsCreatePostIconModalVisible] =
     useState(false);
   const [textInputValue, setTextInputValue] = useState('');
-  const [textInputBackgroundColor, setTextInputBackgroundColor] =
-    useState('transparent');
-  const [mediaUri, setMediaUri] = useState<string | null>();
+  const [textInputBackgroundColor, setTextInputBackgroundColor] = useState<
+    string | string[]
+  >('transparent');
+  const [mediaUri, setMediaUri] = useState<string | null>(null);
   const [videoUri, setVideoUri] = useState<string | null>();
-  const [isEnabled, setIsEnabled] = useState(false);
   const [titleInput, setTitleInput] = useState('');
   const [costValue, setCostValue] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const checkButtonEnable = () => {
-    return textInputValue.length > 0 || mediaUri !== null;
-  };
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsModalVisible(false);
+      setIsComponentMounted(true);
+      setIsCreatePostIconModalVisible(false);
+      setTextInputValue('');
+      setMediaUri('');
+      setTextInputBackgroundColor('transparent');
+      setIsLoading(false);
+      setTitleInput('');
+    }, []),
+  );
 
-  const handleNavigation = () => {
-    navigation.navigate('Home');
-  };
+  useEffect(() => {
+    requestCameraPermission();
+  }, []);
+
+  useEffect(() => {
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    setProfileImageUrl(imageUri);
+  }, [userData]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -92,30 +108,60 @@ export const AddPostScreen = ({route}: any) => {
     setCostValue(value);
   };
 
-  useEffect(() => {
-    setIsEnabled(checkButtonEnable());
-  }, [textInputValue, mediaUri]);
-
   const handlePostButtonPress = async () => {
+    setIsLoading(true);
+    if (textInputValue.trim().length === 0 && !mediaUri) {
+      Toast.show({
+        type: 'error',
+        text1: 'Post Empty',
+        text2: 'Post cannot be empty. Please attach media or text',
+        visibilityTime: 2000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const postData = {
+      let hexCode: string;
+
+      if (!Array.isArray(textInputBackgroundColor))
+        hexCode = textInputBackgroundColor;
+      else {
+        let str = '';
+
+        textInputBackgroundColor.forEach((hex, i) => {
+          str += hex + (i === textInputBackgroundColor.length - 1 ? '' : ',');
+        });
+
+        hexCode = str;
+      }
+      let postData = {
         content: textInputValue,
         media: videoUri ? videoUri : mediaUri,
-        cost: costValue > 0 ? costValue : null,
         visibility: selectedOption.toLowerCase(),
         hexCode:
-          textInputBackgroundColor === 'transparent'
-            ? null
-            : `${textInputBackgroundColor}`,
+          textInputBackgroundColor === 'transparent' ? null : `${hexCode}`,
       };
-      console.log(postData.media);
-      const response = await postContent(postData, authToken);
+
+      if (mediaUri) {
+        postData = {
+          ...postData,
+          cost: costValue > 0 ? costValue : null,
+        };
+      } else {
+        postData = {
+          ...postData,
+          cost: null,
+        };
+      }
+      const response = await postContent(postData);
       if (response.status === 200) {
         Toast.show({
           type: 'success',
           text1: 'Post successful',
           visibilityTime: 2000,
         });
+        setIsLoading(false);
       } else {
         Toast.show({
           type: 'success',
@@ -123,6 +169,7 @@ export const AddPostScreen = ({route}: any) => {
           visibilityTime: 2000,
         });
         console.log('Post failed:', response.data);
+        setIsLoading(false);
         navigation.navigate('Home');
       }
     } catch (error) {
@@ -132,6 +179,7 @@ export const AddPostScreen = ({route}: any) => {
         text1: 'Post Failed',
         visibilityTime: 2000,
       });
+      setIsLoading(false);
       navigation.navigate('Home');
     }
   };
@@ -152,7 +200,7 @@ export const AddPostScreen = ({route}: any) => {
     setIsComponentMounted(false);
   };
 
-  const handleColorSelected = (color: any) => {
+  const handleColorSelected = (color: string | string[]) => {
     setTextInputBackgroundColor(color);
   };
 
@@ -174,6 +222,17 @@ export const AddPostScreen = ({route}: any) => {
     });
   };
 
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (evt, gestureState) => {
+        setIsComponentMounted(true);
+      },
+      onPanResponderRelease: () => {},
+      onPanResponderTerminate: () => {},
+    }),
+  ).current;
+
   const handleVideoLibrary = () => {
     setVideoUri(null);
     setMediaUri(null);
@@ -184,12 +243,18 @@ export const AddPostScreen = ({route}: any) => {
 
     launchImageLibrary(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
+        setIsCreatePostIconModalVisible(false);
         setVideoUri(response.assets[0].uri);
       }
     });
   };
 
-  const handleCaptureButtonPress = () => {
+  const handleCaptureButtonPress = async () => {
+    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+      Alert.alert('Permission denied', 'Allow permission to access images');
+      console.log('Camera permission denied');
+      return;
+    }
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
@@ -206,7 +271,26 @@ export const AddPostScreen = ({route}: any) => {
     });
   };
 
-  const handleVideoButtonPress = () => {
+  async function hasAndroidPermission() {
+    const permission =
+      Platform.Version >= '33'
+        ? PermissionsAndroid.PERMISSIONS.CAMERA
+        : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+      return true;
+    }
+
+    const status = await PermissionsAndroid.request(permission);
+    return status === 'granted';
+  }
+
+  const handleVideoButtonPress = async () => {
+    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+      Alert.alert('Permission denied', 'Allow permission to access images');
+      return;
+    }
     setIsCreatePostIconModalVisible(false);
     setVideoUri(null);
     setMediaUri(null);
@@ -214,7 +298,7 @@ export const AddPostScreen = ({route}: any) => {
     const options: CameraOptions = {
       mediaType: 'video',
       videoQuality: 'low',
-      durationLimit: 60,
+      durationLimit: 120,
       saveToPhotos: true,
     };
     launchCamera(options, (response: ImagePickerResponse) => {
@@ -228,6 +312,8 @@ export const AddPostScreen = ({route}: any) => {
     setMediaUri(null);
     setTextInputValue('');
     setVideoUri(null);
+    setTextInputBackgroundColor('transparent');
+    setTitleInput('');
     navigation.navigate('Home');
   };
 
@@ -254,6 +340,18 @@ export const AddPostScreen = ({route}: any) => {
     }
   };
 
+  const handleCancelImage = () => {
+    setMediaUri(null);
+  };
+
+  const handleVideoNullify = () => {
+    setIsCreatePostIconModalVisible(false);
+    setVideoUri(null);
+    setMediaUri(null);
+    setTextInputBackgroundColor('transparent');
+    setTitleInput('');
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -275,10 +373,12 @@ export const AddPostScreen = ({route}: any) => {
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
               <CustomButton
-                onPress={isEnabled ? handlePostButtonPress : undefined}
-                isDisabled={!isEnabled}
-                extraStyles={{width: 56, height: 31}}>
-                Post
+                onPress={handlePostButtonPress}
+                extraStyles={{
+                  width: 56,
+                  height: 31,
+                }}>
+                {isLoading ? <CustomLoader /> : 'Post'}
               </CustomButton>
             </TouchableOpacity>
           </View>
@@ -321,25 +421,65 @@ export const AddPostScreen = ({route}: any) => {
                 />
               </TouchableOpacity>
             </View>
-            <TextInput
+            <View
               style={[
-                styles.textInputColor,
-                {backgroundColor: textInputBackgroundColor},
-                textInputBackgroundColor !== 'transparent'
-                  ? {height: 150}
-                  : null,
-              ]}
-              placeholder="What do you want to talk about?"
-              placeholderTextColor="white"
-              value={textInputValue}
-              multiline
-              onChangeText={text => setTextInputValue(text)}
-              textAlignVertical={'top'}
-            />
+                styles.inputContainer,
+                mediaUri !== null && {marginBottom: 0},
+              ]}>
+              {Array.isArray(textInputBackgroundColor) ? (
+                <LinearGradient
+                  colors={textInputBackgroundColor}
+                  style={styles.coloredInput}>
+                  <TextInput
+                    style={[
+                      styles.textInputColor,
+                      {
+                        backgroundColor: !Array.isArray(
+                          textInputBackgroundColor,
+                        )
+                          ? textInputBackgroundColor
+                          : 'transparent',
+                        minHeight: 90,
+                      },
+                    ]}
+                    placeholder="What do you want to talk about?"
+                    placeholderTextColor="white"
+                    value={textInputValue}
+                    multiline
+                    onChangeText={text => setTextInputValue(text)}
+                    textAlignVertical={'top'}
+                  />
+                </LinearGradient>
+              ) : (
+                <TextInput
+                  style={[
+                    styles.textInputColor,
+                    {
+                      backgroundColor:
+                        textInputBackgroundColor ?? 'transparent',
+                    },
+                    textInputBackgroundColor !== 'transparent'
+                      ? {minHeight: 90, marginTop: 10}
+                      : null,
+                  ]}
+                  placeholder="What do you want to talk about?"
+                  placeholderTextColor="white"
+                  value={textInputValue}
+                  multiline
+                  onChangeText={text => setTextInputValue(text)}
+                  textAlignVertical={'top'}
+                />
+              )}
+            </View>
             <View style={styles.postContainer}>
               {mediaUri && !videoUri && (
                 <View style={styles.mediaContainer}>
                   <Image source={{uri: mediaUri}} style={styles.media} />
+                  <TouchableOpacity
+                    style={styles.cancelIconContainer}
+                    onPress={handleCancelImage}>
+                    <Image source={CancelIcon} style={styles.cancelIcon} />
+                  </TouchableOpacity>
                 </View>
               )}
             </View>
@@ -347,6 +487,7 @@ export const AddPostScreen = ({route}: any) => {
         </ScrollView>
         <View style={styles.modalContainer}>
           <Modal
+            onBackButtonPress={() => setIsModalVisible(false)}
             isVisible={isModalVisible}
             style={styles.bottomModal}
             onBackdropPress={() => setIsModalVisible(false)}
@@ -361,6 +502,7 @@ export const AddPostScreen = ({route}: any) => {
             </View>
           </Modal>
           <Modal
+            onBackButtonPress={() => setIsComponentMounted(false)}
             isVisible={isComponentMounted}
             style={styles.bottomModal}
             onBackdropPress={handlePostOptionsIconModalClose}
@@ -376,6 +518,7 @@ export const AddPostScreen = ({route}: any) => {
             </View>
           </Modal>
           <Modal
+            onBackButtonPress={() => setIsCreatePostIconModalVisible(false)}
             isVisible={isCreatePostIconModalVisible}
             style={styles.bottomModal}
             onBackdropPress={() => setIsCreatePostIconModalVisible(false)}
@@ -391,34 +534,41 @@ export const AddPostScreen = ({route}: any) => {
           </Modal>
         </View>
         {!mediaUri && (
-          <ColorSelectionSlider
-            colors={[
-              '#CC5252',
-              '#88BD91',
-              '#654848',
-              '#AF3E3E',
-              '#42A883',
-              '#00FF00',
-              '#0000FF',
-              '#FFFF00',
-              '#FF00FF',
-            ]}
-            onColorSelected={handleColorSelected}
-          />
+          <View style={{paddingTop: verticalScale(40)}}>
+            <View>
+              <ColorSelectionSlider
+                colors={[
+                  '#CC5252',
+                  '#88BD91',
+                  ['#DC8686', '#274B6C'],
+                  '#654848',
+                  '#AF3E3E',
+                  '#42A883',
+                  ['#4A8D21', '#9CE271', '#BF3A3A'],
+                  '#FFFF00',
+                  '#FF00FF',
+                ]}
+                onColorSelected={handleColorSelected}
+              />
+            </View>
+          </View>
         )}
-        <BottomMinimizedContainer
-          handlePhotoButtonPress={handlePhotoButtonPress}
-          handleVideoButtonPress={handleVideoButtonPress}
-          handleCaptureButtonPress={handleCaptureButtonPress}
-        />
+        <View style={styles.minimizedContainer} {...panResponder.panHandlers}>
+          <BottomMinimizedContainer
+            handlePhotoButtonPress={handlePhotoButtonPress}
+            handleVideoButtonPress={handleVideoButtonPress}
+            handleCaptureButtonPress={handleCaptureButtonPress}
+          />
+        </View>
       </View>
       {videoUri && (
         <View style={StyleSheet.absoluteFill}>
           <VideoPreviewScreen
             videoUri={videoUri}
-            email={userData?.email}
+            handleBackButtonPress={handleBackButtonPress}
             username={userData?.username}
-            handleNavigation={handleNavigation}
+            handleNavigation={handleVideoNullify}
+            setIsComponentMounted={setIsComponentMounted}
           />
         </View>
       )}
@@ -440,6 +590,7 @@ const styles = StyleSheet.create({
     padding: moderateScale(8),
     flexDirection: 'row',
     justifyContent: 'space-between',
+    backgroundColor: '#282b2c',
   },
   button: {
     padding: moderateScale(8),
@@ -458,13 +609,15 @@ const styles = StyleSheet.create({
     flex: 2.5,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    paddingHorizontal: horizontalScale(16),
+    paddingHorizontal: horizontalScale(0),
   },
   avatarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginVertical: verticalScale(10),
+    marginVertical: verticalScale(1),
+    paddingHorizontal: horizontalScale(20),
+    marginTop: 10,
   },
   postContainer: {
     flex: 1,
@@ -507,12 +660,13 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 10,
     color: 'white',
-    paddingHorizontal: horizontalScale(15),
+    paddingHorizontal: horizontalScale(20),
   },
   mediaContainer: {
     marginVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: 16,
   },
   media: {
     width: horizontalScale(340),
@@ -536,5 +690,30 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'black',
     justifyContent: 'center',
+  },
+  minimizedContainer: {
+    position: 'relative',
+    marginTop: 0,
+  },
+  inputContainer: {
+    flex: 2,
+    width: '100%',
+    marginBottom: 40,
+  },
+  coloredInput: {
+    width: '100%',
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  cancelIconContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  cancelIcon: {
+    width: 20,
+    height: 20,
+    tintColor: 'white',
   },
 });

@@ -32,12 +32,13 @@ export interface CreateAccountFormValues {
   confirmPassword: string;
 }
 
-const CreateAccount = ({navigation}: any) => {
+const CreateAccount = ({navigation, route}: any) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
   const [phoneCode, setPhoneCode] = useState('1');
+  const [countryCode, setCountryCode] = useState(route.params.countryCode);
 
   const phoneNumberCheck = (values: any) => {
     const isValid = phoneInput.current?.isValidNumber(values);
@@ -49,10 +50,10 @@ const CreateAccount = ({navigation}: any) => {
   };
 
   const initialValues: CreateAccountFormValues = {
-    email: '',
-    phone: null,
-    password: '',
-    confirmPassword: '',
+    email: route.params.email,
+    phone: route.params.phone,
+    password: route.params.password,
+    confirmPassword: route.params.password,
   };
   const handleSubmit = async (values: CreateAccountFormValues) => {
     setIsLoading(true);
@@ -84,7 +85,7 @@ const CreateAccount = ({navigation}: any) => {
         Toast.show({
           type: 'error',
           text1: 'Account Already Exists!',
-          text2: 'Please try another email.',
+          text2: 'Please try another email or phone number.',
         });
       } else if (error.response.status === 500) {
         Toast.show({
@@ -115,9 +116,10 @@ const CreateAccount = ({navigation}: any) => {
           errors,
           touched,
           setFieldValue,
+          setFieldError,
         }) => (
           <>
-            <Text style={[STYLES.text16, {fontWeight: '700'}]}>
+            <Text style={[STYLES.text16, {fontWeight: '700', marginTop: 16}]}>
               Create Account
             </Text>
             <View style={styles.formContainer}>
@@ -131,6 +133,8 @@ const CreateAccount = ({navigation}: any) => {
                 autoCapitalize="none"
                 initialTouched={true}
                 handleChange={handleChange('email')}
+                setFieldError={setFieldError}
+                fieldName="email"
               />
               <CustomPhoneInput
                 value={values.phone}
@@ -140,8 +144,10 @@ const CreateAccount = ({navigation}: any) => {
                 setFieldValue={setFieldValue}
                 phoneInput={phoneInput}
                 setIsError={setIsError}
+                setFieldError={setFieldError}
                 isError={isError}
                 setPhoneCode={setPhoneCode}
+                countryCode={countryCode}
               />
               <CustomInput
                 label="Password"
@@ -152,9 +158,11 @@ const CreateAccount = ({navigation}: any) => {
                 isPasswordIcon={true}
                 initialTouched={true}
                 handleChange={handleChange('password')}
+                setFieldError={setFieldError}
+                fieldName="password"
               />
               <CustomInput
-                label="Re-Enter Password"
+                label="Re-enter Password"
                 placeholder="Re-Enter Password"
                 value={values.confirmPassword}
                 error={errors.confirmPassword}
@@ -162,6 +170,8 @@ const CreateAccount = ({navigation}: any) => {
                 touched={touched.confirmPassword}
                 initialTouched={true}
                 handleChange={handleChange('confirmPassword')}
+                setFieldError={setFieldError}
+                fieldName="confirmPassword"
               />
             </View>
             <View style={styles.button}>

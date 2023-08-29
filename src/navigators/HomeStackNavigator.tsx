@@ -2,7 +2,6 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import {horizontalScale, verticalScale} from '../utils/metrics';
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
 import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
@@ -18,7 +17,6 @@ const HomeStackNavigator = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
       initialRouteName="AddPostScreen">
-      {/* // initialRouteName="SplashScreen">  */}
       <Stack.Screen
         name="AddPostScreen"
         component={AddPostScreen}
