@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 
-const VerificationSix = ({navigation, disabled}: any) => {
+const VerificationSix = ({navigation, disabled, route, data}: any) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const formdata: null | any = data;
 
   const options = [
     'Increase Lean Muscle',
@@ -26,6 +27,10 @@ const VerificationSix = ({navigation, disabled}: any) => {
       setSelectedOptions(prevOptions => [...prevOptions, option]);
     }
   };
+
+  useEffect(() => {
+    if (formdata) setSelectedOptions(formdata);
+  }, [formdata]);
 
   return (
     <View
@@ -61,7 +66,7 @@ const VerificationSix = ({navigation, disabled}: any) => {
             <TouchableOpacity
               key={index}
               style={styles.optionItem}
-              onPress={() => handleSelectOption(option)}>
+              onPress={() => !disabled && handleSelectOption(option)}>
               <Text style={styles.optionText}>{option}</Text>
               <View
                 style={[
@@ -81,7 +86,12 @@ const VerificationSix = ({navigation, disabled}: any) => {
         <View style={styles.buttonContainer}>
           <CustomButton
             isDisabled={selectedOptions.length === 0}
-            onPress={() => navigation.navigate('VerificationSeven')}>
+            onPress={() =>
+              navigation.navigate('VerificationSeven', {
+                ...route.params,
+                optionals: selectedOptions,
+              })
+            }>
             Submit
           </CustomButton>
         </View>

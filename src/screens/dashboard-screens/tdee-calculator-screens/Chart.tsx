@@ -3,16 +3,23 @@ import PieChart from 'react-native-pie-chart';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import ColorChart from '../../../../assets/icons/ColorChart';
+import {NutritionData} from '../../../interfaces/extra.interface';
 
 const legends = [
   {color: '#24A3CC', label: 'Protein'},
-  {color: '#209BCC', label: 'Fat'},
-  {color: '#21334E', label: 'Carb'},
+  {color: '#209BCC', label: 'Carb'},
+  {color: '#21334E', label: 'Fat'},
 ];
 
-export const ChartScreen = ({navigation}: any) => {
+export const ChartScreen = ({navigation, route}: any) => {
+  const chartData: NutritionData = route.params;
+
   const widthAndHeight = 290;
-  const series = [82, 64, 185];
+  const series = [
+    chartData.fatGrams,
+    chartData.carbGrams,
+    chartData.proteinGrams,
+  ];
   const sliceColor = ['#21334E', '#209BCC', '#24A3CC'];
   return (
     <View style={styles.container}>
@@ -43,9 +50,9 @@ export const ChartScreen = ({navigation}: any) => {
             widthAndHeight={widthAndHeight}
             series={series}
             sliceColor={sliceColor}
-            text1="Protein: 64 g"
-            text2="Carb: 82 g"
-            text3="Protein: 185 g"
+            text1={`Fat: ${chartData.fatGrams} g`}
+            text2={`Carb: ${chartData.carbGrams} g`}
+            text3={`Protien: ${chartData.proteinGrams} g`}
           />
           <View
             style={{

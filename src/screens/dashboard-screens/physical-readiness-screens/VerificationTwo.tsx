@@ -16,21 +16,44 @@ const questionTexts = [
   'Is there any reason, not mentioned thus far, that would not allow you to participate in a physical fitness program?',
 ];
 
-const VerificationTwo = ({disabled, navigation}: any) => {
+const VerificationTwo = ({disabled, navigation, route, data}: any) => {
+  const formdata: null | any = data;
+ 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
-            answer1: '',
-            answer2: '',
-            answer3: '',
-            answer4: '',
-            answer5: '',
-            answer6: '',
+            answer1: (formdata && formdata[0]?.answer) ?? '',
+            answer2: (formdata && formdata[1]?.answer) ?? '',
+            answer3: (formdata && formdata[2]?.answer) ?? '',
+            answer4: (formdata && formdata[3]?.answer) ?? '',
+            answer5: (formdata && formdata[4]?.answer) ?? '',
+            answer6: (formdata && formdata[5]?.answer) ?? '',
           }}
           validateOnChange={false}
-          onSubmit={values => console.log(values)}>
+          onSubmit={values => {
+            const answersArr = Object.values(values);
+            const isRemainingField = answersArr.find(ans => ans === '') === '';
+            if (isRemainingField) return;
+
+            let answers: {question: string; answer: 'Yes' | 'No' | string}[] =
+              [];
+
+            questionTexts.forEach((q: string, i) => {
+              answers.push({
+                question: q,
+                answer: answersArr[i],
+              });
+            });
+
+            // console.log(answers);
+            // console.log(values);
+            navigation.navigate('VerificationThree', {
+              ...route.params,
+              verificationTwo: answers,
+            });
+          }}>
           {({values, setFieldValue, handleSubmit}) => (
             <>
               {disabled !== true && (
@@ -43,6 +66,7 @@ const VerificationTwo = ({disabled, navigation}: any) => {
                   <Field key={`answer${index + 1}`} name={`answer${index + 1}`}>
                     {({field}: any) => (
                       <CustomRadioButton
+                        disabled={disabled}
                         text={text}
                         value={field.value}
                         selectedValue={values[`answer${index + 1}`]}
@@ -56,7 +80,8 @@ const VerificationTwo = ({disabled, navigation}: any) => {
               {disabled !== true && (
                 <View style={styles.button}>
                   <CustomButton
-                    onPress={() => navigation.navigate('VerificationThree')}>
+                    // onPress={() => navigation.navigate('VerificationThree')}
+                    onPress={handleSubmit}>
                     Continue
                   </CustomButton>
                 </View>

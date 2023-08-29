@@ -9,10 +9,17 @@ import {
   moderateScale,
   horizontalScale,
 } from '../../../utils/metrics';
+import {PhysicalActivitySchema} from '../../../validations';
 
-const VerificationFive = ({navigation, disabled}: any) => {
+const VerificationFive = ({navigation, disabled, route, data}: any) => {
+  const formdata: null | any = data;
   const handleSubmit = values => {
     console.log('Form values:', values);
+    navigation.navigate('VerificationSix', {
+      ...route.params,
+      verificationFive: values,
+    });
+
     // Handle form submission or navigation here
   };
 
@@ -21,14 +28,23 @@ const VerificationFive = ({navigation, disabled}: any) => {
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
-            desiredBodyFat: '',
-            desiredWeight: '',
-            desiredLeanMuscle: '',
-            exerciseFrequency: '',
+            desiredBodyFat: formdata?.desiredBodyFat ?? '',
+            desiredWeight: formdata?.desiredWeight ?? '',
+            desiredLeanMuscle: formdata?.desiredLeanMuscle ?? '',
+            exerciseFrequency: formdata?.exerciseFrequency ?? '',
           }}
           validateOnChange={false}
+          validationSchema={PhysicalActivitySchema}
           onSubmit={handleSubmit}>
-          {({handleChange, handleSubmit, values}) => (
+          {({
+            handleChange,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            setFieldValue,
+            setFieldError,
+          }) => (
             <>
               {disabled !== true && (
                 <View style={{marginTop: 16, paddingHorizontal: 16}}>
@@ -54,41 +70,69 @@ const VerificationFive = ({navigation, disabled}: any) => {
                 </View>
               )}
               <View style={styles.formContainer}>
+                {/* <CustomInput
+                  label="Email"
+                  placeholder="lincolnsmith@gmail.com"
+                  value={values.email}
+                  error={errors.email}
+                  touched={touched.email}
+                  handleChange={handleChange('email')}
+                  setFieldError={setFieldError}
+                  fieldName="email"
+                  keyboardType="email-address"
+                /> */}
                 <CustomInput
+                  editable={!disabled}
                   label="Desired Body Fat"
                   placeholder="19%"
                   value={values.desiredBodyFat}
                   handleChange={handleChange('desiredBodyFat')}
                   keyboardType="numeric"
+                  error={errors.desiredBodyFat}
+                  touched={touched.desiredBodyFat}
+                  setFieldError={setFieldError}
+                  fieldName="desiredBodyFat"
                 />
                 <CustomInput
+                  editable={!disabled}
                   label="Desired Weight"
                   placeholder="61 kg"
                   value={values.desiredWeight}
                   handleChange={handleChange('desiredWeight')}
                   keyboardType="numeric"
+                  error={errors.desiredWeight}
+                  touched={touched.desiredWeight}
+                  setFieldError={setFieldError}
+                  fieldName="desiredWeight"
                 />
                 <CustomInput
                   label="Desired Lean Muscle"
+                  editable={!disabled}
                   placeholder="70-90%"
                   value={values.desiredLeanMuscle}
                   handleChange={handleChange('desiredLeanMuscle')}
                   keyboardType="numeric"
+                  error={errors.desiredLeanMuscle}
+                  touched={touched.desiredLeanMuscle}
+                  setFieldError={setFieldError}
+                  fieldName="desiredLeanMuscle"
                 />
                 <CustomInput
                   label="I plan to exercise ______ times of the week."
+                  editable={!disabled}
                   placeholder="6"
                   value={values.exerciseFrequency}
                   handleChange={handleChange('exerciseFrequency')}
                   keyboardType="numeric"
+                  error={errors.exerciseFrequency}
+                  touched={touched.exerciseFrequency}
+                  setFieldError={setFieldError}
+                  fieldName="exerciseFrequency"
                 />
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton
-                    onPress={() => navigation.navigate('VerificationSix')}>
-                    Continue
-                  </CustomButton>
+                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
                 </View>
               )}
             </>
