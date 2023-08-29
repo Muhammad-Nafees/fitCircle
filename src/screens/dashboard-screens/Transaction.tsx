@@ -27,7 +27,7 @@ export const Transaction = ({navigation}: any) => {
           paddingHorizontal: 12,
           flex: 0.05,
         }}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.navigate('Dashboard')}>
         <Image
           source={ArrowBack}
           style={{width: 24, height: 24, tintColor: 'white'}}
@@ -83,7 +83,6 @@ export const Transaction = ({navigation}: any) => {
                 <Text></Text>
                 <Text style={styles.detail}>To</Text>
                 <Text></Text>
-                <Text style={[styles.detail, {paddingTop: 16}]}>Amount</Text>
               </View>
               <View style={[styles.detailsColumn, {alignItems: 'flex-end'}]}>
                 <Text style={styles.detailData}>May 4, 2023</Text>
@@ -92,20 +91,39 @@ export const Transaction = ({navigation}: any) => {
                 <Text></Text>
                 <Text style={styles.detailData}>2:00 PM</Text>
                 <Text></Text>
-                <View style={{alignItems: 'flex-end'}}>
-                  <Text style={styles.detailData}>Isaac Butler</Text>
-                  <Text style={{fontSize: 10, fontWeight: '400'}}>
-                    isaacButtler@gmail.com
-                  </Text>
-                </View>
+                <Text style={styles.detailData}>Isaac Butler</Text>
+                <Text style={{fontSize: 10, fontWeight: '400'}}>
+                  isaacButtler@gmail.com
+                </Text>
                 <Text></Text>
+              </View>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginHorizontal: 20,
+              }}>
+              <View
+                style={{
+                  alignItems: 'flex-start',
+                  flex: 1,
+                }}>
+                <Text style={styles.detail}>Amount</Text>
+              </View>
+              <View
+                style={{
+                  alignItems: 'flex-end',
+                  flex: 1,
+                }}>
                 <Text
                   style={{
                     fontSize: 22,
                     fontWeight: '600',
                     color: 'rgba(255, 123, 131, 1)',
                   }}>
-                  - $20:00
+                  - $20.00
                 </Text>
               </View>
             </View>

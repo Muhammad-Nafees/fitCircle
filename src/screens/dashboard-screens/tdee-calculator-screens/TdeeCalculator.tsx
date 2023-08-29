@@ -28,6 +28,7 @@ const activityFactors = {
     value: 1.9,
   },
 };
+import CustomHeader from '../../../components/shared-components/CustomHeader';
 
 export const TdeeCalculator = ({navigation}: any) => {
   const formikRef: any = useRef();
@@ -76,6 +77,13 @@ export const TdeeCalculator = ({navigation}: any) => {
   }, []);
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
+      <View style={{paddingBottom: 10}}>
+        <CustomHeader
+          onPress={() =>
+            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
+          }
+        />
+      </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           // const
@@ -88,10 +96,11 @@ export const TdeeCalculator = ({navigation}: any) => {
             goal: '',
             startDate: '',
             goalWeight: '',
-            calorieDeficit: '',
-            activityFactor: '',
+            caloriedeficit: '',
+            activityfactor: '',
           }}
           validateOnChange={false}
+          validationSchema={TdeeCalculatorSchema}
           validationSchema={TdeeCalculatorSchema}
           onSubmit={handleSubmit}>
           {({
@@ -119,6 +128,7 @@ export const TdeeCalculator = ({navigation}: any) => {
               <View style={styles.formContainer}>
                 <CustomSelect
                   label="Gender"
+                  placeholder="Gender"
                   values={['Male', 'Female']}
                   selectedValue={values.gender}
                   error={errors.gender}
@@ -142,7 +152,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                 <CustomInput
                   label="Age"
                   starlabel={true}
-                  placeholder=""
+                  placeholder="Type here"
                   value={values.age}
                   error={errors.age}
                   touched={touched.age}
@@ -160,6 +170,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                   <DropdownTextInput
                     value={values.height}
                     options={['ft', 'm']}
+                    placeholder="Type here"
                     defaultOption="ft"
                     handleChange={handleChange('height')}
                     error={errors.height}
@@ -178,6 +189,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                   <DropdownTextInput
                     value={values.weight}
                     options={['kg', 'lb']}
+                    placeholder="Type here"
                     defaultOption="kg"
                     handleChange={handleChange('weight')}
                     error={errors.weight}
@@ -190,6 +202,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                 </View>
                 <CustomSelect
                   label="Goal"
+                  placeholder="Choose here"
                   starlabel={true}
                   values={['Muscle Gain', 'Weight loss/cutting', 'Maintain']}
                   selectedValue={values.goal}
@@ -211,10 +224,22 @@ export const TdeeCalculator = ({navigation}: any) => {
                     borderRadius: 0,
                   }}
                 />
+                <CustomInput
+                  label="Start Date (dd/mm/yyyy)"
+                  placeholder="Type here"
+                  value={values.startDate}
+                  error={errors.startDate}
+                  touched={touched.startDate}
+                  initialTouched={true}
+                  handleChange={handleChange('startDate')}
+                  setFieldError={setFieldError}
+                  fieldName="startDate"
+                />
                 <View style={{width: '85%'}}>
                   <Text style={styles.label}>Goal Weight</Text>
                   <DropdownTextInput
                     value={values.goalWeight}
+                    placeholder="Type here"
                     options={['kg', 'lb']}
                     defaultOption="kg"
                     handleChange={handleChange('goalWeight')}
@@ -234,10 +259,10 @@ export const TdeeCalculator = ({navigation}: any) => {
                     'Moderate                                                                     TDEE (.15)',
                     'Aggressive                                                                  TDEE (.20)',
                   ]}
-                  selectedValue={values.calorieDeficit}
-                  error={errors.calorieDeficit}
+                  selectedValue={values.goal}
+                  error={errors.caloriedeficit}
                   initialTouched={true}
-                  touched={touched.calorieDeficit}
+                  touched={touched.caloriedeficit}
                   setFieldValue={setFieldValue}
                   setFieldError={setFieldError}
                   handleChange={handleChange('calorieDeficit')}

@@ -209,8 +209,8 @@ export const TdeeCalculatorSchema = Yup.object().shape({
   goalWeight: Yup.string()
     .required('Goal weight is required')
     .test('not-zero', 'Goal weight must not be 0', value => !/^0/.test(value)),
-  calorieDeficit: Yup.string().required('Calorie deficit is required'),
-  activityFactor: Yup.string().required('Select activity factor'),
+  caloriedeficit: Yup.string().required('Calorie deficit is required'),
+  activityfactor: Yup.string().required('Activity Factor is required'),
 });
 
 // startDate: Yup.string()

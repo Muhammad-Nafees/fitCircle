@@ -10,6 +10,7 @@ import {MealPlanTwo} from '../screens/dashboard-screens/meal-plan-screens/MealPl
 import {MealPlanThree} from '../screens/dashboard-screens/meal-plan-screens/MealPlanThree';
 import {MealPlanFour} from '../screens/dashboard-screens/meal-plan-screens/MealPlanFour';
 import RequestMealPlan from '../screens/dashboard-screens/meal-plan-screens/RequestMealPlan';
+import HomeTabNavigator from './HomeTabNavigator';
 
 const Stack = createStackNavigator();
 const MealPlanStackNavigator = () => {
@@ -27,13 +28,18 @@ const MealPlanStackNavigator = () => {
       <Stack.Screen name="MealPlanThree" component={MealPlanThree} />
       <Stack.Screen name="MealPlanFour" component={MealPlanFour} />
       <Stack.Screen
-        name="SuccessfulDialog"
+        name="SuccessfulMealDialog"
         component={SuccessfulDialog}
         options={{headerShown: false}}
       />
       <Stack.Screen
         name="RequestMealPlan"
         component={RequestMealPlan}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="DashboardScreen"
+        component={HomeTabNavigator}
         options={{headerShown: false}}
       />
       <Stack.Screen

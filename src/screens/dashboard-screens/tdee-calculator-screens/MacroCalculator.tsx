@@ -224,48 +224,59 @@ export const MacroCalculator = ({navigation, route}: any) => {
                 Macro Calculator
               </Text>
               <View style={styles.formContainer}>
-                <CustomSelect
-                  label="Select a Preset (Carb % / Protein % / Fat %)"
-                  values={[
-                    'High Card',
-                    'High Protein',
-                    'Recommended',
-                    'Low Carb',
-                    'Ketogenic',
-                  ]}
-                  selectedValue={values.preset}
-                  error={errors.preset}
-                  initialTouched={true}
-                  touched={touched.preset}
-                  setFieldValue={setFieldValue}
-                  setFieldError={setFieldError}
-                  fieldName="preset"
-                  extraRowTextStyle={{color: 'white', fontSize: 12}}
-                  extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
-                  extraDropdownStyle={{
-                    borderBottomRightRadius: 10,
-                    borderBottomLeftRadius: 10,
-                  }}
-                  extraSelectedRowStyle={{
-                    backgroundColor: 'rgba(68, 68, 68, 1)',
-                    marginVertical: 0,
-                    borderRadius: 0,
-                  }}
-                />
-                <Text
+                <View
                   style={{
-                    color: 'white',
-                    fontSize: 12,
-                    fontStyle: 'italic',
-                    marginHorizontal: 35,
-                    marginTop: -18,
-                    marginBottom: 50,
-                    textAlign: 'left',
+                    width: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 10,
                   }}>
-                  Note: To use a custom Macro setting, please visit our new and
-                  improved Macro Calculator
-                </Text>
-                <View style={{marginVertical: 20, marginRight: '60%'}}>
+                  <CustomSelect
+                    label="Select a Preset (Carb % / Protein % / Fat %)"
+                    values={[
+                      'High Carb                                                               50c-30p-20f',
+                      'High Protein                                                          40c-40p-20f',
+                      'Recommended                                                     40c-30p-30f',
+                      'Low Carb                                                                40c-30p-30f',
+                      'Ketogenic                                                               40c-30p-30f',
+                    ]}
+                    placeholder={
+                      'Low Carb                                  20c-45p-35f'
+                    }
+                    selectedValue={values.preset}
+                    error={errors.preset}
+                    initialTouched={true}
+                    touched={touched.preset}
+                    setFieldValue={setFieldValue}
+                    setFieldError={setFieldError}
+                    fieldName="preset"
+                    extraRowTextStyle={{color: 'white', fontSize: 12}}
+                    extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
+                    extraDropdownStyle={{
+                      borderBottomRightRadius: 10,
+                      borderBottomLeftRadius: 10,
+                    }}
+                    extraSelectedRowStyle={{
+                      backgroundColor: 'rgba(68, 68, 68, 1)',
+                      marginVertical: 0,
+                      borderRadius: 0,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 12,
+                      fontStyle: 'italic',
+                      marginTop: -20,
+                      width: '85%',
+                      marginBottom: 30,
+                      textAlign: 'left',
+                    }}>
+                    Note: To use a custom Macro setting, please visit our new
+                    and improved Macro Calculator
+                  </Text>
+                </View>
+                <View style={{marginBottom: 20, marginRight: '60%'}}>
                   <Text style={styles.heading}>Carbohydrates</Text>
                 </View>
                 <View
@@ -359,7 +370,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    marginTop: verticalScale(100),
+    marginTop: verticalScale(70),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
   },

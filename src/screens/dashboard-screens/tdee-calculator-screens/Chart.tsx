@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import PieChart from 'react-native-pie-chart';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';

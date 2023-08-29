@@ -29,6 +29,7 @@ interface Props {
   extraSelectedRowStyle?: any;
   starlabel?: boolean;
   handleChange?: any;
+  placeholder?: string;
 }
 
 export const CustomSelect: React.FC<Props> = ({
@@ -54,6 +55,7 @@ export const CustomSelect: React.FC<Props> = ({
   extraSelectedRowStyle,
   starlabel,
   handleChange,
+  placeholder,
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
 
@@ -91,6 +93,7 @@ export const CustomSelect: React.FC<Props> = ({
           setFieldValue(field, selectedItem),
             setCountry && setCountry(selectedItem);
         }}
+        placeholder={placeholder}
         renderDropdownIcon={() =>
           isIcon && <Icon name="chevron-down-outline" color="grey" size={24} />
         }
@@ -115,6 +118,7 @@ export const CustomSelect: React.FC<Props> = ({
           backgroundColor: '#FBFBFB',
           ...extraRowStyle,
         }}
+        defaultValue={'Gender'}
         buttonTextStyle={{
           fontSize: 14,
           color: fontColor ? fontColor : '#000000',

@@ -75,11 +75,6 @@ const CustomInput = ({...props}: Props) => {
 
   const inputStyle = {
     ...styles.input,
-    // borderColor: isFocused
-    //   ? 'transparent'
-    //   : props.touched && props.error
-    //   ? 'red'
-    //   : 'transparent',
   };
 
   return (
