@@ -280,6 +280,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                   }}
                 />
                 <CustomSelect
+                  placeholder="Choose here"
                   label="Activity Factor"
                   starlabel={true}
                   values={Object.keys(activityFactors)}

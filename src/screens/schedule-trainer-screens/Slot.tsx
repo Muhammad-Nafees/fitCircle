@@ -157,13 +157,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#209BCC',
     alignItems: 'center',
     justifyContent: 'center',
-<<<<<<< HEAD
-    width: 110,
-    height: 110,
-=======
     width: width - 282,
     height: height - 715,
->>>>>>> feat-dashboard-sameer
     marginVertical: 5,
     marginHorizontal: 5,
     borderRadius: 10,

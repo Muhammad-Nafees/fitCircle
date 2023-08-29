@@ -10,27 +10,18 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../utils/metrics';
-<<<<<<< HEAD
-
-const questionTexts = [
-  'Do you ever feel weak, fatigued, or sluggish?',
-=======
 import CustomInput from '../../../components/shared-components/CustomInput';
 
 const questionTexts = [
->>>>>>> feat-dashboard-sameer
   'Do you know how many calories you eat in a day?',
   'Do you eat breakfast?',
   'Are you taking supplements? (i.e. vitamins, amino acids, protein shakes, etc.)',
   'Do you need several cups of coffee to keep you going throughout the day?',
   'Do you often experience digestive difficulties?',
   'Proper nutrition can increase the body’s ability to enhance physical and mental performance by up to 80%. Do you feel that a properly structured nutrition and exercise program would benefit you?',
-<<<<<<< HEAD
-=======
 ];
 
 const questionTexts2 = [
->>>>>>> feat-dashboard-sameer
   'Have you reached and maintained your goals?',
   'Are you happy with the way you look and your health?',
 ];
@@ -43,7 +34,7 @@ const questionSeriousness =
 
 const VerificationFour = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
- 
+
   const handleSubmit = (values: {
     answer10: string;
     answer11: string;
@@ -185,7 +176,6 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
             setFieldValue,
             setFieldError,
           }) => (
->>>>>>> feat-dashboard-sameer
             <>
               {disabled !== true && (
                 <Text
@@ -202,9 +192,6 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                 </Text>
               )}
               <View style={styles.formContainer}>
-<<<<<<< HEAD
-                {questionTexts.map((text, index = 6) => (
-=======
                 <Field key={`answer7`} name={`answer7`}>
                   {({field}: any) => (
                     <CustomRadioButton
@@ -307,7 +294,6 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                   <CustomButton onPress={() => handleSubmit(values)}>
                     Continue
                   </CustomButton>
->>>>>>> feat-dashboard-sameer
                 </View>
               )}
             </>
