@@ -8,6 +8,7 @@ const CustomRadioButton = ({
   selectedValue,
   setFieldValue,
   name,
+  disabled
 }: any) => {
   const handleSelect = (selected: string) => {
     setFieldValue(name, selected);
@@ -36,7 +37,7 @@ const CustomRadioButton = ({
           label="Yes"
           value="Yes"
           status={selectedValue === 'Yes' ? 'checked' : 'unchecked'}
-          onPress={() => handleSelect('Yes')}
+          onPress={() => !disabled && handleSelect('Yes')}
           color="#209BCC"
           labelStyle={{
             marginLeft: 5,
@@ -50,7 +51,7 @@ const CustomRadioButton = ({
           label="No"
           value="No"
           status={selectedValue === 'No' ? 'checked' : 'unchecked'}
-          onPress={() => handleSelect('No')}
+          onPress={() => !disabled && handleSelect('No')}
           color="#209BCC"
           labelStyle={{
             marginLeft: 5,

@@ -266,7 +266,14 @@ const DashboardScreen = ({navigation}: any) => {
       </View>
       <View style={[styles.bottomContainer, isTrainerAvailable && {flex: 1}]}>
         <Text style={styles.transactionText}>Last Transaction</Text>
-        <TouchableOpacity
+        <Text
+          style={[
+            styles.transactionText,
+            {fontSize: 14, paddingVertical: 0, opacity: 0.8},
+          ]}>
+          Coming soon
+        </Text>
+        {/* <TouchableOpacity
           onPress={() => navigation.navigate('TransactionScreen')}>
           <CustomTransaction
             profileImageUrl={profileImageUrl}
@@ -287,7 +294,7 @@ const DashboardScreen = ({navigation}: any) => {
             amount="- $50"
             listText="Unlocked Content"
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

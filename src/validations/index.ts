@@ -4,25 +4,22 @@ import {RootState} from '../redux/store';
 import moment from 'moment';
 const currentDate = moment();
 
+const email = Yup.string()
+  .matches(
+    /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+    'Invalid email',
+  )
+  .required('Email is required');
+
 export const loginSchema = Yup.object().shape({
-  email: Yup.string()
-    .matches(
-      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
-      'Invalid email',
-    )
-    .required('Email is required'),
+  email: email,
   password: Yup.string()
     .required('Password is required')
     .min(8, 'Password must be at least 8 characters long'),
 });
 
 export const signupSchema = Yup.object().shape({
-  email: Yup.string()
-    .matches(
-      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
-      'Invalid email',
-    )
-    .required('Email is required'),
+  email: email,
   phone: Yup.string().required('Phone number is required!'),
   password: Yup.string()
     .required('Password is required')
@@ -37,12 +34,7 @@ export const signUpFormSchema = Yup.object().shape({
   name: Yup.string()
     .required('Name is required')
     .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
-  email: Yup.string()
-    .matches(
-      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
-      'Invalid email',
-    )
-    .required('Email is required'),
+  email: email,
   phone: Yup.string().required('Phone number is required!'),
   password: Yup.string()
     .required('Password is required')
@@ -150,12 +142,7 @@ export const genderSchema = Yup.object().shape({
 });
 
 export const forgetPasswordSchema = Yup.object().shape({
-  email: Yup.string()
-    .matches(
-      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
-      'Invalid email',
-    )
-    .required('Email is required'),
+  email: email,
 });
 
 export const createNewPasswordSchema = Yup.object().shape({
@@ -175,12 +162,7 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
       'Invalid date format. Must be dd/mm/yyyy',
     )
     .required('Date is required'),
-  email: Yup.string()
-    .matches(
-      /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
-      'Invalid email',
-    )
-    .required('Email is required'),
+  email: email,
   firstName: Yup.string()
     .required('First Name is required')
     .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
@@ -204,6 +186,13 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
     .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
 });
 
+export const PhysicalActivitySchema = Yup.object().shape({
+  desiredBodyFat: Yup.number().required('This field is required'),
+  desiredWeight: Yup.number().required('This field is required'),
+  desiredLeanMuscle: Yup.number().required('This field is required'),
+  exerciseFrequency: Yup.number().required('This field is required'),
+});
+
 export const TdeeCalculatorSchema = Yup.object().shape({
   gender: Yup.string().required('Select gender'),
   age: Yup.number()
@@ -216,16 +205,17 @@ export const TdeeCalculatorSchema = Yup.object().shape({
   weight: Yup.string()
     .required('Weight is required')
     .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
-  goal: Yup.string().required('Goal is required'),
-  startDate: Yup.string()
-    .matches(
-      /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
-      'Invalid date format. Must be dd/mm/yyyy',
-    )
-    .required('Start date is required'),
+  goal: Yup.string().required('Select goal'),
   goalWeight: Yup.string()
     .required('Goal weight is required')
     .test('not-zero', 'Goal weight must not be 0', value => !/^0/.test(value)),
   caloriedeficit: Yup.string().required('Calorie deficit is required'),
   activityfactor: Yup.string().required('Activity Factor is required'),
 });
+
+// startDate: Yup.string()
+//   .matches(
+//     /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+//     'Invalid date format. Must be dd/mm/yyyy',
+//   )
+//   .required('Start date is required'),

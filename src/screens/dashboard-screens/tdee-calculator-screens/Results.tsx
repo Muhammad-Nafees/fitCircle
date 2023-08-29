@@ -5,22 +5,25 @@ import CustomInput from '../../../components/shared-components/CustomInput';
 import {verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 
-export const Results = ({navigation}: any) => {
+export const Results = ({navigation, route}: any) => {
+  const {data, weight} = route.params;
+  console.log("🚀 ~ file: Results.tsx:10 ~ Results ~ data:", data)
+
   const handleSubmit = () => {
-    navigation.navigate('MacroCalculator');
+    navigation.navigate('MacroCalculator', {data, weight});
   };
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
-            bmi: '36.5',
-            bmr: '1992 Calories',
-            deficitCalories: '548 Calories',
-            dailyCalories: '1664 Calories',
-            daysToReachGoal: '383 days',
-            targetDate: '13/04/2024',
-            tdee: '2192 Calories',
+            bmi: data.bmi.toFixed(1),
+            bmr: `${data.bmr} Calories`,
+            deficitCalories: `${data.calorieDeficit} Calories`,
+            dailyCalories: `${data.dailyCalories} Calories`,
+            daysToReachGoal: `${data.daysToReachGoal} days`,
+            targetDate: data.targetDate,
+            tdee: `${data.tdee.toFixed(1)} Calories`,
           }}
           onSubmit={handleSubmit}>
           {({
