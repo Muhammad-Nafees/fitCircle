@@ -18,7 +18,7 @@ const questionTexts = [
 
 const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
- 
+
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -46,9 +46,6 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
                 answer: answersArr[i],
               });
             });
-
-            // console.log(answers);
-            // console.log(values);
             navigation.navigate('VerificationThree', {
               ...route.params,
               verificationTwo: answers,
