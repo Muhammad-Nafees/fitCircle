@@ -7,12 +7,74 @@ import {CustomSelect} from '../../../components/shared-components/CustomSelect';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {moderateScale, verticalScale} from '../../../utils/metrics';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
+import axiosInstance from '../../../api/interceptor';
+import {useEffect, useRef} from 'react';
+import {format} from 'date-fns';
+
+const activityFactors = {
+  'Sedentary (Little or no exercise)': {
+    value: 1.2,
+  },
+  'Lightly active (Light exercise/sports 1-3 days a week)': {
+    value: 1.3,
+  },
+  'Moderately active (Moderate exercise/sports 3-5 days aweek)': {
+    value: 1.5,
+  },
+  'Very active (Hard exercise/sports 6-7 days a week)': {
+    value: 1.7,
+  },
+  'Extra active (Hard exercise/sports 6-7 days a week, plus physical job)': {
+    value: 1.9,
+  },
+};
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 
 export const TdeeCalculator = ({navigation}: any) => {
-  const handleSubmit = () => {
-    navigation.navigate('Results');
+  const formikRef: any = useRef();
+
+  const handleSubmit = async (values: any) => {
+    try {
+      const currentDate = format(new Date(), 'dd/LL/Y');
+      const reqObj = {
+        gender: values.gender.toLowerCase(),
+        age: values.age,
+        height: values.height,
+        weight: values.weight,
+        goal:
+          values.goal === 'Muscle Gain'
+            ? 'slow'
+            : values.goal === 'Weight loss/cutting'
+            ? 'moderate'
+            : 'aggressive',
+        calorieDeficit: values.calorieDeficit.includes('10')
+          ? 0.1
+          : values.calorieDeficit.includes('15')
+          ? 0.15
+          : 0.2,
+        startDate: currentDate,
+        goalWeight: values.goalWeight,
+        activityFactor:
+          activityFactors[values.activityFactor as keyof typeof activityFactors]
+            .value,
+      };
+
+      const response = await axiosInstance.post(`tdee/result`, reqObj);
+
+      formikRef.current?.resetForm();
+      if (response.status === 200)
+        navigation.navigate('Results', {
+          data: response.data,
+          weight: values.weight,
+        });
+    } catch (error) {
+      console.log('🚀 ~ handleFormSave ~ error:', error);
+    }
   };
+
+  useEffect(() => {
+    formikRef.current?.resetForm();
+  }, []);
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <View style={{paddingBottom: 10}}>
@@ -24,6 +86,8 @@ export const TdeeCalculator = ({navigation}: any) => {
       </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
+          // const
+          innerRef={formikRef}
           initialValues={{
             gender: '',
             age: '',
@@ -173,27 +237,26 @@ export const TdeeCalculator = ({navigation}: any) => {
                 <View style={{width: '85%'}}>
                   <Text style={styles.label}>Goal Weight</Text>
                   <DropdownTextInput
-                    value={values.weight}
+                    value={values.goalWeight}
                     placeholder="Type here"
                     options={['kg', 'lb']}
                     defaultOption="kg"
-                    handleChange={handleChange('weight')}
-                    error={errors.weight}
-                    touched={touched.weight}
+                    handleChange={handleChange('goalWeight')}
+                    error={errors.goalWeight}
+                    touched={touched.goalWeight}
                     initialTouched={true}
                     setFieldError={setFieldError}
-                    fieldName="weight"
+                    fieldName="goalWeight"
                     tdee={true}
                   />
                 </View>
                 <CustomSelect
                   label="Calorie Deficit"
-                  placeholder="Choose here"
-                  starlabel={false}
+                  starlabel={true}
                   values={[
                     'Slow                                                                              TDEE (.10)',
                     'Moderate                                                                     TDEE (.15)',
-                    'Aggressive                                                                  TDEE (.15)',
+                    'Aggressive                                                                  TDEE (.20)',
                   ]}
                   selectedValue={values.goal}
                   error={errors.caloriedeficit}
@@ -201,6 +264,7 @@ export const TdeeCalculator = ({navigation}: any) => {
                   touched={touched.caloriedeficit}
                   setFieldValue={setFieldValue}
                   setFieldError={setFieldError}
+                  handleChange={handleChange('calorieDeficit')}
                   fieldName="calorieDeficit"
                   extraRowTextStyle={{color: 'white', fontSize: 12}}
                   extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
@@ -215,21 +279,17 @@ export const TdeeCalculator = ({navigation}: any) => {
                   }}
                 />
                 <CustomSelect
-                  label="Activity Factor"
                   placeholder="Choose here"
-                  values={[
-                    'Sedentary (Little or no exercise)',
-                    'Lightly active (Light exercise/sports 3-5 days a week)',
-                    'Moderately active (Moderate exercise/sports 3-5 days aweek)',
-                    'Very active (Hard exercise/sports 6-7 days a week)',
-                    'Extra active (Hard exercise/sports 6-7 days a week, plus physical job)',
-                  ]}
-                  selectedValue={values.activityfactor}
-                  error={errors.activityfactor}
+                  label="Activity Factor"
+                  starlabel={true}
+                  values={Object.keys(activityFactors)}
+                  selectedValue={values.activityFactor}
+                  error={errors.activityFactor}
                   initialTouched={true}
-                  touched={touched.activityfactor}
+                  touched={touched.activityFactor}
                   setFieldValue={setFieldValue}
                   setFieldError={setFieldError}
+                  handleChange={handleChange('activityFactor')}
                   fieldName="activityFactor"
                   extraRowTextStyle={{
                     color: 'white',

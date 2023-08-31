@@ -46,29 +46,45 @@ const SetSchedule = ({route, navigation}: any) => {
     ? formatDate(selectedDate)
     : formatDate(new Date());
 
-  const generateTimeSlots = () => {
-    const currentTime = moment().add(1, 'hour').startOf('hour');
-    const endTime = moment().set({
-      hour: 24,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
-    const timeSlots = [];
+  const generateTimeSlots = (forNextDay = false) => {
+    const currentTime = moment();
+    if (forNextDay) {
+      const startTime = moment().add(1, 'day').startOf('day');
+      const endTime = moment(startTime).add(1, 'day');
 
-    while (currentTime.isBefore(endTime)) {
-      const startTime = currentTime.clone();
-      const endTime = currentTime.add(1, 'hour');
-      const formattedSlot = `${startTime.format('h:mmA')} - ${endTime.format(
-        'h:mmA',
-      )}`;
-      timeSlots.push(formattedSlot);
+      const timeSlots = [];
+      while (startTime.isBefore(endTime)) {
+        const formattedSlot = `${startTime.format('h:mmA')} - ${startTime
+          .add(1, 'hour')
+          .format('h:mmA')}`;
+        timeSlots.push(formattedSlot);
+      }
+      return timeSlots;
+    } else {
+      const nextHourStart = moment().add(1, 'hour').startOf('hour');
+      const endTime = moment().set({
+        hour: 24,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      });
+      const timeSlots = [];
+
+      while (nextHourStart.isBefore(endTime)) {
+        const startTime = nextHourStart.clone();
+        const endTime = nextHourStart.add(1, 'hour');
+        const formattedSlot = `${startTime.format('h:mmA')} - ${endTime.format(
+          'h:mmA',
+        )}`;
+        timeSlots.push(formattedSlot);
+      }
+
+      return timeSlots;
     }
-
-    return timeSlots;
   };
 
   const options = generateTimeSlots();
+  const nextDayOptions = generateTimeSlots(true);
 
   const handleSelectOption = option => {
     if (selectedOptions.includes(option)) {
@@ -131,7 +147,11 @@ const SetSchedule = ({route, navigation}: any) => {
       <View style={styles.bottomContainer}>
         <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
         <FlatList
-          data={options}
+          data={
+            formattedSelectedDate === formatDate(new Date())
+              ? options
+              : nextDayOptions
+          }
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderOptionItem}
           contentContainerStyle={styles.optionsContainer}

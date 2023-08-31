@@ -370,10 +370,7 @@ const styles = StyleSheet.create({
     color: 'white',
     padding: moderateScale(8),
     backgroundColor: '#00abd2',
-<<<<<<< HEAD
-=======
     position: 'relative',
->>>>>>> feat-dashboard-sameer
   },
   commentButton: {
     marginLeft: horizontalScale(5),

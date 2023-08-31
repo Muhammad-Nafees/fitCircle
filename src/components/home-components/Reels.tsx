@@ -15,10 +15,10 @@ const ShareIcon = require('../../../assets/icons/share2.png');
 const PlayIcon = require('../../../assets/icons/playIcon.png');
 const PauseIcon = require('../../../assets/icons/pauseIcon.png');
 const LockOpenIcon = require('../../../assets/icons/lock-open.png');
+const CancelIcon = require('../../../assets/icons/cancel.png');
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-const Wallpaper = require('../../../assets/wallpaper.jpg');
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
@@ -43,15 +43,44 @@ interface ReelsProps {
   index: number;
   currIndex: number;
   tabBarHeight: any;
+  isProfile: boolean;
+  handleCancelPress: any;
 }
 
+const defaultPost = {
+  _id: '64e0b316ee5a31d3fa55edec',
+  user: {
+    _id: '64c0489c1b7733ae1e2c2614',
+    email: 'fitcircletest1234@gmail.com',
+    username: 'Sam32',
+  },
+  content: 'Testing',
+  media:
+    'https://fit-1-bucket.s3.us-west-1.amazonaws.com/1692447509448_0.33454017719268325_video.mp4',
+  thumbnail: null,
+  visibility: 'public',
+  favorites: [],
+  cost: null,
+  boosted: false,
+  boostEndTime: null,
+  hexCode: null,
+  likes: [],
+  comments: [],
+  shares: [],
+  createdAt: '2023-08-19T12:18:30.172Z',
+  updatedAt: '2023-08-19T12:18:30.172Z',
+  __v: 0,
+};
+
 export const ReelsComponent = ({
-  post,
+  post = defaultPost,
   userId,
   viewable,
   index,
   currIndex,
   tabBarHeight,
+  isProfile,
+  handleCancelPress,
 }: ReelsProps) => {
   const {_id, media, content, user, cost, favorites, thumbnail} = post;
   const {profileImageUrl, username, email} = user;
@@ -125,27 +154,46 @@ export const ReelsComponent = ({
   };
 
   return (
-    <View style={[styles.container, {height: height - 120 - tabBarHeight}]}>
-      <View style={styles.topLeftContent}>
-        {profileImageUrl ? (
-          <Avatar.Image
-            size={40}
-            source={{uri: profileImageUrl}}
-            style={styles.avatarImage}
-          />
-        ) : (
-          <Avatar.Text
-            size={40}
-            label={username ? username[0].toUpperCase() : 'SA'}
-            style={styles.avatarText}
-          />
-        )}
-        <View style={styles.postTextContainer}>
-          <Text style={styles.postName}>{username}</Text>
-          <Text style={styles.postId}>{`@${username
-            ?.toLowerCase()
-            ?.replace(/\s/g, '')}`}</Text>
+    <View
+      style={[
+        styles.container,
+        isProfile !== true && {height: height - 120 - tabBarHeight},
+      ]}>
+      <View style={[styles.topLeftContent, {padding: 0}]}>
+        <View style={[styles.topLeftContent, {left: -15, top: -15}]}>
+          {profileImageUrl ? (
+            <Avatar.Image
+              size={40}
+              source={{uri: profileImageUrl}}
+              style={styles.avatarImage}
+            />
+          ) : (
+            <Avatar.Text
+              size={40}
+              label={username ? username[0].toUpperCase() : 'SA'}
+              style={styles.avatarText}
+            />
+          )}
+          <View style={styles.postTextContainer}>
+            <Text style={styles.postName}>{username}</Text>
+            <Text style={styles.postId}>{`@${username
+              ?.toLowerCase()
+              ?.replace(/\s/g, '')}`}</Text>
+          </View>
         </View>
+        <TouchableOpacity
+          onPress={handleCancelPress}
+          style={{
+            alignItems: 'flex-end',
+            justifyContent: 'flex-end',
+            left: width - 50,
+            top: 8,
+          }}>
+          <Image
+            source={CancelIcon}
+            style={{width: 20, height: 20, tintColor: 'white'}}
+          />
+        </TouchableOpacity>
       </View>
       {isLocked ? (
         <View style={styles.lockedOverlay}>
@@ -243,6 +291,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: verticalScale(15),
     marginHorizontal: horizontalScale(16),
+    justifyContent: 'space-between',
     position: 'absolute',
     top: 0,
     left: 0,

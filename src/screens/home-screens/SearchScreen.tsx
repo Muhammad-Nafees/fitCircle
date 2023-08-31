@@ -9,7 +9,6 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import axiosInstance from '../../api/interceptor';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {UserSearch} from '../../components/home-components/UserSearch';
 import {
@@ -18,6 +17,10 @@ import {
   verticalScale,
 } from '../../utils/metrics';
 import {searchUser} from '../../api';
+import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/Ionicons';
+import CustomButton from '../../components/shared-components/CustomButton';
+import {STYLES} from '../../styles/globalStyles';
 
 const SearchIcon = require('../../../assets/icons/search.png');
 const FilterIcon = require('../../../assets/icons/filter.png');
@@ -29,6 +32,8 @@ export const SearchScreen = () => {
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [searchData, setSearchData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [followModal, setFollowModal] = useState(false);
+  const [modalName, setModalName] = useState('');
   const navigation = useNavigation();
 
   useFocusEffect(
@@ -37,21 +42,6 @@ export const SearchScreen = () => {
       setSearchData([]);
     }, []),
   );
-
-  const handleSearch = async () => {
-    setSearchData([]);
-    setIsLoading(true);
-    try {
-      if (searchQuery.trim() !== '') {
-        const endpoint = `home/search/${searchQuery}`;
-        const response = await axiosInstance.get(endpoint);
-        setIsLoading(false);
-        setSearchData(response.data);
-      }
-    } catch (error) {
-      console.error('Error while searching:', error);
-    }
-  };
 
   const handleSearchBarBlur = () => {
     setIsSearchActive(false);
@@ -69,15 +59,20 @@ export const SearchScreen = () => {
   };
 
   const handleBackButtonPress = () => {
+    setSearchQuery('');
     navigation.goBack();
+  };
+
+  const handleFollowButton = (name: string) => {
+    setModalName(name);
+    setFollowModal(!followModal);
   };
 
   let placeholderText = selectedFilter
     ? `Search ${selectedFilter} ...`
     : 'Search';
 
-  const renderItem = ({item, index}: any) => {
-    const isLastItem = index === searchData.length - 1;
+  const renderItem = ({item}: any) => {
     if (
       !selectedFilter ||
       (selectedFilter === 'nutritionist' && item.role === 'trainer') ||
@@ -85,12 +80,13 @@ export const SearchScreen = () => {
       (selectedFilter === 'other' && item.role === 'user')
     ) {
       return (
-        <View
-          style={[
-            styles.searchResultContainer,
-            isLastItem && {borderBottomWidth: 0},
-          ]}>
-          <UserSearch username={item.username} email={item.email} />
+        <View>
+          <UserSearch
+            username={item.username}
+            email={item.email}
+            profileImageUrl={item.profileImageUrl}
+            handleFollowButton={handleFollowButton}
+          />
         </View>
       );
     }
@@ -187,6 +183,27 @@ export const SearchScreen = () => {
           <ActivityIndicator size="large" />
         </View>
       )}
+      <Modal
+        isVisible={followModal}
+        style={styles.modal}
+        animationIn="fadeIn"
+        animationOut="fadeOut">
+        <View style={styles.modalContent}>
+          <View style={styles.card}>
+            <View style={styles.iconModal}>
+              <Icon name="checkmark-outline" color="white" size={24} />
+            </View>
+            <Text style={[STYLES.text14, {marginTop: 2}]}>
+              You followed {modalName}
+            </Text>
+            <View style={{width: '75%', marginTop: verticalScale(25)}}>
+              <CustomButton onPress={() => setFollowModal(false)}>
+                Return
+              </CustomButton>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -263,12 +280,34 @@ const styles = StyleSheet.create({
     width: horizontalScale(24),
     tintColor: '#fff',
   },
-  searchResultContainer: {
-    borderBottomColor: '#fff',
-    borderBottomWidth: 0.6,
-  },
   activityIndicate: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    alignItems: 'center',
+    marginHorizontal: 35,
+  },
+  modal: {
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    width: '100%',
+    height: '100%',
+    margin: 0,
+  },
+  card: {
+    backgroundColor: 'rgba(107, 107, 107, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 271,
+    height: 180,
+    borderRadius: 30,
+  },
+  iconModal: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#30D298',
     justifyContent: 'center',
     alignItems: 'center',
   },

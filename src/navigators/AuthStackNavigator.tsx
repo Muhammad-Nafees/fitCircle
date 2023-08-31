@@ -121,11 +121,6 @@ const AuthStackNavigator = () => {
         component={BlankButtonRenderScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen
-        name="PasswordChangedDialog"
-        component={FavoriteDialogScreen}
-        options={{headerShown: false}}
-      />
     </Stack.Navigator>
   );
 };

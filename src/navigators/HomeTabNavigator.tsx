@@ -19,6 +19,10 @@ import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
 import MealPlanStackNavigator from './MealPlanStackNavigator';
 import {Transaction} from '../screens/dashboard-screens/Transaction';
 import UserSchedule from '../screens/schedule-trainer-screens/UserSchedule';
+import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
+import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
+import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
+import ReelsComponent from '../components/home-components/Reels';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -211,6 +215,29 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="FavoriteDialog"
         component={FavoriteDialogScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="PackageDetail"
+        component={PackageDetailScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="SearchProfile"
+        component={SearchProfileScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,

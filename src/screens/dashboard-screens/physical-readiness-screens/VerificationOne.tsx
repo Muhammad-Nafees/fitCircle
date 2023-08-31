@@ -7,11 +7,11 @@ import {
 } from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import {Formik} from 'formik';
+import {Formik, useFormik} from 'formik';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {format} from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {
   horizontalScale,
   moderateScale,
@@ -24,20 +24,32 @@ import {useDispatch} from 'react-redux';
 import {setAnswers} from '../../../redux/readinessTestSlice';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 import PhoneInput from 'react-native-phone-number-input';
+import {useIsFocused} from '@react-navigation/native';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 
-export const VerificationOne = ({navigation, disabled}: any) => {
+export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
   const [phoneCode, setPhoneCode] = useState('1');
   const dispatch = useDispatch();
 
+  const editable = typeof disabled === 'boolean' ? !disabled : true;
+
+  const isFocused = useIsFocused();
+  const formikRef = useRef();
+
+  const formdata: null | any = data;
+
   const formSubmit = (values: any) => {
     console.log('Form values:', values);
-    dispatch(setAnswers(values));
-    navigation.navigate('VerificationTwo');
+    // dispatch(setAnswers(values));
+    navigation.navigate('VerificationTwo', {verificationOne: values});
   };
+
+  useEffect(() => {
+    if (isFocused && route?.params?.clearValues) formikRef.current?.resetForm();
+  }, [isFocused]);
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
@@ -50,23 +62,24 @@ export const VerificationOne = ({navigation, disabled}: any) => {
       </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
+          innerRef={formikRef}
           initialValues={{
-            date: '',
-            email: '',
-            firstName: '',
-            lastName: '',
-            address: '',
-            city: '',
-            zip: '',
-            homePhone: '',
-            cellPhone: '',
-            age: '',
-            height: '',
-            weight: '',
+            date: formdata?.date ?? '',
+            email: formdata?.email ?? '',
+            firstName: formdata?.firstName ?? '',
+            lastName: formdata?.lastName ?? '',
+            address: formdata?.address ?? '',
+            city: formdata?.city ?? '',
+            zip: formdata?.zip ?? '',
+            homePhone: formdata?.homePhone ?? '',
+            cellPhone: formdata?.cellPhone ?? '',
+            age: formdata?.age ?? '',
+            height: formdata?.height ?? '',
+            weight: formdata?.weight ?? '',
           }}
+          onSubmit={formSubmit}
           validateOnChange={false}
-          // validationSchema={PhysicalReadinessTestSchema}
-          onSubmit={formSubmit}>
+          validationSchema={PhysicalReadinessTestSchema}>
           {({
             handleChange,
             handleSubmit,
@@ -93,7 +106,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
               )}
               <View style={styles.formContainer}>
                 <TouchableWithoutFeedback
-                  onPress={() => setDatePickerVisible(true)}>
+                  onPress={() => editable && setDatePickerVisible(true)}>
                   <View style={{position: 'relative'}}>
                     <CustomInput
                       label="Date"
@@ -119,6 +132,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                     <DateTimePickerModal
                       isVisible={isDatePickerVisible}
                       mode="date"
+                      disabled={editable}
                       onConfirm={(e: any) => {
                         const formattedDate = format(e, 'dd/MM/yyyy');
                         setFieldValue('date', formattedDate);
@@ -130,6 +144,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   </View>
                 </TouchableWithoutFeedback>
                 <CustomInput
+                  editable={editable}
                   label="Email"
                   placeholder="lincolnsmith@gmail.com"
                   value={values.email}
@@ -141,6 +156,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   keyboardType="email-address"
                 />
                 <CustomInput
+                  editable={editable}
                   label="First Name"
                   placeholder="Lincoln"
                   value={values.firstName}
@@ -151,6 +167,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   fieldName="firstName"
                 />
                 <CustomInput
+                  editable={editable}
                   label="Last Name"
                   placeholder="Smith"
                   value={values.lastName}
@@ -161,6 +178,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   fieldName="lastName"
                 />
                 <CustomInput
+                  editable={editable}
                   label="Address"
                   placeholder="New York, United States"
                   value={values.address}
@@ -171,6 +189,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   fieldName="address"
                 />
                 <CustomInput
+                  editable={editable}
                   label="City"
                   placeholder="New York"
                   value={values.city}
@@ -181,6 +200,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   fieldName="city"
                 />
                 <CustomInput
+                  editable={editable}
                   label="Zip"
                   placeholder="10001"
                   value={values.zip}
@@ -193,6 +213,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   fieldName="zip"
                 />
                 <CustomInput
+                  editable={editable}
                   label="Home Phone"
                   placeholder="(555) 555-1234"
                   value={values.homePhone}
@@ -218,22 +239,25 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   setPhoneCode={setPhoneCode}
                   placeholder="123-1234"
                 />
-                <CustomInput
-                  label="Age"
-                  placeholder=""
-                  value={values.age}
-                  error={errors.age}
-                  touched={touched.age}
-                  initialTouched={true}
-                  keyboardType="numeric"
-                  handleChange={handleChange('age')}
-                  setFieldError={setFieldError}
-                  fieldName="age"
-                />
                 <View style={styles.inputRow}>
+                  <CustomInput
+                    editable={editable}
+                    label="Age"
+                    placeholder=""
+                    value={values.age}
+                    error={errors.age}
+                    touched={touched.age}
+                    initialTouched={true}
+                    keyboardType="numeric"
+                    handleChange={handleChange('age')}
+                    setFieldError={setFieldError}
+                    fieldName="age"
+                    extraStyles={{width: 80, paddingRight: 0}}
+                  />
                   <View style={styles.inputContainer}>
                     <Text style={styles.label}>Height</Text>
                     <DropdownTextInput
+                      editable={editable}
                       value={values.height}
                       options={['ft', 'm']}
                       defaultOption="ft"
@@ -248,6 +272,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
                   <View style={styles.inputContainer}>
                     <Text style={styles.label}>Weight</Text>
                     <DropdownTextInput
+                      editable={editable}
                       value={values.weight}
                       options={['kg', 'lb']}
                       defaultOption="kg"
@@ -263,10 +288,7 @@ export const VerificationOne = ({navigation, disabled}: any) => {
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton
-                    onPress={() => navigation.navigate('VerificationTwo')}>
-                    Continue
-                  </CustomButton>
+                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
                 </View>
               )}
             </>
@@ -287,7 +309,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   inputContainer: {
-    flex: 3,
+    flex: 4
   },
   label: {
     fontSize: moderateScale(12),
@@ -299,7 +321,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    marginTop: verticalScale(100),
+    marginTop: verticalScale(50),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
   },
