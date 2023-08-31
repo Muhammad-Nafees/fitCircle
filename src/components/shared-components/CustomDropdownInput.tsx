@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -26,6 +26,7 @@ const DropdownTextInput = ({
   fieldName,
   placeholder,
   tdee,
+  editable,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
@@ -59,10 +60,17 @@ const DropdownTextInput = ({
     }
   };
 
+  useEffect(() => {
+    if (!value) {
+      setTextInputValue('');
+    }
+  }, [value]);
+
   return (
     <View>
       <View style={styles.container}>
         <TextInput
+          editable={editable}
           value={textInputValue}
           onChangeText={handleTextInputChange}
           style={styles.textInput}
@@ -72,7 +80,7 @@ const DropdownTextInput = ({
           keyboardType="numeric"
         />
         <View style={styles.dropdownContainer}>
-          <TouchableOpacity onPress={toggleDropdown}>
+          <TouchableOpacity onPress={() => editable && toggleDropdown}>
             <View
               style={[
                 styles.dropdownIconContainer,

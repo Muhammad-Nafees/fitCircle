@@ -101,6 +101,7 @@ export const TdeeCalculator = ({navigation}: any) => {
           }}
           validateOnChange={false}
           validationSchema={TdeeCalculatorSchema}
+          validationSchema={TdeeCalculatorSchema}
           onSubmit={handleSubmit}>
           {({
             handleChange,

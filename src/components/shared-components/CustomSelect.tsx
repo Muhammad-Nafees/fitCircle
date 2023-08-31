@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {View, Text} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
 import {STYLES} from '../../styles/globalStyles';
@@ -28,6 +28,7 @@ interface Props {
   extraDropdownStyle?: any;
   extraSelectedRowStyle?: any;
   starlabel?: boolean;
+  handleChange?: any;
   placeholder?: string;
 }
 
@@ -53,6 +54,7 @@ export const CustomSelect: React.FC<Props> = ({
   extraDropdownStyle,
   extraSelectedRowStyle,
   starlabel,
+  handleChange,
   placeholder,
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
@@ -62,6 +64,14 @@ export const CustomSelect: React.FC<Props> = ({
       setFieldError(fieldName, '');
     }
   };
+
+  const drpDwnRef: any = useRef({});
+
+  useEffect(() => {
+    if (!selectedValue) {
+      drpDwnRef.current.reset();
+    }
+  }, [selectedValue]);
 
   return (
     <View style={[{gap: 8}, styles]}>
@@ -77,9 +87,11 @@ export const CustomSelect: React.FC<Props> = ({
       </Text>
       <SelectDropdown
         data={values ? values : ['Loading...']}
+        ref={drpDwnRef}
         onSelect={(selectedItem, index) => {
-          setFieldValue(field, selectedItem), console.log(field);
-          setCountry && setCountry(selectedItem);
+          if (handleChange) handleChange(selectedItem);
+          setFieldValue(field, selectedItem),
+            setCountry && setCountry(selectedItem);
         }}
         placeholder={placeholder}
         renderDropdownIcon={() =>
