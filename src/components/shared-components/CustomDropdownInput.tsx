@@ -26,7 +26,7 @@ const DropdownTextInput = ({
   fieldName,
   placeholder,
   tdee,
-  editable,
+  editable = true,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
@@ -49,7 +49,7 @@ const DropdownTextInput = ({
   };
 
   const toggleDropdown = () => {
-    setShowDropdown(prev => !prev);
+    setShowDropdown(!showDropdown);
   };
 
   const handleTextInputChange = (text: string) => {
@@ -80,7 +80,8 @@ const DropdownTextInput = ({
           keyboardType="numeric"
         />
         <View style={styles.dropdownContainer}>
-          <TouchableOpacity onPress={() => editable && toggleDropdown}>
+          <TouchableOpacity
+            onPress={() => editable && setShowDropdown(!showDropdown)}>
             <View
               style={[
                 styles.dropdownIconContainer,
@@ -167,6 +168,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
     height: verticalScale(47),
+    zIndex: 9999,
   },
   dropdownIconContainer: {
     backgroundColor: '#019acd',
@@ -175,6 +177,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(8),
     flexDirection: 'row',
     alignItems: 'center',
+    zIndex: 9999,
   },
   selectedOptionText: {
     color: 'white',

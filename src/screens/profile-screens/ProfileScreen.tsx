@@ -31,13 +31,13 @@ import CustomVideo from '../../components/profile-components/CustomVideo';
 import Modal from 'react-native-modal';
 import {ReelsComponent} from '../../components/home-components/Reels';
 import Video from 'react-native-video';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 
 export const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
-  const videoRef = useRef(null);
   const posts = useSelector((state: RootState) => state.post.posts);
   const coverImageUrl = userData?.coverImage;
   const username = userData?.username;
@@ -114,7 +114,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
 
   const handleCommentButtonPress = (selectedPost: any, userId: any) => {
     dispatch(setSelectedPost(selectedPost));
-    navigation.navigate('CommentsScreen', {userId});
+    navigation.navigate('CommentsScreen', {userId, profileScreen: true});
   };
 
   const renderPostItem = ({item}: any) => (
@@ -140,7 +140,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
   };
 
   return (
-    <View style={[styles.container, {marginBottom: tabBarHeight + 30}]}>
+    <View style={[styles.container]}>
       <ImageBackground
         style={styles.topContainer}
         source={Image1}
@@ -152,7 +152,12 @@ export const ProfileScreen = ({navigation, route}: any) => {
             width: '100%',
             paddingHorizontal: 14,
           }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() => {
+              isTrainerView
+                ? navigation.navigate('Search')
+                : navigation.goBack();
+            }}>
             <Image source={BackArrowIcon} style={styles.backIcon} />
           </TouchableOpacity>
           <View style={{flexDirection: 'row', gap: 6}}>
@@ -231,22 +236,21 @@ export const ProfileScreen = ({navigation, route}: any) => {
           {!isTrainerView && <Text style={styles.email}>{email}</Text>}
         </View>
         <View style={styles.rowContainer}>
-          {isTrainerView ||
-            (userData.role === 'trainer' && (
-              <TouchableOpacity
-                style={styles.column}
-                onPress={() =>
-                  navigation.navigate('SearchProfile', {
-                    default: 'community',
-                    followers: followers,
-                    following: following,
-                    communities: communities,
-                  })
-                }>
-                <Text style={styles.columnText}>{communities.length}</Text>
-                <Text style={styles.columnLabel}>Subs</Text>
-              </TouchableOpacity>
-            ))}
+          {isTrainerView || userData.role === 'trainer' ? (
+            <TouchableOpacity
+              style={styles.column}
+              onPress={() =>
+                navigation.navigate('SearchProfile', {
+                  default: 'community',
+                  followers: followers,
+                  following: following,
+                  communities: communities,
+                })
+              }>
+              <Text style={styles.columnText}>{communities.length}</Text>
+              <Text style={styles.columnLabel}>Subs</Text>
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity
             style={styles.column}
             onPress={() =>
@@ -374,6 +378,9 @@ export const ProfileScreen = ({navigation, route}: any) => {
             data={filteredPostsWithoutVideo}
             keyExtractor={item => item._id}
             renderItem={renderPostItem}
+            contentContainerStyle={{
+              paddingBottom: tabBarHeight + verticalScale(45),
+            }}
           />
         )}
         {selectedOption === 'Favorites' && (
@@ -449,21 +456,23 @@ export const ProfileScreen = ({navigation, route}: any) => {
           </View>
         )}
         {selectedOption === 'Videos' && (
-          <View style={{paddingHorizontal: 16}}>
+          <View style={{width: '100%', paddingHorizontal: 16}}>
             <FlatList
+              vertical
               data={firstVideoPost}
               keyExtractor={item => item._id}
               renderItem={({item, index}) => (
-                <CustomVideo
-                  key={item._id}
-                  userId={userId}
-                  video={item}
-                  handleVideoPress={handleVideoPress}
-                  style={{marginRight: index % 2 === 0 ? 8 : 0}}
-                />
+                <View style={{maxWidth: '50%'}}>
+                  <CustomVideo
+                    key={item._id}
+                    userId={userId}
+                    video={item}
+                    handleVideoPress={handleVideoPress}
+                    style={{marginRight: index % 2 === 0 ? 8 : 0}}
+                  />
+                </View>
               )}
               numColumns={2}
-              columnWrapperStyle={{marginBottom: 16}}
             />
           </View>
         )}
@@ -491,7 +500,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 25,
+    paddingVertical: verticalScale(25),
   },
   email: {
     fontSize: 10,
@@ -501,15 +510,15 @@ const styles = StyleSheet.create({
   topContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 300,
+    height: verticalScale(300),
     backgroundColor: '#363639',
   },
   avatarImage: {
-    marginBottom: 12,
+    marginBottom: verticalScale(12),
   },
   avatarText: {
     backgroundColor: '#5e01a9',
-    marginVertical: 12,
+    marginVertical: verticalScale(12),
     borderWidth: 1,
     borderColor: '#fff',
   },
@@ -545,13 +554,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#363639',
     borderRadius: 40,
-    marginHorizontal: 10,
-    paddingVertical: 2,
-    marginVertical: 5,
+    marginHorizontal: horizontalScale(10),
+    paddingVertical: verticalScale(2),
+    marginVertical: verticalScale(5),
   },
   optionButton: {
-    paddingHorizontal: 28,
-    paddingVertical: 2,
+    paddingHorizontal: horizontalScale(28),
+    paddingVertical: verticalScale(2),
     borderRadius: 40,
   },
   optionText: {
@@ -577,8 +586,8 @@ const styles = StyleSheet.create({
   },
   profileButton: {
     backgroundColor: 'rgba(32, 155, 204, 1)',
-    paddingHorizontal: 25,
-    paddingVertical: 4,
+    paddingHorizontal: horizontalScale(25),
+    paddingVertical: verticalScale(4),
     borderRadius: 40,
   },
   profileButtonText: {
@@ -590,8 +599,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderColor: 'white',
     borderWidth: 1,
-    paddingHorizontal: 25,
-    paddingVertical: 4,
+    paddingHorizontal: horizontalScale(25),
+    paddingVertical: verticalScale(4),
     borderRadius: 40,
   },
   fullscreenContainer: {

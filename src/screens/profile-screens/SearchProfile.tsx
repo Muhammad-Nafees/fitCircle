@@ -425,8 +425,8 @@ const styles = StyleSheet.create({
   },
   backIconContainer: {
     justifyContent: 'flex-start',
-    marginVertical: 16,
-    marginHorizontal: 16,
+    marginVertical: verticalScale(16),
+    marginHorizontal: horizontalScale(16),
   },
   optionContainer: {
     flexDirection: 'row',
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
     borderColor: '#444444',
   },
   option: {
-    paddingVertical: 10,
+    paddingVertical: verticalScale(10),
   },
   optionText: {
     color: '#444444',
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#2c2d2f',
     paddingHorizontal: horizontalScale(40),
-    marginVertical: 10,
+    marginVertical: verticalScale(10),
     width: '100%',
   },
   input: {
@@ -470,13 +470,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 15,
+    paddingHorizontal: horizontalScale(15),
   },
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 7,
+    paddingVertical: verticalScale(7),
     flex: 1,
     width: '70%',
   },
@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   nameContainer: {
-    marginLeft: 10,
+    marginLeft: horizontalScale(10),
     gap: 4,
   },
   name: {
@@ -514,11 +514,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(107, 107, 107, 0.5)',
     borderRadius: 32,
     alignItems: 'center',
-    marginHorizontal: 35,
+    marginHorizontal: horizontalScale(35),
   },
   modalButton: {
-    paddingVertical: 15,
-    paddingHorizontal: 60,
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: horizontalScale(60),
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -550,13 +550,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(107, 107, 107, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 271,
-    height: 180,
+    width: horizontalScale(271),
+    height: verticalScale(180),
     borderRadius: 30,
   },
   iconModal: {
-    width: 34,
-    height: 34,
+    width: horizontalScale(34),
+    height: verticalScale(34),
     borderRadius: 17,
     backgroundColor: '#30D298',
     justifyContent: 'center',

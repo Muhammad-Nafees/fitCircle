@@ -119,7 +119,6 @@ const CustomInput = ({...props}: Props) => {
       ) : (
         <View style={{height: 35}} />
       )}
-
       {props.isPasswordIcon && (
         <TouchableWithoutFeedback onPress={togglePasswordVisibility}>
           <Icon

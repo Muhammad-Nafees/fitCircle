@@ -32,6 +32,15 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
   const [phoneCode, setPhoneCode] = useState('1');
+
+  const phoneNumberCheck = (values: any) => {
+    const isValid = phoneInput.current?.isValidNumber(values);
+    if (!isValid) {
+      setIsError('Invalid phone number!');
+    } else {
+      setIsError('');
+    }
+  };
   const dispatch = useDispatch();
 
   const editable = typeof disabled === 'boolean' ? !disabled : true;
@@ -42,8 +51,10 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   const formdata: null | any = data;
 
   const formSubmit = (values: any) => {
+    if (isError) {
+      return;
+    }
     console.log('Form values:', values);
-    // dispatch(setAnswers(values));
     navigation.navigate('VerificationTwo', {verificationOne: values});
   };
 
@@ -239,21 +250,20 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                   setPhoneCode={setPhoneCode}
                   placeholder="123-1234"
                 />
+                <CustomInput
+                  editable={editable}
+                  label="Age"
+                  placeholder=""
+                  value={values.age}
+                  error={errors.age}
+                  touched={touched.age}
+                  initialTouched={true}
+                  keyboardType="numeric"
+                  handleChange={handleChange('age')}
+                  setFieldError={setFieldError}
+                  fieldName="age"
+                />
                 <View style={styles.inputRow}>
-                  <CustomInput
-                    editable={editable}
-                    label="Age"
-                    placeholder=""
-                    value={values.age}
-                    error={errors.age}
-                    touched={touched.age}
-                    initialTouched={true}
-                    keyboardType="numeric"
-                    handleChange={handleChange('age')}
-                    setFieldError={setFieldError}
-                    fieldName="age"
-                    extraStyles={{width: 80, paddingRight: 0}}
-                  />
                   <View style={styles.inputContainer}>
                     <Text style={styles.label}>Height</Text>
                     <DropdownTextInput
@@ -288,7 +298,13 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                  <CustomButton
+                    onPress={async () => {
+                      await phoneNumberCheck(values.cellPhone);
+                      handleSubmit();
+                    }}>
+                    Continue
+                  </CustomButton>
                 </View>
               )}
             </>
@@ -304,12 +320,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: moderateScale(20),
+    gap: moderateScale(15),
     marginHorizontal: horizontalScale(30),
     zIndex: 1000,
   },
   inputContainer: {
-    flex: 4
+    flex: 4,
   },
   label: {
     fontSize: moderateScale(12),

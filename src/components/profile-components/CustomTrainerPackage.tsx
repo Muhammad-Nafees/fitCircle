@@ -2,6 +2,8 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {MealPlanStarIcon} from '../../../assets/icons/MealPlanStar';
 import {useNavigation} from '@react-navigation/core';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
+const PlayIcon = require('../../../assets/icons/playIcon.png');
 
 const ImagePreview = require('../../../assets/images/TestMealPlanImage.png');
 
@@ -16,6 +18,11 @@ export const CustomTrainerPackage = ({hidePriceAndPackage}: boolean) => {
       ]}>
       <View style={styles.imageContainer}>
         <Image source={ImagePreview} style={styles.image} />
+        {hidePriceAndPackage && (
+          <View style={styles.playIconContainer}>
+            <Image source={PlayIcon} style={styles.playIcon} />
+          </View>
+        )}
       </View>
       <View style={styles.packageInfo}>
         <View style={styles.topInfo}>
@@ -115,5 +122,18 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 10,
     color: 'rgba(32, 155, 204, 1)',
+  },
+  playIconContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playIcon: {
+    width: horizontalScale(8.86),
+    height: verticalScale(10.85),
+    tintColor: '#fff',
+    backgroundColor: 'rgba(141, 156, 152, 0.8)',
+    borderRadius: 30,
+    padding: 7,
   },
 });

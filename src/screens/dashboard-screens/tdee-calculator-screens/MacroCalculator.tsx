@@ -37,7 +37,11 @@ export const MacroCalculator = ({navigation, route}: any) => {
     if (chartData._id === '') {
       navigation.navigate('TdeeCalculatorScreen');
     } else {
-      navigation.navigate('Chart', chartData);
+      console.log(route.params.data.dailyCalories);
+      navigation.navigate('Chart', {
+        chartData: chartData,
+        dailyCalories: route.params.data.dailyCalories,
+      });
     }
   };
 
@@ -76,40 +80,47 @@ export const MacroCalculator = ({navigation, route}: any) => {
           Macro Calculator
         </Text>
         <View style={styles.formContainer}>
-          <CustomSelect
-            label="Select a Preset (Carb % / Protein % / Fat %)"
-            values={Object.keys(presets)}
-            selectedValue={preset}
-            initialTouched={true}
-            handleChange={setPreset}
-            setFieldValue={() => null}
-            setFieldError={() => null}
-            fieldName="preset"
-            extraRowTextStyle={{color: 'white', fontSize: 12}}
-            extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
-            extraDropdownStyle={{
-              borderBottomRightRadius: 10,
-              borderBottomLeftRadius: 10,
-            }}
-            extraSelectedRowStyle={{
-              backgroundColor: 'rgba(68, 68, 68, 1)',
-              marginVertical: 0,
-              borderRadius: 0,
-            }}
-          />
-          <Text
+          <View
             style={{
-              color: 'white',
-              fontSize: 12,
-              fontStyle: 'italic',
-              marginHorizontal: 35,
-              marginTop: -18,
-              marginBottom: 50,
-              textAlign: 'left',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginHorizontal: 16,
             }}>
-            Note: To use a custom Macro setting, please visit our new and
-            improved Macro Calculator
-          </Text>
+            <CustomSelect
+              label="Select a Preset (Carb % / Protein % / Fat %)"
+              values={Object.keys(presets)}
+              selectedValue={preset}
+              initialTouched={true}
+              handleChange={setPreset}
+              setFieldValue={() => null}
+              setFieldError={() => null}
+              width={'90%'}
+              fieldName="preset"
+              extraRowTextStyle={{color: 'white', fontSize: 12}}
+              extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
+              extraDropdownStyle={{
+                borderBottomRightRadius: 10,
+                borderBottomLeftRadius: 10,
+              }}
+              extraSelectedRowStyle={{
+                backgroundColor: 'rgba(68, 68, 68, 1)',
+                marginVertical: 0,
+                borderRadius: 0,
+              }}
+            />
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 12,
+                fontStyle: 'italic',
+                marginTop: -18,
+                marginBottom: 20,
+                textAlign: 'left',
+              }}>
+              Note: To use a custom Macro setting, please visit our new and
+              improved Macro Calculator
+            </Text>
+          </View>
           <View style={{marginVertical: 20, marginRight: '60%'}}>
             <Text style={styles.heading}>Carbohydrates</Text>
           </View>

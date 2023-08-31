@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
 import {CustomPackageReview} from '../../components/profile-components/CustomPackageReview';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
 const reviewData = Array.from({length: 5});
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
   horizontalLine: {
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.5)',
-    marginVertical: 15,
+    marginVertical: verticalScale(15),
   },
   heading2: {
     fontSize: 14,
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.5)',
   },
   itemSeparator: {
-    height: 8,
+    height: verticalScale(8),
   },
   duration: {
     fontSize: 12,
@@ -107,13 +108,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.25)',
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   bottomContainerHeading: {
     color: 'white',
     fontSize: 14,
     fontWeight: '500',
-    marginTop: 16,
-    marginBottom: 20,
+    marginTop: verticalScale(16),
+    marginBottom: verticalScale(20),
   },
 });
