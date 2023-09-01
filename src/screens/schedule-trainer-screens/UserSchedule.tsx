@@ -13,15 +13,44 @@ import CustomButton from '../../components/shared-components/CustomButton';
 import {CustomScheduleTime} from '../../components/dashboard-components/CustomScheduleTime';
 import {RootState} from '../../redux/store';
 import {useSelector} from 'react-redux';
+import axiosInstance from '../../api/interceptor';
+import {format} from 'date-fns';
+import {DateData, MarkedDates} from 'react-native-calendars/src/types';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
+type ScheduleItem = {
+  scheduleDate: string;
+  slot: string;
+  booked: boolean;
+  bookedBy: string;
+};
+
+
+
 const SetSchedule = ({route, navigation}: any) => {
   const currentMonth = moment().format('YYYY-MM-DD');
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState<any>();
   const [profileImageUrl, setProfileImageUrl] = useState();
+  const today = format(new Date(), 'u-MM-dd'); // Get the current date in 'YYYY-MM-DD' format
+  const [customDatesStyles, setCustomDatesStyles] = useState<
+    MarkedDates | undefined
+  >({
+    [today]: {
+      selected: true,
+      selectedColor: '#209BCC',
+      selectedTextColor: '#FFF',
+    },
+    [selectedDate]: {
+      selected: true,
+      selectedColor: '#209BCC',
+      selectedTextColor: '#FFF',
+    },
+  });
   const userData = useSelector((state: RootState) => state.auth.user);
   const [userId, setUserId] = useState(userData?._id);
+  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [slot, setSlot] = useState<ScheduleItem | undefined>();
 
   useEffect(() => {
     setUserId(userData?._id);
@@ -29,24 +58,49 @@ const SetSchedule = ({route, navigation}: any) => {
     setProfileImageUrl(imageUri);
   }, [userData]);
 
-  const customDatesStyles = {};
-  customDatesStyles[currentMonth] = {textStyle: {color: '#fff'}};
+  // const customDatesStyles = {};
+  // customDatesStyles[currentMonth] = {textStyle: {color: '#fff'}};
 
-  const saturdayAndSundayStyle = {
-    textStyle: {color: 'red'},
-    containerStyle: {backgroundColor: 'transparent'},
-  };
-  for (let i = 0; i < 31; i++) {
-    const currentDate = new Date(currentMonth);
-    currentDate.setDate(i + 1);
-    if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
-      customDatesStyles[currentDate] = saturdayAndSundayStyle;
+  // const saturdayAndSundayStyle = {
+  //   textStyle: {color: 'red'},
+  //   containerStyle: {backgroundColor: 'transparent'},
+  // };
+  // for (let i = 0; i < 31; i++) {
+  //   const currentDate = new Date(currentMonth);
+  //   currentDate.setDate(i + 1);
+  //   if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
+  //     customDatesStyles[currentDate] = saturdayAndSundayStyle;
+  //   }
+  // }
+
+  const handleDayPress = (day: DateData) => {
+    const selected = day.dateString;
+
+    if (selected === selectedDate) {
+      setSelectedDate(undefined);
+      setSlot(undefined);
+      return;
     }
-  }
 
-  const handleDayPress = day => {
-    setSelectedDate(day.dateString);
+    const availableSlot = schedule.find(
+      ({scheduleDate}) => scheduleDate === selected,
+    );
+
+    setSlot(availableSlot);
+
+    setSelectedDate(selected);
   };
+
+  // useEffect(() => {
+  //   setCustomDatesStyles(prevState => ({
+  //     ...prevState,
+  //     [selectedDate]: {
+  //       selected: true,
+  //       selectedColor: '#209BCC',
+  //       selectedTextColor: '#FFF',
+  //     },
+  //   }));
+  // }, [selectedDate]);
 
   const formatDate = date => {
     return moment(date).format('ddd, D MMM');
@@ -55,6 +109,69 @@ const SetSchedule = ({route, navigation}: any) => {
   const formattedSelectedDate = selectedDate
     ? formatDate(selectedDate)
     : formatDate(new Date());
+
+  const getSchedule = async () => {
+    try {
+      const response = await axiosInstance.get(`schedules/user/slots`);
+
+      console.log(
+        '🚀 ~ file: UserSchedule.tsx:66 ~ getSchedule ~ response:',
+        response.data,
+      );
+      if (response.status === 200) {
+        let arr: ScheduleItem[] = [];
+        response?.data?.forEach((data: ScheduleItem) => {
+          const dateArr = data.scheduleDate.split('/');
+          setCustomDatesStyles(prevState => ({
+            [`${dateArr[2]}-${dateArr[0]}-${dateArr[1]}`]: {
+              customStyles: {
+                container: {
+                  borderWidth: 1,
+                  borderColor: '#FFF',
+                  borderRadius: 50,
+                },
+              },
+            },
+            ...prevState,
+          }));
+
+          arr.push({
+            ...data,
+            scheduleDate: `${dateArr[2]}-${dateArr[0]}-${dateArr[1]}`,
+          });
+        });
+        setSchedule(arr);
+      }
+    } catch (error) {
+      console.log('🚀 ~ getSchedule ~ error:', error);
+    }
+  };
+
+  // const customDatesStyles: MarkedDates | undefined = {
+  //   [today]: {
+  //     selected: true,
+  //     selectedColor: '#209BCC',
+  //     selectedTextColor: '#FFF',
+  //   },
+  //   [selectedDate]: {
+  //     selected: true,
+  //     selectedColor: '#209BCC',
+  //     selectedTextColor: '#FFF',
+  //   },
+  //   '2023-09-09': {
+  //     customStyles: {
+  //       container: {
+  //         borderWidth: 1,
+  //         borderColor: '#FFF',
+  //         borderRadius: 50,
+  //       },
+  //     },
+  //   },
+  // };
+
+  useEffect(() => {
+    getSchedule();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -79,7 +196,15 @@ const SetSchedule = ({route, navigation}: any) => {
               monthTextColor: '#fff',
             }}
             markingType="custom"
-            markedDates={customDatesStyles}
+            // markedDates={customDatesStyles}
+            markedDates={{
+              ...customDatesStyles,
+              [selectedDate]: {
+                selected: true,
+                selectedColor: '#209BCC',
+                selectedTextColor: '#FFF',
+              },
+            }}
             onDayPress={handleDayPress}
             hideExtraDays={true}
           />
@@ -87,13 +212,16 @@ const SetSchedule = ({route, navigation}: any) => {
       </View>
       <View style={styles.bottomContainer}>
         <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
-        <CustomScheduleTime
-          profileImageUrl={profileImageUrl}
-          name="Sameer Ather"
-          timeSlot="1:00 PM- 2:00 PM"
-          exercise="Back and Triceps"
-          username="Sam"
-        />
+
+        {slot ? (
+          <CustomScheduleTime
+            profileImageUrl={profileImageUrl}
+            name={userData?.firstName + ' ' + userData?.lastName}
+            timeSlot={slot?.slot}
+            exercise="None"
+            username="Sam"
+          />
+        ) : null}
       </View>
     </View>
   );

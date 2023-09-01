@@ -9,8 +9,8 @@ import {
   Dimensions,
 } from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
-import {horizontal, vertical} from 'react-native-swiper-flatlist/src/themes';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
+import axiosInstance from '../../api/interceptor';
+import { horizontalScale, verticalScale } from '../../utils/metrics';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -32,6 +32,8 @@ export const Slot = ({navigation}: any) => {
     'NOV',
     'DEC',
   ];
+
+
   const getCurrentMonth = () => {
     const currentMonthIndex = new Date().getMonth();
     return months[currentMonthIndex];
@@ -78,6 +80,7 @@ export const Slot = ({navigation}: any) => {
   const filteredCarouselData = generateCarouselData().filter(
     item => item.month === selectedMonth,
   );
+
 
   return (
     <View style={styles.container}>
