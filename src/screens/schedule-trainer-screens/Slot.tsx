@@ -9,6 +9,8 @@ import {
   Dimensions,
 } from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
+import {horizontal, vertical} from 'react-native-swiper-flatlist/src/themes';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -157,10 +159,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#209BCC',
     alignItems: 'center',
     justifyContent: 'center',
-    width: width - 282,
-    height: height - 715,
+    width: horizontalScale(108),
+    height: verticalScale(93),
     marginVertical: 5,
-    marginHorizontal: 5,
+    marginHorizontal: 2.5,
     borderRadius: 10,
   },
   carouselItemText: {

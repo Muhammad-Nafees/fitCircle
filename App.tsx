@@ -3,17 +3,21 @@ import AuthStackNavigator from './src/navigators/AuthStackNavigator';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
-import {persistor, store} from './src/redux/store';
+import store from './src/redux/store';
+import {persistStore} from 'redux-persist';
+import StackNavigator from './src/navigators/StackNavigator';
+
+let persistor = persistStore(store);
 
 const App = () => {
   return (
     <Provider store={store}>
-      {/* <PersistGate loading={null} persistor={persistor}> */}
-      <NavigationContainer>
-        <AuthStackNavigator />
-        <Toast />
-      </NavigationContainer>
-      {/* </PersistGate> */}
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <StackNavigator />
+          <Toast />
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   );
 };

@@ -254,9 +254,9 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   label="Calorie Deficit"
                   starlabel={true}
                   values={[
-                    'Slow                                                                              TDEE (.10)',
-                    'Moderate                                                                     TDEE (.15)',
-                    'Aggressive                                                                  TDEE (.20)',
+                    `Slow${' '.padEnd(68)}TDEE (.10)`,
+                    `Moderate${' '.padEnd(60)}TDEE (.15)`,
+                    `Aggressive${' '.padEnd(57)}TDEE (.20)`,
                   ]}
                   selectedValue={values.goal}
                   error={errors.caloriedeficit}
