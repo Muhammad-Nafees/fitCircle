@@ -26,6 +26,8 @@ type ScheduleItem = {
   bookedBy: string;
 };
 
+
+
 const SetSchedule = ({route, navigation}: any) => {
   const currentMonth = moment().format('YYYY-MM-DD');
   const [selectedDate, setSelectedDate] = useState<any>();
@@ -85,15 +87,6 @@ const SetSchedule = ({route, navigation}: any) => {
     );
 
     setSlot(availableSlot);
-
-    // setCustomDatesStyles(prevState => ({
-    //   ...prevState,
-    //   [selectedDate]: {
-    //     selected: true,
-    //     selectedColor: '#209BCC',
-    //     selectedTextColor: '#FFF',
-    //   },
-    // }));
 
     setSelectedDate(selected);
   };

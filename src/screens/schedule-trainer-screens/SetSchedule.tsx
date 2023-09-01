@@ -7,38 +7,78 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import {Calendar} from 'react-native-calendars';
+import {Calendar, DateData} from 'react-native-calendars';
 import moment from 'moment';
 import CustomButton from '../../components/shared-components/CustomButton';
+import {format} from 'date-fns';
+import axiosInstance from '../../api/interceptor';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
+
+type TimeSlot = {
+  date: string;
+  option: string[];
+};
+
+type ScheduleTimeSlot = {
+  slot: string;
+  booked: boolean;
+  _id: string;
+};
+
+type Schedule = {
+  _id: string;
+  user: string;
+  date: string;
+  timeSlots: ScheduleTimeSlot[];
+  __v: number;
+};
 
 const SetSchedule = ({route, navigation}: any) => {
   const {selectedMonth} = route.params;
 
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedDate, setSelectedDate] = useState<any>(null);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedOptionsWDate, setSelectedOptionsWDate] = useState<TimeSlot[]>(
+    [],
+  );
+  const today = format(new Date(), 'u-MM-dd'); // Get the current date in 'YYYY-MM-DD' format
+  const userData = useSelector((state: RootState) => state.auth.user);
 
-  const customDatesStyles = {};
-  customDatesStyles[selectedMonth] = {textStyle: {color: '#fff'}};
+  const [data, setData] = useState<Schedule[]>([]);
+  // const customDatesStyles = {};
+  // customDatesStyles[selectedMonth] = {textStyle: {color: '#fff'}};
 
-  const saturdayAndSundayStyle = {
-    textStyle: {color: 'red'},
-    containerStyle: {backgroundColor: 'transparent'},
-  };
-  for (let i = 0; i < 31; i++) {
-    const currentDate = new Date(selectedMonth);
-    currentDate.setDate(i + 1);
-    if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
-      customDatesStyles[currentDate] = saturdayAndSundayStyle;
+  // const saturdayAndSundayStyle = {
+  //   textStyle: {color: 'red'},
+  //   containerStyle: {backgroundColor: 'transparent'},
+  // };
+  // for (let i = 0; i < 31; i++) {
+  //   const currentDate = new Date(selectedMonth);
+  //   currentDate.setDate(i + 1);
+  //   if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
+  //     customDatesStyles[currentDate] = saturdayAndSundayStyle;
+  //   }
+  // }
+
+  // const handleDayPress = day => {
+  //   setSelectedDate(day.dateString);
+  // };
+
+  const handleDayPress = (day: DateData) => {
+    const selected = day.dateString;
+
+    if (selected === selectedDate) {
+      setSelectedDate(undefined);
+      return;
     }
-  }
 
-  const handleDayPress = day => {
-    setSelectedDate(day.dateString);
+    setSelectedDate(selected);
   };
 
-  const formatDate = date => {
+  const formatDate = (date: string | Date) => {
     return moment(date).format('ddd, D MMM');
   };
 
@@ -86,19 +126,66 @@ const SetSchedule = ({route, navigation}: any) => {
   const options = generateTimeSlots();
   const nextDayOptions = generateTimeSlots(true);
 
-  const handleSelectOption = option => {
+  const handleSelectOption = (option: string) => {
+    const selectedDateArr = selectedDate?.split('-');
+    const date = selectedDate
+      ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
+      : format(new Date(), 'MM/dd/u');
+
     if (selectedOptions.includes(option)) {
       setSelectedOptions(selectedOptions.filter(item => item !== option));
+      // setSelectedOptionsWDate()
     } else {
       setSelectedOptions([...selectedOptions, option]);
     }
+
+    const availDateInd = selectedOptionsWDate?.findIndex(
+      el => el.date === date,
+    );
+
+    if (availDateInd >= 0) {
+      let temp = [...selectedOptionsWDate];
+      const savedOptions = [...temp[availDateInd].option];
+
+      if (savedOptions.find(i => i === option) === undefined) {
+        temp[availDateInd]['option'] = [...savedOptions, option];
+      } else {
+        temp[availDateInd]['option'] = savedOptions.filter(op => op !== option);
+      }
+
+      setSelectedOptionsWDate(temp);
+
+      return;
+    }
+
+    const obj = {
+      date,
+      option: [option],
+    };
+
+    setSelectedOptionsWDate([...selectedOptionsWDate, obj]);
   };
 
   const renderOptionItem = ({item}) => {
-    const isSelected = selectedOptions.includes(item);
+    const selectedDateArr = selectedDate?.split('-');
+
+    const date = selectedDate
+      ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
+      : format(new Date(), 'MM/dd/u');
+
+    // const selectedSlot = data
+    //   .find(el => el.date === date)
+    //   ?.timeSlots.map(({slot}) => slot);
+
+    // const isSelected = selectedSlot?.includes(item);
+    const selectedSlot = selectedOptionsWDate.find(
+      el => el.date === date,
+    )?.option;
+
+    const isSelected = selectedSlot?.includes(item);
     return (
       <TouchableOpacity
-        style={[styles.optionItem, isSelected && styles.selectedOption]}
+        style={[styles.optionItem]}
         onPress={() => handleSelectOption(item)}>
         <Text style={styles.optionTime}>{item}</Text>
         <View style={styles.optionCheckboxContainer}>
@@ -114,6 +201,80 @@ const SetSchedule = ({route, navigation}: any) => {
       </TouchableOpacity>
     );
   };
+
+  const setSchedule = async () => {
+    selectedOptionsWDate.forEach(async (element, index) => {
+      try {
+        const timeSlots = element.option.map(e => ({slot: e}));
+        const reqData = {
+          timeSlots,
+          slotDate: element.date,
+        };
+        const response = await axiosInstance.post(`schedules/create`, reqData);
+
+        if (
+          selectedOptionsWDate.length - 1 === index &&
+          response.status === 200
+        ) {
+          navigation.goBack();
+        }
+      } catch (error) {
+        console.log('🚀 ~ setSchedule ~ error:', error);
+      }
+    });
+  };
+
+  const getTrainerSchedule = async () => {
+    try {
+      const response = await axiosInstance.get(`schedules/${userData?._id}`);
+
+      if (response.status === 200) {
+        // setData(response.data);
+
+        let arr: TimeSlot[] = [];
+        response.data?.forEach((elem: Schedule) => {
+          let timeOptions = elem.timeSlots.map(e => e.slot);
+          arr.push({
+            date: elem.date,
+            option: timeOptions,
+          });
+        });
+        setSelectedOptionsWDate([...arr]);
+
+        // const availDateInd = selectedOptionsWDate?.findIndex(
+        //   el => el.date === date,
+        // );
+
+        // if (availDateInd >= 0) {
+        //   let temp = [...selectedOptionsWDate];
+        //   const savedOptions = [...temp[availDateInd].option];
+
+        //   if (savedOptions.find(i => i === option) === undefined) {
+        //     temp[availDateInd]['option'] = [...savedOptions, option];
+        //   } else {
+        //     temp[availDateInd]['option'] = savedOptions.filter(op => op !== option);
+        //   }
+
+        //   setSelectedOptionsWDate(temp);
+
+        //   return;
+        // }
+
+        // const obj = {
+        //   date,
+        //   option: [option],
+        // };
+
+        // setSelectedOptionsWDate([...selectedOptionsWDate, obj]);
+      }
+    } catch (error) {
+      console.log('🚀 ~ getTrainerSlots ~ error:', error);
+    }
+  };
+
+  useEffect(() => {
+    getTrainerSchedule();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -138,7 +299,19 @@ const SetSchedule = ({route, navigation}: any) => {
               monthTextColor: '#fff',
             }}
             markingType="custom"
-            markedDates={customDatesStyles}
+            // markedDates={customDatesStyles}
+            markedDates={{
+              [today]: {
+                selected: true,
+                selectedColor: '#209BCC',
+                selectedTextColor: '#FFF',
+              },
+              [selectedDate]: {
+                selected: true,
+                selectedColor: '#209BCC',
+                selectedTextColor: '#FFF',
+              },
+            }}
             onDayPress={handleDayPress}
             hideExtraDays={true}
           />
@@ -160,7 +333,8 @@ const SetSchedule = ({route, navigation}: any) => {
         <View style={styles.buttonContainer}>
           <CustomButton
             isDisabled={selectedOptions.length === 0}
-            extraStyles={{paddingHorizontal: 110}}>
+            extraStyles={{paddingHorizontal: 110}}
+            onPress={setSchedule}>
             Set Schedule
           </CustomButton>
         </View>
