@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {Formik} from 'formik';
 import {STYLES} from '../../../styles/globalStyles';
@@ -31,6 +31,18 @@ const activityFactors = {
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 
 export const TdeeCalculator = ({navigation, disabled}: any) => {
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
+
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
     try {

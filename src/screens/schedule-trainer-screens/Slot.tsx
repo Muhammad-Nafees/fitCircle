@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  BackHandler,
 } from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import axiosInstance from '../../api/interceptor';
@@ -33,7 +34,6 @@ export const Slot = ({navigation}: any) => {
     'DEC',
   ];
 
-
   const getCurrentMonth = () => {
     const currentMonthIndex = new Date().getMonth();
     return months[currentMonthIndex];
@@ -56,6 +56,18 @@ export const Slot = ({navigation}: any) => {
       </TouchableOpacity>
     );
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   const generateCarouselData = () => {
     const currentDate = new Date();
@@ -80,7 +92,6 @@ export const Slot = ({navigation}: any) => {
   const filteredCarouselData = generateCarouselData().filter(
     item => item.month === selectedMonth,
   );
-
 
   return (
     <View style={styles.container}>

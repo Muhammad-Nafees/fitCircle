@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Formik, Field} from 'formik';
@@ -19,6 +19,24 @@ const questionTexts = [
 const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
 
+  const [touched, setTouched] = useState({
+    answer1: false,
+    answer2: false,
+    answer3: false,
+    answer4: false,
+    answer5: false,
+    answer6: false,
+  });
+
+  const [errorStates, setErrorStates] = useState({
+    answer1: false,
+    answer2: false,
+    answer3: false,
+    answer4: false,
+    answer5: false,
+    answer6: false,
+  });
+
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -35,6 +53,24 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
           onSubmit={values => {
             const answersArr = Object.values(values);
             const isRemainingField = answersArr.find(ans => ans === '') === '';
+
+            for (let i = 1; i <= questionTexts.length; i++) {
+              const fieldName = `answer${i}`;
+              if (!values[fieldName]) {
+                setErrorStates(prevState => ({
+                  ...prevState,
+                  [fieldName]: true,
+                }));
+              } else {
+                setErrorStates(prevState => ({
+                  ...prevState,
+                  [fieldName]: false,
+                }));
+              }
+            }
+            if (Object.values(errorStates).some(error => error)) {
+              return;
+            }
             if (isRemainingField) return;
 
             let answers: {question: string; answer: 'Yes' | 'No' | string}[] =
@@ -69,6 +105,13 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
                         selectedValue={values[`answer${index + 1}`]}
                         setFieldValue={setFieldValue}
                         name={`answer${index + 1}`}
+                        errorShow={errorStates[`answer${index + 1}`]}
+                        setErrorShow={value =>
+                          setErrorStates(prevState => ({
+                            ...prevState,
+                            [`answer${index + 1}`]: value,
+                          }))
+                        }
                       />
                     )}
                   </Field>
@@ -76,11 +119,7 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton
-                    // onPress={() => navigation.navigate('VerificationThree')}
-                    onPress={handleSubmit}>
-                    Continue
-                  </CustomButton>
+                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
                 </View>
               )}
             </>

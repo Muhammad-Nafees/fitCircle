@@ -1,14 +1,35 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  BackHandler,
+} from 'react-native';
 import MealPlanImage from '../../../../assets/icons/MealPlanImage';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import {useEffect} from 'react';
 const ArrowBack = require('../../../../assets/icons/arrow-back.png');
 
 export const MealPlanOne = ({navigation}: any) => {
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
-        onPress={() => navigation.navigate('DashboardScreen', {screen: 'Dashboard'})}>
+        onPress={() =>
+          navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
+        }>
         <Image
           source={ArrowBack}
           style={{width: 24, height: 24, tintColor: 'white'}}

@@ -462,7 +462,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
               data={firstVideoPost}
               keyExtractor={item => item._id}
               renderItem={({item, index}) => (
-                <View style={{maxWidth: '50%'}}>
+                <View>
                   <CustomVideo
                     key={item._id}
                     userId={userId}

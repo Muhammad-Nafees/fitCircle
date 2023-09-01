@@ -8,9 +8,12 @@ const CustomRadioButton = ({
   selectedValue,
   setFieldValue,
   name,
-  disabled
+  disabled,
+  errorShow,
+  setErrorShow,
 }: any) => {
   const handleSelect = (selected: string) => {
+    setErrorShow(false);
     setFieldValue(name, selected);
   };
 
@@ -26,6 +29,9 @@ const CustomRadioButton = ({
         }}>
         {text}
       </Text>
+      {errorShow && (
+        <Text style={{color: 'red', fontSize: 12}}>This field is required</Text>
+      )}
       <View
         style={{
           flexDirection: 'row',
