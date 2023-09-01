@@ -506,6 +506,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
       <Modal
         isVisible={isModalVisible}
         style={styles.modal}
+        onBackButtonPress={handleCancelButton}
         animationIn="fadeIn"
         animationOut="fadeOut">
         <View style={styles.modalContent}>
@@ -563,6 +564,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
       <Modal
         isVisible={removeModal}
         style={styles.modal}
+        onBackButtonPress={() => setRemoveModal(false)}
         animationIn="fadeIn"
         animationOut="fadeOut">
         <View style={[styles.modalContent, {backgroundColor: 'transparent'}]}>
