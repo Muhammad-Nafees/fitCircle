@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import axiosInstance from '../../api/interceptor';
-import { horizontalScale, verticalScale } from '../../utils/metrics';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 

@@ -33,6 +33,8 @@ import {ReelsComponent} from '../../components/home-components/Reels';
 import Video from 'react-native-video';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {ScrollView} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {STYLES} from '../../styles/globalStyles';
 
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -68,6 +70,8 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const [favoritesPost, setFavoritesPost] = useState([]);
   const [reelsModal, setReelsModal] = useState(false);
   const [firstVideoPost, setFirstVideoPost] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [removeModal, setRemoveModal] = useState(false);
 
   useEffect(() => {
     setUserId(userData?._id);
@@ -104,6 +108,15 @@ export const ProfileScreen = ({navigation, route}: any) => {
       console.log(firstVideoPost);
     }
   }, [posts]);
+
+  const handleCancelButton = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  const toggleModal = () => {
+    setIsModalVisible(false);
+    setRemoveModal(!removeModal);
+  };
 
   // const userFavoritePosts = route.params?.posts?.filter((post: any) => {
   //   return post.favorites.some((favorite: any) => favorite._id === userId);
@@ -373,15 +386,16 @@ export const ProfileScreen = ({navigation, route}: any) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.bottomContainer}>
+      <View
+        style={[
+          styles.bottomContainer,
+          {paddingBottom: tabBarHeight + verticalScale(45)},
+        ]}>
         {selectedOption === 'Feed' && (
           <FlatList
             data={filteredPostsWithoutVideo}
             keyExtractor={item => item._id}
             renderItem={renderPostItem}
-            contentContainerStyle={{
-              paddingBottom: tabBarHeight + verticalScale(45),
-            }}
           />
         )}
         {selectedOption === 'Favorites' && (
@@ -457,7 +471,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
           </View>
         )}
         {selectedOption === 'Videos' && (
-          <View style={{width: '100%',paddingBottom:100}}>
+          <View style={{width: '100%'}}>
             <FlatList
               data={firstVideoPost}
               keyExtractor={item => item._id}
@@ -467,6 +481,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
                     key={item._id}
                     userId={userId}
                     video={item}
+                    handleCancelButtonPress={handleCancelButton}
                     handleVideoPress={handleVideoPress}
                     style={{marginRight: index % 2 === 0 ? 8 : 0}}
                   />
@@ -486,6 +501,88 @@ export const ProfileScreen = ({navigation, route}: any) => {
             isProfile={true}
             handleCancelPress={handleVideoPress}
           />
+        </View>
+      </Modal>
+      <Modal
+        isVisible={isModalVisible}
+        style={styles.modal}
+        animationIn="fadeIn"
+        animationOut="fadeOut">
+        <View style={styles.modalContent}>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingBottom: 30,
+              paddingTop: 15,
+              gap: 15,
+            }}>
+            <Text style={{fontSize: 16, fontWeight: '500', color: 'white'}}>
+              Please Confirm
+            </Text>
+            <Text style={styles.whiteText}>
+              Are you sure you want to{' '}
+              <Text style={styles.coloredText}>remove</Text> this video
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              borderTopWidth: 1,
+              borderTopColor: 'rgba(255, 255, 255, 0.5)',
+              width: '100%',
+              justifyContent: 'center',
+            }}>
+            <TouchableOpacity style={styles.modalButton} onPress={toggleModal}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '700',
+                  color: 'rgba(220, 77, 77, 1)',
+                }}>
+                Remove
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.verticalLine} />
+            <TouchableOpacity
+              onPress={handleCancelButton}
+              style={styles.modalButton}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '700',
+                  color: 'rgba(32, 128, 183, 1)',
+                  textAlign: 'center',
+                }}>
+                Return
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        isVisible={removeModal}
+        style={styles.modal}
+        animationIn="fadeIn"
+        animationOut="fadeOut">
+        <View style={[styles.modalContent, {backgroundColor: 'transparent'}]}>
+          <View style={styles.card}>
+            <View style={styles.iconModal}>
+              <Icon name="checkmark-outline" color="white" size={24} />
+            </View>
+            <Text
+              style={[
+                STYLES.text14,
+                {marginTop: 2, color: 'rgba(48, 210, 152, 1)'},
+              ]}>
+              Removed Successfully
+            </Text>
+            <View style={{width: '75%', marginTop: verticalScale(25)}}>
+              <CustomButton onPress={() => setRemoveModal(false)}>
+                Return
+              </CustomButton>
+            </View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -607,5 +704,57 @@ const styles = StyleSheet.create({
     margin: 0,
     width: '100%',
     height: '100%',
+  },
+  modalContent: {
+    backgroundColor: 'rgba(107, 107, 107, 0.5)',
+    borderRadius: 32,
+    alignItems: 'center',
+    marginHorizontal: horizontalScale(35),
+  },
+  modalButton: {
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: horizontalScale(60),
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  modal: {
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    width: '100%',
+    height: '100%',
+    margin: 0,
+  },
+  coloredText: {
+    color: 'rgba(220, 77, 77, 1)',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  whiteText: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 1)',
+    marginHorizontal: 28,
+    textAlign: 'center',
+  },
+  verticalLine: {
+    width: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  card: {
+    backgroundColor: 'rgba(107, 107, 107, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: horizontalScale(271),
+    height: verticalScale(180),
+    borderRadius: 30,
+  },
+  iconModal: {
+    width: horizontalScale(34),
+    height: verticalScale(34),
+    borderRadius: 17,
+    backgroundColor: '#30D298',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

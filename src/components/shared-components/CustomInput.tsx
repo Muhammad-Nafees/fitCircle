@@ -69,8 +69,12 @@ const CustomInput = ({...props}: Props) => {
   };
 
   return (
-    <View style={{position: 'relative'}}>
-      <Text style={STYLES.text12}>
+    <View style={[{position: 'relative'}]}>
+      <Text
+        style={[
+          STYLES.text12,
+          props.label === 'Age' && {lineHeight: verticalScale(17)},
+        ]}>
         {props.label}
         {props.starlabel ? (
           <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
@@ -114,7 +118,11 @@ const CustomInput = ({...props}: Props) => {
               marginTop: verticalScale(7),
               marginBottom: verticalScale(4),
             },
-            props.label === 'Age' && {width: 70, paddingBottom: -10},
+            props.label === 'Age' && {
+              width: horizontalScale(70),
+              paddingBottom: -verticalScale(10),
+              marginBottom: -verticalScale(3),
+            },
           ]}>
           <Icon name="alert-circle" size={22} color="red" />
           <Text style={[STYLES.text12, {color: 'red'}]}>{props.error}</Text>

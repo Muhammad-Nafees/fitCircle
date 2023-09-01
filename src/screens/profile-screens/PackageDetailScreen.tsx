@@ -36,22 +36,29 @@ export const PackageDetailScreen = ({navigation}: any) => {
         <View style={[styles.horizontalLine, {marginTop: 0}]} />
         <View>
           <Text style={styles.heading2}>Description</Text>
-          <Text></Text>
-          <Text style={styles.paragraph1}>
+          <Text
+            style={[styles.paragraph1, {paddingVertical: verticalScale(16)}]}>
             A great routine for biceps and triceps workout!
           </Text>
-          <Text></Text>
           <Text style={styles.heading2}>Duration</Text>
-          <Text></Text>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingTop: verticalScale(14),
+            }}>
             <Text style={styles.paragraph1}>Length</Text>
             <Text style={styles.duration}>1 HOUR</Text>
           </View>
         </View>
         <View style={styles.horizontalLine} />
         <Text style={styles.heading2}>Service Cost</Text>
-        <Text></Text>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingTop: verticalScale(14),
+          }}>
           <Text style={styles.paragraph1}>Package Cost</Text>
           <Text style={styles.duration}>$100.00</Text>
         </View>

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {Formik, Field} from 'formik';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomRadioButton from '../../../components/dashboard-components/CustomRadioButton';
-import {PhysicalReadinessTestSchema} from '../../../validations';
+import {PhysicalReadinessFourSchema} from '../../../validations';
 import {
   horizontalScale,
   moderateScale,
@@ -35,6 +35,22 @@ const questionSeriousness =
 const VerificationFour = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
 
+  const [errorStates, setErrorStates] = useState({answer7: false});
+
+  const [errorStates1, setErrorStates1] = useState({
+    answer8: false,
+    answer9: false,
+    answer10: false,
+    answer11: false,
+    answer12: false,
+    answer13: false,
+  });
+
+  const [errorStates2, setErrorStates2] = useState({
+    answer14: false,
+    answer15: false,
+  });
+
   const handleSubmit = (values: {
     answer10: string;
     answer11: string;
@@ -53,6 +69,58 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
 
     const answersArr = Object.values(values);
     const isRemainingField = answersArr.find(ans => ans === '') === '';
+    for (let i = 7; i <= 7; i++) {
+      const fieldName = `answer${i}`;
+      if (!values[fieldName]) {
+        setErrorStates(prevState => ({
+          ...prevState,
+          [fieldName]: true,
+        }));
+      } else {
+        setErrorStates(prevState => ({
+          ...prevState,
+          [fieldName]: false,
+        }));
+      }
+    }
+    for (let i = 8; i <= 13; i++) {
+      const fieldName = `answer${i}`;
+      if (!values[fieldName]) {
+        setErrorStates1(prevState => ({
+          ...prevState,
+          [fieldName]: true,
+        }));
+      } else {
+        setErrorStates1(prevState => ({
+          ...prevState,
+          [fieldName]: false,
+        }));
+      }
+    }
+    for (let i = 14; i <= 15; i++) {
+      const fieldName = `answer${i}`;
+      if (!values[fieldName]) {
+        setErrorStates2(prevState => ({
+          ...prevState,
+          [fieldName]: true,
+        }));
+      } else {
+        setErrorStates2(prevState => ({
+          ...prevState,
+          [fieldName]: false,
+        }));
+      }
+    }
+
+    if (
+      Object.values(errorStates1).some(error => error) ||
+      Object.values(errorStates2).some(error => error)
+    ) {
+      return;
+    }
+    if (Object.values(errorStates).some(error => error)) {
+      return;
+    }
     if (isRemainingField) return;
 
     navigation.navigate('VerificationFive', {
@@ -115,6 +183,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
+          initialTouched={true}
           initialValues={{
             answer7:
               (formdata?.physicalAReadiness &&
@@ -165,8 +234,8 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                 formdata?.physicalAReadiness[11]?.answer) ??
               '',
           }}
-          validateOnChange={false}
-          validationSchema={PhysicalReadinessTestSchema}
+          validateOnChange={true}
+          validationSchema={PhysicalReadinessFourSchema}
           onSubmit={values => console.log('Form values:', values)}>
           {({
             handleChange,
@@ -201,6 +270,13 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       selectedValue={values['answer7']}
                       setFieldValue={setFieldValue}
                       name="answer7"
+                      errorShow={errorStates[`answer7`]}
+                      setErrorShow={value =>
+                        setErrorStates(prevState => ({
+                          ...prevState,
+                          [`answer7`]: value,
+                        }))
+                      }
                     />
                   )}
                 </Field>
@@ -211,6 +287,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     }
                     touched={touched.mealsEat}
                     label={questionMealsEat}
+                    error={errors.mealsEat}
                     placeholder="3"
                     value={values.mealsEat}
                     initialTouched={true}
@@ -233,6 +310,13 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                           selectedValue={values[`answer${index + 8}`]}
                           setFieldValue={setFieldValue}
                           name={`answer${index + 8}`}
+                          errorShow={errorStates1[`answer${index + 8}`]}
+                          setErrorShow={value =>
+                            setErrorStates1(prevState => ({
+                              ...prevState,
+                              [`answer${index + 8}`]: value,
+                            }))
+                          }
                         />
                       )}
                     </Field>
@@ -245,6 +329,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     }
                     touched={touched.durationExercise}
                     label={questionDurationExercise}
+                    error={errors.durationExercise}
                     placeholder="1 month"
                     value={values.durationExercise}
                     initialTouched={true}
@@ -267,6 +352,13 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                           selectedValue={values[`answer${indx + 14}`]}
                           setFieldValue={setFieldValue}
                           name={`answer${indx + 14}`}
+                          errorShow={errorStates2[`answer${indx + 14}`]}
+                          setErrorShow={value =>
+                            setErrorStates2(prevState => ({
+                              ...prevState,
+                              [`answer${indx + 14}`]: value,
+                            }))
+                          }
                         />
                       )}
                     </Field>
@@ -277,8 +369,9 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     editable={
                       typeof disabled === 'boolean' ? !disabled : disabled
                     }
-                    touched={touched.seriousness}
+                    touched={true}
                     label={questionSeriousness}
+                    error={errors.seriousness}
                     placeholder="9"
                     value={values.seriousness}
                     initialTouched={true}
@@ -286,6 +379,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     handleChange={handleChange('seriousness')}
                     setFieldError={setFieldError}
                     fieldName="seriousness"
+                    require={true}
                   />
                 </View>
               </View>

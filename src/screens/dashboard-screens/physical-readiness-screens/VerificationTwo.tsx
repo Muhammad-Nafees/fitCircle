@@ -19,15 +19,6 @@ const questionTexts = [
 const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
 
-  const [touched, setTouched] = useState({
-    answer1: false,
-    answer2: false,
-    answer3: false,
-    answer4: false,
-    answer5: false,
-    answer6: false,
-  });
-
   const [errorStates, setErrorStates] = useState({
     answer1: false,
     answer2: false,

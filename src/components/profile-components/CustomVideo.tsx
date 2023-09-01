@@ -13,7 +13,7 @@ const Image1 = require('../../../assets/images/backgroundImage.jpg');
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const PlayIcon = require('../../../assets/icons/playIcon.png');
 
-const CustomVideo = ({handleVideoPress}: any) => {
+const CustomVideo = ({handleVideoPress, handleCancelButtonPress}: any) => {
   return (
     <TouchableOpacity onPress={handleVideoPress}>
       <ImageBackground
@@ -21,11 +21,15 @@ const CustomVideo = ({handleVideoPress}: any) => {
         style={styles.container}
         imageStyle={{borderRadius: 10}}
         resizeMode="cover">
-        <TouchableOpacity style={styles.cancelIconContainer}>
+        <TouchableOpacity
+          style={styles.cancelIconContainer}
+          onPress={() => handleCancelButtonPress()}>
           <Image source={CancelIcon} style={styles.cancelIcon} />
         </TouchableOpacity>
-        <View style={styles.playIconBackground}>
-          <Image source={PlayIcon} style={styles.playIcon} />
+        <View style={{flex: 1}}>
+          <View style={styles.playIconBackground}>
+            <Image source={PlayIcon} style={styles.playIcon} />
+          </View>
         </View>
         <Text style={styles.text}>
           Sweat is magic. Cover yourself in it daily to grant your wishes.
@@ -41,7 +45,8 @@ const styles = StyleSheet.create({
     height: verticalScale(195),
     justifyContent: 'flex-end',
     marginVertical: 5,
-    marginHorizontal: 6
+    marginHorizontal: 6,
+    flex: 1,
   },
   cancelIconContainer: {
     alignItems: 'flex-end',
@@ -69,7 +74,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    marginBottom: '35%',
   },
   playIcon: {
     width: horizontalScale(8.86),

@@ -161,6 +161,17 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
       /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
       'Invalid date format. Must be dd/mm/yyyy',
     )
+    .test('valid-date', 'Invalid Date', function (value) {
+      if (!value) return true;
+      const currentDate = new Date();
+      const [day, month, year] = value.split('/').map(Number);
+      const selectedDate = new Date(year, month - 1, day);
+      return (
+        selectedDate instanceof Date &&
+        !isNaN(selectedDate) &&
+        selectedDate <= currentDate
+      );
+    })
     .required('Date is required'),
   email: email,
   firstName: Yup.string()
@@ -184,6 +195,18 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
   weight: Yup.string()
     .required('Weight is required')
     .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
+});
+
+export const PhysicalReadinessFourSchema = Yup.object().shape({
+  seriousness: Yup.number()
+    .required('Seriousness is required')
+    .max(10, 'Seriousness cannot be greater than 10'),
+  durationExercise: Yup.string()
+    .required('Duration of exercise is required')
+    .test('not-three-digits', 'Duration cannot be 3 digits', function (value) {
+      return value.length !== 3;
+    }),
+  mealsEat: Yup.string().required('Meals Eat is required'),
 });
 
 export const PhysicalActivitySchema = Yup.object().shape({
@@ -216,5 +239,16 @@ export const TdeeCalculatorSchema = Yup.object().shape({
       /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
       'Invalid date format. Must be dd/mm/yyyy',
     )
+    .test('valid-date', 'Invalid Date', function (value) {
+      if (!value) return true;
+      const currentDate = new Date();
+      const [day, month, year] = value.split('/').map(Number);
+      const selectedDate = new Date(year, month - 1, day);
+      return (
+        selectedDate instanceof Date &&
+        !isNaN(selectedDate) &&
+        selectedDate <= currentDate
+      );
+    })
     .required('Start date is required'),
 });
