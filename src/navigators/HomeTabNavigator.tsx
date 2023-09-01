@@ -23,6 +23,8 @@ import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
 import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
 import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 import ReelsComponent from '../components/home-components/Reels';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -113,6 +115,7 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
 
 const HomeTabNavigator = () => {
   const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
+
 
   React.useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
