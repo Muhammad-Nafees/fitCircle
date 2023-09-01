@@ -191,6 +191,14 @@ export const AddPostScreen = ({route}: any) => {
     setSelectedOption(option);
   };
 
+  const handleScheduleRoute = () => {
+    if (userData.role === 'trainer') {
+      navigation.navigate('MySche', {screen: 'Slot'});
+    } else {
+      navigation.navigate('MySche', {screen: 'SetSchedule'});
+    }
+  };
+
   const handleCreatePostIconPress = () => {
     setIsComponentMounted(false);
     setIsCreatePostIconModalVisible(!isCreatePostIconModalVisible);
@@ -514,6 +522,7 @@ export const AddPostScreen = ({route}: any) => {
                   handlePostOptionsIconModalClose
                 }
                 handleVideoButtonPress={handleVideoButtonPress}
+                handleScheduleRoute={handleScheduleRoute}
               />
             </View>
           </Modal>

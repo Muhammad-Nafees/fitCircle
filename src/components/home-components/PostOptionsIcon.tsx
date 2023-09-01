@@ -9,12 +9,18 @@ import ScheduleSvgIcon from '../../../assets/icons/ScheduleIcon';
 import CalculatorSvgIcon from '../../../assets/icons/CalculatorIcon';
 import PhysicalSvgIcon from '../../../assets/icons/PhysicalIcon';
 import WalletSvgIcon from '../../../assets/icons/WalletIcon';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 
 export const PostOptionsIcon = ({
   handleCreatePostIconPress,
   handlePostOptionsIconModalClose,
   handleVideoButtonPress,
+  handleScheduleRoute,
 }: any) => {
+  const navigation = useNavigation();
+  const userData = useSelector((state: RootState) => state.auth.user);
   return (
     <View style={styles.bottomOptions}>
       <TouchableOpacity
@@ -36,19 +42,39 @@ export const PostOptionsIcon = ({
         <ProfileSvgIcon />
         <Text style={styles.options}>My profile</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={() => {
+          handlePostOptionsIconModalClose();
+          navigation.navigate('MealPlan');
+        }}>
         <MealPlanSvgIcon />
         <Text style={styles.options}>My Meal Plan</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={() => {
+          handlePostOptionsIconModalClose();
+          handleScheduleRoute();
+        }}>
         <ScheduleSvgIcon />
         <Text style={styles.options}>My Schedule</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={() => {
+          handlePostOptionsIconModalClose();
+          navigation.navigate('Tdee');
+        }}>
         <CalculatorSvgIcon />
         <Text style={styles.options}>My TDEE Calculator</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={() => {
+          handlePostOptionsIconModalClose();
+          navigation.navigate('PhysicalReadiness');
+        }}>
         <PhysicalSvgIcon />
         <Text style={styles.options}>My Physical Readiness Test</Text>
       </TouchableOpacity>

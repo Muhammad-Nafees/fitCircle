@@ -1,4 +1,5 @@
 import {
+  BackHandler,
   ScrollView,
   StyleSheet,
   Text,
@@ -61,6 +62,18 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   useEffect(() => {
     if (isFocused && route?.params?.clearValues) formikRef.current?.resetForm();
   }, [isFocused]);
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
@@ -250,20 +263,21 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                   setPhoneCode={setPhoneCode}
                   placeholder="123-1234"
                 />
-                <CustomInput
-                  editable={editable}
-                  label="Age"
-                  placeholder=""
-                  value={values.age}
-                  error={errors.age}
-                  touched={touched.age}
-                  initialTouched={true}
-                  keyboardType="numeric"
-                  handleChange={handleChange('age')}
-                  setFieldError={setFieldError}
-                  fieldName="age"
-                />
                 <View style={styles.inputRow}>
+                  <CustomInput
+                    editable={editable}
+                    label="Age"
+                    placeholder=""
+                    value={values.age}
+                    error={errors.age}
+                    touched={touched.age}
+                    initialTouched={true}
+                    keyboardType="numeric"
+                    handleChange={handleChange('age')}
+                    setFieldError={setFieldError}
+                    extraStyles={{width: 70}}
+                    fieldName="age"
+                  />
                   <View style={styles.inputContainer}>
                     <Text style={styles.label}>Height</Text>
                     <DropdownTextInput
@@ -325,7 +339,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   inputContainer: {
-    flex: 4,
+    flex: 1,
   },
   label: {
     fontSize: moderateScale(12),

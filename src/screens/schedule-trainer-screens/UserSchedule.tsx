@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  BackHandler,
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment';
@@ -25,8 +26,6 @@ type ScheduleItem = {
   booked: boolean;
   bookedBy: string;
 };
-
-
 
 const SetSchedule = ({route, navigation}: any) => {
   const currentMonth = moment().format('YYYY-MM-DD');
@@ -105,6 +104,18 @@ const SetSchedule = ({route, navigation}: any) => {
   const formatDate = date => {
     return moment(date).format('ddd, D MMM');
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('Dashboard');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   const formattedSelectedDate = selectedDate
     ? formatDate(selectedDate)
