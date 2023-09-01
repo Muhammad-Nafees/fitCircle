@@ -106,13 +106,16 @@ const CustomInput = ({...props}: Props) => {
         (props.error && props.value) ||
         isFocused) ? (
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 2,
-            marginTop: verticalScale(7),
-            marginBottom: verticalScale(4),
-          }}>
+          style={[
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 2,
+              marginTop: verticalScale(7),
+              marginBottom: verticalScale(4),
+            },
+            props.label === 'Age' && {width: 70, paddingBottom: -10},
+          ]}>
           <Icon name="alert-circle" size={22} color="red" />
           <Text style={[STYLES.text12, {color: 'red'}]}>{props.error}</Text>
         </View>
