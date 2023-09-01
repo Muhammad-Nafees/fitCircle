@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  BackHandler,
 } from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {Avatar} from 'react-native-paper';
@@ -120,6 +121,18 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     setModalOpenFor(null);
     setModalVisible(false);
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('Profile');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   const renderProfileItem = ({item}: any) => {
     const isRemoved = removedFollowers.includes(item._id);
@@ -322,6 +335,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
       <Modal
         isVisible={isModalVisible}
         style={styles.modal}
+        onBackButtonPress={toggleModal}
         animationIn="fadeIn"
         animationOut="fadeOut">
         <View style={styles.modalContent}>
@@ -391,6 +405,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
       <Modal
         isVisible={followModal}
         style={styles.modal}
+        onBackButtonPress={() => setFollowModal(false)}
         animationIn="fadeIn"
         animationOut="fadeOut">
         <View style={[styles.modalContent, {backgroundColor: 'transparent'}]}>
