@@ -37,8 +37,8 @@ const CustomVideo = ({handleVideoPress}: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 170,
-    height: 195,
+    width: horizontalScale(170),
+    height: verticalScale(195),
     justifyContent: 'flex-end',
     marginVertical: 5,
     marginHorizontal: 6

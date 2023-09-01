@@ -32,6 +32,7 @@ import Modal from 'react-native-modal';
 import {ReelsComponent} from '../../components/home-components/Reels';
 import Video from 'react-native-video';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {ScrollView} from 'react-native';
 
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -456,9 +457,8 @@ export const ProfileScreen = ({navigation, route}: any) => {
           </View>
         )}
         {selectedOption === 'Videos' && (
-          <View style={{width: '100%', paddingHorizontal: 16}}>
+          <View style={{width: '100%',paddingBottom:100}}>
             <FlatList
-              vertical
               data={firstVideoPost}
               keyExtractor={item => item._id}
               renderItem={({item, index}) => (
