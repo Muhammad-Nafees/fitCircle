@@ -29,13 +29,16 @@ import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormS
 import HomeTabNavigator from './HomeTabNavigator';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
+import AuthStackNavigator from './AuthStackNavigator';
 
 const Stack = createStackNavigator();
 
-const AuthStackNavigator = () => {
+const StackNavigator = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
+  if (isAuthenticated) return <AuthStackNavigator />;
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -51,32 +54,58 @@ const AuthStackNavigator = () => {
       }}
       initialRouteName="SplashScreen">
       <Stack.Screen
-        name="HomeScreen"
-        component={HomeTabNavigator}
+        name="SplashScreen"
+        component={SplashScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="ForgetPasswordEmail"
-        component={ForgetPasswordEmail}
-      />
-      <Stack.Screen
-        name="ForgetPasswordNumber"
-        component={ForgetPasswordNumber}
-      />
-      <Stack.Screen name="ForgetPasswordOtp" component={ForgetPasswordOtp} />
-      <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
-      <Stack.Screen
-        name="PasswordChangedDialog"
-        component={FavoriteDialogScreen}
+        name="SigninScreenOne"
+        component={SignInScreenOne}
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="BlankButtonRender"
-        component={BlankButtonRenderScreen}
+        name="SigninScreenTwo"
+        component={SignInScreenTwo}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="LoginFormScreen"
+        component={LoginFormScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SignupFormScreen"
+        component={SignupFormScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="CreateAccount" component={CreateAccount} />
+      <Stack.Screen
+        name="CreateProfile"
+        component={CreateProfile}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="GenderScreen" component={GenderScreen} />
+      <Stack.Screen name="InterestScreen" component={InterestScreen} />
+      <Stack.Screen name="CommunitiesScreen" component={CommunitiesScreen} />
+      <Stack.Screen name="SocialMediaAccount" component={SocialMediaAccount} />
+      <Stack.Screen
+        name="ChooseVerificationType"
+        component={ChooseVerificationType}
+      />
+      <Stack.Screen name="OtpScreen" component={OtpScreen} />
+      <Stack.Screen
+        name="AccountVerified"
+        component={VerifyScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="UploadCertificate" component={UploadCertificate} />
+      <Stack.Screen
+        name="CertificateVerified"
+        component={VerifyScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
   );
 };
 
-export default AuthStackNavigator;
+export default StackNavigator;

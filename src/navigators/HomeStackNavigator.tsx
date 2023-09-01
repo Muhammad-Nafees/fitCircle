@@ -5,9 +5,12 @@ import {
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
 import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const Stack = createStackNavigator();
 const HomeStackNavigator = () => {
+
   return (
     <Stack.Navigator
       screenOptions={{

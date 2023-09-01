@@ -8,7 +8,7 @@ import {useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import {createProfile} from '../../../api';
-import {setUserData} from '../../../redux/authSlice';
+import {authenticate, setUserData} from '../../../redux/authSlice';
 import {RootState} from '../../../redux/store';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -45,6 +45,7 @@ const VerifyScreen = ({navigation}: any) => {
         storeData(authToken);
         console.log(response);
         // dispatch(setUserData(data));
+        dispatch(authenticate(true));
         setIsLoading(false);
         navigation.navigate('HomeScreen');
         Toast.show({

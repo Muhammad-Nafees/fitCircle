@@ -92,7 +92,8 @@ const DashboardScreen = ({navigation}: any) => {
     return (
       <View
         style={{
-          width: screenWidth / 3 - 30,
+          // width: screenWidth / 3 - 30,
+          flex: 1,
         }}>
         <TouchableOpacity
           onPress={
@@ -274,17 +275,18 @@ const DashboardScreen = ({navigation}: any) => {
         </View>
         <View
           style={{
-            flex: 1,
+            // flex: 1,
             // flexDirection: 'row',
             marginTop: 10,
             width: screenWidth,
-            paddingHorizontal: 10,
+            paddingRight: 30,
           }}>
           <FlatList
             horizontal
             data={roleBasedItems}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderItem}
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={{gap: 10}}
           />
         </View>
@@ -332,7 +334,7 @@ const styles = StyleSheet.create({
   },
   topContainer: {
     padding: 15,
-    flex: 1.1,
+    // flex: 1.1,
     paddingBottom: 30,
   },
   dateText: {
@@ -384,7 +386,8 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     backgroundColor: '#222123',
-    flex: 0.8,
+    flex: 2,
+    marginTop: -verticalScale(20),
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     zIndex: -1,
@@ -393,14 +396,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#209BCC',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    height: 110,
+    width: horizontalScale(106),
+    height: verticalScale(115),
     // marginHorizontal: 5,
     borderRadius: 10,
   },
   carouselItemText: {
     color: 'white',
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '500',
     marginVertical: 10,
     marginHorizontal: 6,

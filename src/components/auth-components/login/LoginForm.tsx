@@ -60,7 +60,7 @@ const LoginForm = () => {
       const response = await loginIn(values.email, values.password);
       setIsLoading(false);
       if (response?.status === 200) {
-        dispatch(authenticate());
+        dispatch(authenticate(true));
         dispatch(setAuthorizationToken(response?.headers.authorization));
         storeData(response?.headers.authorization);
         dispatch(setuserRole(response.data.role));
@@ -173,7 +173,8 @@ const LoginForm = () => {
                       bottom: -verticalScale(10),
                     },
                   ]}>
-                  Forget Password</Text>
+                  Forget Password
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={{marginTop: verticalScale(37), gap: 37}}>
