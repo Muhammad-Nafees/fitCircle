@@ -41,41 +41,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [countryCode, setCountryCode] = useState();
   const [phoneCode, setPhoneCode] = useState('1');
   const [usernameError, setUsernameError] = useState<string>('');
-  const phoneInput = useRef<PhoneInput>(null);
-  const [isError, setIsError] = useState('');
-
-  const phoneNumberCheck = async (values: any) => {
-    const isValid = phoneInput.current?.isValidNumber(values);
-    console.log(`+${phoneCode}${values}`);
-    if (!isValid) {
-      setIsError('Invalid phone number!');
-    } else {
-      setIsError('');
-      try {
-        const response = await fetch(
-          'http://fitcircle.yameenyousuf.com/users/check-phone',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              phone: `+${phoneCode}${values}`,
-            }),
-          },
-        );
-        const data = await response.json();
-        if (!data.unique) {
-          setIsError('Phone number already exists');
-        } else {
-          setIsError('');
-        }
-      } catch (error) {
-        console.log('Error checking phoneNumber:', error);
-        setIsError('Error checking phone number. Please try again later.');
-      }
-    }
-  };
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -216,8 +181,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     <Formik
       initialValues={initialValues}
       validationSchema={createProfileSchema(userRole)}
-      validationContext={{userRole: userRole}}
-      validateOnChange={false}
+      validationContext={{userRole: userRole}} // Provide the context here
       onSubmit={handleSubmit}>
       {({
         handleChange,
@@ -264,8 +228,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               touched={touched.username}
               initialTouched={true}
               handleChange={handleChange('username')}
-              setFieldError={setFieldError}
-              fieldName="username"
+              handleBlur={() => handleUsernameBlur(values.username)}
             />
             <CustomInput
               label="Add bio"
@@ -288,11 +251,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               error={errors.phone}
               touched={touched.phone}
               handleChange={handleChange('phone')}
-              phoneInput={phoneInput}
-              setIsError={setIsError}
-              setFieldError={setFieldError}
-              isError={isError}
-              setPhoneCode={setPhoneCode}
             />
             <CustomSelect
               label="Country"

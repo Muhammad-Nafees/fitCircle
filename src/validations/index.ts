@@ -211,11 +211,10 @@ export const TdeeCalculatorSchema = Yup.object().shape({
     .test('not-zero', 'Goal weight must not be 0', value => !/^0/.test(value)),
   caloriedeficit: Yup.string().required('Calorie deficit is required'),
   activityfactor: Yup.string().required('Activity Factor is required'),
+  startDate: Yup.string()
+    .matches(
+      /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+      'Invalid date format. Must be dd/mm/yyyy',
+    )
+    .required('Start date is required'),
 });
-
-// startDate: Yup.string()
-//   .matches(
-//     /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
-//     'Invalid date format. Must be dd/mm/yyyy',
-//   )
-//   .required('Start date is required'),

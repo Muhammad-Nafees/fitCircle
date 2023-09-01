@@ -40,15 +40,6 @@ const CustomInput = ({...props}: Props) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  const theme = {
-    colors: {
-      text: '#000',
-      placeholder: 'rgba(68, 68, 68, 0.5)',
-      primary: props.error && props.initialTouched ? '#292A2C' : '#292A2C',
-    },
-    roundness: 0, // Border radius value
-  };
-
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -128,7 +119,6 @@ const CustomInput = ({...props}: Props) => {
       ) : (
         <View style={{height: 35}} />
       )}
-
       {props.isPasswordIcon && (
         <TouchableWithoutFeedback onPress={togglePasswordVisibility}>
           <Icon

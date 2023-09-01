@@ -38,6 +38,7 @@ const CommentsScreen = ({route, navigation}: any) => {
   );
   console.log(selectedPost);
   const {userId} = route.params;
+  const profileScreen = route?.params?.profileScreen;
   const [comments, setComments] = useState([]);
   const [commentsCount, setCommentsCount] = useState('Loading');
   const [loading, setLoading] = useState(false);
@@ -182,7 +183,11 @@ const CommentsScreen = ({route, navigation}: any) => {
   const handleBackPress = async () => {
     setCommentScreenActive(false);
     await setComments([]);
-    navigation.goBack();
+    if (profileScreen) {
+      navigation.navigate('Profile');
+    } else {
+      navigation.goBack();
+    }
     return true;
   };
 

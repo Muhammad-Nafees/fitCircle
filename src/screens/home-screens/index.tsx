@@ -33,7 +33,6 @@ import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
@@ -68,10 +67,6 @@ const HomeScreen = () => {
     navigation.navigate('CommentsScreen', {userId});
   };
 
-  const onChangeIndex = ({index}: any) => {
-    console.log('🚀 ~ file: index.tsx:77 ~ onChangeIndex ~ index:', index);
-    setFocusedIndex(index);
-  };
   useFocusEffect(
     React.useCallback(() => {
       handleRefresh();
@@ -188,7 +183,7 @@ const HomeScreen = () => {
       <Animated.View
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             {profileImageUrl ? (
               <Avatar.Image size={40} source={{uri: profileImageUrl}} />
             ) : (

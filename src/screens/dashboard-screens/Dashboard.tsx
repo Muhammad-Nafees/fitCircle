@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  Dimensions,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {Avatar} from 'react-native-paper';
@@ -25,6 +32,8 @@ const DashboardScreen = ({navigation}: any) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [userId, setUserId] = useState(userData?._id);
 
+  const screenWidth = Dimensions.get('window').width;
+
   useEffect(() => {
     setUserId(userData?._id);
     const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
@@ -47,14 +56,13 @@ const DashboardScreen = ({navigation}: any) => {
             selectOption: option => {
               setSelectedOption(option);
               if (option === 'Meal Plan') {
-                navigation.navigate('MealPlanScreen'); // Navigate to MealPlanScreen
+                navigation.navigate('MealPlanScreen');
               }
             },
           },
           {
             text: 'Wallet',
             icon: <WalletDashboardIcon />,
-            routeName: 'ScheduleScreen',
           },
           {
             text: 'Schedule',
@@ -81,14 +89,16 @@ const DashboardScreen = ({navigation}: any) => {
         ];
 
   const renderItem = ({item}: any) => {
-    const onPress = withNavigationAction(item.routeName);
     return (
-      <View>
+      <View
+        style={{
+          width: screenWidth / 3 - 30,
+        }}>
         <TouchableOpacity
           onPress={
             item.text === 'Packages / Meal Plan'
               ? () => setIsDropdownVisible(!isDropdownVisible)
-              : withNavigationAction(item.routeName)
+              : item.routeName && withNavigationAction(item.routeName)
           }
           style={styles.carouselItem}>
           {item.icon}
@@ -193,7 +203,13 @@ const DashboardScreen = ({navigation}: any) => {
                 flexDirection: 'row',
                 marginHorizontal: horizontalScale(5),
               }}>
-              <View style={{flexDirection: 'row'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                }}>
                 <Text
                   style={{
                     fontSize: 10,
@@ -205,8 +221,9 @@ const DashboardScreen = ({navigation}: any) => {
                 <TouchableOpacity
                   style={{
                     flexDirection: 'row',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    alignSelf: 'center',
                   }}>
                   <Text
                     style={{
@@ -255,12 +272,20 @@ const DashboardScreen = ({navigation}: any) => {
             </View>
           )}
         </View>
-        <View style={{flex: 1, flexDirection: 'row', marginTop: 10}}>
+        <View
+          style={{
+            flex: 1,
+            // flexDirection: 'row',
+            marginTop: 10,
+            width: screenWidth,
+            paddingHorizontal: 10,
+          }}>
           <FlatList
             horizontal
             data={roleBasedItems}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderItem}
+            contentContainerStyle={{gap: 10}}
           />
         </View>
       </View>
@@ -307,7 +332,8 @@ const styles = StyleSheet.create({
   },
   topContainer: {
     padding: 15,
-    flex: 1,
+    flex: 1.1,
+    paddingBottom: 30,
   },
   dateText: {
     color: 'white',
@@ -367,9 +393,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#209BCC',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 110,
+    width: '100%',
     height: 110,
-    marginHorizontal: 5,
+    // marginHorizontal: 5,
     borderRadius: 10,
   },
   carouselItemText: {

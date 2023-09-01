@@ -30,9 +30,8 @@ const activityFactors = {
 };
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 
-export const TdeeCalculator = ({navigation}: any) => {
+export const TdeeCalculator = ({navigation, disabled}: any) => {
   const formikRef: any = useRef();
-
   const handleSubmit = async (values: any) => {
     try {
       const currentDate = format(new Date(), 'dd/LL/Y');

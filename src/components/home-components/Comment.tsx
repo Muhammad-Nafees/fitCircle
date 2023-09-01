@@ -329,6 +329,10 @@ const styles = StyleSheet.create({
   },
   commentsAndInputContainer: {
     height: '100%',
+    justifyContent: 'center',
+  },
+  commentsAndInputContainer: {
+    flex: 1,
   },
   commentsList: {
     paddingBottom: verticalScale(10),
@@ -407,6 +411,30 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '500',
     color: '#888888',
+  },
+  repliesContainer: {
+    marginLeft: 0,
+  },
+  commentMediaImage: {
+    width: 100,
+    height: 100,
+    marginTop: verticalScale(8),
+    borderRadius: 8,
+  },
+  timeContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    width: '25%',
+    marginLeft: horizontalScale(20),
+  },
+  timeText: {
+    color: '#888888',
+    fontSize: 10,
+    textAlign: 'left',
+  },
+  replyButton: {
+    fontSize: 10,
+    fontWeight: '500',
   },
   repliesContainer: {
     marginLeft: 0,

@@ -192,6 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#212223',
     borderRadius: 15,
     padding: 10,
+    paddingBottom: 80,
   },
   bottomContainer: {
     flex: 0.8,

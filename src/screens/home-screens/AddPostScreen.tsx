@@ -88,6 +88,21 @@ export const AddPostScreen = ({route}: any) => {
     setProfileImageUrl(imageUri);
   }, [userData]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsModalVisible(false);
+      setIsComponentMounted(true);
+      setIsCreatePostIconModalVisible(false);
+      setTextInputValue('');
+      setMediaUri('');
+    }, []),
+  );
+
+  useEffect(() => {
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    setProfileImageUrl(imageUri);
+  }, [userData]);
+
   const onSelectCost = (value: number) => {
     console.log(value);
     setCostValue(value);

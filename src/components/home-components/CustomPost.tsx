@@ -370,6 +370,12 @@ export const CustomPost = ({
                 </CustomButton>
               </View>
             </View>
+            <TouchableOpacity>
+              <Image
+                source={OptionIcon}
+                style={{width: 24, height: 35, tintColor: '#fff'}}
+              />
+            </TouchableOpacity>
           </View>
         </Modal>
       )}
