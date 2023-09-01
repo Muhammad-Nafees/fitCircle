@@ -5,10 +5,12 @@ import {
   Image,
   StyleSheet,
   FlatList,
+  BackHandler,
 } from 'react-native';
 import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
 import {CustomPackageReview} from '../../components/profile-components/CustomPackageReview';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {useEffect} from 'react';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
 const reviewData = Array.from({length: 5});
@@ -17,6 +19,18 @@ export const PackageDetailScreen = ({navigation}: any) => {
   const renderCustomPackageReview = () => {
     return <CustomPackageReview />;
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('Profile');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
