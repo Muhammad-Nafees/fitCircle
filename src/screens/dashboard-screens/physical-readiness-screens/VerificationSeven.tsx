@@ -1,5 +1,5 @@
-import React from 'react';
-import {ScrollView, StyleSheet, View, Text} from 'react-native';
+import React, {useEffect} from 'react';
+import {ScrollView, StyleSheet, View, Text, BackHandler} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {VerificationOne} from './VerificationOne';
 import VerificationTwo from './VerificationTwo';
@@ -16,6 +16,17 @@ type Mcq = {
 };
 
 const VerificationSeven = ({navigation, route}: any) => {
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
   const {
     verificationOne,
     verificationTwo,
@@ -74,8 +85,8 @@ const VerificationSeven = ({navigation, route}: any) => {
           }
         }
 
-      const dateArr = verificationOne?.date?.split("/")
-      const reqDate = `${dateArr[1]}/${dateArr[0]}/${dateArr[2]}`
+      const dateArr = verificationOne?.date?.split('/');
+      const reqDate = `${dateArr[1]}/${dateArr[0]}/${dateArr[2]}`;
 
       const reqObj = {
         date: reqDate,
@@ -96,7 +107,10 @@ const VerificationSeven = ({navigation, route}: any) => {
 
       const response = await axiosInstance.post(`physical-readiness`, reqObj);
 
-      console.log("🚀 ~ file: VerificationSeven.tsx:97 ~ handleFormSave ~ response:", response)
+      console.log(
+        '🚀 ~ file: VerificationSeven.tsx:97 ~ handleFormSave ~ response:',
+        response,
+      );
       navigation.navigate('FormSaved');
     } catch (error) {
       console.log('🚀 ~ handleFormSave ~ error:', error);

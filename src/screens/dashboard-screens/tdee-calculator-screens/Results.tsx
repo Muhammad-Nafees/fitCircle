@@ -1,13 +1,25 @@
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {Formik} from 'formik';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import {useEffect} from 'react';
 
 export const Results = ({navigation, route}: any) => {
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
   const {data, weight} = route.params;
-  console.log("🚀 ~ file: Results.tsx:10 ~ Results ~ data:", data)
+  console.log('🚀 ~ file: Results.tsx:10 ~ Results ~ data:', data);
 
   const handleSubmit = () => {
     navigation.navigate('MacroCalculator', {data, weight});

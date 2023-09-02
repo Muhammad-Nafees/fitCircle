@@ -244,71 +244,7 @@ export const Comment = ({
             />
           ))}
         </ScrollView>
-        {/* {media && (
-          <View
-            style={{
-              backgroundColor: '#00abd2',
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-                padding: 10,
-              }}>
-              <View>
-                <Text style={{color: '#fff', marginRight: 20}}>
-                  Photo Attached
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => setMediaUri(null)}
-                style={{marginRight: 8}}>
-                <Image
-                  source={CancelIcon}
-                  style={{tintColor: '#fff', width: 18, height: 18}}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )} */}
       </View>
-      {/* <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
-        <View style={styles.inputContainer}>
-          <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor: '#00abd2',
-              width: '85%',
-            }}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Message"
-              placeholderTextColor="#fff"
-              value={commentText}
-              onChangeText={text => setCommentText(text)}
-            />
-            <TouchableOpacity
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: horizontalScale(13),
-                opacity: 0.8,
-              }}
-              onPress={handlePhotoButtonPress}>
-              <CreatePostCommentSvgIcon />
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            style={styles.commentButton}
-            onPress={() => handleCommentSubmit()}>
-            <Image
-              source={SendIcon}
-              style={{width: 20, height: 20, tintColor: '#fff'}}
-            />
-          </TouchableOpacity>
-        </View>
-      </View> */}
     </>
   );
 };

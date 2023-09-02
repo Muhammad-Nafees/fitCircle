@@ -186,7 +186,7 @@ const SetSchedule = ({route, navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      <View style={{flex: 1, paddingHorizontal: 10, paddingBottom: 10}}>
+      <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
         <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
           <Image source={ArrowBackIcon} style={styles.arrowBack} />
         </TouchableOpacity>
@@ -257,13 +257,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   calendarContainer: {
-    flex: 1,
     backgroundColor: '#212223',
     borderRadius: 15,
     padding: 10,
+    paddingBottom: 25,
   },
   bottomContainer: {
-    flex: 0.8,
     backgroundColor: '#212223',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,

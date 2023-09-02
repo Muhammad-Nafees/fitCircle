@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
 import {Formik, Field} from 'formik';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {STYLES} from '../../../styles/globalStyles';
@@ -34,6 +34,18 @@ const questionSeriousness =
 
 const VerificationFour = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   const [errorStates, setErrorStates] = useState({answer7: false});
 

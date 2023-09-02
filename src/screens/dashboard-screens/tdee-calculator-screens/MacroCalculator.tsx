@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
 import {useState, useEffect} from 'react';
 import {STYLES} from '../../../styles/globalStyles';
 import {Formik} from 'formik';
@@ -19,6 +19,17 @@ const presets = {
 };
 
 export const MacroCalculator = ({navigation, route}: any) => {
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
   const [preset, setPreset] = useState('');
   const [chartData, setChartData] = useState<NutritionData>({
     user: '',
@@ -82,9 +93,10 @@ export const MacroCalculator = ({navigation, route}: any) => {
         <View style={styles.formContainer}>
           <View
             style={{
+              width: '100%',
               justifyContent: 'center',
               alignItems: 'center',
-              marginHorizontal: 16,
+              paddingHorizontal: 36,
             }}>
             <CustomSelect
               label="Select a Preset (Carb % / Protein % / Fat %)"
@@ -94,7 +106,7 @@ export const MacroCalculator = ({navigation, route}: any) => {
               handleChange={setPreset}
               setFieldValue={() => null}
               setFieldError={() => null}
-              width={'90%'}
+              width={'100%'}
               fieldName="preset"
               extraRowTextStyle={{color: 'white', fontSize: 12}}
               extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
@@ -116,6 +128,7 @@ export const MacroCalculator = ({navigation, route}: any) => {
                 marginTop: -18,
                 marginBottom: 20,
                 textAlign: 'left',
+                width: '100%',
               }}>
               Note: To use a custom Macro setting, please visit our new and
               improved Macro Calculator

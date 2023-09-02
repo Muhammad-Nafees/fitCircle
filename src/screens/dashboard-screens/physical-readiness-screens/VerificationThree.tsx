@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
 import {LinearGradient} from 'react-native-linear-gradient';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
@@ -12,7 +12,17 @@ const schema = Yup.object().shape({
 });
 
 const VerificationThree = ({navigation, route}: any) => {
-
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   return (
     <View style={[STYLES.container, {justifyContent: 'space-between'}]}>

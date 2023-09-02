@@ -277,8 +277,8 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                     setFieldError={setFieldError}
                     extraStyles={{
                       width: 70,
-                      height: 47,
-                      marginTop: 10,
+                      height: verticalScale(47),
+                      marginTop: verticalScale(10),
                       alignItems: 'center',
                       position: 'relative',
                     }}
