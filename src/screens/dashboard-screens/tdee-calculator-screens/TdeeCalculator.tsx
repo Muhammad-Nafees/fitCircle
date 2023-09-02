@@ -295,10 +295,10 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   label="Activity Factor"
                   starlabel={true}
                   values={Object.keys(activityFactors)}
-                  selectedValue={values.activityFactor}
-                  error={errors.activityFactor}
+                  selectedValue={values.activityfactor}
+                  error={errors.activityfactor}
                   initialTouched={true}
-                  touched={touched.activityFactor}
+                  touched={touched.activityfactor}
                   setFieldValue={setFieldValue}
                   setFieldError={setFieldError}
                   handleChange={handleChange('activityFactor')}
