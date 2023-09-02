@@ -263,6 +263,7 @@ const styles = StyleSheet.create({
     paddingBottom: 25,
   },
   bottomContainer: {
+    flex: 1,
     backgroundColor: '#212223',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
