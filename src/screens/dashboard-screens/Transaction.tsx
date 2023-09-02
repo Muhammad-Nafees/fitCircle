@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {CustomTransaction} from '../../components/dashboard-components/CustomTransaction';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import {horizontalScale} from '../../utils/metrics';
 
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
@@ -148,6 +149,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'black',
     flex: 1,
+    paddingHorizontal: horizontalScale(15),
   },
   icon: {
     width: 34,
