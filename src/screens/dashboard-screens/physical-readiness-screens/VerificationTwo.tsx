@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, BackHandler} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Formik, Field} from 'formik';
 import CustomButton from '../../../components/shared-components/CustomButton';
@@ -18,6 +18,18 @@ const questionTexts = [
 
 const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   const [errorStates, setErrorStates] = useState({
     answer1: false,

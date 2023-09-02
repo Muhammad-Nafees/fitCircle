@@ -1,21 +1,34 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
 import PieChart from 'react-native-pie-chart';
-import { STYLES } from '../../../styles/globalStyles';
+import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import ColorChart from '../../../../assets/icons/ColorChart';
-import { NutritionData } from '../../../interfaces/extra.interface';
-import { useState } from 'react';
+import {NutritionData} from '../../../interfaces/extra.interface';
+import {useState} from 'react';
 
 const legends = [
-  { color: '#24A3CC', label: 'Protein' },
-  { color: '#209BCC', label: 'Carb' },
-  { color: '#21334E', label: 'Fat' },
+  {color: '#24A3CC', label: 'Protein'},
+  {color: '#209BCC', label: 'Carb'},
+  {color: '#21334E', label: 'Fat'},
 ];
 
-export const ChartScreen = ({ navigation, route }: any) => {
+export const ChartScreen = ({navigation, route}: any) => {
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
   const chartData: NutritionData = route.params.chartData;
-  const [dailyCalories, setDailyCalories] = useState(route.params.dailyCalories);
+  const [dailyCalories, setDailyCalories] = useState(
+    route.params.dailyCalories,
+  );
 
   const widthAndHeight = 290;
   const series = [
@@ -41,7 +54,7 @@ export const ChartScreen = ({ navigation, route }: any) => {
           Macro Split Chart
         </Text>
         <View style={styles.contentContainer}>
-          <Text style={{ fontSize: 12, fontWeight: '700', color: 'white' }}>
+          <Text style={{fontSize: 12, fontWeight: '700', color: 'white'}}>
             For your daily calories ({dailyCalories} Calories)
           </Text>
           <View
@@ -67,7 +80,7 @@ export const ChartScreen = ({ navigation, route }: any) => {
                 marginVertical: 24,
               }}>
               {legends.map((legend, index) => (
-                <View key={index} style={{ flexDirection: 'row', gap: 5 }}>
+                <View key={index} style={{flexDirection: 'row', gap: 5}}>
                   <ColorChart color={legend.color} />
                   <Text
                     style={{

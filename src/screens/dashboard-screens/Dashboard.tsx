@@ -6,6 +6,8 @@ import {
   FlatList,
   Image,
   Dimensions,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -15,11 +17,12 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import ReadinessTestIcon from '../../../assets/icons/ReadinessTestIcon';
 import TdeeCalculatorIcon from '../../../assets/icons/TdeeCalculatorIcon';
 import ScheduleDashboardIcon from '../../../assets/icons/ScheduleDashboardIcon';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import WalletDashboardIcon from '../../../assets/icons/WalletDashboard';
 import PackagesMealIcon from '../../../assets/icons/PackagesMealIcon';
 import {CustomTransaction} from '../../components/dashboard-components/CustomTransaction';
+import Modal from 'react-native-modal';
 const ArrowDown = require('../../../assets/icons/arrow-down.png');
+const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
 const DashboardScreen = ({navigation}: any) => {
   const options = {weekday: 'short', day: 'numeric', month: 'short'};
@@ -31,6 +34,16 @@ const DashboardScreen = ({navigation}: any) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [userId, setUserId] = useState(userData?._id);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState('May 2023');
+
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
 
   const screenWidth = Dimensions.get('window').width;
 
@@ -92,7 +105,6 @@ const DashboardScreen = ({navigation}: any) => {
     return (
       <View
         style={{
-          // width: screenWidth / 3 - 30,
           flex: 1,
         }}>
         <TouchableOpacity
@@ -124,6 +136,50 @@ const DashboardScreen = ({navigation}: any) => {
               </TouchableOpacity>
             </View>
           )}
+      </View>
+    );
+  };
+
+  const renderModalContent = () => {
+    const currentMonthYear = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+    });
+
+    const monthsToShow = [
+      'January 2023',
+      'February 2023',
+      'March 2023',
+      'April 2023',
+      'May 2023',
+      'June 2023',
+      'July 2023',
+      'August 2023',
+      'September 2023', // Current month
+    ];
+
+    const reversedMonthsToShow = [...monthsToShow].reverse();
+
+    return (
+      <View style={styles.modalContent}>
+        <ScrollView>
+          <TouchableOpacity
+            style={{paddingBottom: 16, zIndex: 11000}}
+            onPress={closeModal}>
+            <Image
+              source={ArrowBack}
+              style={{width: 24, height: 24, tintColor: 'black'}}
+            />
+          </TouchableOpacity>
+          <View style={styles.monthsEarningsContainer}>
+            {reversedMonthsToShow.map((month, index) => (
+              <View key={index} style={styles.monthEarningsRow}>
+                <Text style={styles.monthText}>{month}</Text>
+                <Text style={styles.earningText}>$0.00</Text>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
       </View>
     );
   };
@@ -220,6 +276,7 @@ const DashboardScreen = ({navigation}: any) => {
                   Earning in
                 </Text>
                 <TouchableOpacity
+                  onPress={openModal}
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -293,24 +350,13 @@ const DashboardScreen = ({navigation}: any) => {
       </View>
       <View style={[styles.bottomContainer, isTrainerAvailable && {flex: 1}]}>
         <Text style={styles.transactionText}>Last Transaction</Text>
-        <Text
+        {/* <Text
           style={[
             styles.transactionText,
             {fontSize: 14, paddingVertical: 0, opacity: 0.8},
           ]}>
           Coming soon
-        </Text>
-        {/* <TouchableOpacity
-          onPress={() => navigation.navigate('TransactionScreen')}>
-          <CustomTransaction
-            profileImageUrl={profileImageUrl}
-            username="Sam"
-            name="Sameer Ather"
-            date={'May 4'}
-            amount="- $50"
-            listText="Unlocked Content"
-          />
-        </TouchableOpacity>
+        </Text> */}
         <TouchableOpacity
           onPress={() => navigation.navigate('TransactionScreen')}>
           <CustomTransaction
@@ -321,8 +367,17 @@ const DashboardScreen = ({navigation}: any) => {
             amount="- $50"
             listText="Unlocked Content"
           />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={closeModal}
+        onBackButtonPress={closeModal}
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        style={styles.modal}>
+        {renderModalContent()}
+      </Modal>
     </View>
   );
 };
@@ -438,6 +493,36 @@ const styles = StyleSheet.create({
     width: '75%',
     height: 1,
     backgroundColor: 'gray',
+  },
+  modal: {
+    margin: 0,
+    width: '100%',
+    height: '100%',
+  },
+  modalContent: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+  },
+  monthsEarningsContainer: {
+    flexDirection: 'column',
+  },
+  monthEarningsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  monthText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  earningText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#209BCC',
   },
 });
 

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {BackHandler, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Formik} from 'formik';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import CustomInput from '../../../components/shared-components/CustomInput';
@@ -12,6 +12,17 @@ import {
 import {PhysicalActivitySchema} from '../../../validations';
 
 const VerificationFive = ({navigation, disabled, route, data}: any) => {
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
   const formdata: null | any = data;
   const handleSubmit = values => {
     console.log('Form values:', values);

@@ -129,7 +129,7 @@ export const Transaction = ({navigation}: any) => {
             </View>
           </View>
         </View>
-        <View style={{marginHorizontal: 15}}>
+        <View>
           <CustomTransaction
             profileImageUrl={profileImageUrl}
             username="Sam"
