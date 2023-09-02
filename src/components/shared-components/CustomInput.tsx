@@ -14,6 +14,7 @@ import {
 } from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useRoute} from '@react-navigation/native';
 
 interface Props {
   placeholder: string;
@@ -37,6 +38,7 @@ interface Props {
 }
 
 const CustomInput = ({...props}: Props) => {
+  const route = useRoute();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -70,11 +72,7 @@ const CustomInput = ({...props}: Props) => {
 
   return (
     <View style={[{position: 'relative'}]}>
-      <Text
-        style={[
-          STYLES.text12,
-          props.label === 'Age' && {lineHeight: verticalScale(17)},
-        ]}>
+      <Text style={[STYLES.text12]}>
         {props.label}
         {props.starlabel ? (
           <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
@@ -118,11 +116,12 @@ const CustomInput = ({...props}: Props) => {
               marginTop: verticalScale(7),
               marginBottom: verticalScale(4),
             },
-            props.label === 'Age' && {
-              width: horizontalScale(70),
-              paddingBottom: -verticalScale(10),
-              marginBottom: -verticalScale(3),
-            },
+            props.label === 'Age' &&
+              route.name === 'VerificationOne' && {
+                width: horizontalScale(70),
+                paddingBottom: -verticalScale(10),
+                marginBottom: -verticalScale(3),
+              },
           ]}>
           <Icon name="alert-circle" size={22} color="red" />
           <Text style={[STYLES.text12, {color: 'red'}]}>{props.error}</Text>
