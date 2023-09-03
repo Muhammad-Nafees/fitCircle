@@ -47,22 +47,6 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
     return () => backHandler.remove();
   }, [navigation]);
 
-  const [errorStates, setErrorStates] = useState({answer7: false});
-
-  const [errorStates1, setErrorStates1] = useState({
-    answer8: false,
-    answer9: false,
-    answer10: false,
-    answer11: false,
-    answer12: false,
-    answer13: false,
-  });
-
-  const [errorStates2, setErrorStates2] = useState({
-    answer14: false,
-    answer15: false,
-  });
-
   const handleSubmit = (values: {
     answer10: string;
     answer11: string;
@@ -81,58 +65,6 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
 
     const answersArr = Object.values(values);
     const isRemainingField = answersArr.find(ans => ans === '') === '';
-    for (let i = 7; i <= 7; i++) {
-      const fieldName = `answer${i}`;
-      if (!values[fieldName]) {
-        setErrorStates(prevState => ({
-          ...prevState,
-          [fieldName]: true,
-        }));
-      } else {
-        setErrorStates(prevState => ({
-          ...prevState,
-          [fieldName]: false,
-        }));
-      }
-    }
-    for (let i = 8; i <= 13; i++) {
-      const fieldName = `answer${i}`;
-      if (!values[fieldName]) {
-        setErrorStates1(prevState => ({
-          ...prevState,
-          [fieldName]: true,
-        }));
-      } else {
-        setErrorStates1(prevState => ({
-          ...prevState,
-          [fieldName]: false,
-        }));
-      }
-    }
-    for (let i = 14; i <= 15; i++) {
-      const fieldName = `answer${i}`;
-      if (!values[fieldName]) {
-        setErrorStates2(prevState => ({
-          ...prevState,
-          [fieldName]: true,
-        }));
-      } else {
-        setErrorStates2(prevState => ({
-          ...prevState,
-          [fieldName]: false,
-        }));
-      }
-    }
-
-    if (
-      Object.values(errorStates1).some(error => error) ||
-      Object.values(errorStates2).some(error => error)
-    ) {
-      return;
-    }
-    if (Object.values(errorStates).some(error => error)) {
-      return;
-    }
     if (isRemainingField) return;
 
     navigation.navigate('VerificationFive', {
@@ -248,7 +180,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
           }}
           validateOnChange={true}
           validationSchema={PhysicalReadinessFourSchema}
-          onSubmit={values => console.log('Form values:', values)}>
+          onSubmit={errors => console.log('Form values:', errors)}>
           {({
             handleChange,
             values,
@@ -282,13 +214,8 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       selectedValue={values['answer7']}
                       setFieldValue={setFieldValue}
                       name="answer7"
-                      errorShow={errorStates[`answer7`]}
-                      setErrorShow={value =>
-                        setErrorStates(prevState => ({
-                          ...prevState,
-                          [`answer7`]: value,
-                        }))
-                      }
+                      error={errors.answer7}
+                      setFieldError={setFieldError}
                     />
                   )}
                 </Field>
@@ -297,7 +224,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     editable={
                       typeof disabled === 'boolean' ? !disabled : disabled
                     }
-                    touched={touched.mealsEat}
+                    touched={true}
                     label={questionMealsEat}
                     error={errors.mealsEat}
                     placeholder="3"
@@ -319,16 +246,11 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                           disabled={disabled}
                           text={text}
                           value={field.value}
+                          setFieldError={setFieldError}
                           selectedValue={values[`answer${index + 8}`]}
                           setFieldValue={setFieldValue}
                           name={`answer${index + 8}`}
-                          errorShow={errorStates1[`answer${index + 8}`]}
-                          setErrorShow={value =>
-                            setErrorStates1(prevState => ({
-                              ...prevState,
-                              [`answer${index + 8}`]: value,
-                            }))
-                          }
+                          error={errors[`answer${index + 8}`]}
                         />
                       )}
                     </Field>
@@ -339,7 +261,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     editable={
                       typeof disabled === 'boolean' ? !disabled : disabled
                     }
-                    touched={touched.durationExercise}
+                    touched={true}
                     label={questionDurationExercise}
                     error={errors.durationExercise}
                     placeholder="1 month"
@@ -364,13 +286,8 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                           selectedValue={values[`answer${indx + 14}`]}
                           setFieldValue={setFieldValue}
                           name={`answer${indx + 14}`}
-                          errorShow={errorStates2[`answer${indx + 14}`]}
-                          setErrorShow={value =>
-                            setErrorStates2(prevState => ({
-                              ...prevState,
-                              [`answer${indx + 14}`]: value,
-                            }))
-                          }
+                          setFieldError={setFieldError}
+                          error={errors[`answer${indx + 14}`]}
                         />
                       )}
                     </Field>
@@ -391,13 +308,15 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     handleChange={handleChange('seriousness')}
                     setFieldError={setFieldError}
                     fieldName="seriousness"
-                    require={true}
                   />
                 </View>
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton onPress={() => handleSubmit(values)}>
+                  <CustomButton
+                    onPress={() => {
+                      handleSubmit(values);
+                    }}>
                     Continue
                   </CustomButton>
                 </View>

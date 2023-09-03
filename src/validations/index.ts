@@ -187,14 +187,14 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
   cellPhone: Yup.string().required('Cell phone is required'),
   age: Yup.number()
     .required('Age is required')
-    .min(14, 'Age must be greater than 14')
-    .max(99, 'Age must be less than 100'),
+    .min(14, 'Invalid Age value')
+    .max(99, 'Invalid Age value'),
   height: Yup.string()
     .required('Height is required')
-    .test('not-zero', 'Height must not be 0', value => !/^0/.test(value)),
+    .test('not-zero', 'Invalid Height', value => !/^0/.test(value)),
   weight: Yup.string()
     .required('Weight is required')
-    .test('not-zero', 'Weight must not be 0', value => !/^0/.test(value)),
+    .test('not-zero', 'Invalid Weight', value => !/^0/.test(value)),
 });
 
 export const PhysicalReadinessFourSchema = Yup.object().shape({
@@ -207,6 +207,15 @@ export const PhysicalReadinessFourSchema = Yup.object().shape({
       return value.length !== 3;
     }),
   mealsEat: Yup.string().required('Meals Eat is required'),
+  answer7: Yup.string().required('Answer is required'),
+  answer8: Yup.string().required('Answer is required'),
+  answer9: Yup.string().required('Answer is required'),
+  answer10: Yup.string().required('Answer is required'),
+  answer11: Yup.string().required('Answer is required'),
+  answer12: Yup.string().required('Answer is required'),
+  answer13: Yup.string().required('Answer is required'),
+  answer14: Yup.string().required('Answer is required'),
+  answer15: Yup.string().required('Answer is required'),
 });
 
 export const PhysicalActivitySchema = Yup.object().shape({
@@ -214,6 +223,15 @@ export const PhysicalActivitySchema = Yup.object().shape({
   desiredWeight: Yup.number().required('This field is required'),
   desiredLeanMuscle: Yup.number().required('This field is required'),
   exerciseFrequency: Yup.number().required('This field is required'),
+});
+
+export const PhysicalReadinessTwoSchema = Yup.object().shape({
+  answer1: Yup.string().required('Answer is required'),
+  answer2: Yup.string().required('Answer is required'),
+  answer3: Yup.string().required('Answer is required'),
+  answer4: Yup.string().required('Answer is required'),
+  answer5: Yup.string().required('Answer is required'),
+  answer6: Yup.string().required('Answer is required'),
 });
 
 export const TdeeCalculatorSchema = Yup.object().shape({

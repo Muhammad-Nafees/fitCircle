@@ -6,6 +6,7 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import CustomRadioButton from '../../../components/dashboard-components/CustomRadioButton';
 import {STYLES} from '../../../styles/globalStyles';
 import {verticalScale} from '../../../utils/metrics';
+import {PhysicalReadinessTwoSchema} from '../../../validations';
 
 const questionTexts = [
   'Do you have high cholesterol?',
@@ -31,15 +32,6 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
     return () => backHandler.remove();
   }, [navigation]);
 
-  const [errorStates, setErrorStates] = useState({
-    answer1: false,
-    answer2: false,
-    answer3: false,
-    answer4: false,
-    answer5: false,
-    answer6: false,
-  });
-
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -53,27 +45,10 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
             answer6: (formdata && formdata[5]?.answer) ?? '',
           }}
           validateOnChange={false}
+          validationSchema={PhysicalReadinessTwoSchema}
           onSubmit={values => {
             const answersArr = Object.values(values);
             const isRemainingField = answersArr.find(ans => ans === '') === '';
-
-            for (let i = 1; i <= questionTexts.length; i++) {
-              const fieldName = `answer${i}`;
-              if (!values[fieldName]) {
-                setErrorStates(prevState => ({
-                  ...prevState,
-                  [fieldName]: true,
-                }));
-              } else {
-                setErrorStates(prevState => ({
-                  ...prevState,
-                  [fieldName]: false,
-                }));
-              }
-            }
-            if (Object.values(errorStates).some(error => error)) {
-              return;
-            }
             if (isRemainingField) return;
 
             let answers: {question: string; answer: 'Yes' | 'No' | string}[] =
@@ -90,7 +65,7 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
               verificationTwo: answers,
             });
           }}>
-          {({values, setFieldValue, handleSubmit}) => (
+          {({values, setFieldValue, handleSubmit, errors, setFieldError}) => (
             <>
               {disabled !== true && (
                 <Text style={[STYLES.text16, styles.heading]}>
@@ -100,21 +75,16 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
               <View style={styles.formContainer}>
                 {questionTexts.map((text, index) => (
                   <Field key={`answer${index + 1}`} name={`answer${index + 1}`}>
-                    {({field}: any) => (
+                    {({field, form}: any) => (
                       <CustomRadioButton
                         disabled={disabled}
                         text={text}
                         value={field.value}
                         selectedValue={values[`answer${index + 1}`]}
                         setFieldValue={setFieldValue}
+                        setFieldError={setFieldError}
+                        error={errors[`answer${index + 1}`]}
                         name={`answer${index + 1}`}
-                        errorShow={errorStates[`answer${index + 1}`]}
-                        setErrorShow={value =>
-                          setErrorStates(prevState => ({
-                            ...prevState,
-                            [`answer${index + 1}`]: value,
-                          }))
-                        }
                       />
                     )}
                   </Field>

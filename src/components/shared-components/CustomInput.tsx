@@ -118,16 +118,21 @@ const CustomInput = ({...props}: Props) => {
             },
             props.label === 'Age' &&
               route.name === 'VerificationOne' && {
-                width: horizontalScale(70),
-                paddingBottom: -verticalScale(10),
-                marginBottom: -verticalScale(3),
+                width: horizontalScale(75),
+                marginBottom: -verticalScale(0),
               },
           ]}>
           <Icon name="alert-circle" size={22} color="red" />
           <Text style={[STYLES.text12, {color: 'red'}]}>{props.error}</Text>
         </View>
       ) : (
-        <View style={{height: 35}} />
+        <View
+          style={[
+            {height: 35},
+            props.label === 'Age' &&
+              route.name === 'VerificationOne' && {height: verticalScale(35)},
+          ]}
+        />
       )}
       {props.isPasswordIcon && (
         <TouchableWithoutFeedback onPress={togglePasswordVisibility}>

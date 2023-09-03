@@ -141,14 +141,6 @@ export const ProfileScreen = ({navigation, route}: any) => {
     />
   );
 
-  const onBuffer = () => {
-    console.log('onBuffer1');
-  };
-
-  const onError = () => {
-    console.log('onError');
-  };
-
   const handleVideoPress = () => {
     setReelsModal(!reelsModal);
   };
@@ -481,6 +473,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
                     key={item._id}
                     userId={userId}
                     video={item}
+                    isTrainerView={isTrainerView}
                     handleCancelButtonPress={handleCancelButton}
                     handleVideoPress={handleVideoPress}
                     style={{marginRight: index % 2 === 0 ? 8 : 0}}

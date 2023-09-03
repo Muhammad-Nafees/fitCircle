@@ -12,8 +12,16 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 const Image1 = require('../../../assets/images/backgroundImage.jpg');
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const PlayIcon = require('../../../assets/icons/playIcon.png');
+import ProfileVideoLockIcon from '../../../assets/icons/ProfileVideoLock';
 
-const CustomVideo = ({handleVideoPress, handleCancelButtonPress}: any) => {
+const CustomVideo = ({
+  handleVideoPress,
+  handleCancelButtonPress,
+  video,
+  isTrainerView,
+}: any) => {
+  console.log(video.cost);
+  console.log(isTrainerView);
   return (
     <TouchableOpacity onPress={handleVideoPress}>
       <ImageBackground
@@ -21,19 +29,31 @@ const CustomVideo = ({handleVideoPress, handleCancelButtonPress}: any) => {
         style={styles.container}
         imageStyle={{borderRadius: 10}}
         resizeMode="cover">
-        <TouchableOpacity
-          style={styles.cancelIconContainer}
-          onPress={() => handleCancelButtonPress()}>
-          <Image source={CancelIcon} style={styles.cancelIcon} />
-        </TouchableOpacity>
-        <View style={{flex: 1}}>
-          <View style={styles.playIconBackground}>
-            <Image source={PlayIcon} style={styles.playIcon} />
+        <View
+          style={[
+            {flex: 1, borderRadius: 10},
+            video.cost !== null && {backgroundColor: 'black'},
+          ]}>
+          <TouchableOpacity
+            style={styles.cancelIconContainer}
+            onPress={() => handleCancelButtonPress()}>
+            {isTrainerView !== true && (
+              <Image source={CancelIcon} style={styles.cancelIcon} />
+            )}
+          </TouchableOpacity>
+          <View style={{flex: 1}}>
+            <View style={styles.playIconBackground}>
+              {video.cost !== null ? (
+                <ProfileVideoLockIcon />
+              ) : (
+                <Image source={PlayIcon} style={styles.playIcon} />
+              )}
+            </View>
           </View>
+          <Text style={styles.text}>
+            Sweat is magic. Cover yourself in it daily to grant your wishes.
+          </Text>
         </View>
-        <Text style={styles.text}>
-          Sweat is magic. Cover yourself in it daily to grant your wishes.
-        </Text>
       </ImageBackground>
     </TouchableOpacity>
   );

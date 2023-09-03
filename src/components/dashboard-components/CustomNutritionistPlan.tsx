@@ -42,7 +42,7 @@ export const CustomNutritionistPlan = ({
           </Text>
         </View>
       </View>
-      {plans.map((plan, index) => (
+      {plans.map((plan: any, index: any) => (
         <TouchableOpacity
           onPress={() => handleModalOpen(plan.planName, plan.price)}
           style={{
