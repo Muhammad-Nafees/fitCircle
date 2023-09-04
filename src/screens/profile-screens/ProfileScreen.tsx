@@ -413,8 +413,8 @@ export const ProfileScreen = ({navigation, route}: any) => {
               paddingHorizontal: 12,
               marginTop: 5,
             }}>
-            <CustomTrainerPackage />
-            <CustomTrainerPackage />
+            <CustomTrainerPackage isTrainerView={isTrainerView} />
+            <CustomTrainerPackage isTrainerView={isTrainerView} />
           </View>
         )}
         {selectedOption === 'Bio' && (
@@ -461,27 +461,45 @@ export const ProfileScreen = ({navigation, route}: any) => {
                   Bio
                 </Text>
                 {isTrainerView || userData.role === 'trainer' ? (
-                  <Text style={styles.bioText}>
-                    Starting a fitness journey can be a big commitment, but it
-                    can also be a rewarding and life-changing experience. Here
-                    are some steps that you can follow to start your fitness
-                    journey:
-                    {'\n\n'}
-                    <Text>
-                      {'\t\u2022\t'} Set realistic and achievable goals: Start
-                      by setting specific, measurable, and attainable goals,
-                      such as losing weight, improving your cardiovascular
-                      health, or building strength.
-                      {'\n'}
-                      {'\t\u2022\t'} Assess your starting point: Before you
-                      start, it's important to assess your current fitness
-                      level, including your physical strengths and weaknesses,
-                      so you can create a plan that is tailored to your needs.
-                      {'\n'}
-                      {'\t\u2022\t'} Create an exercise plan: Choose an exercise
-                      routine that you enjoy and that fits your
+                  <View>
+                    <Text style={styles.bioText}>
+                      Starting a fitness journey can be a big commitment, but it
+                      can also be a rewarding and life-changing experience. Here
+                      are some steps that you can follow to start your fitness
+                      journey:
                     </Text>
-                  </Text>
+                    <Text></Text>
+                    <View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={styles.bioText}>{'\t\u2022\t'}</Text>
+                        <Text style={styles.bioText}>
+                          Set realistic and achievable goals: Start by setting
+                          specific, measurable, and attainable goals, such as
+                          losing weight, improving your cardiovascular health,
+                          or building strength.
+                        </Text>
+                      </View>
+                      <View>
+                        <View style={{flexDirection: 'row'}}>
+                          <Text style={styles.bioText}>{'\t\u2022\t'}</Text>
+                          <Text style={styles.bioText}>
+                            Assess your starting point: Before you start, it's
+                            important to assess your current fitness level,
+                            including your physical strengths and weaknesses, so
+                            you can create a plan that is tailored to your
+                            needs.
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={styles.bioText}>{'\t\u2022\t'}</Text>
+                        <Text style={styles.bioText}>
+                          Create an exercise plan: Choose an exercise routine
+                          that you enjoy and that fits your
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
                 ) : (
                   <Text style={styles.bioText}>
                     There comes a particular point in life once you need to stop

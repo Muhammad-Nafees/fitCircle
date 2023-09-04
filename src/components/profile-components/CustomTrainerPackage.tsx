@@ -9,12 +9,15 @@ const PlayIcon = require('../../../assets/icons/playIcon.png');
 
 const ImagePreview = require('../../../assets/images/TestMealPlanImage.png');
 
-export const CustomTrainerPackage = ({hidePriceAndPackage}: any) => {
+export const CustomTrainerPackage = ({
+  hidePriceAndPackage,
+  isTrainerView,
+}: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const navigation = useNavigation();
 
   const onPressHandler = () => {
-    if (userData?.role !== 'trainer') {
+    if (userData?.role !== 'trainer' || isTrainerView) {
       navigation.navigate('PackageDetail');
     }
   };
@@ -65,7 +68,7 @@ export const CustomTrainerPackage = ({hidePriceAndPackage}: any) => {
         {!hidePriceAndPackage ? (
           <View style={styles.priceContainer}>
             <Text style={styles.price}>$100</Text>
-            {userData?.role === 'trainer' ? (
+            {userData?.role === 'trainer' && !isTrainerView ? (
               <Text style={styles.getPackage}>Edit this package</Text>
             ) : (
               <Text style={styles.getPackage}>Get this package</Text>
