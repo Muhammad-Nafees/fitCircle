@@ -13,6 +13,7 @@ import {
   moderateScale,
 } from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
+import {useRoute} from '@react-navigation/native';
 
 const DropdownTextInput = ({
   value,
@@ -32,6 +33,7 @@ const DropdownTextInput = ({
   const [selectedOption, setSelectedOption] = useState(defaultOption);
   const [textInputValue, setTextInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
+  const route = useRoute();
 
   const handleDropdownSelection = (option: any) => {
     setShowDropdown(false);
@@ -46,10 +48,6 @@ const DropdownTextInput = ({
   const handleInputBlur = () => {
     setIsFocused(false);
     setShowDropdown(false);
-  };
-
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
   };
 
   const handleTextInputChange = (text: string) => {
@@ -86,6 +84,9 @@ const DropdownTextInput = ({
               style={[
                 styles.dropdownIconContainer,
                 tdee && {backgroundColor: '#fff'},
+                route.name === 'VerificationOne' && {
+                  width: 48,
+                },
               ]}>
               <Text
                 style={[
@@ -127,18 +128,26 @@ const DropdownTextInput = ({
       </View>
       {error && ((touched && !value) || (error && value) || isFocused) ? (
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 2,
-            marginTop: verticalScale(7),
-            marginBottom: verticalScale(4),
-          }}>
+          style={[
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 2,
+              marginTop: verticalScale(7),
+              marginBottom: verticalScale(4),
+            },
+            route.name === 'VerificationOne' && {width: horizontalScale(60)},
+          ]}>
           <Icon name="alert-circle" size={22} color="red" />
           <Text style={[STYLES.text12, {color: 'red'}]}>{error}</Text>
         </View>
       ) : (
-        <View style={{height: 35}} />
+        <View
+          style={[
+            {height: 35},
+            route.name === 'VerificationOne' && {height: verticalScale(40)},
+          ]}
+        />
       )}
     </View>
   );

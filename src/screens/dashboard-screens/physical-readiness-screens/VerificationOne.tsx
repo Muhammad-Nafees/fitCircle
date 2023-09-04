@@ -277,10 +277,10 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                     handleChange={handleChange('age')}
                     setFieldError={setFieldError}
                     extraStyles={{
-                      width: horizontalScale(70),
+                      width: horizontalScale(80),
                       height: verticalScale(47),
-                      marginTop: verticalScale(10),
                       alignItems: 'center',
+                      marginTop: verticalScale(10),
                     }}
                     fieldName="age"
                   />
