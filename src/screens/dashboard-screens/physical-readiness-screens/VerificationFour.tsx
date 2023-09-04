@@ -224,9 +224,9 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     editable={
                       typeof disabled === 'boolean' ? !disabled : disabled
                     }
-                    touched={true}
+                    touched={touched.mealsEat as boolean}
                     label={questionMealsEat}
-                    error={errors.mealsEat}
+                    error={errors.mealsEat as string}
                     placeholder="3"
                     value={values.mealsEat}
                     initialTouched={true}
@@ -256,14 +256,14 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     </Field>
                   );
                 })}
-                <View style={{alignItems: 'center'}}>
+                <View style={{alignItems: 'center', position: 'relative'}}>
                   <CustomInput
                     editable={
                       typeof disabled === 'boolean' ? !disabled : disabled
                     }
-                    touched={true}
+                    touched={touched.durationExercise as boolean}
                     label={questionDurationExercise}
-                    error={errors.durationExercise}
+                    error={errors.durationExercise as string}
                     placeholder="1 month"
                     value={values.durationExercise}
                     initialTouched={true}
@@ -298,9 +298,9 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                     editable={
                       typeof disabled === 'boolean' ? !disabled : disabled
                     }
-                    touched={true}
+                    touched={touched.seriousness as boolean}
                     label={questionSeriousness}
-                    error={errors.seriousness}
+                    error={errors.seriousness as string}
                     placeholder="9"
                     value={values.seriousness}
                     initialTouched={true}

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   BackHandler,
+  ScrollView,
 } from 'react-native';
 import {Calendar, DateData} from 'react-native-calendars';
 import moment from 'moment';
@@ -15,6 +16,8 @@ import {format} from 'date-fns';
 import axiosInstance from '../../api/interceptor';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import {vertical} from 'react-native-swiper-flatlist/src/themes';
+import {verticalScale} from '../../utils/metrics';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -284,8 +287,8 @@ const SetSchedule = ({route, navigation}: any) => {
 
         // setSelectedOptionsWDate([...selectedOptionsWDate, obj]);
       }
-    } catch (error) {
-      console.log('🚀 ~ getTrainerSlots ~ error:', error);
+    } catch (error: any) {
+      console.log('🚀 ~ getTrainerSlots ~ error:', error.response.data);
     }
   };
 
@@ -334,27 +337,29 @@ const SetSchedule = ({route, navigation}: any) => {
           />
         </View>
       </View>
-      <View style={styles.bottomContainer}>
-        <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
-        <FlatList
-          data={
-            formattedSelectedDate === formatDate(new Date())
-              ? options
-              : nextDayOptions
-          }
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderOptionItem}
-          contentContainerStyle={styles.optionsContainer}
-          showsVerticalScrollIndicator={false}
-        />
-        <View style={styles.buttonContainer}>
-          <CustomButton
-            isDisabled={selectedOptions.length === 0}
-            extraStyles={{paddingHorizontal: 110}}
-            onPress={setSchedule}>
-            Set Schedule
-          </CustomButton>
+      <ScrollView>
+        <View style={styles.bottomContainer}>
+          <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
+          <FlatList
+            data={
+              formattedSelectedDate === formatDate(new Date())
+                ? options
+                : nextDayOptions
+            }
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderOptionItem}
+            contentContainerStyle={styles.optionsContainer}
+            showsVerticalScrollIndicator={false}
+          />
         </View>
+      </ScrollView>
+      <View style={styles.buttonContainer}>
+        <CustomButton
+          isDisabled={selectedOptions.length === 0}
+          extraStyles={{paddingHorizontal: 110}}
+          onPress={setSchedule}>
+          Set Schedule
+        </CustomButton>
       </View>
     </View>
   );
@@ -365,6 +370,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 32,
     backgroundColor: '#292A2C',
+    position: 'relative',
   },
   arrowBack: {
     width: 24,
@@ -391,6 +397,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     marginTop: 8,
     width: '100%',
+    paddingBottom: 100,
   },
   selectedDateText: {
     fontSize: 16,
@@ -424,10 +431,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 25,
+    bottom: verticalScale(30),
     left: 0,
     right: 0,
     alignItems: 'center',
+    zIndex: 999,
   },
 });
 

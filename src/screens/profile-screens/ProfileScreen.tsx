@@ -242,7 +242,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
           {!isTrainerView && <Text style={styles.email}>{email}</Text>}
         </View>
         <View style={styles.rowContainer}>
-          {isTrainerView || userData.role === 'trainer' ? (
+          {isTrainerView || userData?.role === 'trainer' ? (
             <TouchableOpacity
               style={styles.column}
               onPress={() =>

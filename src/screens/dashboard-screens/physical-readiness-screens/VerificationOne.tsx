@@ -103,7 +103,8 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
           }}
           onSubmit={formSubmit}
           validateOnChange={false}
-          validationSchema={PhysicalReadinessTestSchema}>
+          validationSchema={PhysicalReadinessTestSchema}
+          >
           {({
             handleChange,
             handleSubmit,
