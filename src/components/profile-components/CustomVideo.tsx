@@ -32,7 +32,7 @@ const CustomVideo = ({
         <View
           style={[
             {flex: 1, borderRadius: 10},
-            video.cost !== null && {backgroundColor: 'black'},
+            // video.cost !== null && {backgroundColor: 'black'},
           ]}>
           <TouchableOpacity
             style={styles.cancelIconContainer}
@@ -43,11 +43,11 @@ const CustomVideo = ({
           </TouchableOpacity>
           <View style={{flex: 1}}>
             <View style={styles.playIconBackground}>
-              {video.cost !== null ? (
+              {/* {video.cost !== null ? (
                 <ProfileVideoLockIcon />
-              ) : (
-                <Image source={PlayIcon} style={styles.playIcon} />
-              )}
+              ) : ( */}
+              <Image source={PlayIcon} style={styles.playIcon} />
+              {/* )} */}
             </View>
           </View>
           <Text style={styles.text}>

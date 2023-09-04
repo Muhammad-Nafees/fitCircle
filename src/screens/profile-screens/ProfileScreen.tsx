@@ -8,6 +8,7 @@ import {
   Image,
   FlatList,
   TouchableHighlight,
+  BackHandler,
 } from 'react-native';
 const Image1 = require('../../../assets/images/backgroundImage.jpg');
 import {Avatar} from 'react-native-paper';
@@ -35,6 +36,7 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {STYLES} from '../../styles/globalStyles';
+import {communitiesData, followersData, followingData} from './dummyData';
 
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -45,7 +47,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const coverImageUrl = userData?.coverImage;
   const username = userData?.username;
   const [userId, setUserId] = useState<string | undefined>(undefined);
-  const [communities, setCommunities] = useState([]);
+  const [communities, setCommunities] = useState(communitiesData);
   const tabBarHeight = useBottomTabBarHeight();
   const [firstName, setFirstName] = useState<string | undefined>(
     userData?.firstName,
@@ -60,8 +62,8 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const [lastName, setLastName] = useState<string | undefined>(
     userData?.lastName,
   );
-  const [following, setFollowing] = useState([]);
-  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState(followingData);
+  const [followers, setFollowers] = useState(followersData);
   const [email, setEmail] = useState<string>('');
   const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>();
   const [selectedOption, setSelectedOption] = useState<string>('Feed');
@@ -80,9 +82,10 @@ export const ProfileScreen = ({navigation, route}: any) => {
         .get(`profile/user/${userData._id}`)
         .then(response => {
           const data = response.data;
-          setCommunities(data.communities);
-          setFollowing(data.following);
-          setFollowers(data.followers);
+          console.log(response.data);
+          // setCommunities(data.communities);
+          // setFollowing(data.following);
+          // setFollowers(data.followers);
           setProfileImageUrl(data.profileImageUrl);
           setEmail(data.email);
           // userFavoritePosts();
@@ -93,6 +96,19 @@ export const ProfileScreen = ({navigation, route}: any) => {
         });
     }
   }, [userData, route.params?.posts]);
+
+  useEffect(() => {
+    const backAction = () => {
+      setSelectedOption('Feed');
+      navigation.navigate('Home');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   useEffect(() => {
     const filteredPostsWithoutVideo = posts?.filter(post => {
@@ -143,6 +159,10 @@ export const ProfileScreen = ({navigation, route}: any) => {
 
   const handleVideoPress = () => {
     setReelsModal(!reelsModal);
+  };
+
+  const handleFavoriteDialog = () => {
+    setRemoveModal(!removeModal);
   };
 
   return (
@@ -221,7 +241,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
                   {isFollowed ? 'Followed' : 'Follow'}
                 </Text>
               </TouchableHighlight>
-              <Text style={styles.email}>{email}</Text>
+              <Text style={styles.email}>@{username}</Text>
               <TouchableHighlight
                 style={[subscribeButtonStyle, {paddingHorizontal: 16}]}
                 activeOpacity={1}
@@ -239,7 +259,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
               </TouchableHighlight>
             </View>
           )}
-          {!isTrainerView && <Text style={styles.email}>{email}</Text>}
+          {!isTrainerView && <Text style={styles.email}>@{username}</Text>}
         </View>
         <View style={styles.rowContainer}>
           {isTrainerView || userData.role === 'trainer' ? (
@@ -254,7 +274,9 @@ export const ProfileScreen = ({navigation, route}: any) => {
                 })
               }>
               <Text style={styles.columnText}>{communities.length}</Text>
-              <Text style={styles.columnLabel}>Subs</Text>
+              <Text style={[styles.columnLabel, {textDecorationLine: 'none'}]}>
+                Subs
+              </Text>
             </TouchableOpacity>
           ) : null}
           <TouchableOpacity
@@ -268,7 +290,13 @@ export const ProfileScreen = ({navigation, route}: any) => {
               })
             }>
             <Text style={styles.columnText}>{communities.length}</Text>
-            <Text style={styles.columnLabel}>Community</Text>
+            <Text
+              style={[
+                styles.columnLabel,
+                isTrainerView && {textDecorationLine: 'none'},
+              ]}>
+              Community
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.column}
@@ -281,7 +309,13 @@ export const ProfileScreen = ({navigation, route}: any) => {
               })
             }>
             <Text style={styles.columnText}>{following.length}</Text>
-            <Text style={styles.columnLabel}>Following</Text>
+            <Text
+              style={[
+                styles.columnLabel,
+                isTrainerView && {textDecorationLine: 'none'},
+              ]}>
+              Following
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.column}
@@ -294,7 +328,13 @@ export const ProfileScreen = ({navigation, route}: any) => {
               })
             }>
             <Text style={styles.columnText}>{followers.length}</Text>
-            <Text style={styles.columnLabel}>Followers</Text>
+            <Text
+              style={[
+                styles.columnLabel,
+                isTrainerView && {textDecorationLine: 'none'},
+              ]}>
+              Followers
+            </Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -306,13 +346,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
               selectedOption === 'Feed' && styles.selectedOption,
             ]}
             onPress={() => setSelectedOption('Feed')}>
-            <Text
-              style={[
-                styles.optionText,
-                selectedOption === 'Feed' && styles.selectedOptionText,
-              ]}>
-              Feed
-            </Text>
+            <Text style={styles.optionText}>Feed</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -320,13 +354,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
               selectedOption === 'Videos' && styles.selectedOption,
             ]}
             onPress={() => setSelectedOption('Videos')}>
-            <Text
-              style={[
-                styles.optionText,
-                selectedOption === 'Videos' && styles.selectedOptionText,
-              ]}>
-              Videos
-            </Text>
+            <Text style={[styles.optionText]}>Videos</Text>
           </TouchableOpacity>
           {isTrainerView || userData.role === 'trainer' ? (
             <TouchableOpacity
@@ -335,13 +363,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
                 selectedOption === 'Packages' && styles.selectedOption,
               ]}
               onPress={() => setSelectedOption('Packages')}>
-              <Text
-                style={[
-                  styles.optionText,
-                  selectedOption === 'Packages' && styles.selectedOptionText,
-                ]}>
-                Packages
-              </Text>
+              <Text style={styles.optionText}>Packages</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -353,13 +375,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
                 setSelectedOption('Favorites');
                 console.log(userId);
               }}>
-              <Text
-                style={[
-                  styles.optionText,
-                  selectedOption === 'Favorites' && styles.selectedOptionText,
-                ]}>
-                Favorites
-              </Text>
+              <Text style={styles.optionText}>Favorites</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -368,13 +384,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
               selectedOption === 'Bio' && styles.selectedOption,
             ]}
             onPress={() => setSelectedOption('Bio')}>
-            <Text
-              style={[
-                styles.optionText,
-                selectedOption === 'Bio' && styles.selectedOptionText,
-              ]}>
-              Bio
-            </Text>
+            <Text style={styles.optionText}>Bio</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -409,57 +419,79 @@ export const ProfileScreen = ({navigation, route}: any) => {
         )}
         {selectedOption === 'Bio' && (
           <View style={{paddingHorizontal: 16}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginVertical: 10,
-              }}>
-              <Text style={{fontSize: 12, fontWeight: '600', color: 'white'}}>
-                Social Media Accounts
-              </Text>
-              <TouchableOpacity>
+            <ScrollView>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginVertical: 10,
+                }}>
+                <Text style={{fontSize: 12, fontWeight: '600', color: 'white'}}>
+                  Social Media Accounts
+                </Text>
+                {isTrainerView !== true && (
+                  <TouchableOpacity>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: 'rgba(32, 155, 204, 1)',
+                        fontWeight: '400',
+                      }}>
+                      More Details
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={{flexDirection: 'row', gap: 6, paddingBottom: 18}}>
+                <Twitter />
+                <Facebook />
+                <Image source={Instagram} style={{width: 29, height: 29}} />
+                <View style={{backgroundColor: 'white', borderRadius: 40}}>
+                  <Tiktok />
+                </View>
+              </View>
+              <View>
                 <Text
                   style={{
                     fontSize: 12,
-                    color: 'rgba(32, 155, 204, 1)',
-                    fontWeight: '400',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: 12,
                   }}>
-                  More Details
+                  Bio
                 </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{flexDirection: 'row', gap: 6, paddingBottom: 18}}>
-              <Twitter />
-              <Facebook />
-              <Image source={Instagram} style={{width: 29, height: 29}} />
-              <View style={{backgroundColor: 'white', borderRadius: 40}}>
-                <Tiktok />
+                {isTrainerView || userData.role === 'trainer' ? (
+                  <Text style={styles.bioText}>
+                    Starting a fitness journey can be a big commitment, but it
+                    can also be a rewarding and life-changing experience. Here
+                    are some steps that you can follow to start your fitness
+                    journey:
+                    {'\n\n'}
+                    <Text>
+                      {'\t\u2022\t'} Set realistic and achievable goals: Start
+                      by setting specific, measurable, and attainable goals,
+                      such as losing weight, improving your cardiovascular
+                      health, or building strength.
+                      {'\n'}
+                      {'\t\u2022\t'} Assess your starting point: Before you
+                      start, it's important to assess your current fitness
+                      level, including your physical strengths and weaknesses,
+                      so you can create a plan that is tailored to your needs.
+                      {'\n'}
+                      {'\t\u2022\t'} Create an exercise plan: Choose an exercise
+                      routine that you enjoy and that fits your
+                    </Text>
+                  </Text>
+                ) : (
+                  <Text style={styles.bioText}>
+                    There comes a particular point in life once you need to stop
+                    blaming people for a way you are feeling or the misfortunes
+                    in your life. You can’t undergo life obsessing about what
+                    may need been.
+                  </Text>
+                )}
               </View>
-            </View>
-            <View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '600',
-                  color: 'white',
-                  marginBottom: 12,
-                }}>
-                Bio
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: 'rgba(255, 255, 255, 0.5)',
-                  lineHeight: 18.74,
-                  fontWeight: '500',
-                }}>
-                There comes a particular point in life once you need to stop
-                blaming people for a way you are feeling or the misfortunes in
-                your life. You can’t undergo life obsessing about what may need
-                been.
-              </Text>
-            </View>
+            </ScrollView>
           </View>
         )}
         {selectedOption === 'Videos' && (
@@ -493,6 +525,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
           <ReelsComponent
             isProfile={true}
             handleCancelPress={handleVideoPress}
+            handleFavoriteDialog={handleFavoriteDialog}
           />
         </View>
       </Modal>
@@ -516,7 +549,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
             </Text>
             <Text style={styles.whiteText}>
               Are you sure you want to{' '}
-              <Text style={styles.coloredText}>remove</Text> this video
+              <Text style={styles.coloredText}>remove</Text> this video ?
             </Text>
           </View>
           <View
@@ -565,13 +598,19 @@ export const ProfileScreen = ({navigation, route}: any) => {
             <View style={styles.iconModal}>
               <Icon name="checkmark-outline" color="white" size={24} />
             </View>
-            <Text
-              style={[
-                STYLES.text14,
-                {marginTop: 2, color: 'rgba(48, 210, 152, 1)'},
-              ]}>
-              Removed Successfully
-            </Text>
+            {reelsModal ? (
+              <Text style={[STYLES.text14, {marginTop: 2}]}>
+                Added to favorites!
+              </Text>
+            ) : (
+              <Text
+                style={[
+                  STYLES.text14,
+                  {marginTop: 2, color: 'rgba(48, 210, 152, 1)'},
+                ]}>
+                Removed Successfully
+              </Text>
+            )}
             <View style={{width: '75%', marginTop: verticalScale(25)}}>
               <CustomButton onPress={() => setRemoveModal(false)}>
                 Return
@@ -657,14 +696,11 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: '#444444',
+    color: 'white',
     fontWeight: '400',
   },
   selectedOption: {
     backgroundColor: '#209BCC',
-  },
-  selectedOptionText: {
-    color: '#fff',
   },
   bottomContainer: {
     backgroundColor: '#292a2c',
@@ -751,5 +787,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#30D298',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  bioText: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.5)',
+    lineHeight: 18.74,
+    fontWeight: '500',
   },
 });

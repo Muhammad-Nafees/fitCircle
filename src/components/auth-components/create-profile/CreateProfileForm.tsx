@@ -38,6 +38,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [allCountries, setAllCountries] = useState<any | null>([]);
   const [allCities, setAllCities] = useState([]);
   const [country, setCountry] = useState();
+  const phoneInput = useRef<PhoneInput>(null);
+  const [isError, setIsError] = useState('');
   const [countryCode, setCountryCode] = useState();
   const [phoneCode, setPhoneCode] = useState('1');
   const [usernameError, setUsernameError] = useState<string>('');
@@ -112,6 +114,15 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     hourlyRate: '',
     profileImage: null,
     coverImage: null,
+  };
+
+  const phoneNumberCheck = (values: any) => {
+    const isValid = phoneInput.current?.isValidNumber(values);
+    if (!isValid) {
+      setIsError('Invalid phone number!');
+    } else {
+      setIsError('');
+    }
   };
 
   const handleUsernameBlur = async (username: any) => {
@@ -245,12 +256,17 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               fieldName="bio"
             />
             <CustomPhoneInput
-              setFieldValue={setFieldValue}
-              label="Phone Number"
               value={values.phone}
               error={errors.phone}
               touched={touched.phone}
               handleChange={handleChange('phone')}
+              setFieldValue={setFieldValue}
+              phoneInput={phoneInput}
+              setIsError={setIsError}
+              setFieldError={setFieldError}
+              isError={isError}
+              setPhoneCode={setPhoneCode}
+              countryCode={countryCode}
             />
             <CustomSelect
               label="Country"
