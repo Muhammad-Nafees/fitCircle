@@ -7,18 +7,21 @@ import CustomRadioButton from '../../../components/dashboard-components/CustomRa
 import {STYLES} from '../../../styles/globalStyles';
 import {verticalScale} from '../../../utils/metrics';
 import {PhysicalReadinessTwoSchema} from '../../../validations';
+import {verficationTwoquestionTexts} from '../../../../data/data';
 
-const questionTexts = [
-  'Do you have high cholesterol?',
-  'Has your doctor ever said that you have heart trouble?',
-  'Has your doctor ever told you that you have a bone or joint problem (such as arthritis) that has been or may be exacerbated by physical activity?',
-  'Has your doctor ever told you that your blood pressure was too high?',
-  'Are you over 65 years of age and not accustomed to vigorous exercise?',
-  'Is there any reason, not mentioned thus far, that would not allow you to participate in a physical fitness program?',
-];
+interface FormValues {
+  answer1: string;
+  answer2: string;
+  answer3: string;
+  answer4: string;
+  answer5: string;
+  answer6: string;
+}
 
 const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
+  console.log(formdata, 'sss');
+  const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
 
   useEffect(() => {
     const backAction = () => {
@@ -32,39 +35,29 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
     return () => backHandler.remove();
   }, [navigation]);
 
+  const initialValues = {
+    answer1: (formdata && formdata?.answer1) ?? '',
+    answer2: (formdata && formdata?.answer2) ?? '',
+    answer3: (formdata && formdata?.answer3) ?? '',
+    answer4: (formdata && formdata?.answer4) ?? '',
+    answer5: (formdata && formdata?.answer5) ?? '',
+    answer6: (formdata && formdata?.answer6) ?? '',
+  };
+
+  const handleSubmit = (answers: any) => {
+    navigation.navigate('VerificationThree', {
+      ...route.params,
+      verificationTwo: answers,
+    });
+  };
+
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
-          initialValues={{
-            answer1: (formdata && formdata[0]?.answer) ?? '',
-            answer2: (formdata && formdata[1]?.answer) ?? '',
-            answer3: (formdata && formdata[2]?.answer) ?? '',
-            answer4: (formdata && formdata[3]?.answer) ?? '',
-            answer5: (formdata && formdata[4]?.answer) ?? '',
-            answer6: (formdata && formdata[5]?.answer) ?? '',
-          }}
-          validateOnChange={false}
+          initialValues={initialValues}
           validationSchema={PhysicalReadinessTwoSchema}
-          onSubmit={values => {
-            const answersArr = Object.values(values);
-            const isRemainingField = answersArr.find(ans => ans === '') === '';
-            if (isRemainingField) return;
-
-            let answers: {question: string; answer: 'Yes' | 'No' | string}[] =
-              [];
-
-            questionTexts.forEach((q: string, i) => {
-              answers.push({
-                question: q,
-                answer: answersArr[i],
-              });
-            });
-            navigation.navigate('VerificationThree', {
-              ...route.params,
-              verificationTwo: answers,
-            });
-          }}>
+          onSubmit={handleSubmit}>
           {({values, setFieldValue, handleSubmit, errors, setFieldError}) => (
             <>
               {disabled !== true && (
@@ -73,26 +66,28 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
                 </Text>
               )}
               <View style={styles.formContainer}>
-                {questionTexts.map((text, index) => (
-                  <Field key={`answer${index + 1}`} name={`answer${index + 1}`}>
-                    {({field, form}: any) => (
-                      <CustomRadioButton
-                        disabled={disabled}
-                        text={text}
-                        value={field.value}
-                        selectedValue={values[`answer${index + 1}`]}
-                        setFieldValue={setFieldValue}
-                        setFieldError={setFieldError}
-                        error={errors[`answer${index + 1}`]}
-                        name={`answer${index + 1}`}
-                      />
-                    )}
-                  </Field>
+                {verficationTwoquestionTexts.map(question => (
+                  <View key={question.id}>
+                    <CustomRadioButton
+                      disabled={disabled}
+                      text={question.question}
+                      value={values[question.id as keyof FormValues]}
+                      setFieldValue={setFieldValue}
+                      name={question.id}
+                      error={errors[question.id as keyof FormValues]}
+                      isFormSubmitted={isFormSubmitted}
+                    />
+                  </View>
                 ))}
               </View>
               {disabled !== true && (
                 <View style={styles.button}>
-                  <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                  <CustomButton
+                    onPress={() => {
+                      setIsFormSubmitted(true), handleSubmit();
+                    }}>
+                    Continue
+                  </CustomButton>
                 </View>
               )}
             </>

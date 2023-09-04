@@ -1,11 +1,10 @@
-import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import PieChart from 'react-native-pie-chart';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import ColorChart from '../../../../assets/icons/ColorChart';
 import {NutritionData} from '../../../interfaces/extra.interface';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 const legends = [
   {color: '#24A3CC', label: 'Protein'},
@@ -14,17 +13,6 @@ const legends = [
 ];
 
 export const ChartScreen = ({navigation, route}: any) => {
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
   const chartData: NutritionData = route.params.chartData;
   const [dailyCalories, setDailyCalories] = useState(
     route.params.dailyCalories,
@@ -37,7 +25,6 @@ export const ChartScreen = ({navigation, route}: any) => {
     chartData.proteinGrams,
   ];
   const sliceColor = ['#21334E', '#209BCC', '#24A3CC'];
-
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -70,7 +57,7 @@ export const ChartScreen = ({navigation, route}: any) => {
               sliceColor={sliceColor}
               text1={`Fat: ${chartData.fatGrams} g`}
               text2={`Carb: ${chartData.carbGrams} g`}
-              text3={`Protein: ${chartData.proteinGrams} g`}
+              text3={`Protien: ${chartData.proteinGrams} g`}
             />
             <View
               style={{
@@ -83,11 +70,7 @@ export const ChartScreen = ({navigation, route}: any) => {
                 <View key={index} style={{flexDirection: 'row', gap: 5}}>
                   <ColorChart color={legend.color} />
                   <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: '500',
-                      color: 'white',
-                    }}>
+                    style={{fontSize: 12, fontWeight: '500', color: 'white'}}>
                     {legend.label}
                   </Text>
                 </View>

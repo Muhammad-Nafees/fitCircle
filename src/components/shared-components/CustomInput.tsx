@@ -32,6 +32,7 @@ interface Props {
   handleChange: (e: any) => void;
   isFirstLetterLowercase?: boolean;
   setFieldError: (name: any, error: any) => void;
+  labelStyles?: any;
   fieldName: string;
   editable?: boolean;
   starlabel?: boolean;
@@ -72,7 +73,7 @@ const CustomInput = ({...props}: Props) => {
 
   return (
     <View style={[{position: 'relative'}]}>
-      <Text style={[STYLES.text12]}>
+      <Text style={[STYLES.text12, props.labelStyles]}>
         {props.label}
         {props.starlabel ? (
           <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>

@@ -1,21 +1,20 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 import {RadioButton} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {STYLES} from '../../styles/globalStyles';
 
 const CustomRadioButton = ({
   text,
-  value,
-  selectedValue,
   setFieldValue,
   name,
   disabled,
+  value,
   error,
-  setFieldError,
+  isFormSubmitted,
 }: any) => {
   const handleSelect = (selected: string) => {
-    console.log(error);
-    setFieldError(name, null);
-    setFieldValue(name, selected);
+    setFieldValue(`${name}`, selected);
   };
 
   return (
@@ -23,15 +22,27 @@ const CustomRadioButton = ({
       <Text
         style={{
           fontSize: 12,
-          fontWeight: '700',
+          fontWeight: '400',
           color: 'white',
           textAlign: 'left',
           marginBottom: 5,
         }}>
         {text}
       </Text>
-      {error && (
-        <Text style={{color: 'red', fontSize: 12}}>This field is required</Text>
+      {error && isFormSubmitted ? (
+        <View
+          style={[
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 2,
+            },
+          ]}>
+          <Icon name="alert-circle" size={22} color="red" />
+          <Text style={[STYLES.text12, {color: 'red'}]}>{error}</Text>
+        </View>
+      ) : (
+        ''
       )}
       <View
         style={{
@@ -43,7 +54,7 @@ const CustomRadioButton = ({
         <RadioButton.Item
           label="Yes"
           value="Yes"
-          status={selectedValue === 'Yes' ? 'checked' : 'unchecked'}
+          status={value === 'Yes' ? 'checked' : 'unchecked'}
           onPress={() => !disabled && handleSelect('Yes')}
           color="#209BCC"
           labelStyle={{
@@ -57,7 +68,7 @@ const CustomRadioButton = ({
         <RadioButton.Item
           label="No"
           value="No"
-          status={selectedValue === 'No' ? 'checked' : 'unchecked'}
+          status={value === 'No' ? 'checked' : 'unchecked'}
           onPress={() => !disabled && handleSelect('No')}
           color="#209BCC"
           labelStyle={{

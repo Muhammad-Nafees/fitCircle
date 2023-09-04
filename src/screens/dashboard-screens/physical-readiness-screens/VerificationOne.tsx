@@ -25,7 +25,7 @@ import {useDispatch} from 'react-redux';
 import {setAnswers} from '../../../redux/readinessTestSlice';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 import PhoneInput from 'react-native-phone-number-input';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useRoute} from '@react-navigation/native';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 
 export const VerificationOne = ({navigation, disabled, data, route}: any) => {
@@ -33,6 +33,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
   const [phoneCode, setPhoneCode] = useState('1');
+  console.log(route, 'route');
 
   const phoneNumberCheck = (values: any) => {
     const isValid = phoneInput.current?.isValidNumber(values);
@@ -78,11 +79,13 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <View style={{paddingBottom: 10}}>
-        <CustomHeader
-          onPress={() =>
-            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
-          }
-        />
+        {route?.name == 'VerificationOne' && (
+          <CustomHeader
+            onPress={() =>
+              navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
+            }
+          />
+        )}
       </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
