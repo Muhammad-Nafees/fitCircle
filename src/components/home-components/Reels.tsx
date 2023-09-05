@@ -43,8 +43,9 @@ interface ReelsProps {
   index: number;
   currIndex: number;
   tabBarHeight: any;
-  isProfile: boolean;
+  isProfile?: boolean;
   handleCancelPress: any;
+  handleFavoriteDialog?: any;
 }
 
 const defaultPost = {
@@ -81,6 +82,7 @@ export const ReelsComponent = ({
   tabBarHeight,
   isProfile,
   handleCancelPress,
+  handleFavoriteDialog,
 }: ReelsProps) => {
   const {_id, media, content, user, cost, favorites, thumbnail} = post;
   const {profileImageUrl, username, email} = user;
@@ -123,17 +125,21 @@ export const ReelsComponent = ({
   };
 
   const handleFavoritePress = () => {
-    const apiEndpoint = `posts/favs/${_id}`;
-    axiosInstance
-      .patch(apiEndpoint)
-      .then(response => {
-        console.log('Comment Posted successfully!');
-        console.log(response);
-      })
-      .catch(error => {
-        console.error('Error while commenting on the post:', error);
-      });
-    navigation.navigate('FavoriteDialog');
+    if (isProfile === true) {
+      handleFavoriteDialog();
+    } else {
+      const apiEndpoint = `posts/favs/${_id}`;
+      axiosInstance
+        .patch(apiEndpoint)
+        .then(response => {
+          console.log('Comment Posted successfully!');
+          console.log(response);
+        })
+        .catch(error => {
+          console.error('Error while commenting on the post:', error);
+        });
+      navigation.navigate('FavoriteDialog');
+    }
   };
 
   const handleShareVideo = async () => {

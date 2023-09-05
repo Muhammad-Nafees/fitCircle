@@ -38,10 +38,9 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [communityName, setCommunityName] = useState('');
   const [removedFollowers, setRemovedFollowers] = useState<string[]>([]);
-  const [modalOpenFor, setModalOpenFor] = useState<string | null>(null);
-  const [removedCommunities, setRemovedCommunities] = useState<Set<string>[]>(
-    [],
-  );
+  const [modalOpenFor, setModalOpenFor] = useState<any>(null);
+  const [removedFollowing, setRemovedFollowing] = useState<string[]>([]);
+  const [removedCommunities, setRemovedCommunities] = useState<string[]>([]);
 
   useEffect(() => {
     setSelectedOption(route.params.default);
@@ -63,6 +62,11 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   }, []);
 
   const toggleModal = () => {
+    if (selectedOption === 'following') {
+      handleModalConfirm(true, modalOpenFor, 'following');
+    } else if (selectedOption === 'community') {
+      handleModalConfirm(true, modalOpenFor, 'community');
+    }
     setModalVisible(!isModalVisible);
   };
 
@@ -110,13 +114,28 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     }
   };
 
-  const handleModalConfirm = (confirmed: boolean, followerId: string) => {
-    console.log(followerId);
+  const handleModalConfirm = (
+    confirmed: boolean,
+    itemId: string,
+    actionType: string,
+  ) => {
     if (confirmed) {
-      const updatedRemovedFollowers = removedFollowers.includes(followerId)
-        ? removedFollowers.filter(id => id !== followerId)
-        : [...removedFollowers, followerId];
-      setRemovedFollowers(updatedRemovedFollowers);
+      if (actionType === 'followers') {
+        const updatedRemovedFollowers = removedFollowers.includes(itemId)
+          ? removedFollowers.filter(id => id !== itemId)
+          : [...removedFollowers, itemId];
+        setRemovedFollowers(updatedRemovedFollowers);
+      } else if (actionType === 'following') {
+        const updatedRemovedFollowing = removedFollowing.includes(itemId)
+          ? removedFollowing.filter(id => id !== itemId)
+          : [...removedFollowing, itemId];
+        setRemovedFollowing(updatedRemovedFollowing);
+      } else if (actionType === 'community') {
+        const updatedRemovedCommunity = removedCommunities.includes(itemId)
+          ? removedCommunities.filter(id => id !== itemId)
+          : [...removedCommunities, itemId];
+        setRemovedCommunities(updatedRemovedCommunity);
+      }
     }
     setModalOpenFor(null);
     setModalVisible(false);
@@ -133,6 +152,16 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     );
     return () => backHandler.remove();
   }, [navigation]);
+
+  const onPressHandler = () => {
+    if (selectedOption === 'followers') {
+      handleModalConfirm(true, modalOpenFor, 'followers');
+    } else if (selectedOption === 'following') {
+      setModalVisible(!isModalVisible);
+    } else if (selectedOption === 'community') {
+      setModalVisible(!isModalVisible);
+    }
+  };
 
   const renderProfileItem = ({item}: any) => {
     const isRemoved = removedFollowers.includes(item._id);
@@ -168,48 +197,78 @@ const SearchProfileScreen = ({route, navigation}: any) => {
             <Text style={styles.name}>{item.username}</Text>
           </View>
         </View>
-        {selectedOption === 'followers' && (
-          <TouchableOpacity
-            style={styles.removeButtonContainer}
-            onPress={handleToggleRemove}>
-            <Text style={styles.remove}>{!isRemoved ? 'Remove' : 'Add'}</Text>
-          </TouchableOpacity>
-        )}
-        {selectedOption === 'following' && (
-          <TouchableOpacity
-            style={styles.removeButtonContainer}
-            onPress={toggleModal}>
-            <Text style={styles.remove}>Unfollow</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={styles.removeButtonContainer}
+          onPress={handleToggleRemove}>
+          <Text style={styles.remove}>{!isRemoved ? 'Remove' : 'Add'}</Text>
+        </TouchableOpacity>
       </View>
     );
   };
 
-  const renderCommunityItem = ({item}) => {
-    const isUnsubscribed = removedCommunities.some(set => set.has(item._id));
-    const handleUnsubscribe = (communityId: string, communityName: string) => {
-      const communityIndex = removedCommunities.findIndex(set =>
-        set.has(communityId),
-      );
-      const isUnsubscribed = communityIndex !== -1;
-
-      if (!isUnsubscribed) {
-        const updatedRemovedCommunities = [...removedCommunities];
-        updatedRemovedCommunities.push(new Set([communityId]));
-        setRemovedCommunities(updatedRemovedCommunities);
+  const renderFollowingItem = ({item}: any) => {
+    const isRemoved = removedFollowing.includes(item._id);
+    const handleToggleRemove = (followingId: string) => {
+      if (!isRemoved) {
+        const updatedRemovedFollowing = [...removedFollowing, followingId];
+        setRemovedFollowing(updatedRemovedFollowing);
       } else {
-        const updatedRemovedCommunities = [...removedCommunities];
-        updatedRemovedCommunities.splice(communityIndex, 1);
-        setModalName(`joined ${item.name}`);
+        const updatedRemovedFollowing = isRemoved
+          ? removedFollowing.filter(id => id !== item._id)
+          : [...removedFollowing, item._id];
+        setModalName(`followed ${item.username}`);
         setFollowModal(true);
-        setRemovedCommunities(updatedRemovedCommunities);
+        setRemovedFollowing(updatedRemovedFollowing);
       }
+      if (!isRemoved) {
+        setModalVisible(true);
+        setModalOpenFor(item._id);
+      }
+    };
+    return (
+      <View style={styles.profileContainer}>
+        <View style={styles.profileInfo}>
+          {item.profileImageUrl ? (
+            <Avatar.Image size={40} source={{uri: item.profileImageUrl}} />
+          ) : (
+            <Avatar.Text
+              size={40}
+              label={item.username ? item.username[0].toUpperCase() : 'SA'}
+            />
+          )}
+          <View style={styles.nameContainer}>
+            <Text style={styles.name}>{item.username}</Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.removeButtonContainer}
+          onPress={() => handleToggleRemove(item._id)}>
+          <Text style={styles.remove}>
+            {!isRemoved ? 'Unfollow' : 'Follow'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
+  const renderCommunityItem = ({item}: any) => {
+    const isUnsubscribed = removedCommunities.includes(item._id);
+    const handleToggleRemove = (followerId: string, name: string) => {
+      setCommunityName(name);
+      if (!isUnsubscribed) {
+        const updatedRemovedCommunity = [...removedCommunities, followerId];
+        setRemovedCommunities(updatedRemovedCommunity);
+      } else {
+        const updatedRemovedCommunity = isUnsubscribed
+          ? removedCommunities.filter(id => id !== item._id)
+          : [...removedCommunities, item._id];
+        setModalName(`followed ${item.name}`);
+        setFollowModal(true);
+        setRemovedCommunities(updatedRemovedCommunity);
+      }
       if (!isUnsubscribed) {
         setModalVisible(true);
-        setModalOpenFor(communityId);
-        setCommunityName(communityName);
+        setModalOpenFor(item._id);
       }
     };
     return (
@@ -230,7 +289,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
         </View>
         <TouchableOpacity
           style={styles.removeButtonContainer}
-          onPress={() => handleUnsubscribe(item._id, item.name)}>
+          onPress={() => handleToggleRemove(item._id, item.name)}>
           <Text style={styles.remove}>
             {!isUnsubscribed ? 'Unsubscribe' : 'Join'}
           </Text>
@@ -313,21 +372,24 @@ const SearchProfileScreen = ({route, navigation}: any) => {
             All {capitalizeFirstLetter(selectedOption)}
           </Text>
         </View>
-        {(selectedOption === 'followers' || selectedOption === 'following') && (
+        {selectedOption === 'followers' && (
           <FlatList
-            data={
-              selectedOption === 'followers'
-                ? filteredFollowers
-                : filteredFollowing
-            }
-            keyExtractor={item => item._id}
+            data={filteredFollowers}
+            keyExtractor={(item: any) => item._id}
             renderItem={renderProfileItem}
+          />
+        )}
+        {selectedOption === 'following' && (
+          <FlatList
+            data={filteredFollowing}
+            keyExtractor={(item: any) => item._id}
+            renderItem={renderFollowingItem}
           />
         )}
         {selectedOption === 'community' && (
           <FlatList
             data={filteredCommunities}
-            keyExtractor={item => item._id}
+            keyExtractor={(item: any) => item._id}
             renderItem={renderCommunityItem}
           />
         )}
@@ -358,9 +420,9 @@ const SearchProfileScreen = ({route, navigation}: any) => {
                 <Text style={styles.coloredText}>unfollow </Text>
               ) : (
                 <>
-                  <Text style={styles.coloredText}>unsubscribe</Text>
+                  <Text style={styles.coloredText}>unsubscribe </Text>
                   {selectedOption === 'community' && (
-                    <Text> {communityName}</Text>
+                    <Text>{communityName}</Text>
                   )}
                 </>
               )}
@@ -388,7 +450,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
             </TouchableOpacity>
             <View style={styles.verticalLine} />
             <TouchableOpacity
-              onPress={() => handleModalConfirm(true, modalOpenFor)}
+              onPress={onPressHandler}
               style={styles.modalButton}>
               <Text
                 style={{
@@ -454,7 +516,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(10),
   },
   optionText: {
-    color: '#444444',
+    color: 'rgba(255, 255, 255, 0.3)',
     fontSize: 12,
   },
   selectedOption: {

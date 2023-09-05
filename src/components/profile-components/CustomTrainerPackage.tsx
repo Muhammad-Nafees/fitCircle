@@ -3,15 +3,27 @@ import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {MealPlanStarIcon} from '../../../assets/icons/MealPlanStar';
 import {useNavigation} from '@react-navigation/core';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 const PlayIcon = require('../../../assets/icons/playIcon.png');
 
 const ImagePreview = require('../../../assets/images/TestMealPlanImage.png');
 
-export const CustomTrainerPackage = ({hidePriceAndPackage}: boolean) => {
+export const CustomTrainerPackage = ({
+  hidePriceAndPackage,
+  isTrainerView,
+}: any) => {
+  const userData = useSelector((state: RootState) => state.auth.user);
   const navigation = useNavigation();
+
+  const onPressHandler = () => {
+    if (userData?.role !== 'trainer' || isTrainerView) {
+      navigation.navigate('PackageDetail');
+    }
+  };
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('PackageDetail')}
+      onPress={onPressHandler}
       style={[
         styles.container,
         hidePriceAndPackage && {backgroundColor: 'transparent'},
@@ -56,7 +68,11 @@ export const CustomTrainerPackage = ({hidePriceAndPackage}: boolean) => {
         {!hidePriceAndPackage ? (
           <View style={styles.priceContainer}>
             <Text style={styles.price}>$100</Text>
-            <Text style={styles.getPackage}>Get this package</Text>
+            {userData?.role === 'trainer' && !isTrainerView ? (
+              <Text style={styles.getPackage}>Edit this package</Text>
+            ) : (
+              <Text style={styles.getPackage}>Get this package</Text>
+            )}
           </View>
         ) : null}
       </View>
