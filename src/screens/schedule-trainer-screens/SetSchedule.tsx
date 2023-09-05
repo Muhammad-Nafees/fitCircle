@@ -12,7 +12,7 @@ import {
 import {Calendar, DateData} from 'react-native-calendars';
 import moment from 'moment';
 import CustomButton from '../../components/shared-components/CustomButton';
-import {format, parse} from 'date-fns';
+import {format, parse, startOfDay} from 'date-fns';
 import axiosInstance from '../../api/interceptor';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -150,18 +150,19 @@ const SetSchedule = ({route, navigation}: any) => {
   }, [navigation]);
 
   const handleSelectOption = (option: string) => {
+    console.log(option);
     const selectedDateArr = isDateFormatted ? '' : selectedDate?.split('-');
-
     const selectedSlotDate = new Date(route.params.date);
-    const formattedDate = format(selectedSlotDate, 'MM/dd/yyyy');
 
+    const formattedDate = isDateFormatted
+      ? format(selectedSlotDate, 'MM/dd/yyyy')
+      : '';
     const date = isDateFormatted
       ? formattedDate
       : selectedDate
       ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
       : format(new Date(), 'MM/dd/u');
     console.log(date);
-
     if (selectedOptions.includes(option)) {
       setSelectedOptions(selectedOptions.filter(item => item !== option));
       // setSelectedOptionsWDate()
@@ -203,7 +204,6 @@ const SetSchedule = ({route, navigation}: any) => {
       setSlotsDate(formattedDate);
     } else {
       const selectedDateArr = selectedDate?.split('-');
-
       setSlotsDate(
         selectedDate
           ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
@@ -318,14 +318,15 @@ const SetSchedule = ({route, navigation}: any) => {
       const parsedDate = new Date(route.params.date);
       const formattedDate = format(parsedDate, 'yyyy-MM-dd');
       setSelectedSlotDate(formattedDate);
-      console.log(formatDate,"sss")
     } else {
       setIsDateFormatted(false);
     }
   }, []);
   console.log(selectedSlotDate);
-  const selectedFormattedDate = format(new Date(route.params.date), 'yyyy-MM-dd');
-
+  const currentttDate = startOfDay(new Date());
+  const formattedCurrentDate = route.params.date
+    ? format(route.params.date, 'yyyy-MM-dd')
+    : format(currentttDate, 'yyyy-MM-dd');
 
   return (
     <View style={styles.container}>
@@ -367,7 +368,7 @@ const SetSchedule = ({route, navigation}: any) => {
             }}
             onDayPress={handleDayPress}
             hideExtraDays={true}
-            current={selectedFormattedDate}
+            current={formattedCurrentDate}
           />
         </View>
       </View>
