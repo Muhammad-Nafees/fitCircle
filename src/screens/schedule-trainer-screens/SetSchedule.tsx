@@ -47,7 +47,6 @@ const SetSchedule = ({route, navigation}: any) => {
   const [isDateFormatted, setIsDateFormatted] = useState(false);
   const [slotsDate, setSlotsDate] = useState<any>();
 
-
   const {selectedMonth} = route.params || {currentMonth};
 
   const [selectedDate, setSelectedDate] = useState<any>(null);
@@ -57,6 +56,7 @@ const SetSchedule = ({route, navigation}: any) => {
   );
   const today = format(new Date(), 'u-MM-dd'); // Get the current date in 'YYYY-MM-DD' format
   const userData = useSelector((state: RootState) => state.auth.user);
+  const [selectedSlotDate, setSelectedSlotDate] = useState<any>();
 
   const [data, setData] = useState<Schedule[]>([]);
 
@@ -82,7 +82,7 @@ const SetSchedule = ({route, navigation}: any) => {
   const handleDayPress = (day: DateData) => {
     setIsDateFormatted(false);
     const selected = day.dateString;
-    console.log(selected,selectedDate,"daypress")
+    console.log(selected, selectedDate, selectedSlotDate, 'daypress');
 
     if (selected === selectedDate) {
       setSelectedDate(undefined);
@@ -150,10 +150,17 @@ const SetSchedule = ({route, navigation}: any) => {
   }, [navigation]);
 
   const handleSelectOption = (option: string) => {
-    const selectedDateArr = selectedDate?.split('-');
-    const date = selectedDate
+    const selectedDateArr = isDateFormatted ? '' : selectedDate?.split('-');
+
+    const selectedSlotDate = new Date(route.params.date);
+    const formattedDate = format(selectedSlotDate, 'MM/dd/yyyy');
+
+    const date = isDateFormatted
+      ? formattedDate
+      : selectedDate
       ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
       : format(new Date(), 'MM/dd/u');
+    console.log(date);
 
     if (selectedOptions.includes(option)) {
       setSelectedOptions(selectedOptions.filter(item => item !== option));
@@ -190,7 +197,7 @@ const SetSchedule = ({route, navigation}: any) => {
   };
 
   const renderOptionItem = ({item}) => {
-    if (route.params.date) {
+    if (route.params.date && isDateFormatted) {
       const parsedDate = new Date(route.params.date);
       const formattedDate = format(parsedDate, 'MM/dd/yyyy');
       setSlotsDate(formattedDate);
@@ -203,7 +210,6 @@ const SetSchedule = ({route, navigation}: any) => {
           : format(new Date(), 'MM/dd/u'),
       );
     }
-    console.log(slotsDate,"slptsdate")
 
     // const selectedSlot = data
     //   .find(el => el.date === date)
@@ -309,10 +315,17 @@ const SetSchedule = ({route, navigation}: any) => {
     if (route.params.date) {
       setSelectedDate(route.params.date);
       setIsDateFormatted(true);
+      const parsedDate = new Date(route.params.date);
+      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+      setSelectedSlotDate(formattedDate);
+      console.log(formatDate,"sss")
     } else {
       setIsDateFormatted(false);
     }
   }, []);
+  console.log(selectedSlotDate);
+  const selectedFormattedDate = format(new Date(route.params.date), 'yyyy-MM-dd');
+
 
   return (
     <View style={styles.container}>
@@ -344,7 +357,9 @@ const SetSchedule = ({route, navigation}: any) => {
                 selectedColor: '#209BCC',
                 selectedTextColor: '#FFF',
               },
-              [selectedDate]: {
+              [selectedSlotDate && isDateFormatted
+                ? selectedSlotDate
+                : selectedDate]: {
                 selected: true,
                 selectedColor: '#209BCC',
                 selectedTextColor: '#FFF',
@@ -352,6 +367,7 @@ const SetSchedule = ({route, navigation}: any) => {
             }}
             onDayPress={handleDayPress}
             hideExtraDays={true}
+            current={selectedFormattedDate}
           />
         </View>
       </View>

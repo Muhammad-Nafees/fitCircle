@@ -86,7 +86,7 @@ export const Slot = ({navigation}: any) => {
 
     return (
       <TouchableOpacity
-        // onPress={() => navigation.navigate('SetSchedule', {date: parsedDate})}
+        onPress={() => navigation.navigate('SetSchedule', {date: parsedDate})}
         style={styles.carouselItem}>
         <Text style={styles.carouselItemText1}>{day}</Text>
         <View style={styles.dateMonthRow}>
