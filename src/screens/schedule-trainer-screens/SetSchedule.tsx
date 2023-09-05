@@ -12,12 +12,13 @@ import {
 import {Calendar, DateData} from 'react-native-calendars';
 import moment from 'moment';
 import CustomButton from '../../components/shared-components/CustomButton';
-import {format} from 'date-fns';
+import {format, parse} from 'date-fns';
 import axiosInstance from '../../api/interceptor';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {vertical} from 'react-native-swiper-flatlist/src/themes';
 import {verticalScale} from '../../utils/metrics';
+import {enUS} from 'date-fns/locale';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -43,8 +44,9 @@ type Schedule = {
 const SetSchedule = ({route, navigation}: any) => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1;
+  const [isDateFormatted, setIsDateFormatted] = useState(false);
+  const [slotsDate, setSlotsDate] = useState<any>();
 
-  console.log(currentMonth);
 
   const {selectedMonth} = route.params || {currentMonth};
 
@@ -57,6 +59,7 @@ const SetSchedule = ({route, navigation}: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
 
   const [data, setData] = useState<Schedule[]>([]);
+
   // const customDatesStyles = {};
   // customDatesStyles[selectedMonth] = {textStyle: {color: '#fff'}};
 
@@ -77,13 +80,14 @@ const SetSchedule = ({route, navigation}: any) => {
   // };
 
   const handleDayPress = (day: DateData) => {
+    setIsDateFormatted(false);
     const selected = day.dateString;
+    console.log(selected,selectedDate,"daypress")
 
     if (selected === selectedDate) {
       setSelectedDate(undefined);
       return;
     }
-
     setSelectedDate(selected);
   };
 
@@ -100,7 +104,6 @@ const SetSchedule = ({route, navigation}: any) => {
     if (forNextDay) {
       const startTime = moment().add(1, 'day').startOf('day');
       const endTime = moment(startTime).add(1, 'day');
-
       const timeSlots = [];
       while (startTime.isBefore(endTime)) {
         const formattedSlot = `${startTime.format('h:mmA')} - ${startTime
@@ -187,11 +190,20 @@ const SetSchedule = ({route, navigation}: any) => {
   };
 
   const renderOptionItem = ({item}) => {
-    const selectedDateArr = selectedDate?.split('-');
+    if (route.params.date) {
+      const parsedDate = new Date(route.params.date);
+      const formattedDate = format(parsedDate, 'MM/dd/yyyy');
+      setSlotsDate(formattedDate);
+    } else {
+      const selectedDateArr = selectedDate?.split('-');
 
-    const date = selectedDate
-      ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
-      : format(new Date(), 'MM/dd/u');
+      setSlotsDate(
+        selectedDate
+          ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
+          : format(new Date(), 'MM/dd/u'),
+      );
+    }
+    console.log(slotsDate,"slptsdate")
 
     // const selectedSlot = data
     //   .find(el => el.date === date)
@@ -199,7 +211,7 @@ const SetSchedule = ({route, navigation}: any) => {
 
     // const isSelected = selectedSlot?.includes(item);
     const selectedSlot = selectedOptionsWDate.find(
-      el => el.date === date,
+      el => el.date === slotsDate,
     )?.option;
 
     const isSelected = selectedSlot?.includes(item);
@@ -236,7 +248,7 @@ const SetSchedule = ({route, navigation}: any) => {
           selectedOptionsWDate.length - 1 === index &&
           response.status === 200
         ) {
-          navigation.goBack();
+          navigation.navigate('Slot');
         }
       } catch (error) {
         console.log('🚀 ~ setSchedule ~ error:', error);
@@ -294,6 +306,12 @@ const SetSchedule = ({route, navigation}: any) => {
 
   useEffect(() => {
     getTrainerSchedule();
+    if (route.params.date) {
+      setSelectedDate(route.params.date);
+      setIsDateFormatted(true);
+    } else {
+      setIsDateFormatted(false);
+    }
   }, []);
 
   return (
@@ -337,7 +355,7 @@ const SetSchedule = ({route, navigation}: any) => {
           />
         </View>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.bottomContainer}>
           <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
           <FlatList

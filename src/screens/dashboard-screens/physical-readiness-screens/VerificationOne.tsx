@@ -282,7 +282,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       width: horizontalScale(80),
                       height: verticalScale(47),
                       alignItems: 'center',
-                      marginTop: verticalScale(10),
+                      marginTop: 7
                     }}
                     fieldName="age"
                   />

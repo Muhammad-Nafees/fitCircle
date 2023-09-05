@@ -93,7 +93,8 @@ export const Transaction = ({navigation}: any) => {
                 <Text style={styles.detailData}>2:00 PM</Text>
                 <Text></Text>
                 <Text style={styles.detailData}>Isaac Butler</Text>
-                <Text style={{fontSize: 10, fontWeight: '400'}}>
+                <Text
+                  style={{fontSize: 10, fontWeight: '400', color: '#262626'}}>
                   isaacButtler@gmail.com
                 </Text>
                 <Text></Text>

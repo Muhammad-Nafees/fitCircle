@@ -8,10 +8,17 @@ import {
   FlatList,
   Dimensions,
   BackHandler,
+  ScrollView,
 } from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import {format, parse} from 'date-fns';
+import {enUS} from 'date-fns/locale';
+import {useRoute} from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -40,19 +47,55 @@ export const Slot = ({navigation}: any) => {
   };
 
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+  const [trainerSchedules, setTrainerSchedules] = useState([]);
+
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const authorizationToken = useSelector(
+    (state: RootState) => state.auth.authorizationToken,
+  );
+  const route = useRoute();
+  const focus = useIsFocused(); // useIsFocused as shown
+
+  console.log(userData?._id, 'SSSSS');
+  console.log(authorizationToken);
+
+  const getTrainerSchedule = async () => {
+    try {
+      const response = await axiosInstance.get(`schedules/${userData?._id}`);
+
+      if (response.status === 200) {
+        setTrainerSchedules(response.data);
+      }
+    } catch (error: any) {
+      console.log('🚀 ~ getTrainerSlots ~ error:', error.response.data);
+    }
+  };
+
+  useEffect(() => {
+    if (focus == true) {
+      getTrainerSchedule();
+    }
+  }, [focus]);
 
   const renderCarouselItem = ({item}) => {
-    const {day, date, month} = item;
+    const inputDateString = item?.date;
+    const parsedDate = parse(inputDateString, 'MM/dd/yyyy', new Date());
+    const month = format(parsedDate, 'MMM', {locale: enUS});
+    const date = format(parsedDate, 'dd', {locale: enUS});
+    const day = format(parsedDate, 'EEE', {locale: enUS});
+
     return (
       <TouchableOpacity
-        onPress={() => console.log('Something')}
+        // onPress={() => navigation.navigate('SetSchedule', {date: parsedDate})}
         style={styles.carouselItem}>
         <Text style={styles.carouselItemText1}>{day}</Text>
         <View style={styles.dateMonthRow}>
           <Text style={styles.carouselItemText}>{date} </Text>
           <Text style={styles.carouselItemText}>{month}</Text>
         </View>
-        <Text style={styles.carouselItemText1}>0 slots</Text>
+        <Text style={styles.carouselItemText1}>
+          {item?.timeSlots?.length} Slots
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -68,30 +111,6 @@ export const Slot = ({navigation}: any) => {
     );
     return () => backHandler.remove();
   }, [navigation]);
-
-  const generateCarouselData = () => {
-    const currentDate = new Date();
-    const carouselData = [];
-
-    for (let i = 1; i <= 15; i++) {
-      const nextDate = new Date(currentDate);
-      nextDate.setDate(currentDate.getDate() + i);
-
-      const dayIndex = nextDate.getDay();
-      const day = days[dayIndex];
-      const date = nextDate.getDate();
-      const monthIndex = nextDate.getMonth();
-      const month = months[monthIndex];
-
-      carouselData.push({day, date, month});
-    }
-
-    return carouselData;
-  };
-
-  const filteredCarouselData = generateCarouselData().filter(
-    item => item.month === selectedMonth,
-  );
 
   return (
     <View style={styles.container}>
@@ -112,15 +131,15 @@ export const Slot = ({navigation}: any) => {
           <ArrowForward />
         </View>
       </TouchableOpacity>
-      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+      <ScrollView>
         <FlatList
-          data={filteredCarouselData}
+          data={trainerSchedules}
           renderItem={renderCarouselItem}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={styles.carouselContainer}
           numColumns={3}
         />
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -184,6 +203,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginVertical: 6,
+    textTransform: 'uppercase',
   },
   carouselItemText1: {
     color: 'white',
