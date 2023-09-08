@@ -12,7 +12,7 @@ import {
 import {Calendar, DateData} from 'react-native-calendars';
 import moment from 'moment';
 import CustomButton from '../../components/shared-components/CustomButton';
-import {format, parse} from 'date-fns';
+import {format, parse, startOfDay} from 'date-fns';
 import axiosInstance from '../../api/interceptor';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -56,6 +56,7 @@ const SetSchedule = ({route, navigation}: any) => {
   );
   const today = format(new Date(), 'u-MM-dd'); // Get the current date in 'YYYY-MM-DD' format
   const userData = useSelector((state: RootState) => state.auth.user);
+  const [selectedSlotDate, setSelectedSlotDate] = useState<any>();
 
   const [data, setData] = useState<Schedule[]>([]);
 
@@ -81,7 +82,7 @@ const SetSchedule = ({route, navigation}: any) => {
   const handleDayPress = (day: DateData) => {
     setIsDateFormatted(false);
     const selected = day.dateString;
-    console.log(selected, selectedDate, 'daypress');
+    console.log(selected, selectedDate, selectedSlotDate, 'daypress');
 
     if (selected === selectedDate) {
       setSelectedDate(undefined);
@@ -149,11 +150,19 @@ const SetSchedule = ({route, navigation}: any) => {
   }, [navigation]);
 
   const handleSelectOption = (option: string) => {
-    const selectedDateArr = selectedDate?.split('-');
-    const date = selectedDate
+    console.log(option);
+    const selectedDateArr = isDateFormatted ? '' : selectedDate?.split('-');
+    const selectedSlotDate = new Date(route.params.date);
+
+    const formattedDate = isDateFormatted
+      ? format(selectedSlotDate, 'MM/dd/yyyy')
+      : '';
+    const date = isDateFormatted
+      ? formattedDate
+      : selectedDate
       ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
       : format(new Date(), 'MM/dd/u');
-
+    console.log(date);
     if (selectedOptions.includes(option)) {
       setSelectedOptions(selectedOptions.filter(item => item !== option));
       // setSelectedOptionsWDate()
@@ -188,21 +197,19 @@ const SetSchedule = ({route, navigation}: any) => {
     setSelectedOptionsWDate([...selectedOptionsWDate, obj]);
   };
 
-  const renderOptionItem = ({item}: any) => {
-    if (route.params.date) {
+  const renderOptionItem = ({item}) => {
+    if (route.params.date && isDateFormatted) {
       const parsedDate = new Date(route.params.date);
       const formattedDate = format(parsedDate, 'MM/dd/yyyy');
       setSlotsDate(formattedDate);
     } else {
       const selectedDateArr = selectedDate?.split('-');
-
       setSlotsDate(
         selectedDate
           ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
           : format(new Date(), 'MM/dd/u'),
       );
     }
-    console.log(slotsDate, 'slptsdate');
 
     // const selectedSlot = data
     //   .find(el => el.date === date)
@@ -308,10 +315,18 @@ const SetSchedule = ({route, navigation}: any) => {
     if (route.params.date) {
       setSelectedDate(route.params.date);
       setIsDateFormatted(true);
+      const parsedDate = new Date(route.params.date);
+      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+      setSelectedSlotDate(formattedDate);
     } else {
       setIsDateFormatted(false);
     }
   }, []);
+  console.log(selectedSlotDate);
+  const currentttDate = startOfDay(new Date());
+  const formattedCurrentDate = route.params.date
+    ? format(route.params.date, 'yyyy-MM-dd')
+    : format(currentttDate, 'yyyy-MM-dd');
 
   return (
     <View style={styles.container}>
@@ -343,7 +358,9 @@ const SetSchedule = ({route, navigation}: any) => {
                 selectedColor: '#209BCC',
                 selectedTextColor: '#FFF',
               },
-              [selectedDate]: {
+              [selectedSlotDate && isDateFormatted
+                ? selectedSlotDate
+                : selectedDate]: {
                 selected: true,
                 selectedColor: '#209BCC',
                 selectedTextColor: '#FFF',
@@ -351,6 +368,7 @@ const SetSchedule = ({route, navigation}: any) => {
             }}
             onDayPress={handleDayPress}
             hideExtraDays={true}
+            current={formattedCurrentDate}
           />
         </View>
       </View>
