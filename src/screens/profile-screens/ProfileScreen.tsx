@@ -36,7 +36,7 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {STYLES} from '../../styles/globalStyles';
-import {communitiesData, followersData, followingData} from './dummyData';
+import {communitiesData, followersData, followingData} from '../dummyData';
 
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 

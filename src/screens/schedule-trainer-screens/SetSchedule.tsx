@@ -47,7 +47,6 @@ const SetSchedule = ({route, navigation}: any) => {
   const [isDateFormatted, setIsDateFormatted] = useState(false);
   const [slotsDate, setSlotsDate] = useState<any>();
 
-
   const {selectedMonth} = route.params || {currentMonth};
 
   const [selectedDate, setSelectedDate] = useState<any>(null);
@@ -82,7 +81,7 @@ const SetSchedule = ({route, navigation}: any) => {
   const handleDayPress = (day: DateData) => {
     setIsDateFormatted(false);
     const selected = day.dateString;
-    console.log(selected,selectedDate,"daypress")
+    console.log(selected, selectedDate, 'daypress');
 
     if (selected === selectedDate) {
       setSelectedDate(undefined);
@@ -189,7 +188,7 @@ const SetSchedule = ({route, navigation}: any) => {
     setSelectedOptionsWDate([...selectedOptionsWDate, obj]);
   };
 
-  const renderOptionItem = ({item}) => {
+  const renderOptionItem = ({item}: any) => {
     if (route.params.date) {
       const parsedDate = new Date(route.params.date);
       const formattedDate = format(parsedDate, 'MM/dd/yyyy');
@@ -203,7 +202,7 @@ const SetSchedule = ({route, navigation}: any) => {
           : format(new Date(), 'MM/dd/u'),
       );
     }
-    console.log(slotsDate,"slptsdate")
+    console.log(slotsDate, 'slptsdate');
 
     // const selectedSlot = data
     //   .find(el => el.date === date)

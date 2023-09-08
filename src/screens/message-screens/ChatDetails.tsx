@@ -1,0 +1,207 @@
+import React, {useState} from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
+} from 'react-native';
+import VideoSvgIcon from '../../../assets/icons/VideoIcon';
+import ChatCallIcon from '../../../assets/icons/ChatCall';
+import {Avatar} from 'react-native-paper';
+import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
+import {UserMessage} from '../../components/message-components/UserMessage';
+const ArrowBack = require('../../../assets/icons/arrow-back.png');
+const Option = require('../../../assets/icons/customPostOption.png');
+const SendIcon = require('../../../assets/icons/send.png');
+
+export const ChatDetails = ({navigation, route}: any) => {
+  const [message, setMessage] = useState('');
+  const [userMessages, setUserMessages] = useState<any>([]);
+
+  const handleSendMessage = () => {
+    if (message.trim() !== '') {
+      const newMessage = {
+        id: Date.now(),
+        text: message,
+        timestamp: new Date().toISOString(),
+        isUser: true,
+      };
+      setUserMessages((prevMessages: any) => [newMessage, ...prevMessages]);
+      setMessage('');
+    }
+  };
+  return (
+    <View style={styles.container}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          backgroundColor: '#209BCC',
+          paddingBottom: 10,
+          zIndex: 10,
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+          {/* <View style={styles.onlineIndicator}></View> */}
+          <TouchableOpacity
+            style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
+            onPress={() => navigation.goBack()}>
+            <Image
+              source={ArrowBack}
+              style={{width: 24, height: 24, tintColor: 'white'}}
+            />
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              top: 10,
+            }}>
+            <Avatar.Text
+              size={40}
+              label={route.params.username[0]}
+              style={{backgroundColor: '#5e01a9'}}
+            />
+            <View>
+              <Text style={styles.name}>{route.params.username}</Text>
+              <Text style={styles.status}>Online</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.iconContainer}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('VoiceCall', {
+                username: route.params.username,
+              })
+            }>
+            <ChatCallIcon />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('VideoCall', {
+                username: route.params.username,
+              })
+            }>
+            <VideoSvgIcon color={'white'} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image source={Option} style={styles.icon} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View
+        style={{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+        <FlatList
+          data={userMessages}
+          keyExtractor={item => item.id.toString()}
+          inverted
+          renderItem={({item}) => (
+            <UserMessage text={item.text} timestamp={item.timestamp} />
+          )}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: '#00abd2',
+            width: '85%',
+          }}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Message"
+            placeholderTextColor="#fff"
+            value={message}
+            onChangeText={text => setMessage(text)}
+          />
+          <TouchableOpacity
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: horizontalScale(13),
+              opacity: 0.8,
+            }}
+            onPress={() => console.log('Something')}>
+            <CreatePostCommentSvgIcon />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={styles.commentButton}
+          onPress={handleSendMessage}>
+          <Image
+            source={SendIcon}
+            style={{width: 20, height: 20, tintColor: '#fff'}}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#292A2C',
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    tintColor: 'white',
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  name: {
+    fontWeight: '600',
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 1)',
+  },
+  status: {
+    fontWeight: '400',
+    fontSize: 12,
+    color: 'white',
+  },
+  onlineIndicator: {
+    width: 10,
+    height: 10,
+    backgroundColor: 'green',
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 0,
+    right: '90%',
+    zIndex: 1000,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#209BCC',
+    padding: moderateScale(16),
+    width: '100%',
+  },
+  textInput: {
+    flex: 1,
+    color: 'white',
+    padding: moderateScale(8),
+    backgroundColor: '#00abd2',
+    position: 'relative',
+  },
+  commentButton: {
+    marginLeft: horizontalScale(5),
+    backgroundColor: '#019acd',
+    borderRadius: 10,
+    paddingVertical: verticalScale(8),
+    paddingHorizontal: horizontalScale(12),
+  },
+});
