@@ -50,7 +50,7 @@ export const ChatDetails = ({navigation, route}: any) => {
           zIndex: 10,
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-          {/* <View style={styles.onlineIndicator}></View> */}
+          <View style={styles.onlineIndicator}></View>
           <TouchableOpacity
             style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
             onPress={() => navigation.goBack()}>
@@ -178,8 +178,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderRadius: 5,
     position: 'absolute',
-    bottom: 0,
-    right: '90%',
+    bottom: 2,
+    right: '48%',
     zIndex: 1000,
   },
   inputContainer: {
