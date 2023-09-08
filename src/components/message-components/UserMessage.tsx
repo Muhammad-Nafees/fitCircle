@@ -1,8 +1,8 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 
-export const UserMessage = ({text, timestamp}: any) => {
+export const UserMessage = ({text, timestamp, mediaUri}: any) => {
   const formattedTimestamp = new Date(timestamp).toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: 'numeric',
@@ -11,6 +11,9 @@ export const UserMessage = ({text, timestamp}: any) => {
   return (
     <View style={styles.parentContainer}>
       <View style={styles.container}>
+        {mediaUri !== null && (
+          <Image source={{uri: mediaUri}} style={styles.messageImage} />
+        )}
         <Text style={styles.messageText}>{text}</Text>
       </View>
       <View
@@ -59,5 +62,11 @@ const styles = StyleSheet.create({
   timestamp: {
     color: 'rgba(255, 255, 255, 0.5)',
     fontSize: 12,
+  },
+  messageImage: {
+    width: horizontalScale(219),
+    height: verticalScale(150),
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
   },
 });

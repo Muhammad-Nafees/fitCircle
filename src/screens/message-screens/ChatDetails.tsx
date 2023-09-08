@@ -7,11 +7,14 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import VideoSvgIcon from '../../../assets/icons/VideoIcon';
 import ChatCallIcon from '../../../assets/icons/ChatCall';
 import {Avatar} from 'react-native-paper';
 import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
+const CancelIcon = require('../../../assets/icons/cancel.png');
+
 import {
   horizontalScale,
   moderateScale,
@@ -20,11 +23,13 @@ import {
 import {UserMessage} from '../../components/message-components/UserMessage';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 const Option = require('../../../assets/icons/customPostOption.png');
+import {launchImageLibrary} from 'react-native-image-picker';
 const SendIcon = require('../../../assets/icons/send.png');
 
 export const ChatDetails = ({navigation, route}: any) => {
   const [message, setMessage] = useState('');
   const [userMessages, setUserMessages] = useState<any>([]);
+  const [mediaUri, setMediaUri] = useState(null);
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
@@ -33,11 +38,31 @@ export const ChatDetails = ({navigation, route}: any) => {
         text: message,
         timestamp: new Date().toISOString(),
         isUser: true,
+        mediaUri: mediaUri,
       };
       setUserMessages((prevMessages: any) => [newMessage, ...prevMessages]);
       setMessage('');
+      setMediaUri(null);
     }
   };
+
+  const handlePhotoButtonPress = () => {
+    setMediaUri(null);
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      quality: 1,
+      maxWidth: 500,
+      maxHeight: 500,
+    };
+
+    launchImageLibrary(options, (response: any) => {
+      if (!response.didCancel && !response.errorMessage && response.assets) {
+        setMediaUri(response.assets[0].uri);
+        console.log(response.assets[0].uri);
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -99,17 +124,51 @@ export const ChatDetails = ({navigation, route}: any) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View
-        style={{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-        <FlatList
-          data={userMessages}
-          keyExtractor={item => item.id.toString()}
-          inverted
-          renderItem={({item}) => (
-            <UserMessage text={item.text} timestamp={item.timestamp} />
-          )}
-        />
-      </View>
+      <ScrollView>
+        <View
+          style={{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+          <FlatList
+            data={userMessages}
+            keyExtractor={item => item.id.toString()}
+            inverted
+            renderItem={({item}) => (
+              <UserMessage
+                text={item.text}
+                timestamp={item.timestamp}
+                mediaUri={item.mediaUri}
+              />
+            )}
+          />
+        </View>
+      </ScrollView>
+      {mediaUri && (
+        <View
+          style={{
+            backgroundColor: '#00abd2',
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginHorizontal: 10,
+              padding: 10,
+            }}>
+            <View>
+              <Text style={{color: '#fff', marginRight: 20}}>
+                Photo Attached
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => setMediaUri(null)}
+              style={{marginRight: 8}}>
+              <Image
+                source={CancelIcon}
+                style={{tintColor: '#fff', width: 18, height: 18}}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
       <View style={styles.inputContainer}>
         <View
           style={{
@@ -131,7 +190,7 @@ export const ChatDetails = ({navigation, route}: any) => {
               paddingHorizontal: horizontalScale(13),
               opacity: 0.8,
             }}
-            onPress={() => console.log('Something')}>
+            onPress={handlePhotoButtonPress}>
             <CreatePostCommentSvgIcon />
           </TouchableOpacity>
         </View>
@@ -179,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     position: 'absolute',
     bottom: 2,
-    right: '48%',
+    right: '52%',
     zIndex: 1000,
   },
   inputContainer: {
