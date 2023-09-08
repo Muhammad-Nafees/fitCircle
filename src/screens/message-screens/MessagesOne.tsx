@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: 'rgba(255, 255, 255, 1)',
-    marginHorizontal: 28,
+    marginHorizontal: horizontalScale(28),
     textAlign: 'center',
   },
   verticalLine: {

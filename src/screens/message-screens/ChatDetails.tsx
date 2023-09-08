@@ -46,7 +46,7 @@ export const ChatDetails = ({navigation, route}: any) => {
           justifyContent: 'space-between',
           alignItems: 'center',
           backgroundColor: '#209BCC',
-          paddingBottom: 10,
+          paddingBottom: verticalScale(10),
           zIndex: 10,
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
@@ -154,13 +154,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#292A2C',
   },
   icon: {
-    width: 24,
-    height: 24,
+    width: horizontalScale(24),
+    height: verticalScale(24),
     tintColor: 'white',
   },
   iconContainer: {
     flexDirection: 'row',
-    gap: 10,
+    gap: moderateScale(10),
   },
   name: {
     fontWeight: '600',
@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   onlineIndicator: {
-    width: 10,
-    height: 10,
+    width: horizontalScale(10),
+    height: verticalScale(10),
     backgroundColor: 'green',
     borderRadius: 5,
     position: 'absolute',

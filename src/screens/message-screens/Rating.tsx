@@ -14,10 +14,14 @@ import Modal from 'react-native-modal';
 import CustomButton from '../../components/shared-components/CustomButton';
 import {STYLES} from '../../styles/globalStyles';
 
-const Rating = ({navigation}: any) => {
+const Rating = ({navigation, route}: any) => {
   const [rating, setRating] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [comment, setComment] = useState('');
+
+  const handleRating = (selectedRating: any) => {
+    setRating(selectedRating);
+  };
 
   return (
     <View style={styles.container}>
@@ -31,7 +35,11 @@ const Rating = ({navigation}: any) => {
             gap: 15,
           }}>
           <Text style={styles.whiteText}>
-            How was your video experience with Isaac Butler??
+            How was your video experience with
+            <Text style={[styles.whiteText, {fontWeight: '700'}]}>
+              {route.params.username}
+            </Text>
+            ?
           </Text>
           <View style={styles.starContainer}>
             {[1, 2, 3, 4, 5].map(star => (
@@ -103,7 +111,12 @@ const Rating = ({navigation}: any) => {
             </View>
             <Text style={[STYLES.text14, {marginTop: 2}]}>Rate Submitted</Text>
             <View style={{width: '75%', marginTop: verticalScale(25)}}>
-              <CustomButton onPress={() => navigation.navigate('MessagesOne')}>
+              <CustomButton
+                onPress={() =>
+                  navigation.navigate('ChatDetails', {
+                    username: route.params.username,
+                  })
+                }>
                 Return
               </CustomButton>
             </View>

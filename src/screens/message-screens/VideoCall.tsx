@@ -1,7 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {View, StyleSheet, Text, Image, TouchableOpacity} from 'react-native';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
-import {verticalScale, horizontalScale} from '../../utils/metrics';
+import {
+  verticalScale,
+  horizontalScale,
+  moderateScale,
+} from '../../utils/metrics';
 import CallRejectIcon from '../../../assets/icons/CallReject';
 import SpeakerIcon from '../../../assets/icons/Speaker';
 import VolumeOffIcon from '../../../assets/icons/VolumeOff';
@@ -12,14 +16,13 @@ import {Avatar} from 'react-native-paper';
 export const VideoCall = ({route, navigation}: any) => {
   const devices = useCameraDevices();
   const cameraRef = useRef(null);
-  const [deviceCamera, setDeviceCamera] = useState(devices.front);
+  const [flip, setFlip] = useState(false);
+  let cameraDevice = flip ? devices.front : devices.back;
   const [isCameraActive, setIsCameraActive] = useState(true);
 
   const toggleCamera = () => {
     if (isCameraActive) {
-      setDeviceCamera(prevDevice =>
-        prevDevice === devices.front ? devices.back : devices.front,
-      );
+      setFlip(!flip);
     }
   };
 
@@ -32,10 +35,10 @@ export const VideoCall = ({route, navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      {isCameraActive && deviceCamera && (
+      {isCameraActive && cameraDevice && (
         <Camera
           ref={cameraRef}
-          device={deviceCamera}
+          device={cameraDevice}
           isActive={true}
           style={StyleSheet.absoluteFill}
         />
@@ -58,7 +61,7 @@ export const VideoCall = ({route, navigation}: any) => {
         ]}>
         <Avatar.Text
           size={!isCameraActive ? 100 : 40}
-          label={'I'}
+          label={route.params.username[0]}
           style={{backgroundColor: '#5e01a9'}}
         />
         <View
@@ -89,7 +92,9 @@ export const VideoCall = ({route, navigation}: any) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.iconButton}
-              onPress={() => navigation.navigate('Rating')}>
+              onPress={() =>
+                navigation.navigate('Rating', {username: route.params.username})
+              }>
               <View
                 style={[
                   styles.iconBackground,
@@ -134,34 +139,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
-    gap: 20,
+    gap: moderateScale(20),
   },
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconButton: {
-    marginHorizontal: 16,
+    marginHorizontal: horizontalScale(16),
     alignItems: 'center',
   },
   iconBackground: {
-    width: 50,
-    height: 50,
+    width: horizontalScale(50),
+    height: verticalScale(50),
     borderRadius: 25,
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconBackground2: {
-    width: 137,
-    height: 43,
+    width: horizontalScale(137),
+    height: verticalScale(43),
     borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconText: {
-    marginTop: 8,
+    marginTop: verticalScale(8),
     fontSize: 10,
     color: 'white',
   },

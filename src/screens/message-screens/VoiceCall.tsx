@@ -3,8 +3,10 @@ import {View, StyleSheet, Text} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import CallAcceptIcon from '../../../assets/icons/CallAccept';
 import CallRejectIcon from '../../../assets/icons/CallReject';
+import {TouchableOpacity} from 'react-native';
+import {moderateScale} from '../../utils/metrics';
 
-export const VoiceCall = ({route}: any) => {
+export const VoiceCall = ({route, navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
@@ -21,7 +23,13 @@ export const VoiceCall = ({route}: any) => {
         <Text style={styles.miniText}>connecting...</Text>
       </View>
       <View style={styles.actionContainer}>
-        <View style={styles.iconContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ChatDetails', {
+              username: route.params.username,
+            })
+          }
+          style={styles.iconContainer}>
           <View
             style={[
               styles.iconBackground,
@@ -29,8 +37,14 @@ export const VoiceCall = ({route}: any) => {
             ]}>
             <CallRejectIcon />
           </View>
-        </View>
-        <View style={styles.iconContainer}>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={() =>
+            navigation.navigate('ChatDetails', {
+              username: route.params.username,
+            })
+          }>
           <View
             style={[
               styles.iconBackground,
@@ -38,7 +52,7 @@ export const VoiceCall = ({route}: any) => {
             ]}>
             <CallAcceptIcon />
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -55,7 +69,7 @@ const styles = StyleSheet.create({
     flex: 0.7,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 20,
+    gap: moderateScale(20),
   },
   actionContainer: {
     flex: 0.3,
@@ -71,7 +85,7 @@ const styles = StyleSheet.create({
   iconBackground: {
     backgroundColor: 'white',
     borderRadius: 50,
-    padding: 10,
+    padding: moderateScale(10),
   },
   name: {
     color: 'white',

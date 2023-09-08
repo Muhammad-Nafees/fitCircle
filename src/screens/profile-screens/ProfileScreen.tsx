@@ -76,6 +76,21 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const [removeModal, setRemoveModal] = useState(false);
 
   useEffect(() => {
+    const backAction = () => {
+      setSelectedOption('Feed');
+      navigation.navigate('Home');
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  });
+
+  useEffect(() => {
     setUserId(userData?._id);
     if (userData?._id) {
       axiosInstance
@@ -216,9 +231,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
             />
           )}
           {userData?.firstName && userData?.lastName && (
-            <Text style={styles.name}>
-              {firstName} {lastName}
-            </Text>
+            <Text style={styles.name}>{username}</Text>
           )}
           {isTrainerView && (
             <View style={styles.profileButtonsContainer}>

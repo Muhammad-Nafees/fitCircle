@@ -1,5 +1,6 @@
 import {View, Text, StyleSheet} from 'react-native';
 import {Avatar} from 'react-native-paper';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 export const UserMessage = ({text, timestamp}: any) => {
   const formattedTimestamp = new Date(timestamp).toLocaleTimeString('en-US', {
@@ -36,24 +37,24 @@ const styles = StyleSheet.create({
   container: {
     // backgroundColor: 'rgba(32, 155, 204, 1)',
     backgroundColor: 'rgba(50, 54, 69, 0.5)',
-    width: 219,
-    minHeight: 50,
+    width: horizontalScale(219),
+    minHeight: verticalScale(50),
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     // borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    marginVertical: 8,
+    marginVertical: verticalScale(8),
   },
   parentContainer: {
-    marginHorizontal: 10,
-    marginVertical: 7,
+    marginHorizontal: horizontalScale(10),
+    marginVertical: verticalScale(7),
   },
   messageText: {
     fontSize: 12,
     fontWeight: '400',
     color: 'white',
-    paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingHorizontal: horizontalScale(14),
+    paddingVertical: verticalScale(14),
   },
   timestamp: {
     color: 'rgba(255, 255, 255, 0.5)',

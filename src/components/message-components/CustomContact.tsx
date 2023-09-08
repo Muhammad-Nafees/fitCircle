@@ -5,6 +5,7 @@ import {Swipeable} from 'react-native-gesture-handler';
 import DeleteMessageIcon from '../../../assets/icons/DeleteMessage';
 import DoNotDisturbIcon from '../../../assets/icons/DoNotDisturb';
 import {useNavigation} from '@react-navigation/native';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const CustomContact = ({
   name,
@@ -99,12 +100,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#292A2C',
     zIndex: 1000,
-    paddingVertical: 5,
+    paddingVertical: verticalScale(5),
   },
   messagesCount: {
     backgroundColor: 'rgba(169, 225, 247, 1)',
-    width: 20,
-    height: 20,
+    width: horizontalScale(20),
+    height: verticalScale(20),
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -116,12 +117,12 @@ const styles = StyleSheet.create({
   },
   rightActionsContainer: {
     flexDirection: 'row',
-    paddingLeft: 50,
+    paddingLeft: horizontalScale(50),
   },
   rightAction: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 43,
+    width: horizontalScale(43),
   },
   rightActionText: {
     color: 'white',
