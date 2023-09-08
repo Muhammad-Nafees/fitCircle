@@ -11,6 +11,7 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import CustomContact from '../../components/message-components/CustomContact';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 const SearchIcon = require('../../../assets/icons/search.png');
+import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
 import {messageDummyData} from '../dummyData';
 import {useState} from 'react';
@@ -23,6 +24,11 @@ export const MessagesOne = ({navigation}: any) => {
   const [messageData, setMessageData] = useState(messageDummyData);
   const [removeModal, setRemoveModal] = useState(false);
   const [deleteId, setDeleteId] = useState('');
+  const [actionType, setActionType] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredContacts = messageData.filter(item =>
+    item.name.toLowerCase().startsWith(searchQuery.toLowerCase()),
+  );
 
   const handleDeleteUser = () => {
     setIsModalVisible(false);
@@ -41,6 +47,7 @@ export const MessagesOne = ({navigation}: any) => {
       message={item.message}
       messageCount={item.messageCount}
       handleDeleteButton={() => handleCancelButton(item.id)}
+      setActionType={setActionType}
     />
   );
   return (
@@ -69,14 +76,13 @@ export const MessagesOne = ({navigation}: any) => {
             placeholder="Search ..."
             style={styles.input}
             placeholderTextColor="#fff"
-            // value={searchInput}
-            // onChangeText={handleSearch}
-            // onEndEditing={clearSearch}
+            value={searchQuery}
+            onChangeText={text => setSearchQuery(text)}
           />
         </View>
         <View style={{gap: 10}}>
           <FlatList
-            data={messageData}
+            data={filteredContacts}
             renderItem={renderItem}
             keyExtractor={item => item.id}
           />
@@ -102,7 +108,10 @@ export const MessagesOne = ({navigation}: any) => {
             </Text>
             <Text style={styles.whiteText}>
               Are you sure you want to{' '}
-              <Text style={styles.coloredText}>Delete</Text> this user ?
+              <Text style={styles.coloredText}>
+                {actionType === 'Deleted' ? 'Delete' : 'Block'}
+              </Text>{' '}
+              this user ?
             </Text>
           </View>
           <View
@@ -122,7 +131,7 @@ export const MessagesOne = ({navigation}: any) => {
                   fontWeight: '700',
                   color: 'rgba(220, 77, 77, 1)',
                 }}>
-                Delete
+                {actionType === 'Deleted' ? 'Delete' : 'Block'}
               </Text>
             </TouchableOpacity>
             <View style={styles.verticalLine} />
@@ -150,11 +159,14 @@ export const MessagesOne = ({navigation}: any) => {
         animationOut="fadeOut">
         <View style={[styles.modalContent, {backgroundColor: 'transparent'}]}>
           <View style={styles.card}>
-            {/* <View style={styles.iconModal}>
-              <Icon name="checkmark-outline" color="white" size={24} />
-            </View> */}
-            <CrossIcon />
-            <Text style={[STYLES.text14, {marginTop: 2}]}>Deleted</Text>
+            {actionType === 'Blocked' ? (
+              <View style={styles.iconModal}>
+                <Icon name="checkmark-outline" color="white" size={24} />
+              </View>
+            ) : (
+              <CrossIcon />
+            )}
+            <Text style={[STYLES.text14, {marginTop: 2}]}>{actionType}</Text>
             {/* <Text
                 style={[
                   STYLES.text14,

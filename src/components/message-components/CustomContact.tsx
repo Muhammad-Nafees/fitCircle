@@ -11,6 +11,7 @@ const CustomContact = ({
   message,
   messageCount,
   handleDeleteButton,
+  setActionType,
 }: any) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const navigation = useNavigation();
@@ -26,7 +27,10 @@ const CustomContact = ({
             styles.rightAction,
             {backgroundColor: 'rgba(222, 49, 49, 1)'},
           ]}
-          onPress={handleDeleteButton}>
+          onPress={() => {
+            setActionType('Deleted');
+            handleDeleteButton();
+          }}>
           <DeleteMessageIcon />
         </TouchableOpacity>
         <TouchableOpacity
@@ -35,7 +39,8 @@ const CustomContact = ({
             {backgroundColor: 'rgba(220, 77, 77, 1)'},
           ]}
           onPress={() => {
-            console.log('Do Not Disturb pressed');
+            setActionType('Blocked');
+            handleDeleteButton();
           }}>
           <DoNotDisturbIcon />
         </TouchableOpacity>
