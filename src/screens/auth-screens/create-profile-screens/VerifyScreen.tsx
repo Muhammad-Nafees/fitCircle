@@ -54,7 +54,7 @@ const VerifyScreen = ({navigation}: any) => {
           text2: 'Welcome!',
         });
       } catch (error: any) {
-        console.log(error.response.data,"from complete profile!");
+        console.log(error.response);
         setIsLoading(false);
         Toast.show({
           type: 'error',

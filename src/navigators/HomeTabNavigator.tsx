@@ -23,8 +23,9 @@ import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
 import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
 import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 import ReelsComponent from '../components/home-components/Reels';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store';
+import MessageStackNavigator from './MessageStackNavigator';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -116,7 +117,6 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
 const HomeTabNavigator = () => {
   const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
 
-
   React.useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -195,13 +195,14 @@ const HomeTabNavigator = () => {
       />
       <Tab.Screen
         name="Message"
-        component={MessageScreen}
+        component={MessageStackNavigator}
         options={{
           tabBarIcon: ({focused}) => (
             <View>
               <CustomTabBarIcon focused={focused} icon="Message" />
             </View>
           ),
+          tabBarStyle: {display: 'none'},
         }}
       />
       <Tab.Screen

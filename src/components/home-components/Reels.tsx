@@ -45,7 +45,7 @@ interface ReelsProps {
   currIndex: number;
   tabBarHeight: any;
   isProfile?: boolean;
-  handleCancelPress: any;
+  handleCancelPress?: any;
   handleFavoriteDialog?: any;
 }
 
@@ -81,7 +81,7 @@ export const ReelsComponent = ({
   index,
   currIndex,
   tabBarHeight,
-  isProfile,
+  isProfile = false,
   handleCancelPress,
   handleFavoriteDialog,
 }: ReelsProps) => {
@@ -209,19 +209,21 @@ export const ReelsComponent = ({
               ?.replace(/\s/g, '')}`}</Text>
           </View>
         </View>
-        <TouchableOpacity
-          onPress={handleCancelPress}
-          style={{
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end',
-            left: width - 50,
-            top: 8,
-          }}>
-          <Image
-            source={CancelIcon}
-            style={{width: 20, height: 20, tintColor: 'white'}}
-          />
-        </TouchableOpacity>
+        {isProfile && (
+          <TouchableOpacity
+            onPress={handleCancelPress}
+            style={{
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+              left: width - 50,
+              top: 8,
+            }}>
+            <Image
+              source={CancelIcon}
+              style={{width: 20, height: 20, tintColor: 'white'}}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       {isLocked ? (
         <View style={styles.lockedOverlay}>

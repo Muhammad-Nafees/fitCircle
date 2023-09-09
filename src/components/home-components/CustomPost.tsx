@@ -265,7 +265,7 @@ export const CustomPost = ({
             <Text style={styles.lockedText}>{content}</Text>
             <TouchableOpacity style={styles.lockedButtonContainer}>
               <Text style={{color: '#fff'}}>
-                Unlock this video for{' '}
+                Unlock this post for{' '}
                 <Text
                   style={{color: '#30D298', fontWeight: '600', fontSize: 16}}>
                   ${cost}

@@ -46,14 +46,14 @@ const CustomVideo = ({
   return (
     <TouchableOpacity onPress={handleVideoPress}>
       <ImageBackground
-        source={Image1}
+        source={{uri: video.thumbnail}}
         style={styles.container}
         imageStyle={{borderRadius: 10}}
         resizeMode="cover">
         <View
           style={[
             {flex: 1, borderRadius: 10},
-            // video.cost !== null && {backgroundColor: 'black'},
+            video.thumbnail === null && {backgroundColor: 'black'},
           ]}>
           <TouchableOpacity
             style={styles.cancelIconContainer}
@@ -71,9 +71,7 @@ const CustomVideo = ({
               {/* )} */}
             </View>
           </View>
-          <Text style={styles.text}>
-            Sweat is magic. Cover yourself in it daily to grant your wishes.
-          </Text>
+          <Text style={styles.text}>{video.content}</Text>
         </View>
       </ImageBackground>
     </TouchableOpacity>
