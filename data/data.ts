@@ -119,3 +119,21 @@ export const questionMealsEat = 'How many meals do you eat each day?';
 export const questionDurationExercise = 'How long have you been exercising?';
 export const questionSeriousness =
   'On a scale of 1 to 10, how serious are you about achieving your goals? least 1 2 3 4 5 6 7 8 9 10 most';
+
+/// music List
+
+import audio1 from '../assets/audio/the-best-jazz-club-in-new-orleans-164472.mp3';
+
+export const MUSIC_LIST = [
+  {id: "id1", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: "id2", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: "id3", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: "id4", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: "id5", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: "id6", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: "id7", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: "id8", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: "id9", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+
+  // Add more music options here
+];

@@ -36,7 +36,6 @@ const height = Dimensions.get('window').height;
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
-  console.log(userData);
   const postsRedux = useSelector((state: RootState) => state.post.posts);
   const username = userData?.username;
   const [userId, setUserId] = useState(userData?._id);

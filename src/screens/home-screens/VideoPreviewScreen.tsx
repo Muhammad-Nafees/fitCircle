@@ -40,6 +40,12 @@ import {
   ImagePickerResponse,
 } from 'react-native-image-picker';
 import Cameraicon from '../../../assets/icons/Cameraicon';
+import MusicIcon from '../../../assets/icons/MusicIcon';
+import BottomSheet, {BottomSheetSectionList} from '@gorhom/bottom-sheet';
+import CustomBottomSheet from '../../components/shared-components/CustomBottomSheet';
+import {BlurView} from '@react-native-community/blur';
+import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
+import DiscIcon from '../../../assets/icons/DiscIcon';
 
 interface VideoPreviewScreenProps {
   videoUri: string;
@@ -89,7 +95,8 @@ export const VideoPreviewScreen = ({
   const [showDialog, setShowDialog] = useState(false);
   const [thumbnail, setThumbnail] = useState(null);
   const [thumbnailOpen, setThumbnailOpen] = useState(false);
-  console.log(videoUri);
+  const [isMusicModalVisible, setMusicModalVisible] = useState(false);
+  const [music, setMusic] = useState<any>();
 
   const handleBoostOptionSelect = (optionLabel: any) => {
     setSelectedOptionInternal(optionLabel);
@@ -141,6 +148,7 @@ export const VideoPreviewScreen = ({
   };
 
   const handlePostButtonPress = async () => {
+    console.log(music);
     const trimmedContent = content.trim();
     if (trimmedContent === '') {
       Toast.show({
@@ -161,6 +169,7 @@ export const VideoPreviewScreen = ({
         name: 'video.mp4',
         type: 'video/mp4',
       });
+
       const selectedBackendOption: any =
         frontendToBackendMapping[selectedOptionInternal.label];
       if (payment) {
@@ -204,8 +213,8 @@ export const VideoPreviewScreen = ({
         handleClose();
         navigation.navigate('Home');
       }
-    } catch (error) {
-      console.log('API call error:', error);
+    } catch (error: any) {
+      console.log('API call error:', error?.response.data);
       Toast.show({
         type: 'error',
         text1: 'Error sharing post. Please try again!',
@@ -241,6 +250,9 @@ export const VideoPreviewScreen = ({
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
+  };
+  const handleMusicModal = () => {
+    setMusicModalVisible(!isMusicModalVisible);
   };
 
   const onError = () => {
@@ -310,193 +322,230 @@ export const VideoPreviewScreen = ({
     setTitleInputValue(text);
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.topLeftContent}>
-        {profileImageUrl ? (
-          <Avatar.Image size={40} source={{uri: profileImageUrl}} />
-        ) : (
-          <Avatar.Text
-            size={40}
-            style={styles.avatarText}
-            label={username ? username[0].toUpperCase() : 'SA'}
-          />
-        )}
-        <View style={styles.postTextContainer}>
-          <Text style={styles.postName}>{username}</Text>
-          <Text style={styles.postId}>{`@${username
-            ?.toLowerCase()
-            ?.replace(/\s/g, '')}`}</Text>
-        </View>
-      </View>
-      <Video
-        ref={videoRef}
-        onError={onError}
-        resizeMode="cover"
-        source={{uri: videoUri}}
-        style={styles.video}
-      />
-      <View style={styles.textContentContainer}>
-        <Text style={styles.textContent}>{content}</Text>
-      </View>
-      <View style={styles.iconsContainer}>
-        <TouchableOpacity
-          onPress={() => setThumbnailOpen(!thumbnailOpen)}
-          style={styles.singleIconContainer}>
-          <Text style={[styles.iconText]}>
-            {thumbnailOpen ? 'Back' : 'Select Thumbnail'}
-          </Text>
-        </TouchableOpacity>
-        {!thumbnailOpen && (
-          <TouchableOpacity
-            style={styles.singleIconContainer}
-            onPress={handleTextModal}>
-            <TextIcon />
-            <Text style={styles.iconText}>Text</Text>
-          </TouchableOpacity>
-        )}
-        {isBoostAvailable && !thumbnailOpen && (
-          <TouchableOpacity
-            style={styles.singleIconContainer}
-            onPress={handleBoostModal}>
-            <BoostIcon color={payment ? '#209BCC' : 'white'} />
-          </TouchableOpacity>
-        )}
-      </View>
-      <Modal
-        onBackButtonPress={() => setIsModalVisible(false)}
-        isVisible={isModalVisible}
-        style={styles.bottomModal}
-        backdropOpacity={0.3}>
-        <View style={styles.modal}>
-          <WhoCanSeeThisPost
-            selectedOption={selectedOption}
-            onSelectOption={handleOptionSelect}
-            modalClose={handleAvatarButtonPress}
-            onSelectCost={onSelectCost}
-          />
-        </View>
-      </Modal>
-      <Modal
-        onBackButtonPress={() => setBoostModalVisible(false)}
-        isVisible={isBoostModalVisible}
-        style={styles.bottomModal}
-        backdropOpacity={0.7}>
-        <View style={styles.boostModal}>
-          <Boost
-            handleDateConfirm={handleDateConfirm}
-            selectedDate={selectedDate}
-            options={options}
-            selectedOptionInternal={selectedOptionInternal}
-            setDatePickerVisible={setDatePickerVisible}
-            isDatePickerVisible={isDatePickerVisible}
-            handleBoostOptionSelect={handleBoostOptionSelect}
-            handleDialog={handleDialog}
-            onBackdropPress={() => setBoostModalVisible(false)}
-          />
-        </View>
-      </Modal>
-      <Modal
-        onBackButtonPress={() => setTextModalVisible(false)}
-        isVisible={isTextModalVisible}
-        style={styles.bottomModal}
-        backdropOpacity={0.3}>
-        <View style={[styles.modal, {backgroundColor: '#3a3b3d'}]}>
-          <View style={styles.textInputModal}>
-            <TextInput
-              placeholder="Type here..."
-              placeholderTextColor="#fff"
-              style={styles.modalInput}
-              multiline={true}
-              onChangeText={handleContentChange}
+    <>
+      <View style={styles.container}>
+        <View style={styles.topLeftContent}>
+          {profileImageUrl ? (
+            <Avatar.Image size={40} source={{uri: profileImageUrl}} />
+          ) : (
+            <Avatar.Text
+              size={40}
+              style={styles.avatarText}
+              label={username ? username[0].toUpperCase() : 'SA'}
             />
-            <CustomButton onPress={handleTextModal}>Continue</CustomButton>
+          )}
+          <View style={styles.postTextContainer}>
+            <Text style={styles.postName}>{username}</Text>
+            <Text style={styles.postId}>{`@${username
+              ?.toLowerCase()
+              ?.replace(/\s/g, '')}`}</Text>
           </View>
         </View>
-      </Modal>
-      {thumbnail !== null && (
+        <Video
+          ref={videoRef}
+          onError={onError}
+          resizeMode="cover"
+          source={{uri: videoUri}}
+          style={styles.video}
+        />
+        <View style={styles.textContentContainer}>
+          <Text style={styles.textContent}>{content}</Text>
+        </View>
+        <View style={styles.iconsContainer}>
+          <TouchableOpacity
+            onPress={() => setThumbnailOpen(!thumbnailOpen)}
+            style={styles.singleIconContainer}>
+            <Text style={[styles.iconText]}>
+              {thumbnailOpen ? 'Back' : 'Select Thumbnail'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 2,
+            }}
+            onPress={handleMusicModal}>
+            <MusicIcon />
+            <Text style={styles.iconText}>Music</Text>
+          </TouchableOpacity>
+          {!thumbnailOpen && (
+            <TouchableOpacity
+              style={styles.singleIconContainer}
+              onPress={handleTextModal}>
+              <TextIcon />
+              <Text style={styles.iconText}>Text</Text>
+            </TouchableOpacity>
+          )}
+          {isBoostAvailable && !thumbnailOpen && (
+            <TouchableOpacity
+              style={styles.singleIconContainer}
+              onPress={handleBoostModal}>
+              <BoostIcon color={payment ? '#209BCC' : 'white'} />
+            </TouchableOpacity>
+          )}
+        </View>
         <View
           style={{
-            backgroundColor: '#00abd2',
+            position: 'absolute',
+            zIndex: 99,
+            bottom: 110,
+            left: 32,
           }}>
           <View
             style={{
               flexDirection: 'row',
+              alignItems: 'center',
               justifyContent: 'space-between',
-              marginHorizontal: 10,
-              padding: 10,
+              width: '74%',
             }}>
-            <View>
-              <Text style={{color: '#fff', marginRight: 20}}>
-                Thumbnail Attached
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+              <MusicIconTwo />
+              <Text style={{color: 'white', opacity: 0.7}}>
+                Avicii - Push it ft.{' '}
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={() => setThumbnail(null)}
-              style={{marginRight: 8}}>
-              <Image
-                source={CancelIcon}
-                style={{tintColor: '#fff', width: 18, height: 18}}
-              />
-            </TouchableOpacity>
+            <DiscIcon />
           </View>
         </View>
-      )}
-      {thumbnailOpen ? (
-        <View
-          style={[
-            styles.bottomContainer,
-            {paddingVertical: verticalScale(15)},
-          ]}>
-          <View style={styles.iconRow}>
-            <TouchableOpacity onPress={handlePhotoButtonPress}>
-              <CreatePostSvgIcon />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleCaptureButtonPress}>
-              <Cameraicon />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <CustomButton
-              extraStyles={{paddingHorizontal: 30}}
-              onPress={handleThumbnailSelect}>
-              Select as thumbnail
-            </CustomButton>
-          </View>
-        </View>
-      ) : (
-        <View style={styles.bottomContainer}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Add title here..."
-              placeholderTextColor="#fff"
-              onChangeText={handleTitleInputChange}
-              multiline
+        <Modal
+          onBackButtonPress={() => setIsModalVisible(false)}
+          isVisible={isModalVisible}
+          style={styles.bottomModal}
+          backdropOpacity={0.3}>
+          <View style={styles.modal}>
+            <WhoCanSeeThisPost
+              selectedOption={selectedOption}
+              onSelectOption={handleOptionSelect}
+              modalClose={handleAvatarButtonPress}
+              onSelectCost={onSelectCost}
             />
-            <TouchableOpacity
-              style={styles.avatarButton}
-              onPress={handleAvatarButtonPress}>
-              <Text style={{color: 'white', textAlign: 'center', fontSize: 10}}>
-                {selectedOption}
-              </Text>
-              <Image
-                source={ArrowDownIcon}
-                style={{
-                  width: 12,
-                  height: 12,
-                  tintColor: 'white',
-                  marginTop: 2,
-                }}
+          </View>
+        </Modal>
+        <Modal
+          onBackButtonPress={() => setBoostModalVisible(false)}
+          isVisible={isBoostModalVisible}
+          style={styles.bottomModal}
+          backdropOpacity={0.7}>
+          <View style={styles.boostModal}>
+            <Boost
+              handleDateConfirm={handleDateConfirm}
+              selectedDate={selectedDate}
+              options={options}
+              selectedOptionInternal={selectedOptionInternal}
+              setDatePickerVisible={setDatePickerVisible}
+              isDatePickerVisible={isDatePickerVisible}
+              handleBoostOptionSelect={handleBoostOptionSelect}
+              handleDialog={handleDialog}
+              onBackdropPress={() => setBoostModalVisible(false)}
+            />
+          </View>
+        </Modal>
+        <Modal
+          onBackButtonPress={() => setTextModalVisible(false)}
+          isVisible={isTextModalVisible}
+          style={styles.bottomModal}
+          backdropOpacity={0.3}>
+          <View style={[styles.modal, {backgroundColor: '#3a3b3d'}]}>
+            <View style={styles.textInputModal}>
+              <TextInput
+                placeholder="Type here..."
+                placeholderTextColor="#fff"
+                style={styles.modalInput}
+                multiline={true}
+                onChangeText={handleContentChange}
               />
-            </TouchableOpacity>
+              <CustomButton onPress={handleTextModal}>Continue</CustomButton>
+            </View>
           </View>
-          <View style={styles.buttonContainer}>
-            <CustomButton onPress={handlePostButtonPress}>
-              {isLoading ? <CustomLoader /> : 'Share'}
-            </CustomButton>
+        </Modal>
+        {thumbnail !== null && (
+          <View
+            style={{
+              backgroundColor: '#00abd2',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 10,
+                padding: 10,
+              }}>
+              <View>
+                <Text style={{color: '#fff', marginRight: 20}}>
+                  Thumbnail Attached
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setThumbnail(null)}
+                style={{marginRight: 8}}>
+                <Image
+                  source={CancelIcon}
+                  style={{tintColor: '#fff', width: 18, height: 18}}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      )}
+        )}
+        {thumbnailOpen ? (
+          <View
+            style={[
+              styles.bottomContainer,
+              {paddingVertical: verticalScale(15)},
+            ]}>
+            <View style={styles.iconRow}>
+              <TouchableOpacity onPress={handlePhotoButtonPress}>
+                <CreatePostSvgIcon />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCaptureButtonPress}>
+                <Cameraicon />
+              </TouchableOpacity>
+            </View>
+            <View>
+              <CustomButton
+                extraStyles={{paddingHorizontal: 30}}
+                onPress={handleThumbnailSelect}>
+                Select as thumbnail
+              </CustomButton>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.bottomContainer}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Add title here..."
+                placeholderTextColor="#fff"
+                onChangeText={handleTitleInputChange}
+                multiline
+              />
+              <TouchableOpacity
+                style={styles.avatarButton}
+                onPress={handleAvatarButtonPress}>
+                <Text
+                  style={{color: 'white', textAlign: 'center', fontSize: 10}}>
+                  {selectedOption}
+                </Text>
+                <Image
+                  source={ArrowDownIcon}
+                  style={{
+                    width: 12,
+                    height: 12,
+                    tintColor: 'white',
+                    marginTop: 2,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton onPress={handlePostButtonPress}>
+                {isLoading ? <CustomLoader /> : 'Share'}
+              </CustomButton>
+            </View>
+          </View>
+        )}
+      </View>
       {showDialog && (
         <View style={styles.dialogContainer}>
           <View style={styles.dialogBox}>
@@ -513,7 +562,15 @@ export const VideoPreviewScreen = ({
           </View>
         </View>
       )}
-    </View>
+      {isMusicModalVisible && (
+        <>
+          <CustomBottomSheet
+            setMusicModalVisible={setMusicModalVisible}
+            setMusic={setMusic}
+          />
+        </>
+      )}
+    </>
   );
 };
 
@@ -618,8 +675,9 @@ const styles = StyleSheet.create({
   },
   singleIconContainer: {
     marginVertical: verticalScale(5),
-    alignItems: 'flex-end',
-    alignSelf: 'flex-end',
+
+    // alignItems: 'flex-end',
+    // alignSelf: 'flex-end',
   },
   icon: {
     width: horizontalScale(40),
@@ -631,7 +689,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     alignItems: 'center',
-    fontSize: 12,
+    fontSize: 10,
+    fontWeight: '500',
   },
   boostModal: {
     backgroundColor: '#3a3b3d',

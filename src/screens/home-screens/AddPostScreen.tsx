@@ -43,6 +43,8 @@ import {useFocusEffect} from '@react-navigation/native';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import LinearGradient from 'react-native-linear-gradient';
 
+import {Image as ImageCompress} from 'react-native-compressor';
+
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 
@@ -65,6 +67,7 @@ export const AddPostScreen = ({route}: any) => {
   const [titleInput, setTitleInput] = useState('');
   const [costValue, setCostValue] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [compressedImage, setCompressedImage] = useState<any>();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -110,6 +113,7 @@ export const AddPostScreen = ({route}: any) => {
 
   const handlePostButtonPress = async () => {
     setIsLoading(true);
+
     if (textInputValue.trim().length === 0 && !mediaUri) {
       Toast.show({
         type: 'error',
@@ -135,9 +139,15 @@ export const AddPostScreen = ({route}: any) => {
 
         hexCode = str;
       }
+      if (mediaUri) {
+        const result = await ImageCompress.compress(mediaUri, {
+          quality: 0.8,
+        });
+        setCompressedImage(result);
+      }
       let postData = {
         content: textInputValue,
-        media: videoUri ? videoUri : mediaUri,
+        media: videoUri ? videoUri : compressedImage,
         visibility: selectedOption.toLowerCase(),
         hexCode:
           textInputBackgroundColor === 'transparent' ? null : `${hexCode}`,

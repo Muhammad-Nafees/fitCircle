@@ -19,12 +19,13 @@ const CancelIcon = require('../../../assets/icons/cancel.png');
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {createThumbnail} from 'react-native-create-thumbnail';
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
   post: {
     _id: string;
-    media?: string;
+    media: string;
     content?: string;
     likes: any[];
     cost: 0;
@@ -86,7 +87,7 @@ export const ReelsComponent = ({
 }: ReelsProps) => {
   const {_id, media, content, user, cost, favorites, thumbnail} = post;
   const {profileImageUrl, username, email} = user;
-  console.log(media);
+
   const videoRef = useRef(null);
   const isLocked = cost && cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
@@ -95,6 +96,27 @@ export const ReelsComponent = ({
   const [showThumbnail, setShowThumbnail] = useState(thumbnail !== null);
   const navigation = useNavigation();
   console.log(thumbnail);
+  const [videoThumbnail, setVideoThumbnail] = useState<any>();
+
+  const fetchThumbnail = async () => {
+    try {
+      const response = await createThumbnail({
+        url: media,
+        timeStamp: 1000,
+        format: 'jpeg',
+      });
+      console.log({response}, 'respnse');
+      console.log(response.path, 'patj');
+      setVideoThumbnail(response.path);
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+
+  console.log(videoThumbnail, 'videoTHumb');
+  useEffect(() => {
+    fetchThumbnail();
+  }, []);
 
   useEffect(() => {
     const isCurrentUserFavorited = favorites.some(
@@ -234,7 +256,7 @@ export const ReelsComponent = ({
       </View>
       {showThumbnail && (
         <View style={styles.thumbnailContainer}>
-          <Image source={{uri: thumbnail}} style={styles.thumbnail} />
+          <Image source={{uri: videoThumbnail}} style={styles.thumbnail} />
         </View>
       )}
       <Video

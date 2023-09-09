@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   ImageBackground,
@@ -13,6 +13,7 @@ const Image1 = require('../../../assets/images/backgroundImage.jpg');
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const PlayIcon = require('../../../assets/icons/playIcon.png');
 import ProfileVideoLockIcon from '../../../assets/icons/ProfileVideoLock';
+import {createThumbnail} from 'react-native-create-thumbnail';
 
 const CustomVideo = ({
   handleVideoPress,
@@ -20,8 +21,28 @@ const CustomVideo = ({
   video,
   isTrainerView,
 }: any) => {
-  console.log(video.cost);
-  console.log(isTrainerView);
+  // const [videoThumbnail, setVideoThumbnail] = useState<any>();
+
+  // const fetchThumbnail = async () => {
+  //   try {
+  //     const response = await createThumbnail({
+  //       url: video.media,
+  //       timeStamp: 1000,
+  //       format: 'jpeg',
+  //     });
+  //     console.log({response}, 'respnse');
+  //     console.log(response.path, 'patj');
+  //     setVideoThumbnail(response.path);
+  //   } catch (err) {
+  //     console.log('err', err);
+  //   }
+  // };
+
+  // console.log(videoThumbnail, 'videoTHumb');
+  // useEffect(() => {
+  //   fetchThumbnail();
+  // }, []);
+
   return (
     <TouchableOpacity onPress={handleVideoPress}>
       <ImageBackground
