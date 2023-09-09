@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     position: 'absolute',
     bottom: 2,
-    right: '52%',
+    right: '48%',
     zIndex: 1000,
   },
   inputContainer: {
