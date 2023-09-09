@@ -36,7 +36,7 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {STYLES} from '../../styles/globalStyles';
-import {communitiesData, followersData, followingData} from './dummyData';
+import {communitiesData, followersData, followingData} from '../dummyData';
 
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -74,6 +74,21 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const [firstVideoPost, setFirstVideoPost] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [removeModal, setRemoveModal] = useState(false);
+
+  useEffect(() => {
+    const backAction = () => {
+      setSelectedOption('Feed');
+      navigation.navigate('Home');
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  });
 
   useEffect(() => {
     setUserId(userData?._id);
@@ -216,9 +231,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
             />
           )}
           {userData?.firstName && userData?.lastName && (
-            <Text style={styles.name}>
-              {firstName} {lastName}
-            </Text>
+            <Text style={styles.name}>{username}</Text>
           )}
           {isTrainerView && (
             <View style={styles.profileButtonsContainer}>

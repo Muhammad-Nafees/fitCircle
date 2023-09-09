@@ -94,4 +94,37 @@ const followingData = [
   },
 ];
 
-export {communitiesData, followersData, followingData};
+const messageDummyData = [
+  {
+    id: '1',
+    name: 'Isaac Butler',
+    message: 'You:This morning I will be in the ...',
+    messageCount: 8,
+  },
+  {
+    id: '2',
+    name: 'John Doe',
+    message: 'Hey, how are you?',
+    messageCount: 3,
+  },
+  {
+    id: '3',
+    name: 'Alice Johnson',
+    message: 'Can we schedule a meeting?',
+    messageCount: 5,
+  },
+  {
+    id: '4',
+    name: 'Ella Smith',
+    message: 'I have some exciting news!',
+    messageCount: 2,
+  },
+  {
+    id: '5',
+    name: 'Michael Brown',
+    message: 'What time should we meet?',
+    messageCount: 4,
+  },
+];
+
+export {communitiesData, followersData, followingData, messageDummyData};
