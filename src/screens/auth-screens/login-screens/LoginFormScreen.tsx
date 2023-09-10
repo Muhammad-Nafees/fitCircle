@@ -6,7 +6,6 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
-import SigninContent from '../../../components/auth-components/login/SigninContent';
 import {
   horizontalScale,
   moderateScale,
@@ -30,8 +29,6 @@ const LoginFormScreen = () => {
             style={[
               STYLES.text32,
               {
-                // position: 'absolute',
-                // top: verticalScale(111),
                 paddingLeft: horizontalScale(14),
                 marginBottom: verticalScale(0),
                 paddingTop: 3,
@@ -39,11 +36,9 @@ const LoginFormScreen = () => {
             ]}>
             Log in
           </Text>
-          {/* <BlurView blurType="dark" blurAmount={5} overlayColor="transparent" style={{marginTop: 20}}> */}
           <View style={styles.container}>
             <LoginForm />
           </View>
-          {/* </BlurView> */}
         </View>
       </ImageBackground>
     </ScrollView>
@@ -67,13 +62,10 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     maxHeight: verticalScale(630),
-    // overflow: 'scroll',
-    // zIndex: 1,
     marginTop: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderTopLeftRadius: moderateScale(30),
     borderTopRightRadius: moderateScale(30),
-    // justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: horizontalScale(30),
     paddingTop: verticalScale(42),

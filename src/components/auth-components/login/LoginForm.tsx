@@ -2,14 +2,10 @@ import {
   Text,
   View,
   ScrollView,
-  StyleSheet,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from '../../../utils/metrics';
+import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {loginSchema} from '../../../validations';
 import CustomInput from '../../shared-components/CustomInput';
 import {STYLES} from '../../../styles/globalStyles';
@@ -17,7 +13,7 @@ import CustomDivider from '../../shared-components/CustomDivider';
 import SocialIcons from '../../shared-components/SocialIcons';
 import CustomButton from '../../shared-components/CustomButton';
 import {Formik} from 'formik';
-import {useNavigation} from '@react-navigation/native';
+import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../../../interfaces/navigation.type';
 import {useState} from 'react';
@@ -33,13 +29,6 @@ import {
   setUserData,
   setuserRole,
 } from '../../../redux/authSlice';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
-type NavigationProp = NativeStackNavigationProp<
-  AuthStackParamList,
-  'HomeScreen',
-  'ForgetPassword'
->;
 
 interface FormValues {
   email: string;
@@ -47,7 +36,7 @@ interface FormValues {
 }
 
 const LoginForm = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const initialValues: FormValues = {
@@ -126,12 +115,7 @@ const LoginForm = () => {
           initialTouched,
           setFieldError,
         }) => (
-          <View
-            style={{
-              marginTop: verticalScale(42),
-              gap: 0,
-              alignItems: 'center',
-            }}>
+          <View style={styles.container}>
             <CustomInput
               label="Email"
               placeholder="Email"
@@ -160,19 +144,7 @@ const LoginForm = () => {
               />
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgetPasswordEmail')}>
-                <Text
-                  style={[
-                    STYLES.text12,
-                    {
-                      color: '#209BCC',
-                      borderBottomWidth: 1,
-                      borderBottomColor: '#209BCC',
-                      width: horizontalScale(96),
-                      position: 'absolute',
-                      left: 0,
-                      bottom: -verticalScale(10),
-                    },
-                  ]}>
+                <Text style={[STYLES.text12, styles.forgetPasswordText]}>
                   Forget Password
                 </Text>
               </TouchableOpacity>
@@ -188,13 +160,7 @@ const LoginForm = () => {
               <CustomDivider text="Or Sign Up" />
               <SocialIcons />
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 2,
-                justifyContent: 'center',
-                marginTop: verticalScale(30),
-              }}>
+            <View style={styles.signUpText}>
               <Text style={STYLES.text14}>Don’t have an account? </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('SigninScreenTwo')}>
@@ -232,19 +198,23 @@ export default LoginForm;
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: verticalScale(42),
+    gap: 0,
+    alignItems: 'center',
+  },
+  forgetPasswordText: {
+    color: '#209BCC',
+    borderBottomWidth: 1,
+    borderBottomColor: '#209BCC',
+    width: horizontalScale(96),
     position: 'absolute',
     left: 0,
-    right: 0,
-    bottom: 0,
-    maxHeight: verticalScale(630),
-    // overflow: 'scroll',
-    zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.93)',
-    borderTopLeftRadius: moderateScale(30),
-    borderTopRightRadius: moderateScale(30),
-    // justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: horizontalScale(30),
-    paddingTop: verticalScale(42),
+    bottom: -verticalScale(10),
+  },
+  signUpText: {
+    flexDirection: 'row',
+    gap: 2,
+    justifyContent: 'center',
+    marginTop: verticalScale(30),
   },
 });

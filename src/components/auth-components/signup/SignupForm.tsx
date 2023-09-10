@@ -15,22 +15,13 @@ import CustomInput from '../../shared-components/CustomInput';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../shared-components/CustomButton';
 import {Formik} from 'formik';
-import {useNavigation} from '@react-navigation/native';
+import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../../../interfaces/navigation.type';
 import {useRef, useState} from 'react';
-import Toast from 'react-native-toast-message';
 import CustomLoader from '../../shared-components/CustomLoader';
-import {useDispatch} from 'react-redux';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import CustomPhoneInput from '../../shared-components/CustomPhoneInput';
 import PhoneInput from 'react-native-phone-number-input';
-
-type NavigationProp = NativeStackNavigationProp<
-  AuthStackParamList,
-  'HomeScreen',
-  'ForgetPassword'
->;
 
 interface FormValues {
   name: string;
@@ -40,7 +31,7 @@ interface FormValues {
 }
 
 const SignupForm = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [isLoading, setIsLoading] = useState(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
@@ -68,7 +59,6 @@ const SignupForm = () => {
       return;
     }
     const getCode = phoneInput.current?.getCountryCode();
-    console.log(getCode);
     navigation.navigate('CreateAccount', {
       email: values.email,
       password: values.password,
@@ -171,13 +161,7 @@ const SignupForm = () => {
                 {isLoading ? <CustomLoader /> : 'Sign up'}
               </CustomButton>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 2,
-                justifyContent: 'center',
-                marginTop: verticalScale(30),
-              }}>
+            <View style={styles.loginContainer}>
               <Text style={STYLES.text14}>Already have an account? </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('LoginFormScreen')}>
@@ -217,21 +201,10 @@ const SignupForm = () => {
 export default SignupForm;
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    maxHeight: verticalScale(630),
-    flex: 1,
-    // overflow: 'scroll',
-    zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.93)',
-    borderTopLeftRadius: moderateScale(30),
-    borderTopRightRadius: moderateScale(30),
-    // justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: horizontalScale(30),
-    paddingTop: verticalScale(42),
+  loginContainer: {
+    flexDirection: 'row',
+    gap: 2,
+    justifyContent: 'center',
+    marginTop: verticalScale(30),
   },
 });

@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  ImageBackground,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {ImageBackground, StyleSheet, Text, View} from 'react-native';
 import {
   horizontalScale,
   moderateScale,
@@ -31,8 +25,6 @@ const SignupFormScreen = ({navigation}: any) => {
             style={[
               STYLES.text32,
               {
-                // position: 'absolute',
-                // top: verticalScale(111),
                 paddingLeft: horizontalScale(14),
                 marginBottom: verticalScale(0),
               },
@@ -42,7 +34,6 @@ const SignupFormScreen = ({navigation}: any) => {
           <View style={styles.container}>
             <SignupForm />
           </View>
-          {/* </BlurView> */}
         </View>
       </ImageBackground>
     </KeyboardAwareScrollView>
@@ -70,7 +61,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderTopLeftRadius: moderateScale(30),
     borderTopRightRadius: moderateScale(30),
-    // justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: horizontalScale(30),
     paddingTop: verticalScale(42),

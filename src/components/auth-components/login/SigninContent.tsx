@@ -1,18 +1,11 @@
-import {
-  ImageBackground,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ImageBackground, StyleSheet, Text, View} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import {
   horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../../utils/metrics';
-import React, {Children, ReactNode, useState} from 'react';
-import {BlurView} from '@react-native-community/blur';
+import React, {ReactNode} from 'react';
 
 interface Props {
   children?: ReactNode;
@@ -48,7 +41,6 @@ const SigninContent = ({children, screen}: Props) => {
             Motivation
           </Text>
         </View>
-
         <View style={styles.card}>
           <View style={styles.linesContainer}>
             <View
