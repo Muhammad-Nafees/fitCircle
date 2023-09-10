@@ -22,11 +22,9 @@ import ForgetPasswordEmail from '../screens/auth-screens/forget-password-screens
 import CreateNewPassword from '../screens/auth-screens/forget-password-screens/CreateNewPassword';
 import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
 import ForgetPasswordOtp from '../screens/auth-screens/forget-password-screens/ForgetPasswordOtp';
-import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
 import BlankButtonRenderScreen from '../screens/auth-screens/forget-password-screens/BlankButtonRender';
 import ForgetPasswordNumber from '../screens/auth-screens/forget-password-screens/ForgotPasswordNumber';
 import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormScreen';
-import HomeTabNavigator from './HomeTabNavigator';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 import AuthStackNavigator from './AuthStackNavigator';
@@ -37,7 +35,7 @@ const StackNavigator = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
-  if (isAuthenticated) return <AuthStackNavigator />;
+  // if (isAuthenticated) return <AuthStackNavigator />;
 
   return (
     <Stack.Navigator
