@@ -5,17 +5,8 @@ const CheckCircle = require('../../../../assets/icons/check-circle.png');
 
 const BlankButtonRenderScreen = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
 
   useEffect(() => {
-    if (route.params.phone) {
-      setPhone(route.params.phone);
-      console.log('Button Render', route.params.phone);
-    } else {
-      setEmail(route.params.email);
-      console.log(route.params.email);
-    }
     setTimeout(() => {
       setIsLoading(false);
       setTimeout(() => {

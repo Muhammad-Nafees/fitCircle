@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://fitcircle.yameenyousuf.com/',
+  baseURL: '',
 });
 
 const getData = async () => {

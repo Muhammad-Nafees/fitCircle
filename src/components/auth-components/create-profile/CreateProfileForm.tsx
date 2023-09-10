@@ -15,7 +15,7 @@ import {createProfileSchema} from '../../../validations';
 import {setUserData} from '../../../redux/authSlice';
 import {IUserRole} from '../../../interfaces/auth.interface';
 import {IUser} from '../../../interfaces/user.interface';
-import {getCities, getCountries} from '../../../api';
+import {checkUsernameAvailability, getCities, getCountries} from '../../../api';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {format} from 'date-fns';
@@ -47,16 +47,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     const fetchCountries = async () => {
       try {
         const response = await getCountries();
-        // console.log(response.data)
-        // const countries = response?.data.countries;
-        // const countryCodes = Object.keys(countries);
-        // const extractedData = countryCodes.map(countryCode => {
-        //   const country = countries[countryCode];
-        //   return {
-        //     code: countryCode,
-        //     name: country?.name || '',
-        //   };
-        // });
         setAllCountries(response?.data);
       } catch (error: any) {
         console.log('Error fetching countries:', error.response);
@@ -127,19 +117,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
 
   const handleUsernameBlur = async (username: any) => {
     try {
-      const response = await fetch(
-        'http://fitcircle.yameenyousuf.com/users/check-username',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: username,
-          }),
-        },
-      );
-      const data = await response.json();
+      const data = await checkUsernameAvailability(username);
       if (!data.unique) {
         setUsernameError('Username already exists');
       } else {
@@ -150,6 +128,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       setUsernameError('Error checking username. Please try again later.');
     }
   };
+
   const handleSubmit = (values: IUser) => {
     if (isError) {
       return;

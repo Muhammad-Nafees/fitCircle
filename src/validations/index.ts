@@ -270,3 +270,22 @@ export const TdeeCalculatorSchema = Yup.object().shape({
     })
     .required('Start date is required'),
 });
+
+export const socialMediaSchema = Yup.object().shape({
+  facebook: Yup.string().matches(
+    /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/i,
+    'Invalid Facebook URL format',
+  ),
+  twitter: Yup.string().matches(
+    /^(https?:\/\/)?(www\.)?twitter\.com(\/\S*)?$/i,
+    'Invalid Twitter URL format',
+  ),
+  instagram: Yup.string().matches(
+    /^(https?:\/\/)?(www\.)?instagram\.com(\/\S*)?$/i,
+    'Invalid Instagram URL format',
+  ),
+  tiktok: Yup.string().matches(
+    /^(https?:\/\/)?(www\.)?tiktok\.com(\/\S*)?$/i,
+    'Invalid TikTok URL format',
+  ),
+});

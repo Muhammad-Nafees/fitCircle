@@ -6,7 +6,7 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import Toast from 'react-native-toast-message';
-import {generateEmailOtp, resetPassword} from '../../../api';
+import {generateEmailOtp} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const ChooseVerificationType = ({navigation}: any) => {

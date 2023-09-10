@@ -10,36 +10,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ISocial, IUser} from '../../../interfaces/user.interface';
 import {setUserData} from '../../../redux/authSlice';
 import {createProfile} from '../../../api';
+import {socialMediaSchema} from 'validations';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import Toast from 'react-native-toast-message';
-import * as yup from 'yup';
-
-const socialMediaSchema = yup.object().shape({
-  facebook: yup
-    .string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/i,
-      'Invalid Facebook URL format',
-    ),
-  twitter: yup
-    .string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?twitter\.com(\/\S*)?$/i,
-      'Invalid Twitter URL format',
-    ),
-  instagram: yup
-    .string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?instagram\.com(\/\S*)?$/i,
-      'Invalid Instagram URL format',
-    ),
-  tiktok: yup
-    .string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?tiktok\.com(\/\S*)?$/i,
-      'Invalid TikTok URL format',
-    ),
-});
 
 interface FormValues {
   facebook: string;
@@ -57,7 +30,6 @@ const SocialMediaAccount = ({navigation}: any) => {
   };
 
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>();
 
@@ -105,7 +77,7 @@ const SocialMediaAccount = ({navigation}: any) => {
             errors,
             touched,
             initialTouched,
-            setFieldError
+            setFieldError,
           }) => (
             <>
               <View>
@@ -125,7 +97,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     handleChange={handleChange('facebook')}
                     isFirstLetterLowercase={true}
                     setFieldError={setFieldError}
-                    fieldName='facebook'
+                    fieldName="facebook"
                   />
                   <CustomInput
                     label="Instagram"
@@ -138,7 +110,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     handleChange={handleChange('instagram')}
                     isFirstLetterLowercase={true}
                     setFieldError={setFieldError}
-                    fieldName='instagram'
+                    fieldName="instagram"
                   />
                   <CustomInput
                     label="Twitter"
@@ -151,7 +123,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     handleChange={handleChange('twitter')}
                     isFirstLetterLowercase={true}
                     setFieldError={setFieldError}
-                    fieldName='twitter'
+                    fieldName="twitter"
                   />
                   <CustomInput
                     label="Tiktok"
@@ -164,7 +136,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     handleChange={handleChange('tiktok')}
                     isFirstLetterLowercase={true}
                     setFieldError={setFieldError}
-                    fieldName='tiktok'
+                    fieldName="tiktok"
                   />
                 </View>
               </View>

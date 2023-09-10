@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Image,
   StyleSheet,
   PermissionsAndroid,
 } from 'react-native';
@@ -18,7 +17,6 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
   ImageLibraryOptions,
-  launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
 import {openCamera} from 'react-native-image-crop-picker';
@@ -34,7 +32,6 @@ const UploadCertificate = ({navigation}: any) => {
   const [selectedCameraImage, setSelectedCameraImage] = useState('');
   const [uploadImage, setUploadImage] = useState<any>('');
   const [addMoreImages, setAddMoreImages] = useState<any>([]);
-  const [cameraPermission, setCameraPermission] = useState(false);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
 
@@ -69,7 +66,6 @@ const UploadCertificate = ({navigation}: any) => {
         })
           .then((image: any) => {
             if (image.path) {
-              console.log(image.path);
               setSelectedCameraImage(image.path);
             }
           })

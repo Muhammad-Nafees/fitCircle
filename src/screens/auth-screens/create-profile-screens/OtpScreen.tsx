@@ -13,11 +13,7 @@ import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {
-  generateEmailOtp,
-  otpValidationByEmail,
-  resetPassword,
-} from '../../../api';
+import {generateEmailOtp, otpValidationByEmail} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const OtpScreen = ({navigation, route}: any) => {

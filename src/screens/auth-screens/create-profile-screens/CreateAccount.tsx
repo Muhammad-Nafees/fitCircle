@@ -68,18 +68,14 @@ const CreateAccount = ({navigation, route}: any) => {
         confirmPassword: values.confirmPassword,
         phone: `+${phoneCode}${values.phone}`,
       };
-      const response = await register(dataToSend);
-      console.log('first');
-      if (response?.status === 200) {
-        setIsLoading(false);
-        console.log(response?.data.email);
-        dispatch(authenticate());
-        dispatch(setAuthorizationToken(response?.headers.authorization));
-        dispatch(setUserData({email: response?.data.email}));
-        navigation.navigate('CreateProfile');
-      }
+      // const response = await register(dataToSend);
+      // if (response?.status === 200) {
+      // setIsLoading(false);
+      // dispatch(setAuthorizationToken(response?.headers.authorization));
+      // dispatch(setUserData({email: response?.data.email}));
+      navigation.navigate('CreateProfile');
+      // }
     } catch (error: any) {
-      console.log(error.response.data);
       setIsLoading(false);
       if (error.response.status === 409) {
         Toast.show({
@@ -96,7 +92,7 @@ const CreateAccount = ({navigation, route}: any) => {
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Signup Unsuccessfull!',
+          text1: 'Signup Unsuccessful!',
           text2: 'Invalid phone number!',
         });
       }
@@ -119,9 +115,7 @@ const CreateAccount = ({navigation, route}: any) => {
           setFieldError,
         }) => (
           <>
-            <Text style={[STYLES.text16, {fontWeight: '700', marginTop: 16}]}>
-              Create Account
-            </Text>
+            <Text style={styles.titleText}>Create Account</Text>
             <View style={styles.formContainer}>
               <CustomInput
                 label="Email"
@@ -204,5 +198,10 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(125),
     paddingHorizontal: horizontalScale(22),
     paddingBottom: verticalScale(20),
+  },
+  titleText: {
+    ...STYLES.text16,
+    fontWeight: '700',
+    marginTop: 16,
   },
 });

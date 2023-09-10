@@ -5,13 +5,10 @@ import axiosInstance from './interceptor';
 
 export const loginIn = async (email: string, password: string) => {
   try {
-    const response = await axios.post(
-      'http://fitcircle.yameenyousuf.com/users/login',
-      {
-        email: email.toLowerCase(),
-        password: password,
-      },
-    );
+    const response = await axios.post('', {
+      email: email.toLowerCase(),
+      password: password,
+    });
     return response;
   } catch (error) {
     throw error;
@@ -20,19 +17,28 @@ export const loginIn = async (email: string, password: string) => {
 
 export const register = async (values: CreateAccountFormValues) => {
   try {
-    const response = await axios.post(
-      'http://fitcircle.yameenyousuf.com/users/register',
-      {
-        email: values.email.toLowerCase(),
-        phone: values.phone,
-        password: values.password,
-      },
-    );
+    const response = await axios.post('', {
+      email: values.email.toLowerCase(),
+      phone: values.phone,
+      password: values.password,
+    });
     return response;
   } catch (error) {
     throw error;
   }
 };
+
+export async function checkUsernameAvailability(username: string) {
+  try {
+    const response = await axios.post('', {
+      username: username,
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export const createProfile = async (
   userData: IUser,
@@ -73,16 +79,12 @@ export const createProfile = async (
     });
   }
 
-  const response = await axios.post(
-    'http://fitcircle.yameenyousuf.com/home/createProfile',
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `${authorizationToken}`,
-      },
+  const response = await axios.post('', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `${authorizationToken}`,
     },
-  );
+  });
   return response;
 };
 

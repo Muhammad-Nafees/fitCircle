@@ -31,7 +31,6 @@ const InterestScreen = ({navigation}: any) => {
   useEffect(() => {
     const fetchInterest = async () => {
       setIsLoading(true);
-
       try {
         const response = await getInterest();
         setInterest(response?.data);
@@ -75,7 +74,6 @@ const InterestScreen = ({navigation}: any) => {
         <Text style={[STYLES.text16, {fontWeight: '700'}]}>
           Select your interests
         </Text>
-
         <View style={styles.itemsContainer}>
           {interests?.length === 0 ? (
             <CustomLoader isStyle={true} />

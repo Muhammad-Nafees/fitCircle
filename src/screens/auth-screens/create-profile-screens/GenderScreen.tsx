@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import GenderForm from '../../../components/auth-components/create-profile/GenderForm';
 
-const GenderScreen = ({navigation, route}: any) => {
+const GenderScreen = ({route}: any) => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView>
