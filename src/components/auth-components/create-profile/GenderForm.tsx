@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {Formik} from 'formik';
 import {CustomSelect} from '../../shared-components/CustomSelect';
 import CustomInput from '../../shared-components/CustomInput';
@@ -21,8 +21,6 @@ import DropdownTextInput from '../../shared-components/CustomDropdownInput';
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData?.profileImage, 'Dasds');
-
   const dispatch = useDispatch();
 
   const initialValues: IUser = {
@@ -56,12 +54,9 @@ const GenderForm = () => {
       {({
         handleChange,
         handleSubmit,
-        handleBlur,
-        submitForm,
         values,
         errors,
         touched,
-        initialTouched,
         setFieldValue,
         setFieldError,
       }) => (
@@ -122,7 +117,6 @@ const GenderForm = () => {
                   />
                 </View>
               </View>
-
               <CustomSelect
                 label="Body Type"
                 values={['Mesomorph', 'Ectomorph', 'Endomorph']}
@@ -151,7 +145,6 @@ const GenderForm = () => {
                 fieldName="activity"
               />
             </View>
-
             <View style={styles.buttonContainer}>
               <CustomButton onPress={handleSubmit}>Continue</CustomButton>
             </View>

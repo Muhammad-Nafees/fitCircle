@@ -5,7 +5,6 @@ import HeaderBackArrow from '../../../components/shared-components/HeaderBackArr
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import ProfilePhotos from '../../../components/auth-components/create-profile/ProfilePhotos';
 import CreateProfileForm from '../../../components/auth-components/create-profile/CreateProfileForm';
-import {useSelector} from 'react-redux';
 
 const CreateProfile = ({navigation}: any) => {
   const [profilePicture, setProfilePicture] = useState<any>();
@@ -16,13 +15,7 @@ const CreateProfile = ({navigation}: any) => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
-        <View
-          style={{
-            position: 'relative',
-            zIndex: 3,
-            height: verticalScale(292),
-            alignItems: 'center',
-          }}>
+        <View style={styles.contentContainer}>
           <HeaderBackArrow
             extraStyles={{
               marginTop: verticalScale(20),
@@ -51,5 +44,11 @@ const styles = StyleSheet.create({
     height: 142,
     borderRadius: 71,
     backgroundColor: '#ffffff',
+  },
+  contentContainer: {
+    position: 'relative',
+    zIndex: 3,
+    height: verticalScale(292),
+    alignItems: 'center',
   },
 });
