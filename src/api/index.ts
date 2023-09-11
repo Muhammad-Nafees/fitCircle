@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {CreateAccountFormValues} from '../screens/auth-screens/create-profile-screens/CreateAccount';
 import {ISocial, IUser} from '../interfaces/user.interface';
-import axiosInstance from './interceptor';
+// import axiosInstance from './interceptor';
 
 export const loginIn = async (email: string, password: string) => {
   try {
@@ -28,17 +28,17 @@ export const register = async (values: CreateAccountFormValues) => {
   }
 };
 
-export async function checkUsernameAvailability(username: string) {
-  try {
-    const response = await axios.post('', {
-      username: username,
-    });
+// export async function checkUsernameAvailability(username: string) {
+//   try {
+//     const response = await axios.post('', {
+//       username: username,
+//     });
 
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-}
+//     return response.data;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
 export const createProfile = async (
   userData: IUser,
@@ -88,145 +88,144 @@ export const createProfile = async (
   return response;
 };
 
-export const postContent = async (postData: any) => {
-  console.log('post button pressed');
-  try {
-    const formData = new FormData();
-    formData.append('content', postData.content);
-    formData.append('visibility', postData.visibility);
-    formData.append('hexCode', postData.hexCode);
-    if (postData.cost) {
-      formData.append('cost', postData.cost);
-    }
-    if (postData.media) {
-      const mediaUri = postData.media;
-      const isImage =
-        mediaUri.endsWith('.jpg') ||
-        mediaUri.endsWith('.jpeg') ||
-        mediaUri.endsWith('.png');
-      const isVideo = mediaUri.endsWith('.mp4') || mediaUri.endsWith('.mov');
-      console.log(isVideo);
-      if (isImage) {
-        const type = 'image/jpeg';
-        formData.append('media', {
-          uri: mediaUri,
-          type: type,
-          name: `image_${Date.now()}.jpg`,
-        });
-      } else if (isVideo) {
-        const type = 'video/mp4';
-        formData.append('media', {
-          uri: mediaUri,
-          type: type,
-          name: `video_${Date.now()}.mp4`,
-        });
-      }
-    }
+// export const postContent = async (postData: any) => {
+//   try {
+//     const formData = new FormData();
+//     formData.append('content', postData.content);
+//     formData.append('visibility', postData.visibility);
+//     formData.append('hexCode', postData.hexCode);
+//     if (postData.cost) {
+//       formData.append('cost', postData.cost);
+//     }
+//     if (postData.media) {
+//       const mediaUri = postData.media;
+//       const isImage =
+//         mediaUri.endsWith('.jpg') ||
+//         mediaUri.endsWith('.jpeg') ||
+//         mediaUri.endsWith('.png');
+//       const isVideo = mediaUri.endsWith('.mp4') || mediaUri.endsWith('.mov');
+//       console.log(isVideo);
+//       if (isImage) {
+//         const type = 'image/jpeg';
+//         formData.append('media', {
+//           uri: mediaUri,
+//           type: type,
+//           name: `image_${Date.now()}.jpg`,
+//         });
+//       } else if (isVideo) {
+//         const type = 'video/mp4';
+//         formData.append('media', {
+//           uri: mediaUri,
+//           type: type,
+//           name: `video_${Date.now()}.mp4`,
+//         });
+//       }
+//     }
 
-    const response = await axiosInstance.post('posts/create', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
+//     const response = await axiosInstance.post('posts/create', formData, {
+//       headers: {
+//         'Content-Type': 'multipart/form-data',
+//       },
+//     });
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const generateEmailOtp = async (email: string) => {
-  try {
-    const requestData = {email: email.toLowerCase()};
+// export const generateEmailOtp = async (email: string) => {
+//   try {
+//     const requestData = {email: email.toLowerCase()};
 
-    const response = await axiosInstance.post(
-      'users/generate/otp',
-      requestData,
-    );
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
+//     const response = await axiosInstance.post(
+//       'users/generate/otp',
+//       requestData,
+//     );
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const generatePhoneOtp = async (phone: any) => {
-  try {
-    const requestData = {phone};
+// export const generatePhoneOtp = async (phone: any) => {
+//   try {
+//     const requestData = {phone};
 
-    const response = await axiosInstance.post(
-      'users/generate/otp',
-      requestData,
-    );
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
+//     const response = await axiosInstance.post(
+//       'users/generate/otp',
+//       requestData,
+//     );
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const otpValidationByEmail = async (
-  enteredOtp: number,
-  email: string,
-) => {
-  const response = await axiosInstance.post('users/otpValidation', {
-    enteredOtp,
-    email,
-  });
-  return response;
-};
+// export const otpValidationByEmail = async (
+//   enteredOtp: number,
+//   email: string,
+// ) => {
+//   const response = await axiosInstance.post('users/otpValidation', {
+//     enteredOtp,
+//     email,
+//   });
+//   return response;
+// };
 
-export const otpValidationByPhone = async (
-  enteredOtp: number,
-  phone: string,
-) => {
-  const response = await axiosInstance.post('users/otpValidation', {
-    enteredOtp,
-    phone,
-  });
-  return response;
-};
+// export const otpValidationByPhone = async (
+//   enteredOtp: number,
+//   phone: string,
+// ) => {
+//   const response = await axiosInstance.post('users/otpValidation', {
+//     enteredOtp,
+//     phone,
+//   });
+//   return response;
+// };
 
-export const resetPasswordWithEmail = async (
-  newPass: string,
-  email: string | undefined,
-) => {
-  const response = await axiosInstance.post('users/resetPassword', {
-    newPass,
-    email,
-  });
-  return response;
-};
+// export const resetPasswordWithEmail = async (
+//   newPass: string,
+//   email: string | undefined,
+// ) => {
+//   const response = await axiosInstance.post('users/resetPassword', {
+//     newPass,
+//     email,
+//   });
+//   return response;
+// };
 
-export const resetPasswordWithPhone = async (
-  newPass: string,
-  phone: string | undefined,
-) => {
-  const response = await axiosInstance.post('users/resetPassword', {
-    newPass,
-    phone,
-  });
-  return response;
-};
+// export const resetPasswordWithPhone = async (
+//   newPass: string,
+//   phone: string | undefined,
+// ) => {
+//   const response = await axiosInstance.post('users/resetPassword', {
+//     newPass,
+//     phone,
+//   });
+//   return response;
+// };
 
-export const getInterest = async () => {
-  const response = await axiosInstance.get('interest');
-  return response;
-};
+// export const getInterest = async () => {
+//   const response = await axiosInstance.get('interest');
+//   return response;
+// };
 
-export const getCommunities = async () => {
-  const response = await axiosInstance.get('community');
-  return response;
-};
+// export const getCommunities = async () => {
+//   const response = await axiosInstance.get('community');
+//   return response;
+// };
 
-export const getCountries = async () => {
-  const response = await axiosInstance.get('countries');
-  return response;
-};
+// export const getCountries = async () => {
+//   const response = await axiosInstance.get('countries');
+//   return response;
+// };
 
-export const getCities = async (country: string) => {
-  const response = await axiosInstance.get(`cities/${country}`);
-  return response;
-};
+// export const getCities = async (country: string) => {
+//   const response = await axiosInstance.get(`cities/${country}`);
+//   return response;
+// };
 
-export const searchUser = async (name: string) => {
-  const response = await axiosInstance.get(`home/search/${name}`);
-  return response;
-};
+// export const searchUser = async (name: string) => {
+//   const response = await axiosInstance.get(`home/search/${name}`);
+//   return response;
+// };
