@@ -6,7 +6,7 @@ import {INTERESTS} from '../../../../data/data';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {getInterest} from '../../../api';
+// import {getInterest} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import Toast from 'react-native-toast-message';
 import {IUser} from '../../../interfaces/user.interface';
@@ -23,29 +23,29 @@ const InterestScreen = ({navigation}: any) => {
     [],
   );
   console.log(useSelector((state: RootState) => state.auth.user));
-  const [interests, setInterest] = useState<IInterest[]>([]);
+  const [interests, setInterest] = useState<any>(INTERESTS);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchInterest = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getInterest();
-        setInterest(response?.data);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error!',
-        });
-      }
-    };
+  // useEffect(() => {
+  //   const fetchInterest = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       // const response = await getInterest();
+  //       setInterest(response?.data);
+  //       setIsLoading(false);
+  //     } catch (error) {
+  //       setIsLoading(false);
+  //       Toast.show({
+  //         type: 'error',
+  //         text1: 'Server Error!',
+  //       });
+  //     }
+  //   };
 
-    fetchInterest();
-  }, []);
+  //   fetchInterest();
+  // }, []);
 
   const handleSubmit = () => {
     const partialUserData: Partial<IUser> = {

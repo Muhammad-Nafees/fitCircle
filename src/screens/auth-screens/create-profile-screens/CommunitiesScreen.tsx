@@ -15,7 +15,7 @@ import {IUser} from '../../../interfaces/user.interface';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import {setUserData} from '../../../redux/authSlice';
-import {createProfile, getCommunities} from '../../../api';
+// import {createProfile, getCommunities} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import Toast from 'react-native-toast-message';
 
@@ -25,7 +25,8 @@ export interface ICommunities {
 }
 
 const CommunitiesScreen = ({navigation}: any) => {
-  const [selectedCommunities, setSelectedCommunities] = useState<any>([]);
+  const [selectedCommunities, setSelectedCommunities] =
+    useState<any>(COMMUNITIES_LIST);
   const [selectedCommunitiesName, setSelectedCommunitiesName] = useState<
     string[]
   >([]);
@@ -34,24 +35,24 @@ const CommunitiesScreen = ({navigation}: any) => {
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchCommunities = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getCommunities();
-        console.log();
-        setCommunities(response?.data);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error!',
-        });
-      }
-    };
-    fetchCommunities();
-  }, []);
+  // useEffect(() => {
+  //   const fetchCommunities = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const response = await getCommunities();
+  //       console.log();
+  //       setCommunities(response?.data);
+  //       setIsLoading(false);
+  //     } catch (error) {
+  //       setIsLoading(false);
+  //       Toast.show({
+  //         type: 'error',
+  //         text1: 'Server Error!',
+  //       });
+  //     }
+  //   };
+  //   fetchCommunities();
+  // }, []);
 
   const handleSubmit = async () => {
     const partialUserData: Partial<IUser> = {
