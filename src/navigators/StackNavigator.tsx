@@ -28,6 +28,7 @@ import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormS
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 import AuthStackNavigator from './AuthStackNavigator';
+import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
 
 const Stack = createStackNavigator();
 
@@ -100,6 +101,26 @@ const StackNavigator = () => {
       <Stack.Screen
         name="CertificateVerified"
         component={VerifyScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ForgetPasswordEmail"
+        component={ForgetPasswordEmail}
+      />
+      <Stack.Screen
+        name="ForgetPasswordNumber"
+        component={ForgetPasswordNumber}
+      />
+      <Stack.Screen name="ForgetPasswordOtp" component={ForgetPasswordOtp} />
+      <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
+      <Stack.Screen
+        name="PasswordChangedDialog"
+        component={FavoriteDialogScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="BlankButtonRender"
+        component={BlankButtonRenderScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

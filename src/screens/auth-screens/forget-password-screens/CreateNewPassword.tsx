@@ -13,7 +13,6 @@ import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import {createNewPasswordSchema} from '../../../validations';
-import {resetPasswordWithEmail, resetPasswordWithPhone} from '../../../api';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface FormValues {
@@ -42,41 +41,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
   };
 
   const handleSubmit = async (values: FormValues) => {
-    setIsLoading(true);
-    try {
-      let response;
-      if (route.params.phone) {
-        response = await resetPasswordWithPhone(
-          values.newPassword,
-          route.params.phone,
-        );
-      } else {
-        response = await resetPasswordWithEmail(
-          values.newPassword,
-          route.params.email,
-        );
-      }
-      setIsLoading(false);
-      if (response?.status === 200) {
-        navigation.navigate('PasswordChangedDialog');
-      }
-    } catch (error: any) {
-      setIsLoading(false);
-      console.log(error.response?.status);
-      if (error.response?.status === 409) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error changing password',
-          text2: 'The new password cannot be the same as the old password',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error',
-          text2: 'Please try again later!',
-        });
-      }
-    }
+    navigation.navigate('PasswordChangedDialog');
   };
 
   const handleFocus = (fieldName: string) => {
@@ -149,13 +114,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
                 </TouchableOpacity>
               </View>
               {errors.newPassword && touched.newPassword ? (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 2,
-                    marginTop: verticalScale(3),
-                  }}>
+                <View style={styles.errorContainer}>
                   <Icon name="alert-circle" size={22} color="red" />
                   <Text style={[STYLES.text12, {color: 'red'}]}>
                     {errors.newPassword}
@@ -209,13 +168,7 @@ const CreateNewPassword = ({navigation, route}: any) => {
                 </TouchableOpacity>
               </View>
               {errors.confirmNewPassword && touched.confirmNewPassword ? (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 2,
-                    marginTop: verticalScale(3),
-                  }}>
+                <View style={styles.errorContainer}>
                   <Icon name="alert-circle" size={22} color="red" />
                   <Text style={[STYLES.text12, {color: 'red'}]}>
                     {errors.confirmNewPassword}
@@ -297,6 +250,12 @@ const styles = StyleSheet.create({
   icon: {
     padding: 8,
     color: 'gray',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: verticalScale(3),
   },
 });
 

@@ -129,13 +129,7 @@ const DropdownTextInput = ({
       {error && ((touched && !value) || (error && value) || isFocused) ? (
         <View
           style={[
-            {
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 2,
-              marginTop: verticalScale(7),
-              marginBottom: verticalScale(4),
-            },
+            styles.errorTextContainer,
             route.name === 'VerificationOne' && {width: horizontalScale(60)},
           ]}>
           <Icon name="alert-circle" size={22} color="red" />
@@ -209,6 +203,13 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: '#F3F3F3',
+  },
+  errorTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: verticalScale(7),
+    marginBottom: verticalScale(4),
   },
 });
 

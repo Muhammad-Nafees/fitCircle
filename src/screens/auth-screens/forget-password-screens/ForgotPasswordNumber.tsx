@@ -13,10 +13,7 @@ import {
   verticalScale,
 } from '../../../utils/metrics';
 import {Formik} from 'formik';
-import axios from 'axios';
-import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import {generatePhoneOtp} from '../../../api';
 import PhoneInput from 'react-native-phone-number-input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
@@ -47,34 +44,10 @@ const ForgetPasswordNumber = ({navigation}: any) => {
       setIsLoading(false);
       return setError('Invalid phone number');
     }
-    try {
-      console.log(`${values.phone}`);
-      const response = await generatePhoneOtp(values.phone);
-      console.log(response);
-      const data = response.data;
-      setIsLoading(false);
-      Toast.show({
-        type: 'success',
-        text1: 'User Verified!',
-      });
-      navigation.navigate('ForgetPasswordOtp', {
-        otp: data,
-        phone: values.phone,
-      });
-    } catch (error: any) {
-      if (error.response.status == 409) {
-        Toast.show({
-          type: 'error',
-          text1: 'User does not exist!',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error',
-        });
-      }
-      setIsLoading(false);
-    }
+    navigation.navigate('ForgetPasswordOtp', {
+      otp: '243691',
+      phone: values.phone,
+    });
   };
 
   const handleInputFocus = () => {
@@ -131,29 +104,14 @@ const ForgetPasswordNumber = ({navigation}: any) => {
                   ref={phoneInput}
                   defaultCode="US"
                   layout="second"
-                  textContainerStyle={{
-                    backgroundColor: 'black',
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 12,
-                  }}
-                  textInputStyle={{
-                    height: 20,
-                    width: 20,
-                    padding: 0,
-                    fontSize: 12,
-                    color: 'white',
-                  }}
+                  textContainerStyle={styles.phoneTextContainer}
+                  textInputStyle={styles.phoneTextInput}
                   codeTextStyle={{
                     fontSize: moderateScale(12),
                     color: 'gray',
                     marginTop: -verticalScale(1),
                   }}
-                  containerStyle={{
-                    height: verticalScale(50),
-                    width: '100%',
-                    backgroundColor: '#1F1F1F',
-                    borderRadius: 12,
-                  }}
+                  containerStyle={styles.phoneContainer}
                   flagButtonStyle={{
                     width: horizontalScale(85),
                   }}
@@ -174,14 +132,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
               </View>
             </View>
             {error ? ( // Render the error message if it's not empty
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 2,
-                  marginTop: verticalScale(7),
-                  marginBottom: verticalScale(4),
-                }}>
+              <View style={styles.errorContainer}>
                 <Icon name="alert-circle" size={22} color="red" />
                 <Text style={[STYLES.text12, {color: 'red'}]}>{error}</Text>
               </View>
@@ -237,6 +188,31 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#fff',
     paddingVertical: 12,
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: verticalScale(7),
+    marginBottom: verticalScale(4),
+  },
+  phoneTextInput: {
+    height: 20,
+    width: 20,
+    padding: 0,
+    fontSize: 12,
+    color: 'white',
+  },
+  phoneTextContainer: {
+    backgroundColor: 'black',
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  phoneContainer: {
+    height: verticalScale(50),
+    width: '100%',
+    backgroundColor: '#1F1F1F',
+    borderRadius: 12,
   },
 });
 

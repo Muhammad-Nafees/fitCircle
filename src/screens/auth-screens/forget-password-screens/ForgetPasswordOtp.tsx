@@ -12,12 +12,6 @@ import Toast from 'react-native-toast-message';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {
-  otpValidationByPhone,
-  otpValidationByEmail,
-  generateEmailOtp,
-  generatePhoneOtp,
-} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const ForgetPasswordOtp = ({navigation, route}: any) => {
@@ -46,7 +40,6 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
   useEffect(() => {
     if (route.params.phone) {
       setVerificationType('phone');
-      console.log(route.params.phone);
       setPhone(route.params.phone);
     }
     if (accountType === 'signup') {
@@ -67,112 +60,106 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
   const handleSubmit = async () => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
-    try {
-      if (verificationType === 'phone') {
-        const response = await otpValidationByPhone(
-          convertOtpIntoNumber,
-          route.params.phone,
-        );
-        if (response?.status == 200) {
-          setIsLoading(false);
-          setSecondsRemaining(0);
-          Toast.show({
-            type: 'success',
-            text1: 'OTP verified!',
-            text2: 'Account Created Successfully!',
-          });
-          if (accountType == 'signup') {
-            Toast.show({
-              type: 'success',
-              text1: 'OTP verified!',
-            });
-            navigation.navigate('AccountVerified');
-          } else {
-            Toast.show({
-              type: 'success',
-              text1: 'OTP verified!',
-            });
-            navigation.navigate('BlankButtonRender', {
-              phone: route.params.phone,
-            });
-          }
-        }
-      } else {
-        const response = await otpValidationByEmail(
-          convertOtpIntoNumber,
-          email,
-        );
-        if (response?.status == 200) {
-          setIsLoading(false);
-          setSecondsRemaining(0);
-          Toast.show({
-            type: 'success',
-            text1: 'OTP verified!',
-            text2: 'Account Created Successfully!',
-          });
-          if (accountType == 'signup') {
-            Toast.show({
-              type: 'success',
-              text1: 'OTP verified!',
-            });
-            navigation.navigate('AccountVerified');
-          } else {
-            Toast.show({
-              type: 'success',
-              text1: 'OTP verified!',
-            });
-            navigation.navigate('BlankButtonRender', {
-              email: route.params.email,
-            });
-          }
-        }
-      }
-    } catch (error: any) {
-      console.log(error.response.data);
-      if (error?.response.status == 500) {
-        Toast.show({
-          type: 'error',
-          text1: 'Invalid OTP!',
-          text2: 'Please enter valid otp.',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error',
-          text2: 'Please try again later!',
-        });
-      }
-      setIsLoading(false);
-    }
-  };
-  const handleResendOtp = async () => {
-    setIsResendLoading(true);
-    try {
-      if (verificationType === 'phone') {
-        console.log('phone');
-        const response = await generatePhoneOtp(route.params.phone);
-        const newOtp = response.data;
-        setGeneratedOtp(newOtp);
-        setSecondsRemaining(60);
-      } else {
-        const response = await generateEmailOtp(route.params.email as string);
-        const newOtp = response.data;
-        setGeneratedOtp(newOtp);
-        setSecondsRemaining(60);
-      }
-      Toast.show({
-        type: 'success',
-        text1: 'Success!',
-        text2: 'New Otp generated!',
-      });
-      setIsResendLoading(false);
-    } catch (error: any) {
-      Toast.show({
-        type: 'error',
-        text1: 'Server Error',
-      });
-      setIsResendLoading(false);
-    }
+    navigation.navigate('BlankButtonRender', {email: 'samather66@gmail.com'});
+    //   try {
+    //     if (verificationType === 'phone') {
+    //       const response = await otpValidationByPhone(
+    //         convertOtpIntoNumber,
+    //         route.params.phone,
+    //       );
+    //       if (response?.status == 200) {
+    //         setIsLoading(false);
+    //         setSecondsRemaining(0);
+    //         Toast.show({
+    //           type: 'success',
+    //           text1: 'OTP verified!',
+    //           text2: 'Account Created Successfully!',
+    //         });
+    //         if (accountType == 'signup') {
+    //           Toast.show({
+    //             type: 'success',
+    //             text1: 'OTP verified!',
+    //           });
+    //           navigation.navigate('AccountVerified');
+    //         } else {
+    //           Toast.show({
+    //             type: 'success',
+    //             text1: 'OTP verified!',
+    //           });
+    //           navigation.navigate('BlankButtonRender', {
+    //             phone: route.params.phone,
+    //           });
+    //         }
+    //       }
+    //     } else {
+    //       const response = await otpValidationByEmail(
+    //         convertOtpIntoNumber,
+    //         email,
+    //       );
+    //       if (response?.status == 200) {
+    //         setIsLoading(false);
+    //         setSecondsRemaining(0);
+    //         Toast.show({
+    //           type: 'success',
+    //           text1: 'OTP verified!',
+    //           text2: 'Account Created Successfully!',
+    //         });
+    //           Toast.show({
+    //             type: 'success',
+    //             text1: 'OTP verified!',
+    //           });
+    //           navigation.navigate('BlankButtonRender', {
+    //             email: route.params.email,
+    //           });
+    //         }
+    //       }
+    //     }
+    //   } catch (error: any) {
+    //     console.log(error.response.data);
+    //     if (error?.response.status == 500) {
+    //       Toast.show({
+    //         type: 'error',
+    //         text1: 'Invalid OTP!',
+    //         text2: 'Please enter valid otp.',
+    //       });
+    //     } else {
+    //       Toast.show({
+    //         type: 'error',
+    //         text1: 'Server Error',
+    //         text2: 'Please try again later!',
+    //       });
+    //     }
+    //     setIsLoading(false);
+    //   }
+    // };
+    // const handleResendOtp = async () => {
+    //   setIsResendLoading(true);
+    //   try {
+    //     if (verificationType === 'phone') {
+    //       console.log('phone');
+    //       const response = await generatePhoneOtp(route.params.phone);
+    //       const newOtp = response.data;
+    //       setGeneratedOtp(newOtp);
+    //       setSecondsRemaining(60);
+    //     } else {
+    //       const response = await generateEmailOtp(route.params.email as string);
+    //       const newOtp = response.data;
+    //       setGeneratedOtp(newOtp);
+    //       setSecondsRemaining(60);
+    //     }
+    //     Toast.show({
+    //       type: 'success',
+    //       text1: 'Success!',
+    //       text2: 'New Otp generated!',
+    //     });
+    //     setIsResendLoading(false);
+    //   } catch (error: any) {
+    //     Toast.show({
+    //       type: 'error',
+    //       text1: 'Server Error',
+    //     });
+    //     setIsResendLoading(false);
+    //   }
   };
   useEffect(() => {
     if (secondsRemaining == 0) {
@@ -258,7 +245,7 @@ const ForgetPasswordOtp = ({navigation, route}: any) => {
               <Text style={{color: 'red'}}>{` 00:${secondsRemaining}`}</Text>
             </Text>
           ) : (
-            <TouchableOpacity onPress={handleResendOtp}>
+            <TouchableOpacity onPress={() => console.log('Something')}>
               <Text
                 style={{
                   color: '#209BCC',

@@ -30,29 +30,11 @@ const CommunitiesScreen = ({navigation}: any) => {
   const [selectedCommunitiesName, setSelectedCommunitiesName] = useState<
     string[]
   >([]);
-  const [communities, setCommunities] = useState<ICommunities[]>([]);
+  // const [communities, setCommunities] = useState<ICommunities[]>([]);
+  const [communities, setCommunities] = useState<any>(COMMUNITIES_LIST);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   const fetchCommunities = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       const response = await getCommunities();
-  //       console.log();
-  //       setCommunities(response?.data);
-  //       setIsLoading(false);
-  //     } catch (error) {
-  //       setIsLoading(false);
-  //       Toast.show({
-  //         type: 'error',
-  //         text1: 'Server Error!',
-  //       });
-  //     }
-  //   };
-  //   fetchCommunities();
-  // }, []);
 
   const handleSubmit = async () => {
     const partialUserData: Partial<IUser> = {
@@ -87,16 +69,10 @@ const CommunitiesScreen = ({navigation}: any) => {
   const renderCommunity = ({item}: {item: any}) => {
     return (
       <TouchableOpacity onPress={() => handleSelect(item.name, item._id)}>
-        <View
-          style={{
-            marginTop: 16,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
+        <View style={styles.contentContainer}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
             <Image
-              source={{uri: item.photo}}
+              source={{uri: item.image}}
               style={{width: 50, height: 50, borderRadius: 25}}
             />
             <View style={{gap: 5}}>
@@ -166,6 +142,12 @@ const CommunitiesScreen = ({navigation}: any) => {
 const styles = StyleSheet.create({
   listContainer: {
     marginTop: verticalScale(27),
+  },
+  contentContainer: {
+    marginTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });
 

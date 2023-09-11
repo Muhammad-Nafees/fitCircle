@@ -24,28 +24,8 @@ const InterestScreen = ({navigation}: any) => {
   );
   console.log(useSelector((state: RootState) => state.auth.user));
   const [interests, setInterest] = useState<any>(INTERESTS);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   const fetchInterest = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       // const response = await getInterest();
-  //       setInterest(response?.data);
-  //       setIsLoading(false);
-  //     } catch (error) {
-  //       setIsLoading(false);
-  //       Toast.show({
-  //         type: 'error',
-  //         text1: 'Server Error!',
-  //       });
-  //     }
-  //   };
-
-  //   fetchInterest();
-  // }, []);
 
   const handleSubmit = () => {
     const partialUserData: Partial<IUser> = {
@@ -79,26 +59,22 @@ const InterestScreen = ({navigation}: any) => {
             <CustomLoader isStyle={true} />
           ) : (
             interests?.map(data => {
+              const isSelected = selectedInterest.some(
+                item => item._id === data.id,
+              );
+
               return (
                 <TouchableOpacity
-                  key={data?._id}
+                  key={data.id}
                   style={[
                     styles.itemsInnerContainer,
                     {
-                      backgroundColor: selectedInterest.some(
-                        item => item._id === data._id,
-                      )
-                        ? '#209BCC'
-                        : 'transparent',
-                      borderColor: selectedInterest.some(
-                        item => item._id === data._id,
-                      )
-                        ? 'transparent'
-                        : 'white',
+                      backgroundColor: isSelected ? '#209BCC' : 'transparent',
+                      borderColor: isSelected ? 'transparent' : 'white',
                     },
                   ]}
-                  onPress={() => handleSelect(data?.interest, data?._id)}>
-                  <Text style={STYLES.text14}>{data?.interest}</Text>
+                  onPress={() => handleSelect(data.interestName, data.id)}>
+                  <Text style={STYLES.text14}>{data.interestName}</Text>
                 </TouchableOpacity>
               );
             })

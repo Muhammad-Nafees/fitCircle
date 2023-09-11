@@ -19,7 +19,7 @@ const BlankButtonRenderScreen = ({navigation, route}: any) => {
     if (route.params.phone) {
       navigation.navigate('CreateNewPassword', {phone: route.params.phone});
     } else {
-      navigation.navigate('CreateNewPassword', {email: route.params.email});
+      navigation.navigate('CreateNewPassword', {email: 'samather66@gmail.com'});
     }
   };
 

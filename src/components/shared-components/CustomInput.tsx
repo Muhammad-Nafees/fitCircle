@@ -110,13 +110,7 @@ const CustomInput = ({...props}: Props) => {
         isFocused) ? (
         <View
           style={[
-            {
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 2,
-              marginTop: verticalScale(7),
-              marginBottom: verticalScale(4),
-            },
+            styles.errorTextContainer,
             props.label === 'Age' &&
               route.name === 'VerificationOne' && {
                 width: horizontalScale(75),
@@ -163,5 +157,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: horizontalScale(17),
     top: verticalScale(34),
+  },
+  errorTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: verticalScale(7),
+    marginBottom: verticalScale(4),
   },
 });

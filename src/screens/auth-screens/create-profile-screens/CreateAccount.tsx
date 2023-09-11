@@ -13,14 +13,6 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {Formik, Field} from 'formik';
 import {signupSchema} from '../../../validations';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
-import {register} from '../../../api';
-import {
-  authenticate,
-  setaccessToken,
-  setAuthorizationToken,
-  setUserData,
-} from '../../../redux/authSlice';
-import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import PhoneInput from 'react-native-phone-number-input';
@@ -61,42 +53,7 @@ const CreateAccount = ({navigation, route}: any) => {
       setIsLoading(false);
       return;
     }
-    try {
-      const dataToSend = {
-        email: values.email,
-        password: values.password,
-        confirmPassword: values.confirmPassword,
-        phone: `+${phoneCode}${values.phone}`,
-      };
-      // const response = await register(dataToSend);
-      // if (response?.status === 200) {
-      // setIsLoading(false);
-      // dispatch(setAuthorizationToken(response?.headers.authorization));
-      // dispatch(setUserData({email: response?.data.email}));
-      navigation.navigate('CreateProfile');
-      // }
-    } catch (error: any) {
-      setIsLoading(false);
-      if (error.response.status === 409) {
-        Toast.show({
-          type: 'error',
-          text1: 'Account Already Exists!',
-          text2: 'Please try another email or phone number.',
-        });
-      } else if (error.response.status === 500) {
-        Toast.show({
-          type: 'error',
-          text1: 'Signup Unsuccessfull!',
-          text2: 'Internal Server Error. Please try again later',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Signup Unsuccessful!',
-          text2: 'Invalid phone number!',
-        });
-      }
-    }
+    navigation.navigate('CreateProfile');
   };
   return (
     <ScrollView style={STYLES.container} keyboardShouldPersistTaps="always">

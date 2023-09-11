@@ -43,30 +43,30 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [countryCode, setCountryCode] = useState();
   const [phoneCode, setPhoneCode] = useState('1');
   const [usernameError, setUsernameError] = useState<string>('');
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await getCountries();
-        setAllCountries(response?.data);
-      } catch (error: any) {
-        console.log('Error fetching countries:', error.response);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCountries = async () => {
+  //     try {
+  //       const response = await getCountries();
+  //       setAllCountries(['Pakistan']);
+  //     } catch (error: any) {
+  //       console.log('Error fetching countries:', error.response);
+  //     }
+  //   };
 
-    fetchCountries();
-  }, []);
-  useEffect(() => {
-    const getCountryCode = async (selectedCountry: string) => {
-      const country = allCountries.filter(
-        (country: any) => country.name == selectedCountry,
-      );
-      setCountryCode(country[0].isoCode);
-    };
+  //   fetchCountries();
+  // }, []);
+  // useEffect(() => {
+  //   const getCountryCode = async (selectedCountry: string) => {
+  //     const country = allCountries.filter(
+  //       (country: any) => country.name == selectedCountry,
+  //     );
+  //     setCountryCode(country[0].isoCode);
+  //   };
 
-    if (country) {
-      getCountryCode(country);
-    }
-  }, [country]);
+  //   if (country) {
+  //     getCountryCode(country);
+  //   }
+  // }, [country]);
   useEffect(() => {
     const fetchCities = async (countryCode: string) => {
       try {
@@ -117,12 +117,12 @@ const CreateProfileForm = ({profilePicture}: Props) => {
 
   const handleUsernameBlur = async (username: any) => {
     try {
-      const data = await checkUsernameAvailability(username);
-      if (!data.unique) {
-        setUsernameError('Username already exists');
-      } else {
-        setUsernameError('');
-      }
+      // const data = await checkUsernameAvailability(username);
+      // if (!data.unique) {
+      //   setUsernameError('Username already exists');
+      // } else {
+      setUsernameError('');
+      // }
     } catch (error) {
       console.log('Error checking username:', error);
       setUsernameError('Error checking username. Please try again later.');
@@ -218,7 +218,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               touched={touched.username}
               initialTouched={true}
               handleChange={handleChange('username')}
-              handleBlur={() => handleUsernameBlur(values.username)}
+              // handleBlur={() => handleUsernameBlur(values.username)}
             />
             <CustomInput
               label="Add bio"
@@ -250,7 +250,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             <CustomSelect
               label="Country"
               selectedValue={values.country}
-              values={allCountries.map((countries: any) => countries.name)}
+              values={['Pakistan']}
               error={errors.country}
               initialTouched={true}
               setCountry={setCountry}
@@ -262,7 +262,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             <CustomSelect
               label="City"
               selectedValue={values.city}
-              values={allCities.map((cities: any) => cities.name)}
+              values={['Karachi']}
               error={errors.city}
               initialTouched={true}
               touched={touched.city}
@@ -332,7 +332,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                 />
               </View>
             </TouchableWithoutFeedback>
-
             {userRole == 'trainer' && (
               <CustomInput
                 label="Hourly Rate"

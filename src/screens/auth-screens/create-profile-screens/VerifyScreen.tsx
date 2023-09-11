@@ -6,9 +6,6 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import Toast from 'react-native-toast-message';
-import {createProfile} from '../../../api';
-import {authenticate, setUserData} from '../../../redux/authSlice';
 import {RootState} from '../../../redux/store';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -34,27 +31,6 @@ const VerifyScreen = ({navigation}: any) => {
     if (name == 'CertificateVerified') {
       navigation.navigate('InterestScreen');
     } else {
-      setIsLoading(true);
-      try {
-        const response = await createProfile({...userData}, authToken);
-        const data = response?.data;
-        storeData(authToken);
-        // dispatch(setUserData(data));
-        dispatch(authenticate(true));
-        setIsLoading(false);
-        navigation.navigate('HomeScreen');
-        Toast.show({
-          type: 'success',
-          text1: 'Account Created Successfully!',
-          text2: 'Welcome!',
-        });
-      } catch (error: any) {
-        setIsLoading(false);
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error!',
-        });
-      }
     }
   };
 

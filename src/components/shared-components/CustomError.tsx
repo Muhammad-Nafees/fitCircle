@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -15,13 +15,7 @@ const CustomError = ({...props}: Props) => {
   return (
     <View
       style={[
-        {
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 2,
-          marginTop: verticalScale(7),
-          marginBottom: verticalScale(4),
-        },
+        styles.container,
         props.label === 'Age' &&
           props.route.name === 'VerificationOne' && {
             width: horizontalScale(75),
@@ -33,5 +27,15 @@ const CustomError = ({...props}: Props) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: verticalScale(7),
+    marginBottom: verticalScale(4),
+  },
+});
 
 export default CustomError;

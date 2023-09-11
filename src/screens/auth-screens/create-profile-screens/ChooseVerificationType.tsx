@@ -6,7 +6,6 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import Toast from 'react-native-toast-message';
-import {generateEmailOtp} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const ChooseVerificationType = ({navigation}: any) => {
@@ -20,30 +19,11 @@ const ChooseVerificationType = ({navigation}: any) => {
     } else {
       await setVerificationType('phone');
     }
-    try {
-      setIsLoading(true);
-      console.log(email, 'email');
-      const response = await generateEmailOtp(email as string);
-      const data = response.data;
-      navigation.navigate('OtpScreen', {
-        otp: data,
-        verificationType: type,
-      });
-      setIsLoading(false);
-    } catch (error: any) {
-      if (error?.response.status == 409) {
-        Toast.show({
-          type: 'error',
-          text1: 'User does not exist!',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error',
-        });
-      }
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    navigation.navigate('OtpScreen', {
+      otp: '12584',
+      verificationType: type,
+    });
   };
 
   return (

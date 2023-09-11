@@ -13,7 +13,6 @@ import {
 } from '../../../utils/metrics';
 import {STYLES} from '../../../styles/globalStyles';
 import LoginForm from '../../../components/auth-components/login/LoginForm';
-import {BlurView} from '@react-native-community/blur';
 
 const LoginFormScreen = () => {
   return (

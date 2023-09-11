@@ -8,12 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
-import Toast from 'react-native-toast-message';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {generateEmailOtp, otpValidationByEmail} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const OtpScreen = ({navigation, route}: any) => {
@@ -23,7 +21,7 @@ const OtpScreen = ({navigation, route}: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const [email, setEmail] = useState<string | undefined>('');
   const [phone, setPhone] = useState<string | undefined>('');
-  const [generatedOtp, setGeneratedOtp] = useState(null);
+  const [generatedOtp, setGeneratedOtp] = useState('127463');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
   const [verificationType, setVerificationType] = useState('');
@@ -43,76 +41,17 @@ const OtpScreen = ({navigation, route}: any) => {
         setPhone('');
       }
     }
-    setGeneratedOtp(route?.params?.otp);
+    // setGeneratedOtp(route?.params?.otp);
   }, [route?.params?.verificationType]);
 
   const handleSubmit = async () => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
     setIsLoading(true);
-    try {
-      const response = await otpValidationByEmail(convertOtpIntoNumber, email);
-      if (response?.status == 200) {
-        setIsLoading(false);
-        setSecondsRemaining(0);
-        Toast.show({
-          type: 'success',
-          text1: 'OTP verified!',
-          text2: 'Account Created Successfully!',
-        });
-        if (accountType == 'signup') {
-          Toast.show({
-            type: 'success',
-            text1: 'OTP verified!',
-          });
-          navigation.navigate('AccountVerified');
-        } else {
-          Toast.show({
-            type: 'success',
-            text1: 'OTP verified!',
-          });
-          navigation.navigate('CreateNewPassword', {email: email});
-        }
-      }
-    } catch (error: any) {
-      console.log(error.response.data);
-      if (error?.response.status == 500) {
-        Toast.show({
-          type: 'error',
-          text1: 'Invalid OTP!',
-          text2: 'Please enter valid otp.',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error',
-          text2: 'Plese try again later!',
-        });
-      }
-      setIsLoading(false);
-    }
-  };
-  const handleResendOtp = async () => {
-    setIsResendLoading(true);
-    try {
-      const response = await generateEmailOtp(email as string);
-      const newOtp = response.data;
-      setGeneratedOtp(newOtp);
-      setSecondsRemaining(60);
-
-      Toast.show({
-        type: 'success',
-        text1: 'Success!',
-        text2: 'New Otp generated!',
-      });
-      setIsResendLoading(false);
-    } catch (error: any) {
-      Toast.show({
-        type: 'error',
-        text1: 'Server Error',
-      });
-      setIsResendLoading(false);
-    }
+    // const response = await otpValidationByEmail(convertOtpIntoNumber, email);
+    setIsLoading(false);
+    setSecondsRemaining(0);
+    navigation.navigate('AccountVerified');
   };
   useEffect(() => {
     if (secondsRemaining == 0) {
@@ -204,14 +143,8 @@ const OtpScreen = ({navigation, route}: any) => {
               <View style={{flexDirection: 'row', gap: 2}}>
                 <Text style={STYLES.text14}>Didn’t recive code?</Text>
                 {secondsRemaining == 0 && (
-                  <TouchableOpacity onPress={handleResendOtp}>
-                    <Text
-                      style={{
-                        color: '#209BCC',
-                        textDecorationLine: 'underline',
-                        marginTop: 3,
-                        paddingHorizontal: 10,
-                      }}>
+                  <TouchableOpacity>
+                    <Text style={styles.errorText}>
                       {' '}
                       {isResendLoading ? <CustomLoader /> : 'Resend OTP'}
                     </Text>
@@ -266,5 +199,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FBFBFB',
     textAlign: 'center',
     color: 'black',
+  },
+  errorText: {
+    color: '#209BCC',
+    textDecorationLine: 'underline',
+    marginTop: 3,
+    paddingHorizontal: 10,
   },
 });

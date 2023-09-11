@@ -13,7 +13,7 @@ import {Formik} from 'formik';
 import {forgetPasswordSchema} from '../../../validations';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import {generateEmailOtp} from '../../../api';
+// import {generateEmailOtp} from '../../../api';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface FormValues {
@@ -27,33 +27,10 @@ const ForgetPasswordEmail = ({navigation}: any) => {
     email: '',
   };
   const handleSubmit = async (values: FormValues) => {
-    setIsLoading(true);
-    try {
-      const response = await generateEmailOtp(values.email);
-      const data = response.data;
-      setIsLoading(false);
-      Toast.show({
-        type: 'success',
-        text1: 'User Verified!',
-      });
-      navigation.navigate('ForgetPasswordOtp', {
-        otp: data,
-        email: values.email.toLowerCase(),
-      });
-    } catch (error: any) {
-      if (error.response.status == 409) {
-        Toast.show({
-          type: 'error',
-          text1: 'User does not exist!',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error',
-        });
-      }
-      setIsLoading(false);
-    }
+    navigation.navigate('ForgetPasswordOtp', {
+      otp: '234598',
+      email: values.email.toLowerCase(),
+    });
   };
 
   const handleFocus = () => {
@@ -118,14 +95,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
                 onFocus={handleFocus}
               />
               {errors.email && touched.email ? (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 2,
-                    marginTop: verticalScale(7),
-                    marginBottom: verticalScale(4),
-                  }}>
+                <View style={styles.errorContainer}>
                   <Icon name="alert-circle" size={22} color="red" />
                   <Text style={[STYLES.text12, {color: 'red'}]}>
                     {errors.email}
@@ -186,6 +156,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#fff',
     paddingVertical: verticalScale(12),
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: verticalScale(7),
+    marginBottom: verticalScale(4),
   },
 });
 
