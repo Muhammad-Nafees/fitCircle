@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -16,7 +16,6 @@ import {
   moderateScale,
   verticalScale,
 } from '../../utils/metrics';
-import {searchUser} from '../../api';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/shared-components/CustomButton';
@@ -93,31 +92,6 @@ export const SearchScreen = () => {
     return null;
   };
 
-  const search = async () => {
-    setIsLoading(true);
-    if (searchQuery.trim() === '') {
-      setSearchData([]);
-      setSearchQuery('');
-      setIsLoading(false);
-      return;
-    }
-    setSearchQuery(searchQuery);
-    try {
-      const response = await searchUser(searchQuery.toLowerCase());
-      const users = response?.data;
-      setSearchData(users);
-      setIsLoading(false);
-    } catch (error: any) {
-      console.log('Error fetching cities:', error);
-      setIsLoading(false);
-    }
-  };
-  // useEffect(() => {
-  //   if (countryCode) {
-  //     fetchCities(countryCode);
-  //   }
-  // }, [countryCode]);
-
   return (
     <View style={styles.container}>
       <View style={[styles.topContainer]}>
@@ -126,7 +100,7 @@ export const SearchScreen = () => {
         </TouchableOpacity>
         <View style={styles.searchBarContainer}>
           <View style={styles.searchBar}>
-            <TouchableOpacity style={styles.searchButton} onPress={search}>
+            <TouchableOpacity style={styles.searchButton}>
               <Image source={SearchIcon} style={styles.icon} />
             </TouchableOpacity>
             <TextInput
@@ -137,7 +111,6 @@ export const SearchScreen = () => {
               onChangeText={setSearchQuery}
               onBlur={handleSearchBarBlur}
               placeholderTextColor="#fff"
-              // onEndEditing={handleSearch}
             />
             <TouchableOpacity
               style={styles.searchButton}
@@ -166,7 +139,7 @@ export const SearchScreen = () => {
             </View>
           ) : null}
         </View>
-        <TouchableOpacity onPress={search}>
+        <TouchableOpacity>
           <Text style={styles.submitButton}>Search</Text>
         </TouchableOpacity>
       </View>
