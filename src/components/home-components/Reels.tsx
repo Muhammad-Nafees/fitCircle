@@ -95,25 +95,27 @@ export const ReelsComponent = ({
   const [isFavorited, setIsFavorited] = useState(false);
   const [showThumbnail, setShowThumbnail] = useState(thumbnail !== null);
   const navigation = useNavigation();
-  console.log(thumbnail);
   const [videoThumbnail, setVideoThumbnail] = useState<any>();
+  console.log(thumbnail,"thumbnail")
 
   const fetchThumbnail = async () => {
-    try {
-      const response = await createThumbnail({
-        url: media,
-        timeStamp: 1000,
-        format: 'jpeg',
-      });
-      console.log({response}, 'respnse');
-      console.log(response.path, 'patj');
-      setVideoThumbnail(response.path);
-    } catch (err) {
-      console.log('err', err);
+    if (thumbnail !== null) {
+      console.log("first")
+      setVideoThumbnail(thumbnail);
+    } else {
+      try {
+        const response = await createThumbnail({
+          url: media,
+          timeStamp: 1000,
+          format: 'jpeg',
+        });
+        setVideoThumbnail(response.path);
+      } catch (err) {
+        console.log('err', err);
+      }
     }
   };
 
-  console.log(videoThumbnail, 'videoTHumb');
   useEffect(() => {
     fetchThumbnail();
   }, []);
@@ -258,7 +260,7 @@ export const ReelsComponent = ({
       </View>
       {showThumbnail && (
         <View style={styles.thumbnailContainer}>
-          <Image source={{uri: videoThumbnail}} style={styles.thumbnail} />
+          <Image source={{uri: thumbnail}} style={styles.thumbnail} />
         </View>
       )}
       <Video

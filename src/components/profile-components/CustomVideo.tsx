@@ -21,28 +21,6 @@ const CustomVideo = ({
   video,
   isTrainerView,
 }: any) => {
-  // const [videoThumbnail, setVideoThumbnail] = useState<any>();
-
-  // const fetchThumbnail = async () => {
-  //   try {
-  //     const response = await createThumbnail({
-  //       url: video.media,
-  //       timeStamp: 1000,
-  //       format: 'jpeg',
-  //     });
-  //     console.log({response}, 'respnse');
-  //     console.log(response.path, 'patj');
-  //     setVideoThumbnail(response.path);
-  //   } catch (err) {
-  //     console.log('err', err);
-  //   }
-  // };
-
-  // console.log(videoThumbnail, 'videoTHumb');
-  // useEffect(() => {
-  //   fetchThumbnail();
-  // }, []);
-
   return (
     <TouchableOpacity onPress={handleVideoPress}>
       <ImageBackground

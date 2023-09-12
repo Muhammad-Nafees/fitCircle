@@ -87,7 +87,7 @@ export const createProfile = async (
 };
 
 export const postContent = async (postData: any) => {
-  console.log('post button pressed');
+  console.log('post button pressed',postData);
   try {
     const formData = new FormData();
     formData.append('content', postData.content);

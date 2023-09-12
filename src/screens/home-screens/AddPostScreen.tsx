@@ -112,6 +112,14 @@ export const AddPostScreen = ({route}: any) => {
   };
 
   const handlePostButtonPress = async () => {
+    if (textInputValue == '') {
+      Toast.show({
+        type: 'error',
+        text1: 'Post cannot be shared with text content!',
+        visibilityTime: 2000,
+      });
+      return;
+    }
     setIsLoading(true);
 
     if (textInputValue.trim().length === 0 && !mediaUri) {
@@ -164,6 +172,8 @@ export const AddPostScreen = ({route}: any) => {
           cost: null,
         };
       }
+      console.log(postData,"postData");
+
       const response = await postContent(postData);
       if (response.status === 200) {
         Toast.show({
@@ -182,8 +192,8 @@ export const AddPostScreen = ({route}: any) => {
         setIsLoading(false);
         navigation.navigate('Home');
       }
-    } catch (error) {
-      console.log('Error posting content:', error);
+    } catch (error: any) {
+      console.log('Error posting content:', error.response.data);
       Toast.show({
         type: 'error',
         text1: 'Post Failed',
@@ -202,7 +212,7 @@ export const AddPostScreen = ({route}: any) => {
   };
 
   const handleScheduleRoute = () => {
-    if (userData.role === 'trainer') {
+    if (userData?.role === 'trainer') {
       navigation.navigate('MySche', {screen: 'Slot'});
     } else {
       navigation.navigate('MySche', {screen: 'SetSchedule'});
@@ -235,7 +245,7 @@ export const AddPostScreen = ({route}: any) => {
 
     launchImageLibrary(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
+        setMediaUri(response?.assets[0]?.uri);
       }
     });
   };
@@ -484,7 +494,9 @@ export const AddPostScreen = ({route}: any) => {
                   placeholderTextColor="white"
                   value={textInputValue}
                   multiline
-                  onChangeText={text => setTextInputValue(text)}
+                  onChangeText={text => {
+                    console.log(text), setTextInputValue(text);
+                  }}
                   textAlignVertical={'top'}
                 />
               )}

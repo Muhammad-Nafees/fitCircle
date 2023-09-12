@@ -46,7 +46,10 @@ import CustomBottomSheet from '../../components/shared-components/CustomBottomSh
 import {BlurView} from '@react-native-community/blur';
 import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
 import DiscIcon from '../../../assets/icons/DiscIcon';
-
+import ViewShot from 'react-native-view-shot';
+import {createThumbnail} from 'react-native-create-thumbnail';
+const PlayIcon = require('../../../assets/icons/playIcon.png');
+const PauseIcon = require('../../../assets/icons/pauseIcon.png');
 interface VideoPreviewScreenProps {
   videoUri: string;
   username?: string;
@@ -97,6 +100,20 @@ export const VideoPreviewScreen = ({
   const [thumbnailOpen, setThumbnailOpen] = useState(false);
   const [isMusicModalVisible, setMusicModalVisible] = useState(false);
   const [music, setMusic] = useState<any>();
+  const [isPlay, setIsPlay] = useState<boolean>(false);
+  const [showPlayIcon, setShowPlayIcon] = useState<boolean>(true);
+  const viewShotRef = React.useRef<any>();
+
+  useEffect(() => {
+    let hideButtonTimer: any;
+    hideButtonTimer = setTimeout(() => {
+      setShowPlayIcon(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(hideButtonTimer);
+    };
+  }, [isPlay]);
 
   const handleBoostOptionSelect = (optionLabel: any) => {
     setSelectedOptionInternal(optionLabel);
@@ -185,6 +202,7 @@ export const VideoPreviewScreen = ({
           name: `image_${Date.now()}.jpg`,
         });
       }
+      console.log(formData,"formadara")
       const response = await axiosInstance.post('/posts/create', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -196,7 +214,6 @@ export const VideoPreviewScreen = ({
           text1: payment ? 'Post Boosted Successfully!' : 'Post Shared!',
           visibilityTime: 5000,
         });
-        console.log(response);
         setIsLoading(false);
         handleBackButtonPress();
         handleClose();
@@ -299,7 +316,7 @@ export const VideoPreviewScreen = ({
     });
   };
 
-  const handleThumbnailSelect = () => {
+  const handleThumbnailSelect = async () => {
     setThumbnailOpen(false);
   };
 
@@ -317,6 +334,7 @@ export const VideoPreviewScreen = ({
       }
     });
   };
+  console.log(thumbnail, 'thumnail attached!');
 
   const handleTitleInputChange = (text: string) => {
     setTitleInputValue(text);
@@ -341,13 +359,35 @@ export const VideoPreviewScreen = ({
               ?.replace(/\s/g, '')}`}</Text>
           </View>
         </View>
+        {/* <ViewShot ref={viewShotRef} options={{format: 'jpg', quality: 0.9}}> */}
         <Video
           ref={videoRef}
           onError={onError}
           resizeMode="cover"
+          repeat={true}
+          paused={isPlay}
           source={{uri: videoUri}}
           style={styles.video}
+          onTouchStart={() => setShowPlayIcon(true)}
         />
+        {/* </ViewShot> */}
+        {showPlayIcon && (
+          <TouchableOpacity
+            style={[
+              styles.playIconBackground,
+              {
+                position: 'absolute',
+                top: 350,
+                left: '42%',
+              },
+            ]}
+            onPress={() => setIsPlay(!isPlay)}>
+            <Image
+              style={{tintColor: '#fff', width: 40, height: 30}}
+              source={isPlay ? PlayIcon : PauseIcon}
+            />
+          </TouchableOpacity>
+        )}
         <View style={styles.textContentContainer}>
           <Text style={styles.textContent}>{content}</Text>
         </View>
@@ -359,7 +399,7 @@ export const VideoPreviewScreen = ({
               {thumbnailOpen ? 'Back' : 'Select Thumbnail'}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{
               flexDirection: 'column',
               justifyContent: 'center',
@@ -369,7 +409,7 @@ export const VideoPreviewScreen = ({
             onPress={handleMusicModal}>
             <MusicIcon />
             <Text style={styles.iconText}>Music</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {!thumbnailOpen && (
             <TouchableOpacity
               style={styles.singleIconContainer}
@@ -386,7 +426,7 @@ export const VideoPreviewScreen = ({
             </TouchableOpacity>
           )}
         </View>
-        <View
+        {/* <View
           style={{
             position: 'absolute',
             zIndex: 99,
@@ -408,7 +448,7 @@ export const VideoPreviewScreen = ({
             </View>
             <DiscIcon />
           </View>
-        </View>
+        </View> */}
         <Modal
           onBackButtonPress={() => setIsModalVisible(false)}
           isVisible={isModalVisible}
@@ -562,14 +602,14 @@ export const VideoPreviewScreen = ({
           </View>
         </View>
       )}
-      {isMusicModalVisible && (
+      {/* {isMusicModalVisible && (
         <>
           <CustomBottomSheet
             setMusicModalVisible={setMusicModalVisible}
             setMusic={setMusic}
           />
         </>
-      )}
+      )} */}
     </>
   );
 };
@@ -755,6 +795,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20,
     marginHorizontal: 16,
+  },
+  playIconBackground: {
+    backgroundColor: 'rgba(141, 156, 152, 0.8)',
+    width: horizontalScale(55),
+    height: verticalScale(55),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -129,7 +129,6 @@ const HomeScreen = () => {
 
           dispatch(fetchPostsSuccess(data.docs));
           const videoPosts = getVideoPosts(data.docs);
-
           setFilteredVideos(videoPosts);
           // setFilteredVideos(() => getVideoPosts(data.docs));
         } else {
