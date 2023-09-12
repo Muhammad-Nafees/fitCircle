@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {
   Text,
   View,
@@ -13,11 +13,14 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {RootState} from '../../redux/store';
+import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import {SwiperFlatList} from 'react-native-swiper-flatlist';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {Avatar} from 'react-native-paper';
+// ---------------------------------------------------------------------//
+import {RootState} from '../../redux/store';
 import {CustomPost} from '../../components/home-components/CustomPost';
 import {ReelsComponent} from '../../components/home-components/Reels';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import NotificationIcon from '../../../assets/icons/NotificationIcon';
 import {
@@ -25,11 +28,8 @@ import {
   fetchPostsStart,
   fetchPostsSuccess,
 } from '../../redux/postSlice';
-import axios from 'axios';
 const SearchIcon = require('../../../assets/icons/search.png');
-import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import {setSelectedPost} from '../../redux/postSlice';
-import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -47,9 +47,7 @@ const HomeScreen = () => {
   const [hasMore, setHasMore] = useState(true);
   const [fetchedPosts, setFetchedPosts] = useState([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState(0);
   const tabBarHeight = useBottomTabBarHeight();
-  const [Viewable, SetViewable] = React.useState<any[]>([]);
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -58,7 +56,7 @@ const HomeScreen = () => {
   });
 
   const handleSearchBarFocus = () => {
-    navigation.navigate('Search');
+    navigation.navigate('Search' as never);
   };
 
   const handleCommentButtonPress = (selectedPost: any, userId: any) => {
@@ -82,11 +80,12 @@ const HomeScreen = () => {
   const handleRefresh = () => {
     dispatch(setSelectedPost(null));
     setIsRefreshing(true);
-    fetchPosts(1);
   };
 
   const getVideoPosts = (allPosts: any) => {
-    return allPosts.filter(post => post.media && post.media.endsWith('.mp4'));
+    return allPosts.filter(
+      (post: any) => post.media && post.media.endsWith('.mp4'),
+    );
   };
 
   useEffect(() => {
@@ -107,56 +106,6 @@ const HomeScreen = () => {
     );
     setFilteredVideos(filteredData);
   }, [filteredVideos]);
-
-  const fetchPosts = async (page: number) => {
-    if (isLoadingMore) return;
-    setIsLoadingMore(true);
-    try {
-      const response = await axios.get(
-        'http://fitcircle.yameenyousuf.com/posts',
-        {
-          params: {
-            page,
-            limit: 10,
-          },
-        },
-      );
-      const data = response.data;
-      if (data.docs && Array.isArray(data.docs)) {
-        setHasMore(data.docs.length >= 10);
-        if (page === 1) {
-          setFetchedPosts(data.docs);
-
-          dispatch(fetchPostsSuccess(data.docs));
-          const videoPosts = getVideoPosts(data.docs);
-
-          setFilteredVideos(videoPosts);
-          // setFilteredVideos(() => getVideoPosts(data.docs));
-        } else {
-          const posts = [...fetchedPosts, ...data.docs];
-          setFetchedPosts(posts);
-          const videoPosts = getVideoPosts(posts);
-          setFilteredVideos(videoPosts);
-          dispatch(fetchPostsSuccess(data.docs));
-        }
-      } else {
-        console.error('Invalid data format from API:', data);
-        dispatch(fetchPostsFailure('Error fetching posts'));
-      }
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    } finally {
-      setIsRefreshing(false);
-      setIsLoadingMore(false);
-    }
-  };
-
-  const handleLoadMore = () => {
-    if (hasMore && !isLoadingMore) {
-      const nextPage = Math.ceil(fetchedPosts.length / 10) + 1;
-      fetchPosts(nextPage);
-    }
-  };
 
   const handleButtonPress = (button: string) => {
     setSelectedButton(button);
@@ -182,7 +131,8 @@ const HomeScreen = () => {
       <Animated.View
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile' as never)}>
             {profileImageUrl ? (
               <Avatar.Image size={40} source={{uri: profileImageUrl}} />
             ) : (
@@ -203,24 +153,9 @@ const HomeScreen = () => {
             />
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingBottom: 16,
-            // alignSelf: "center",
-          }}>
-          {/* <View></View>
-          <View></View>
-          <View></View> */}
+        <View style={styles.topContentContainer}>
           <View style={styles.topContainerButtons}>
-            <View
-              style={[
-                styles.button,
-                // selectedButton === 'Creator'
-                // ? {backgroundColor: '#019acd'}
-                // : {},
-              ]}>
+            <View style={[styles.button]}>
               <TouchableWithoutFeedback
                 onPress={() => handleButtonPress('My Circle')}>
                 <Text
@@ -247,13 +182,7 @@ const HomeScreen = () => {
               </TouchableWithoutFeedback>
             </View>
           </View>
-          <TouchableOpacity
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginHorizontal: 15,
-              marginTop: 15,
-            }}>
+          <TouchableOpacity style={styles.notificationIcon}>
             <NotificationIcon />
           </TouchableOpacity>
         </View>
@@ -287,17 +216,14 @@ const HomeScreen = () => {
               vertical={true}
               data={filteredVideos}
               keyExtractor={item => item._id}
-              onEndReached={handleLoadMore}
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
               onEndReachedThreshold={3}
               onChangeIndex={i => console.log(i)}
               renderItem={({item, index}: any) => (
                 <ReelsComponent
-                  viewable={Viewable}
                   post={item}
                   index={index}
-                  currIndex={focusedIndex}
                   userId={userId}
                   tabBarHeight={tabBarHeight}
                 />
@@ -316,7 +242,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#353535',
   },
   topContainer: {
-    // flex: 1,
     backgroundColor: '#292a2c',
     justifyContent: 'center',
     height: 120,
@@ -344,16 +269,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: verticalScale(16),
-    // alignSelf: "center"
     margin: 'auto',
-    // backgroundColor: '#5e01a9',
     flex: 1,
     paddingLeft: 25,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor: '#373638',
     borderTopLeftRadius: 40,
     borderBottomRightRadius: 40,
   },
@@ -373,7 +295,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(32),
     color: '#fff',
     marginLeft: -20,
-    // paddingLeft: 20
   },
   input: {
     width: '100%',
@@ -393,6 +314,17 @@ const styles = StyleSheet.create({
     marginBottom: -verticalScale(5),
     paddingHorizontal: horizontalScale(25),
     width: '85%',
+  },
+  notificationIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    marginTop: 15,
+  },
+  topContentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 16,
   },
 });
 
