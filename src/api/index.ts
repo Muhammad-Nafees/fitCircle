@@ -62,7 +62,7 @@ export const createProfile = async (
       formData.append('selectedCommunities[]', community);
     });
   }
-  console.log('API Call', userData.selectedCommunities);
+  console.log('API Call', userData.interest);
   formData.append('profileImage', userData.profileImage);
   formData.append('coverImage', userData.coverImage);
   formData.append('certificateImages', userData.certificateImages);
@@ -87,7 +87,7 @@ export const createProfile = async (
 };
 
 export const postContent = async (postData: any) => {
-  console.log('post button pressed',postData);
+  console.log('post button pressed');
   try {
     const formData = new FormData();
     formData.append('content', postData.content);

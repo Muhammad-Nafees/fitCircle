@@ -21,8 +21,7 @@ const VerifyScreen = ({navigation}: any) => {
   const authToken = useSelector(
     (state: RootState) => state.auth.authorizationToken,
   );
-  console.log(userData);
-  console.log(authToken);
+
 
   const storeData = async (value: any) => {
     try {
@@ -37,30 +36,7 @@ const VerifyScreen = ({navigation}: any) => {
     if (name == 'CertificateVerified') {
       navigation.navigate('InterestScreen');
     } else {
-      setIsLoading(true);
-      try {
-        console.log('try');
-        const response = await createProfile({...userData}, authToken);
-        const data = response?.data;
-        storeData(authToken);
-        console.log(response);
-        // dispatch(setUserData(data));
-        dispatch(authenticate(true));
-        setIsLoading(false);
-        navigation.navigate('HomeScreen');
-        Toast.show({
-          type: 'success',
-          text1: 'Account Created Successfully!',
-          text2: 'Welcome!',
-        });
-      } catch (error: any) {
-        console.log(error.response);
-        setIsLoading(false);
-        Toast.show({
-          type: 'error',
-          text1: 'Server Error!',
-        });
-      }
+      navigation.navigate('HomeScreen');
     }
   };
 

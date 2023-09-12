@@ -47,16 +47,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     const fetchCountries = async () => {
       try {
         const response = await getCountries();
-        // console.log(response.data)
-        // const countries = response?.data.countries;
-        // const countryCodes = Object.keys(countries);
-        // const extractedData = countryCodes.map(countryCode => {
-        //   const country = countries[countryCode];
-        //   return {
-        //     code: countryCode,
-        //     name: country?.name || '',
-        //   };
-        // });
         setAllCountries(response?.data);
       } catch (error: any) {
         console.log('Error fetching countries:', error.response);
@@ -236,6 +226,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               placeholder="Enter your username"
               value={values.username}
               error={errors.username || usernameError}
+              setFieldError={setFieldError}
               touched={touched.username}
               initialTouched={true}
               handleChange={handleChange('username')}

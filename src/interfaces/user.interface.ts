@@ -27,9 +27,9 @@ export interface IUser {
   physicalInformation?: string;
   dob?: string;
   hourlyRate?: string;
-  age?: string;
-  height?: string;
-  weight?: string;
+  age?: string | number;
+  height?: string | number;
+  weight?: string | number;
   activity?: string;
   bodytype?: string;
   interest?: string[];

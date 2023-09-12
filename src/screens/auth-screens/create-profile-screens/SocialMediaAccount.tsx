@@ -8,11 +8,12 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {RootState} from '../../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {ISocial, IUser} from '../../../interfaces/user.interface';
-import {setUserData} from '../../../redux/authSlice';
+import {authenticate, setUserData} from '../../../redux/authSlice';
 import {createProfile} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import Toast from 'react-native-toast-message';
 import * as yup from 'yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const socialMediaSchema = yup.object().shape({
   facebook: yup
@@ -57,9 +58,20 @@ const SocialMediaAccount = ({navigation}: any) => {
   };
 
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>();
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const authToken = useSelector(
+    (state: RootState) => state.auth.authorizationToken,
+  );
+
+  const storeData = async (value: any) => {
+    try {
+      await AsyncStorage.setItem('authToken', value);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const handleSubmit = async (values: FormValues) => {
     const socialMediaLinks: ISocial[] = [
@@ -80,13 +92,42 @@ const SocialMediaAccount = ({navigation}: any) => {
         link: values.twitter,
       },
     ];
-    const partialUserData: Partial<IUser> = {
-      ...previousUserData,
-      role: 'user',
-      socialMediaLinks: socialMediaLinks,
-    };
-    dispatch(setUserData(partialUserData));
-    navigation.navigate('ChooseVerificationType');
+
+    setIsLoading(true);
+    try {
+      const partialUserData: Partial<IUser> = {
+        ...previousUserData,
+        role: 'user',
+        height: Number(userData?.height),
+        weight: Number(userData?.weight),
+        age: Number(userData?.age),
+        activity: userData?.activity == '' ? 'null' : userData?.activity,
+        bodytype: userData?.bodytype == '' ? 'null' : userData?.bodytype,
+        socialMediaLinks: socialMediaLinks,
+      };
+      dispatch(setUserData(partialUserData));
+      console.log(partialUserData, 'sample data');
+      const response = await createProfile({...partialUserData}, authToken);
+      const data = response?.data;
+      storeData(authToken);
+      console.log(response);
+      // dispatch(setUserData(data));
+      dispatch(authenticate(true));
+      setIsLoading(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Account Created Successfully!',
+        text2: 'Welcome!',
+      });
+      navigation.navigate('ChooseVerificationType');
+    } catch (error: any) {
+      console.log(error.response, 'response');
+      setIsLoading(false);
+      Toast.show({
+        type: 'error',
+        text1: error.response.data,
+      });
+    }
   };
   return (
     <ScrollView style={[STYLES.container]}>
@@ -105,7 +146,7 @@ const SocialMediaAccount = ({navigation}: any) => {
             errors,
             touched,
             initialTouched,
-            setFieldError
+            setFieldError,
           }) => (
             <>
               <View>
@@ -125,7 +166,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     handleChange={handleChange('facebook')}
                     isFirstLetterLowercase={true}
                     setFieldError={setFieldError}
-                    fieldName='facebook'
+                    fieldName="facebook"
                   />
                   <CustomInput
                     label="Instagram"
@@ -138,7 +179,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     handleChange={handleChange('instagram')}
                     isFirstLetterLowercase={true}
                     setFieldError={setFieldError}
-                    fieldName='instagram'
+                    fieldName="instagram"
                   />
                   <CustomInput
                     label="Twitter"
@@ -151,7 +192,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     handleChange={handleChange('twitter')}
                     isFirstLetterLowercase={true}
                     setFieldError={setFieldError}
-                    fieldName='twitter'
+                    fieldName="twitter"
                   />
                   <CustomInput
                     label="Tiktok"
@@ -164,7 +205,7 @@ const SocialMediaAccount = ({navigation}: any) => {
                     handleChange={handleChange('tiktok')}
                     isFirstLetterLowercase={true}
                     setFieldError={setFieldError}
-                    fieldName='tiktok'
+                    fieldName="tiktok"
                   />
                 </View>
               </View>
