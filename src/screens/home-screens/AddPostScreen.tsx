@@ -11,6 +11,7 @@ import {
   PermissionsAndroid,
   PanResponder,
   Alert,
+  ScrollView,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -19,11 +20,20 @@ import {
   launchCamera,
   ImagePickerResponse,
 } from 'react-native-image-picker';
-import CustomButton from '../../components/shared-components/CustomButton';
+import {useSelector} from 'react-redux';
 import {Avatar} from 'react-native-paper';
-import {PostOptionsIcon} from '../../components/home-components/PostOptionsIcon';
-import {useNavigation} from '@react-navigation/native';
+import {
+  ParamListBase,
+  useNavigation,
+  useFocusEffect,
+} from '@react-navigation/native';
 import Modal from 'react-native-modal';
+import {Image as ImageCompress} from 'react-native-compressor';
+import LinearGradient from 'react-native-linear-gradient';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+// ------------------------------------------------------------------------------------------------//
+import CustomButton from '../../components/shared-components/CustomButton';
+import {PostOptionsIcon} from '../../components/home-components/PostOptionsIcon';
 import {WhoCanSeeThisPost} from '../../components/home-components/WhoCanSeePost';
 import {CreatePostIcon} from '../../components/home-components/CreatePostIcon';
 import {BottomMinimizedContainer} from '../../components/home-components/BottomMinimizedContainer';
@@ -33,24 +43,16 @@ import {
   moderateScale,
   verticalScale,
 } from '../../utils/metrics';
-import {useSelector} from 'react-redux';
-import Toast from 'react-native-toast-message';
-import {postContent} from '../../api';
 import {RootState} from '../../redux/store';
 import VideoPreviewScreen from './VideoPreviewScreen';
-import {ScrollView} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
 import CustomLoader from '../../components/shared-components/CustomLoader';
-import LinearGradient from 'react-native-linear-gradient';
-
-import {Image as ImageCompress} from 'react-native-compressor';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 
 export const AddPostScreen = ({route}: any) => {
-  const navigation = useNavigation();
-  const userData = useSelector((state: RootState) => state.auth.user);
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const userData: any = useSelector((state: RootState) => state.auth.user);
   const [profileImageUrl, setProfileImageUrl] = useState();
   const username = userData?.username;
   const [selectedOption, setSelectedOption] = useState('Public');
@@ -111,89 +113,6 @@ export const AddPostScreen = ({route}: any) => {
     setCostValue(value);
   };
 
-  const handlePostButtonPress = async () => {
-    setIsLoading(true);
-
-    if (textInputValue.trim().length === 0 && !mediaUri) {
-      Toast.show({
-        type: 'error',
-        text1: 'Post Empty',
-        text2: 'Post cannot be empty. Please attach media or text',
-        visibilityTime: 2000,
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      let hexCode: string;
-
-      if (!Array.isArray(textInputBackgroundColor))
-        hexCode = textInputBackgroundColor;
-      else {
-        let str = '';
-
-        textInputBackgroundColor.forEach((hex, i) => {
-          str += hex + (i === textInputBackgroundColor.length - 1 ? '' : ',');
-        });
-
-        hexCode = str;
-      }
-      if (mediaUri) {
-        const result = await ImageCompress.compress(mediaUri, {
-          quality: 0.8,
-        });
-        setCompressedImage(result);
-      }
-      let postData = {
-        content: textInputValue,
-        media: videoUri ? videoUri : compressedImage,
-        visibility: selectedOption.toLowerCase(),
-        hexCode:
-          textInputBackgroundColor === 'transparent' ? null : `${hexCode}`,
-      };
-
-      if (mediaUri) {
-        postData = {
-          ...postData,
-          cost: costValue > 0 ? costValue : null,
-        };
-      } else {
-        postData = {
-          ...postData,
-          cost: null,
-        };
-      }
-      const response = await postContent(postData);
-      if (response.status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Post successful',
-          visibilityTime: 2000,
-        });
-        setIsLoading(false);
-      } else {
-        Toast.show({
-          type: 'success',
-          text1: 'Post successful',
-          visibilityTime: 2000,
-        });
-        console.log('Post failed:', response.data);
-        setIsLoading(false);
-        navigation.navigate('Home');
-      }
-    } catch (error) {
-      console.log('Error posting content:', error);
-      Toast.show({
-        type: 'error',
-        text1: 'Post Failed',
-        visibilityTime: 2000,
-      });
-      setIsLoading(false);
-      navigation.navigate('Home');
-    }
-  };
-
   const handleAvatarButtonPress = () => {
     setIsModalVisible(!isModalVisible);
   };
@@ -235,7 +154,7 @@ export const AddPostScreen = ({route}: any) => {
 
     launchImageLibrary(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
+        setMediaUri(response.assets[0].uri as any);
       }
     });
   };
@@ -284,7 +203,7 @@ export const AddPostScreen = ({route}: any) => {
     };
     launchCamera(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
+        setMediaUri(response.assets[0].uri as any);
       }
     });
   };
@@ -391,7 +310,7 @@ export const AddPostScreen = ({route}: any) => {
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
               <CustomButton
-                onPress={handlePostButtonPress}
+                onPress={() => console.log('Something')}
                 extraStyles={{
                   width: 56,
                   height: 31,
@@ -428,15 +347,7 @@ export const AddPostScreen = ({route}: any) => {
                   style={{color: 'white', textAlign: 'center', fontSize: 10}}>
                   {selectedOption}
                 </Text>
-                <Image
-                  source={ArrowDownIcon}
-                  style={{
-                    width: 12,
-                    height: 12,
-                    tintColor: 'white',
-                    marginTop: 2,
-                  }}
-                />
+                <Image source={ArrowDownIcon} style={styles.arrowDown} />
               </TouchableOpacity>
             </View>
             <View
@@ -734,5 +645,11 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     tintColor: 'white',
+  },
+  arrowDown: {
+    width: 12,
+    height: 12,
+    tintColor: 'white',
+    marginTop: 2,
   },
 });

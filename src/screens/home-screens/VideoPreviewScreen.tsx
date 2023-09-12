@@ -9,29 +9,16 @@ import {
   BackHandler,
 } from 'react-native';
 import Video from 'react-native-video';
-const Icon = require('../../../assets/icons/cancel.png');
 import {Avatar} from 'react-native-paper';
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from '../../utils/metrics';
-import CustomButton from '../../components/shared-components/CustomButton';
 import Modal from 'react-native-modal';
-import {WhoCanSeeThisPost} from '../../components/home-components/WhoCanSeePost';
-import {Boost} from '../../components/home-components/Boost';
-const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
-import BoostIcon from '../../../assets/icons/BoostIcon';
-import TextIcon from '../../../assets/icons/TextIcon';
 import {format} from 'date-fns';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  ParamListBase,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import axiosInstance from '../../api/interceptor';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../redux/store';
-import CustomLoader from '../../components/shared-components/CustomLoader';
-import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
-const CancelIcon = require('../../../assets/icons/cancel.png');
 import {
   ImageLibraryOptions,
   launchImageLibrary,
@@ -39,13 +26,30 @@ import {
   launchCamera,
   ImagePickerResponse,
 } from 'react-native-image-picker';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import BottomSheet, {BottomSheetSectionList} from '@gorhom/bottom-sheet';
+//-------------------------------------------------------------------------------//
+import CustomButton from '../../components/shared-components/CustomButton';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
+import {WhoCanSeeThisPost} from '../../components/home-components/WhoCanSeePost';
+import {Boost} from '../../components/home-components/Boost';
+const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
+import BoostIcon from '../../../assets/icons/BoostIcon';
+import TextIcon from '../../../assets/icons/TextIcon';
+import {RootState} from '../../redux/store';
+import CustomLoader from '../../components/shared-components/CustomLoader';
+import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
+const CancelIcon = require('../../../assets/icons/cancel.png');
 import Cameraicon from '../../../assets/icons/Cameraicon';
 import MusicIcon from '../../../assets/icons/MusicIcon';
-import BottomSheet, {BottomSheetSectionList} from '@gorhom/bottom-sheet';
 import CustomBottomSheet from '../../components/shared-components/CustomBottomSheet';
-import {BlurView} from '@react-native-community/blur';
 import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
 import DiscIcon from '../../../assets/icons/DiscIcon';
+import BoostPriceDialog from '../../components/home-components/BoostPriceDialog';
 
 interface VideoPreviewScreenProps {
   videoUri: string;
@@ -63,7 +67,7 @@ export const VideoPreviewScreen = ({
   setIsComponentMounted,
   handleBackButtonPress,
 }: VideoPreviewScreenProps) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const options = [
     {label: '24hrs', price: '$5'},
     {label: '72hrs', price: '$10'},
@@ -275,14 +279,7 @@ export const VideoPreviewScreen = ({
               {thumbnailOpen ? 'Back' : 'Select Thumbnail'}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 2,
-            }}
-            onPress={handleMusicModal}>
+          <TouchableOpacity style={styles.music} onPress={handleMusicModal}>
             <MusicIcon />
             <Text style={styles.iconText}>Music</Text>
           </TouchableOpacity>
@@ -302,20 +299,8 @@ export const VideoPreviewScreen = ({
             </TouchableOpacity>
           )}
         </View>
-        <View
-          style={{
-            position: 'absolute',
-            zIndex: 99,
-            bottom: 110,
-            left: 32,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '74%',
-            }}>
+        <View style={styles.musicContainer}>
+          <View style={styles.musicModal}>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
               <MusicIconTwo />
               <Text style={{color: 'white', opacity: 0.7}}>
@@ -381,13 +366,7 @@ export const VideoPreviewScreen = ({
             style={{
               backgroundColor: '#00abd2',
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-                padding: 10,
-              }}>
+            <View style={styles.thumbnailContainer}>
               <View>
                 <Text style={{color: '#fff', marginRight: 20}}>
                   Thumbnail Attached
@@ -447,7 +426,7 @@ export const VideoPreviewScreen = ({
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
-              <CustomButton onPress={handlePostButtonPress}>
+              <CustomButton onPress={() => console.log('Something')}>
                 {isLoading ? <CustomLoader /> : 'Share'}
               </CustomButton>
             </View>
@@ -455,20 +434,12 @@ export const VideoPreviewScreen = ({
         )}
       </View>
       {showDialog && (
-        <View style={styles.dialogContainer}>
-          <View style={styles.dialogBox}>
-            <Text style={styles.dialogText}>Please Confirm</Text>
-            <Text style={styles.dialogText}>
-              Do you want to boost this post for {selectedOptionInternal.price}?
-            </Text>
-            <CustomButton onPress={successfulCompletion}>Yes</CustomButton>
-            <CustomButton
-              onPress={unsuccessfulCompletion}
-              extraStyles={{backgroundColor: 'red', marginVertical: 10}}>
-              No
-            </CustomButton>
-          </View>
-        </View>
+        <>
+          <BoostPriceDialog
+            onYes={unsuccessfulCompletion}
+            onNo={unsuccessfulCompletion}
+          />
+        </>
       )}
       {isMusicModalVisible && (
         <>
@@ -583,9 +554,6 @@ const styles = StyleSheet.create({
   },
   singleIconContainer: {
     marginVertical: verticalScale(5),
-
-    // alignItems: 'flex-end',
-    // alignSelf: 'flex-end',
   },
   icon: {
     width: horizontalScale(40),
@@ -630,28 +598,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
-  dialogContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  dialogBox: {
-    backgroundColor: '#292a2c',
-    padding: moderateScale(20),
-    borderRadius: 8,
-  },
-  dialogText: {
-    fontSize: 16,
-    marginBottom: verticalScale(10),
-    color: '#fff',
-    textAlign: 'center',
-  },
   cancelIcon: {
     width: horizontalScale(24),
     height: verticalScale(24),
@@ -669,6 +615,30 @@ const styles = StyleSheet.create({
     height: 12,
     tintColor: 'white',
     marginTop: 2,
+  },
+  music: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 2,
+  },
+  musicModal: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '74%',
+  },
+  thumbnailContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 10,
+    padding: 10,
+  },
+  musicContainer: {
+    position: 'absolute',
+    zIndex: 99,
+    bottom: 110,
+    left: 32,
   },
 });
 
