@@ -10,16 +10,16 @@ import {
 } from 'react-native';
 import Video from 'react-native-video';
 import {Avatar} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
+import {createThumbnail} from 'react-native-create-thumbnail';
+// ---------------------------------------------------------------------//
 const FavouritesIcon = require('../../../assets/icons/favourites.png');
 const ShareIcon = require('../../../assets/icons/share2.png');
 const PlayIcon = require('../../../assets/icons/playIcon.png');
 const PauseIcon = require('../../../assets/icons/pauseIcon.png');
 const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 const CancelIcon = require('../../../assets/icons/cancel.png');
-import {useNavigation} from '@react-navigation/native';
-import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-import {createThumbnail} from 'react-native-create-thumbnail';
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
@@ -47,33 +47,8 @@ interface ReelsProps {
   handleFavoriteDialog?: any;
 }
 
-const defaultPost = {
-  _id: '64e0b316ee5a31d3fa55edec',
-  user: {
-    _id: '64c0489c1b7733ae1e2c2614',
-    email: 'fitcircletest1234@gmail.com',
-    username: 'Sam32',
-  },
-  content: 'Testing',
-  media:
-    'https://fit-1-bucket.s3.us-west-1.amazonaws.com/1692447509448_0.33454017719268325_video.mp4',
-  thumbnail: null,
-  visibility: 'public',
-  favorites: [],
-  cost: null,
-  boosted: false,
-  boostEndTime: null,
-  hexCode: null,
-  likes: [],
-  comments: [],
-  shares: [],
-  createdAt: '2023-08-19T12:18:30.172Z',
-  updatedAt: '2023-08-19T12:18:30.172Z',
-  __v: 0,
-};
-
 export const ReelsComponent = ({
-  post = defaultPost,
+  post,
   userId,
   index,
   tabBarHeight,
@@ -91,7 +66,6 @@ export const ReelsComponent = ({
   const [isFavorited, setIsFavorited] = useState(false);
   const [showThumbnail, setShowThumbnail] = useState(thumbnail !== null);
   const navigation = useNavigation();
-  console.log(thumbnail);
   const [videoThumbnail, setVideoThumbnail] = useState<any>();
 
   const fetchThumbnail = async () => {
@@ -101,15 +75,12 @@ export const ReelsComponent = ({
         timeStamp: 1000,
         format: 'jpeg',
       });
-      console.log({response}, 'respnse');
-      console.log(response.path, 'patj');
       setVideoThumbnail(response.path);
     } catch (err) {
       console.log('err', err);
     }
   };
 
-  console.log(videoThumbnail, 'videoTHumb');
   useEffect(() => {
     fetchThumbnail();
   }, []);
@@ -146,17 +117,7 @@ export const ReelsComponent = ({
     if (isProfile === true) {
       handleFavoriteDialog();
     } else {
-      const apiEndpoint = `posts/favs/${_id}`;
-      axiosInstance
-        .patch(apiEndpoint)
-        .then(response => {
-          console.log('Comment Posted successfully!');
-          console.log(response);
-        })
-        .catch(error => {
-          console.error('Error while commenting on the post:', error);
-        });
-      navigation.navigate('FavoriteDialog');
+      navigation.navigate('FavoriteDialog' as never);
     }
   };
 
@@ -227,11 +188,7 @@ export const ReelsComponent = ({
             <Text style={styles.lockedText}>{content}</Text>
             <TouchableOpacity style={styles.lockedButtonContainer}>
               <Text style={{color: '#fff'}}>
-                Unlock this video for{' '}
-                <Text
-                  style={{color: '#30D298', fontWeight: '600', fontSize: 16}}>
-                  ${cost}
-                </Text>
+                Unlock this video for <Text style={styles.cost}>${cost}</Text>
               </Text>
               <View style={styles.lockedIconContainer}>
                 <Image source={LockOpenIcon} style={styles.lockIcon} />
@@ -266,13 +223,7 @@ export const ReelsComponent = ({
         source={{
           uri: media,
         }}
-        style={{
-          width: '100%',
-          height: '100%',
-          borderColor: 'black',
-          borderWidth: 0,
-          zIndex: 0,
-        }}
+        style={styles.video}
         paused={!play}
         onTouchStart={() => setShowPlayIcon(true)}
         onLoad={() => {
@@ -501,68 +452,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  playIconContainer: {
-    position: 'absolute',
-    top: '50%',
-    left: '47%',
-    transform: [
-      {translateX: -horizontalScale(38) / 2},
-      {translateY: -verticalScale(41) / 2},
-    ],
-    zIndex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
+  video: {
+    width: '100%',
+    height: '100%',
+    borderColor: 'black',
+    borderWidth: 0,
+    zIndex: 0,
   },
-  playIconBackground: {
-    backgroundColor: 'rgba(141, 156, 152, 0.8)',
-    width: horizontalScale(55),
-    height: verticalScale(55),
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  playIcon: {
-    width: horizontalScale(38),
-    height: verticalScale(41),
-    tintColor: '#fff',
-  },
-  lockIcon: {
-    width: horizontalScale(18),
-    height: verticalScale(18),
-    tintColor: '#fff',
-  },
-  lockedButtonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#209BCC',
-    borderRadius: 40,
-    paddingVertical: verticalScale(6),
-    paddingHorizontal: horizontalScale(16),
-    marginVertical: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  lockedIconContainer: {
-    backgroundColor: '#43c1df',
-    paddingHorizontal: horizontalScale(10),
-    paddingVertical: verticalScale(10),
-    marginLeft: horizontalScale(12),
-    borderRadius: 40,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
+  cost: {color: '#30D298', fontWeight: '600', fontSize: 16},
 });
 
 export default ReelsComponent;
