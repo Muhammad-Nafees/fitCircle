@@ -147,90 +147,6 @@ export const VideoPreviewScreen = ({
     setContent('');
   };
 
-  const handlePostButtonPress = async () => {
-    console.log(music);
-    const trimmedContent = content.trim();
-    if (trimmedContent === '') {
-      Toast.show({
-        type: 'error',
-        text1: 'Video cannot be shared without text content',
-        visibilityTime: 3000,
-      });
-      return;
-    }
-    setIsLoading(true);
-    console.log(selectedOptionInternal.label);
-    try {
-      const formData = new FormData();
-      formData.append('content', content);
-      formData.append('visibility', selectedOption.toLowerCase());
-      formData.append('media', {
-        uri: videoUri,
-        name: 'video.mp4',
-        type: 'video/mp4',
-      });
-
-      const selectedBackendOption: any =
-        frontendToBackendMapping[selectedOptionInternal.label];
-      if (payment) {
-        formData.append('boostTimePeriod', selectedBackendOption);
-      }
-      if (costValue && costValue > 0) {
-        formData.append('cost', costValue.toString());
-      }
-      if (thumbnail !== null) {
-        formData.append('thumbnail', {
-          uri: thumbnail,
-          type: 'image/jpeg',
-          name: `image_${Date.now()}.jpg`,
-        });
-      }
-      const response = await axiosInstance.post('/posts/create', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      if (response.data.success) {
-        Toast.show({
-          type: 'success',
-          text1: payment ? 'Post Boosted Successfully!' : 'Post Shared!',
-          visibilityTime: 5000,
-        });
-        console.log(response);
-        setIsLoading(false);
-        handleBackButtonPress();
-        handleClose();
-        navigation.navigate('Home');
-      } else {
-        Toast.show({
-          type: 'success',
-          text1: payment ? 'Post Boosted Successfully!' : 'Post Shared!',
-          visibilityTime: 5000,
-        });
-        console.log(response);
-        setIsLoading(false);
-        handleBackButtonPress();
-        handleClose();
-        navigation.navigate('Home');
-      }
-    } catch (error: any) {
-      console.log('API call error:', error?.response.data);
-      Toast.show({
-        type: 'error',
-        text1: 'Error sharing post. Please try again!',
-        visibilityTime: 5000,
-      });
-      setIsLoading(false);
-      handleClose();
-      handleBackButtonPress();
-      handleNavigation();
-    }
-  };
-
-  const onBuffer = () => {
-    console.log('onBuffer2');
-  };
-
   const handleBoostModal = () => {
     if (payment) {
       Toast.show({
@@ -527,15 +443,7 @@ export const VideoPreviewScreen = ({
                   style={{color: 'white', textAlign: 'center', fontSize: 10}}>
                   {selectedOption}
                 </Text>
-                <Image
-                  source={ArrowDownIcon}
-                  style={{
-                    width: 12,
-                    height: 12,
-                    tintColor: 'white',
-                    marginTop: 2,
-                  }}
-                />
+                <Image source={ArrowDownIcon} style={styles.arrowDown} />
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
@@ -755,6 +663,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20,
     marginHorizontal: 16,
+  },
+  arrowDown: {
+    width: 12,
+    height: 12,
+    tintColor: 'white',
+    marginTop: 2,
   },
 });
 
