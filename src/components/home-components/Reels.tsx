@@ -40,9 +40,7 @@ interface ReelsProps {
     };
   };
   userId: string | undefined;
-  viewable: any;
   index: number;
-  currIndex: number;
   tabBarHeight: any;
   isProfile?: boolean;
   handleCancelPress?: any;
@@ -77,9 +75,7 @@ const defaultPost = {
 export const ReelsComponent = ({
   post = defaultPost,
   userId,
-  viewable,
   index,
-  currIndex,
   tabBarHeight,
   isProfile = false,
   handleCancelPress,
