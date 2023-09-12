@@ -8,8 +8,9 @@ import {
   TextInput,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+//------------------------------------------------------------------------------------//
 import CustomButton from '../shared-components/CustomButton';
-import { horizontalScale, verticalScale } from '../../utils/metrics';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const RadioUncheckedIcon = require('../../../assets/icons/radio-button-uncheck.png');
 const RadioCheckedIcon = require('../../../assets/icons/radio-button-checked.png');

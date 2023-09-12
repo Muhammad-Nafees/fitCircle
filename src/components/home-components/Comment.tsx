@@ -3,12 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   Image,
   ScrollView,
-  KeyboardAvoidingView,
-  Dimensions,
 } from 'react-native';
 import {
   horizontalScale,
@@ -16,18 +13,8 @@ import {
   verticalScale,
 } from '../../utils/metrics';
 import {Avatar} from 'react-native-paper';
-import {
-  ImageLibraryOptions,
-  ImagePickerResponse,
-  launchImageLibrary,
-} from 'react-native-image-picker';
-const CancelIcon = require('../../../assets/icons/cancel.png');
-const SendIcon = require('../../../assets/icons/send.png');
-import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
-import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
-
 import Entypo from 'react-native-vector-icons/Entypo';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+const CancelIcon = require('../../../assets/icons/cancel.png');
 
 interface CommentProps {
   comments: CommentItem[];
