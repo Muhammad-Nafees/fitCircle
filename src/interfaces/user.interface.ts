@@ -36,6 +36,7 @@ export interface IUser {
   certificateImages?: any[];
   selectedCommunities?: string[];
   socialMediaLinks?: ISocial[];
+  password?: string;
 }
 
 export interface IPost {

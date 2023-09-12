@@ -75,7 +75,7 @@ const CreateAccount = ({navigation, route}: any) => {
         console.log(response?.data.email);
         dispatch(authenticate());
         dispatch(setAuthorizationToken(response?.headers.authorization));
-        dispatch(setUserData({email: route.params.email}));
+        dispatch(setUserData({email: values.email, password: values.password}));
         navigation.navigate('CreateProfile', {email: route.params.email});
       }
     } catch (error: any) {

@@ -36,28 +36,28 @@ const followersData = [
     _id: '64ae8bd037daa1ca15632e2d',
     email: 'testxgz@gmail.com',
     profileImageUrl:
-      'https://fit-1-bucket.s3.us-west-1.amazonaws.com/64ae8bd037daa1ca15632e2d_profileImage.jpg',
+      'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/64ae8bd037daa1ca15632e2d_profileImage.jpg',
     username: 'test',
   },
   {
     _id: '64b5199b85ed6958d701b4a1',
     email: 'testxgz@example.com',
     profileImageUrl:
-      'https://fit-1-bucket.s3.us-west-1.amazonaws.com/64b5199b85ed6958d701b4a1_profileImage.jpg',
+      'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/64b5199b85ed6958d701b4a1_profileImage.jpg',
     username: 'test',
   },
   {
     _id: '64b443db507cf41a08eed375',
     email: 'hell@example.com',
     profileImageUrl:
-      'https://fit-1-bucket.s3.us-west-1.amazonaws.com/64b443db507cf41a08eed375_profileImage.jpg',
+      'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/64b443db507cf41a08eed375_profileImage.jpg',
     username: 'test',
   },
   {
     _id: '64c12345d9e8c6b8f2345678',
     email: 'johndoe@example.com',
     profileImageUrl:
-      'https://fit-1-bucket.s3.us-west-1.amazonaws.com/64c12345d9e8c6b8f2345678_profileImage.jpg',
+      'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/64c12345d9e8c6b8f2345678_profileImage.jpg',
     username: 'johndoe',
   },
 ];
@@ -68,28 +68,28 @@ const followingData = [
     _id: '64cde1f78b53a2d9e1234567',
     email: 'user123@example.com',
     profileImageUrl:
-      'https://fit-1-bucket.s3.us-west-1.amazonaws.com/64cde1f78b53a2d9e1234567_profileImage.jpg',
+      'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/64cde1f78b53a2d9e1234567_profileImage.jpg',
     username: 'user123',
   },
   {
     _id: '64def2c89c74b3f0f2345678',
     email: 'user456@example.com',
     profileImageUrl:
-      'https://fit-1-bucket.s3.us-west-1.amazonaws.com/64def2c89c74b3f0f2345678_profileImage.jpg',
+      'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/64def2c89c74b3f0f2345678_profileImage.jpg',
     username: 'user456',
   },
   {
     _id: '64efg3d790124a5b1234567a',
     email: 'user789@example.com',
     profileImageUrl:
-      'https://fit-1-bucket.s3.us-west-1.amazonaws.com/64efg3d790124a5b1234567a_profileImage.jpg',
+      'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/64efg3d790124a5b1234567a_profileImage.jpg',
     username: 'user789',
   },
   {
     _id: '64fgh4e6911ab6c1c1234567b',
     email: 'janedoe@example.com',
     profileImageUrl:
-      'https://fit-1-bucket.s3.us-west-1.amazonaws.com/64fgh4e6911ab6c1c1234567b_profileImage.jpg',
+      'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/64fgh4e6911ab6c1c1234567b_profileImage.jpg',
     username: 'janedoe',
   },
 ];

@@ -126,6 +126,7 @@ const HomeScreen = () => {
         setHasMore(data.docs.length >= 10);
         if (page === 1) {
           setFetchedPosts(data.docs);
+          console.log(data.docs,"qulllunnn")
 
           dispatch(fetchPostsSuccess(data.docs));
           const videoPosts = getVideoPosts(data.docs);

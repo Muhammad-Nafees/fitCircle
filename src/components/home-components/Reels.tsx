@@ -58,7 +58,7 @@ const defaultPost = {
   },
   content: 'Testing',
   media:
-    'https://fit-1-bucket.s3.us-west-1.amazonaws.com/1692447509448_0.33454017719268325_video.mp4',
+    'https://fitcircle-life-bucket.s3.us-west-1.amazonaws.com/1692447509448_0.33454017719268325_video.mp4',
   thumbnail: null,
   visibility: 'public',
   favorites: [],
@@ -100,7 +100,6 @@ export const ReelsComponent = ({
 
   const fetchThumbnail = async () => {
     if (thumbnail !== null) {
-      console.log("first")
       setVideoThumbnail(thumbnail);
     } else {
       try {

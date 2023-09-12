@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {STYLES} from '../../../styles/globalStyles';
@@ -22,7 +22,6 @@ const VerifyScreen = ({navigation}: any) => {
     (state: RootState) => state.auth.authorizationToken,
   );
 
-
   const storeData = async (value: any) => {
     try {
       await AsyncStorage.setItem('authToken', value);
@@ -30,12 +29,14 @@ const VerifyScreen = ({navigation}: any) => {
       console.log(e);
     }
   };
+  useEffect(() => {}, []);
 
   console.log(userData);
   const handleNavigation = async () => {
     if (name == 'CertificateVerified') {
       navigation.navigate('InterestScreen');
     } else {
+      dispatch(authenticate(true));
       navigation.navigate('HomeScreen');
     }
   };

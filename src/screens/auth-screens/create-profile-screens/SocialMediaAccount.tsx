@@ -112,7 +112,6 @@ const SocialMediaAccount = ({navigation}: any) => {
       storeData(authToken);
       console.log(response);
       // dispatch(setUserData(data));
-      dispatch(authenticate(true));
       setIsLoading(false);
       Toast.show({
         type: 'success',

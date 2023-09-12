@@ -188,7 +188,7 @@ export const AddPostScreen = ({route}: any) => {
           text1: 'Post successful',
           visibilityTime: 2000,
         });
-        console.log('Post failed:', response.data);
+        console.log('Post data:', response.data);
         setIsLoading(false);
         navigation.navigate('Home');
       }

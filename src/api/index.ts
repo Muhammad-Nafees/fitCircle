@@ -39,6 +39,9 @@ export const createProfile = async (
   authorizationToken: string,
 ) => {
   const formData = new FormData();
+  formData.append('email', userData.email);
+  formData.append('password', userData.password);
+
   formData.append('firstName', userData.firstName);
   formData.append('lastName', userData.lastName);
   formData.append('username', userData.username);
@@ -56,16 +59,20 @@ export const createProfile = async (
   formData.append('bodyType', userData.bodytype);
   formData.append('role', 'user');
   formData.append('hourlyRate', userData.hourlyRate);
-  formData.append('interest', userData.interest);
+  formData.append('interest[]', userData.interest);
   if (userData.selectedCommunities) {
     userData.selectedCommunities.forEach(community => {
       formData.append('selectedCommunities[]', community);
     });
   }
   console.log('API Call', userData.interest);
-  formData.append('profileImage', userData.profileImage);
-  formData.append('coverImage', userData.coverImage);
-  formData.append('certificateImages', userData.certificateImages);
+  if (userData?.profileImage) {
+    formData.append('profileImage', userData.profileImage);
+  }
+  if (userData.coverImage) {
+    formData.append('coverImage', userData.coverImage);
+  }
+  // formData.append('certificateImages', userData.certificateImages);
   if (userData?.socialMediaLinks) {
     userData.socialMediaLinks.forEach((link: ISocial, index: number) => {
       formData.append(`socialMediaLinks[${index}][name]`, link.name);
