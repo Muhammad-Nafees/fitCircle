@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 5,
   },
   messagesCountText: {
     fontSize: 12,
