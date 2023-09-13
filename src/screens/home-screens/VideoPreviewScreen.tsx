@@ -48,6 +48,7 @@ import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
 import DiscIcon from '../../../assets/icons/DiscIcon';
 import ViewShot from 'react-native-view-shot';
 import {createThumbnail} from 'react-native-create-thumbnail';
+import axios from 'axios';
 const PlayIcon = require('../../../assets/icons/playIcon.png');
 const PauseIcon = require('../../../assets/icons/pauseIcon.png');
 interface VideoPreviewScreenProps {
@@ -202,12 +203,15 @@ export const VideoPreviewScreen = ({
           name: `image_${Date.now()}.jpg`,
         });
       }
-      console.log(formData,"formadara")
-      const response = await axiosInstance.post('/posts/create', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await axios.post(
+        'http://fitcircle.yameenyousuf.com/posts/create',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
       if (response.data.success) {
         Toast.show({
           type: 'success',
@@ -231,7 +235,7 @@ export const VideoPreviewScreen = ({
         navigation.navigate('Home');
       }
     } catch (error: any) {
-      console.log('API call error:', error?.response.data);
+      console.log('API call error:', error?.response);
       Toast.show({
         type: 'error',
         text1: 'Error sharing post. Please try again!',
@@ -362,7 +366,7 @@ export const VideoPreviewScreen = ({
         {/* <ViewShot ref={viewShotRef} options={{format: 'jpg', quality: 0.9}}> */}
         <Video
           ref={videoRef}
-          onError={onError}
+          // onError={onError}
           resizeMode="cover"
           repeat={true}
           paused={isPlay}

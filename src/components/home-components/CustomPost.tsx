@@ -64,7 +64,6 @@ export const CustomPost = ({
 }: CustomPostProps) => {
   const {_id, media, content, likes, createdAt, user, hexCode, cost} = post;
   let isGradient = hexCode && hexCode.includes(',');
-  console.log(media, 'qqqq');
 
   const {profileImageUrl, username} = user;
   const [isShareModalVisible, setShareModalVisible] = useState(false);
@@ -294,7 +293,7 @@ export const CustomPost = ({
           <Image
             style={styles.image}
             source={{
-              uri: 'https://peacemakers3.s3.us-east-2.amazonaws.com/uploads/c898c9f2-d4a7-4fd2-8e00-84f8720372cc-783px-Test-Logo.svg.png',
+              uri: media,
             }}
           />
         </TouchableOpacity>

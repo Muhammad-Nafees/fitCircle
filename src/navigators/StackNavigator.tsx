@@ -104,11 +104,11 @@ const StackNavigator = () => {
         component={VerifyScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="HomeScreen"
         component={HomeTabNavigator}
         options={{headerShown: false}}
-      />
+      /> */}
     </Stack.Navigator>
   );
 };

@@ -108,7 +108,7 @@ export const SearchScreen = () => {
       setSearchData(users);
       setIsLoading(false);
     } catch (error: any) {
-      console.log('Error fetching cities:', error);
+      console.log('Error fetching :', error.response.data);
       setIsLoading(false);
     }
   };

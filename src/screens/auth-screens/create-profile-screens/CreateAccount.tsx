@@ -69,13 +69,14 @@ const CreateAccount = ({navigation, route}: any) => {
         phone: `+${phoneCode}${values.phone}`,
       };
       const response = await register(dataToSend);
+      console.log(response.data,"response.data")
       console.log('first');
       if (response?.status === 200) {
         setIsLoading(false);
         console.log(response?.data.email);
         dispatch(authenticate());
         dispatch(setAuthorizationToken(response?.headers.authorization));
-        dispatch(setUserData({email: values.email, password: values.password}));
+        dispatch(setUserData({email: route.params.email}));
         navigation.navigate('CreateProfile', {email: route.params.email});
       }
     } catch (error: any) {

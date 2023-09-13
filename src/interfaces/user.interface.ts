@@ -14,8 +14,8 @@ export interface IUser {
   _id?: string;
   email?: string;
   role?: IUserRole | undefined;
-  profileImage?: FileData | null;
-  coverImage?: FileData | null;
+  profileImage?: FileData | null | any;
+  coverImage?: FileData | null | any;
   phone?: any;
   firstName?: string;
   lastName?: string;

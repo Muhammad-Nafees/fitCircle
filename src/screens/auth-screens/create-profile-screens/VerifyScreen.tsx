@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {STYLES} from '../../../styles/globalStyles';
@@ -21,6 +21,8 @@ const VerifyScreen = ({navigation}: any) => {
   const authToken = useSelector(
     (state: RootState) => state.auth.authorizationToken,
   );
+  console.log(userData);
+  console.log(authToken);
 
   const storeData = async (value: any) => {
     try {
@@ -29,15 +31,37 @@ const VerifyScreen = ({navigation}: any) => {
       console.log(e);
     }
   };
-  useEffect(() => {}, []);
 
   console.log(userData);
   const handleNavigation = async () => {
     if (name == 'CertificateVerified') {
       navigation.navigate('InterestScreen');
     } else {
-      dispatch(authenticate(true));
-      navigation.navigate('HomeScreen');
+      setIsLoading(true);
+      try {
+        console.log('try');
+        const response = await createProfile({...userData}, authToken);
+        const data = response?.data;
+        dispatch(setUserData(response?.data));
+        storeData(authToken);
+        console.log(response);
+        // dispatch(setUserData(data));
+        dispatch(authenticate(true));
+        setIsLoading(false);
+        navigation.navigate('HomeScreen');
+        Toast.show({
+          type: 'success',
+          text1: 'Account Created Successfully!',
+          text2: 'Welcome!',
+        });
+      } catch (error: any) {
+        console.log(error.response);
+        setIsLoading(false);
+        Toast.show({
+          type: 'error',
+          text1: 'Server Error!',
+        });
+      }
     }
   };
 

@@ -97,7 +97,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
         .get(`profile/user/${userData._id}`)
         .then(response => {
           const data = response.data;
-          console.log(response.data);
+          console.log(response.data, 'DDDDD');
           // setCommunities(data.communities);
           // setFollowing(data.following);
           // setFollowers(data.followers);
@@ -179,6 +179,9 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const handleFavoriteDialog = () => {
     setRemoveModal(!removeModal);
   };
+  const profile = useSelector(
+    (state: RootState) => state.auth.user?.profileImage,
+  );
 
   return (
     <View style={[styles.container]}>
@@ -220,7 +223,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
           {profileImageUrl ? (
             <Avatar.Image
               size={90}
-              source={{uri: profileImageUrl}}
+              source={{uri: profile}}
               style={styles.avatarImage}
             />
           ) : (

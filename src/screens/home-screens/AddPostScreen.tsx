@@ -44,6 +44,7 @@ import CustomLoader from '../../components/shared-components/CustomLoader';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {Image as ImageCompress} from 'react-native-compressor';
+import {stat} from 'react-native-fs';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
@@ -111,6 +112,11 @@ export const AddPostScreen = ({route}: any) => {
     setCostValue(value);
   };
 
+  const authToken = useSelector(
+    (state: RootState) => state.auth.authorizationToken,
+  );
+  console.log(authToken, 'aaaaaaaaaaaaaaaaa');
+
   const handlePostButtonPress = async () => {
     if (textInputValue == '') {
       Toast.show({
@@ -140,7 +146,6 @@ export const AddPostScreen = ({route}: any) => {
         hexCode = textInputBackgroundColor;
       else {
         let str = '';
-
         textInputBackgroundColor.forEach((hex, i) => {
           str += hex + (i === textInputBackgroundColor.length - 1 ? '' : ',');
         });
@@ -155,7 +160,7 @@ export const AddPostScreen = ({route}: any) => {
       }
       let postData = {
         content: textInputValue,
-        media: videoUri ? videoUri : compressedImage,
+        media: videoUri ? videoUri : mediaUri,
         visibility: selectedOption.toLowerCase(),
         hexCode:
           textInputBackgroundColor === 'transparent' ? null : `${hexCode}`,
@@ -172,7 +177,6 @@ export const AddPostScreen = ({route}: any) => {
           cost: null,
         };
       }
-      console.log(postData,"postData");
 
       const response = await postContent(postData);
       if (response.status === 200) {
@@ -239,13 +243,19 @@ export const AddPostScreen = ({route}: any) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
+
+      // maxWidth: 500,
+      // maxHeight: 500,
     };
 
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
+    launchImageLibrary(options, async (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response?.assets[0]?.uri);
+        // setMediaUri(response?.assets[0]?.uri);
+        setMediaUri(
+          await ImageCompress.compress(response?.assets[0]?.uri, {
+            quality: 0.8,
+          }),
+        );
       }
     });
   };

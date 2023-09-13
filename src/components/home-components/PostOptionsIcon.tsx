@@ -38,7 +38,7 @@ export const PostOptionsIcon = ({
         <VideoSvgIcon />
         <Text style={styles.options}>Take a video</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      <TouchableOpacity style={styles.bottomContainerButtons} onPress={() => navigation.navigate('Profile')}>
         <ProfileSvgIcon />
         <Text style={styles.options}>My profile</Text>
       </TouchableOpacity>
