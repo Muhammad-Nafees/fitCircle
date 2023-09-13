@@ -6,8 +6,10 @@ import {
   Image,
   TouchableOpacity,
   PanResponder,
+  BackHandler,
 } from 'react-native';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome5';
 import {
   verticalScale,
   horizontalScale,
@@ -34,6 +36,20 @@ export const VideoCall = ({route, navigation}: any) => {
     }
   };
 
+  useEffect(() => {
+    const handleBackPress = () => {
+      navigation.navigate('ChatDetails', {username: route.params.username});
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress,
+    );
+    return () => {
+      backHandler.remove();
+    };
+  }, [navigation]);
+
   const toggleCameraComponent = () => {
     setIsCameraActive(!isCameraActive);
   };
@@ -57,23 +73,17 @@ export const VideoCall = ({route, navigation}: any) => {
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>
-      {isCameraActive && cameraDevice && (
+      {cameraDevice && (
         <Camera
           ref={cameraRef}
           device={cameraDevice}
-          isActive={true}
-          style={StyleSheet.absoluteFill}
+          isActive={isCameraActive}
+          style={isCameraActive && StyleSheet.absoluteFill}
         />
       )}
       <View
         style={[
-          {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
-            marginVertical: 15,
-            marginHorizontal: 15,
-          },
+          styles.avatarContainer,
           !isCameraActive && {
             justifyContent: 'center',
             alignItems: 'center',
@@ -110,13 +120,7 @@ export const VideoCall = ({route, navigation}: any) => {
                 onPress={() => setIsModalVisible(false)}
                 style={styles.topLine}></TouchableOpacity>
             </View>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingTop: verticalScale(30),
-                gap: moderateScale(15),
-              }}>
+            <View style={styles.iconContainer}>
               <View style={styles.iconRow}>
                 <TouchableOpacity style={styles.iconButton}>
                   <View style={styles.iconBackground}>
@@ -154,7 +158,20 @@ export const VideoCall = ({route, navigation}: any) => {
                   style={styles.iconButton}
                   onPress={toggleCameraComponent}>
                   <View style={styles.iconBackground2}>
-                    <CameraOnIcon />
+                    {isCameraActive ? (
+                      <CameraOnIcon />
+                    ) : (
+                      <View style={styles.cameraIconContainer}>
+                        <FontAwesomeIcon
+                          name={'video'}
+                          size={15}
+                          color={'white'}
+                        />
+                        <Text style={{color: 'white', fontSize: 10.5}}>
+                          Camera Off
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.iconButton}>
@@ -230,5 +247,24 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(20),
     alignSelf: 'center',
     borderRadius: 3,
+  },
+  cameraIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: moderateScale(5.5),
+  },
+  avatarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginVertical: 15,
+    marginHorizontal: 15,
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: verticalScale(30),
+    gap: moderateScale(15),
   },
 });

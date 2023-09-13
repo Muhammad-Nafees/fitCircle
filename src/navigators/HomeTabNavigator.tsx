@@ -145,6 +145,7 @@ const HomeTabNavigator = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        unmountOnBlur: true,
         tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarStyle,

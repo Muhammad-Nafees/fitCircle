@@ -7,14 +7,15 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
-  ScrollView,
+  Dimensions,
 } from 'react-native';
 import VideoSvgIcon from '../../../assets/icons/VideoIcon';
 import ChatCallIcon from '../../../assets/icons/ChatCall';
-import {Avatar} from 'react-native-paper';
+import {Userpic} from 'react-native-userpic';
 import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
+import Modal from 'react-native-modal';
 const CancelIcon = require('../../../assets/icons/cancel.png');
-
+import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
 import {
   horizontalScale,
   moderateScale,
@@ -23,13 +24,19 @@ import {
 import {UserMessage} from '../../components/message-components/UserMessage';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 const Option = require('../../../assets/icons/customPostOption.png');
-import {launchImageLibrary} from 'react-native-image-picker';
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 const SendIcon = require('../../../assets/icons/send.png');
 
+const width = Dimensions.get('window').width;
 export const ChatDetails = ({navigation, route}: any) => {
   const [message, setMessage] = useState('');
   const [userMessages, setUserMessages] = useState<any>([]);
   const [mediaUri, setMediaUri] = useState(null);
+  const [imageFullScreen, setImageFullScreen] = useState(false);
+  const [messageMedia, setMessageMedia] = useState<any>(null);
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
@@ -46,6 +53,16 @@ export const ChatDetails = ({navigation, route}: any) => {
     }
   };
 
+  const handleImageClose = () => {
+    setImageFullScreen(false);
+    setMessageMedia(null);
+  };
+
+  const handleMessageImagePress = (image: string) => {
+    setMessageMedia(image);
+    setImageFullScreen(true);
+  };
+
   const handlePhotoButtonPress = () => {
     setMediaUri(null);
     const options: ImageLibraryOptions = {
@@ -58,43 +75,31 @@ export const ChatDetails = ({navigation, route}: any) => {
     launchImageLibrary(options, (response: any) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
         setMediaUri(response.assets[0].uri);
-        console.log(response.assets[0].uri);
       }
     });
   };
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backgroundColor: '#209BCC',
-          paddingBottom: verticalScale(10),
-          zIndex: 10,
-        }}>
+      <View style={styles.contentContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-          <View style={styles.onlineIndicator}></View>
           <TouchableOpacity
-            style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
+            style={styles.arrowBack}
             onPress={() => navigation.goBack()}>
             <Image
               source={ArrowBack}
               style={{width: 24, height: 24, tintColor: 'white'}}
             />
           </TouchableOpacity>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 10,
-              top: 10,
-            }}>
-            <Avatar.Text
+          <View style={styles.userDetailStatus}>
+            <Userpic
+              name={route.params.username[0]}
               size={40}
-              label={route.params.username[0]}
-              style={{backgroundColor: '#5e01a9'}}
+              color="#5e01a9"
+              badge={true}
+              badgeColor="green"
+              badgeProps={{position: 'bottom-right'}}
+              textStyle={{fontSize: 19, fontWeight: '400'}}
             />
             <View>
               <Text style={styles.name}>{route.params.username}</Text>
@@ -124,23 +129,22 @@ export const ChatDetails = ({navigation, route}: any) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView>
-        <View
-          style={{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-          <FlatList
-            data={userMessages}
-            keyExtractor={item => item.id.toString()}
-            inverted
-            renderItem={({item}) => (
-              <UserMessage
-                text={item.text}
-                timestamp={item.timestamp}
-                mediaUri={item.mediaUri}
-              />
-            )}
-          />
-        </View>
-      </ScrollView>
+      <View
+        style={{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+        <FlatList
+          data={userMessages}
+          keyExtractor={item => item.id.toString()}
+          inverted
+          renderItem={({item}) => (
+            <UserMessage
+              text={item.text}
+              timestamp={item.timestamp}
+              mediaUri={item.mediaUri}
+              handleMessageImagePress={handleMessageImagePress}
+            />
+          )}
+        />
+      </View>
       {mediaUri && (
         <View
           style={{
@@ -203,6 +207,24 @@ export const ChatDetails = ({navigation, route}: any) => {
           />
         </TouchableOpacity>
       </View>
+      <Modal
+        onBackButtonPress={() => setImageFullScreen(false)}
+        isVisible={imageFullScreen}
+        backdropOpacity={1}
+        onBackdropPress={() => setImageFullScreen(false)}
+        style={styles.fullscreenContainer}>
+        <TouchableOpacity
+          onPress={handleImageClose}
+          style={styles.fullscreenContainer}>
+          <ImageZoom
+            uri={messageMedia}
+            minScale={1}
+            maxScale={10}
+            style={styles.imageZoom}
+            isPinchEnabled={true}
+          />
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 };
@@ -212,6 +234,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#292A2C',
   },
+  contentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#209BCC',
+    paddingBottom: verticalScale(10),
+    zIndex: 10,
+  },
+  arrowBack: {
+    paddingTop: verticalScale(24),
+    paddingBottom: verticalScale(16),
+    paddingHorizontal: horizontalScale(12),
+    bottom: 9,
+  },
   icon: {
     width: horizontalScale(24),
     height: verticalScale(24),
@@ -219,7 +255,9 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: 'row',
-    gap: moderateScale(10),
+    gap: moderateScale(15),
+    alignItems: 'center',
+    marginRight: horizontalScale(7),
   },
   name: {
     fontWeight: '600',
@@ -230,16 +268,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 12,
     color: 'white',
-  },
-  onlineIndicator: {
-    width: horizontalScale(10),
-    height: verticalScale(10),
-    backgroundColor: 'green',
-    borderRadius: 5,
-    position: 'absolute',
-    bottom: 2,
-    right: '48%',
-    zIndex: 1000,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -256,11 +284,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#00abd2',
     position: 'relative',
   },
+  userDetailStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    top: 10,
+  },
   commentButton: {
     marginLeft: horizontalScale(5),
     backgroundColor: '#019acd',
     borderRadius: 10,
     paddingVertical: verticalScale(8),
     paddingHorizontal: horizontalScale(12),
+  },
+  fullscreenContainer: {
+    justifyContent: 'center',
+    width: width,
+    height: verticalScale(500),
+    alignItems: 'center',
+    backgroundColor: 'black',
+    margin: 0,
+    padding: 0,
+  },
+  imageZoom: {
+    width: width,
+    height: verticalScale(300),
   },
 });

@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  BackHandler,
 } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -23,6 +24,20 @@ const Rating = ({navigation, route}: any) => {
     setRating(selectedRating);
   };
 
+  useEffect(() => {
+    const handleBackPress = () => {
+      navigation.navigate('ChatDetails', {username: route.params.username});
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress,
+    );
+    return () => {
+      backHandler.remove();
+    };
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <View style={styles.modalContent}>
@@ -37,6 +52,7 @@ const Rating = ({navigation, route}: any) => {
           <Text style={styles.whiteText}>
             How was your video experience with
             <Text style={[styles.whiteText, {fontWeight: '700'}]}>
+              {' '}
               {route.params.username}
             </Text>
             ?
@@ -56,11 +72,12 @@ const Rating = ({navigation, route}: any) => {
             ))}
           </View>
           <TextInput
-            placeholder="Leave a comment..."
+            placeholder="Leave comment"
             value={comment}
             multiline
             style={styles.commentInput}
             placeholderTextColor={'gray'}
+            onChangeText={text => setComment(text)}
           />
         </View>
         <View
@@ -75,33 +92,30 @@ const Rating = ({navigation, route}: any) => {
             style={styles.modalButton}
             onPress={() => setIsModalVisible(true)}>
             <Text
-              style={{
-                fontSize: 12,
-                fontWeight: '700',
-                color: 'rgba(32, 128, 183, 1)',
-              }}>
+              style={[
+                styles.modalButtonText,
+                {color: 'rgba(32, 128, 183, 1)'},
+              ]}>
               Submit
             </Text>
           </TouchableOpacity>
-          <View style={styles.verticalLine} />
+          {/* <View style={styles.verticalLine} /> */}
           <TouchableOpacity
-            onPress={() => setIsModalVisible(true)}
-            style={styles.modalButton}>
-            <Text
-              style={{
-                fontSize: 12,
-                fontWeight: '700',
-                color: 'rgba(220, 77, 77, 1)',
-              }}>
-              Report
-            </Text>
+            style={[
+              styles.modalButton,
+              {borderLeftWidth: 1, borderColor: 'rgba(255, 255, 255, 0.5)'},
+            ]}
+            onPress={() => setIsModalVisible(true)}>
+            <Text style={styles.modalButtonText}>Report</Text>
           </TouchableOpacity>
         </View>
       </View>
       <Modal
         isVisible={isModalVisible}
         style={styles.modal}
-        onBackButtonPress={() => setIsModalVisible(false)}
+        onBackButtonPress={() =>
+          navigation.navigate('ChatDetails', {username: route.params.username})
+        }
         animationIn="fadeIn"
         animationOut="fadeOut">
         <View style={[styles.modalContent, {backgroundColor: 'transparent'}]}>
@@ -145,11 +159,7 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     paddingVertical: verticalScale(15),
-    paddingHorizontal: horizontalScale(60),
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    flex: 1,
   },
   whiteText: {
     fontSize: 14,
@@ -158,10 +168,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 28,
     marginTop: 10,
     textAlign: 'center',
-  },
-  verticalLine: {
-    width: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   starContainer: {
     flexDirection: 'row',
@@ -199,6 +205,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#30D298',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  modalButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: 'rgba(220, 77, 77, 1)',
+    textAlign: 'center',
   },
 });
 
