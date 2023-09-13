@@ -1,8 +1,20 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Touchable,
+  TouchableOpacity,
+} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 
-export const UserMessage = ({text, timestamp, mediaUri}: any) => {
+export const UserMessage = ({
+  text,
+  timestamp,
+  mediaUri,
+  handleMessageImagePress,
+}: any) => {
   const formattedTimestamp = new Date(timestamp).toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: 'numeric',
@@ -10,12 +22,17 @@ export const UserMessage = ({text, timestamp, mediaUri}: any) => {
   });
   return (
     <View style={styles.parentContainer}>
-      <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => handleMessageImagePress(mediaUri)}
+        style={[
+          styles.container,
+          mediaUri !== null && {width: horizontalScale(210)},
+        ]}>
         {mediaUri !== null && (
           <Image source={{uri: mediaUri}} style={styles.messageImage} />
         )}
         <Text style={styles.messageText}>{text}</Text>
-      </View>
+      </TouchableOpacity>
       <View
         style={{
           flexDirection: 'row',
@@ -38,15 +55,15 @@ export const UserMessage = ({text, timestamp, mediaUri}: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: 'rgba(32, 155, 204, 1)',
     backgroundColor: 'rgba(50, 54, 69, 0.5)',
-    width: horizontalScale(219),
+    minWidth: horizontalScale(10),
     minHeight: verticalScale(50),
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
-    // borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     marginVertical: verticalScale(8),
+    alignSelf: 'flex-end',
+    maxWidth: verticalScale(219),
   },
   parentContainer: {
     marginHorizontal: horizontalScale(10),
@@ -64,8 +81,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   messageImage: {
-    width: horizontalScale(219),
-    height: verticalScale(150),
+    width: horizontalScale(210),
+    height: verticalScale(200),
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },

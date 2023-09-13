@@ -14,10 +14,11 @@ const SearchIcon = require('../../../assets/icons/search.png');
 import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
 import {messageDummyData} from '../dummyData';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import CrossIcon from '../../../assets/icons/Cross';
 import CustomButton from '../../components/shared-components/CustomButton';
 import {STYLES} from '../../styles/globalStyles';
+import {useFocusEffect} from '@react-navigation/native';
 
 export const MessagesOne = ({navigation}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -29,6 +30,10 @@ export const MessagesOne = ({navigation}: any) => {
   const filteredContacts = messageData.filter(item =>
     item.name.toLowerCase().startsWith(searchQuery.toLowerCase()),
   );
+
+  useEffect(() => {
+    setSearchQuery('');
+  }, []);
 
   const handleDeleteUser = () => {
     setIsModalVisible(false);
@@ -45,6 +50,7 @@ export const MessagesOne = ({navigation}: any) => {
     <CustomContact
       name={item.name}
       message={item.message}
+      index={item.id}
       messageCount={item.messageCount}
       handleDeleteButton={() => handleCancelButton(item.id)}
       setActionType={setActionType}

@@ -1,11 +1,15 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import {Swipeable} from 'react-native-gesture-handler';
 import DeleteMessageIcon from '../../../assets/icons/DeleteMessage';
 import DoNotDisturbIcon from '../../../assets/icons/DoNotDisturb';
 import {useNavigation} from '@react-navigation/native';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {
+  horizontalScale,
+  verticalScale,
+  moderateScale,
+} from '../../utils/metrics';
 
 const CustomContact = ({
   name,
@@ -13,9 +17,12 @@ const CustomContact = ({
   messageCount,
   handleDeleteButton,
   setActionType,
+  index,
 }: any) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const navigation = useNavigation();
+  const swipeableRef: any = useRef(null);
+
   const renderRightActions = () => {
     return (
       <View
@@ -30,6 +37,7 @@ const CustomContact = ({
           ]}
           onPress={() => {
             setActionType('Deleted');
+            swipeableRef.current.close();
             handleDeleteButton();
           }}>
           <DeleteMessageIcon />
@@ -41,6 +49,7 @@ const CustomContact = ({
           ]}
           onPress={() => {
             setActionType('Blocked');
+            swipeableRef.current.close();
             handleDeleteButton();
           }}>
           <DoNotDisturbIcon />
@@ -48,9 +57,9 @@ const CustomContact = ({
       </View>
     );
   };
-
   return (
     <Swipeable
+      ref={swipeableRef}
       renderRightActions={renderRightActions}
       overshootRight={false}
       friction={2.7}
@@ -86,7 +95,7 @@ const CustomContact = ({
 const styles = StyleSheet.create({
   name: {
     fontWeight: '600',
-    fontSize: 14,
+    fontSize: 15,
     color: 'rgba(255, 255, 255, 1)',
   },
   message: {
@@ -100,12 +109,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#292A2C',
     zIndex: 1000,
-    paddingVertical: verticalScale(5),
+    paddingVertical: verticalScale(8.5),
   },
   messagesCount: {
     backgroundColor: 'rgba(169, 225, 247, 1)',
-    width: horizontalScale(20),
-    height: verticalScale(20),
+    width: 20,
+    height: 20,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',

@@ -57,6 +57,7 @@
     "react-native-svg": "^13.9.0",
     "react-native-swiper-flatlist": "^3.2.3",
     "react-native-toast-message": "^2.1.6",
+    "react-native-userpic": "^2.0.2",
     "react-native-vector-icons": "^9.2.0",
     "react-native-video": "^5.1.0-alpha2",
     "react-native-view-shot": "^3.7.0",

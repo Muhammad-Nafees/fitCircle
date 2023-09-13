@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, StyleSheet, Text, BackHandler} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import CallAcceptIcon from '../../../assets/icons/CallAccept';
 import CallRejectIcon from '../../../assets/icons/CallReject';
@@ -7,6 +7,19 @@ import {TouchableOpacity} from 'react-native';
 import {moderateScale} from '../../utils/metrics';
 
 export const VoiceCall = ({route, navigation}: any) => {
+  useEffect(() => {
+    const handleBackPress = () => {
+      navigation.navigate('ChatDetails', {username: route.params.username});
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress,
+    );
+    return () => {
+      backHandler.remove();
+    };
+  }, [navigation]);
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
@@ -37,6 +50,7 @@ export const VoiceCall = ({route, navigation}: any) => {
             ]}>
             <CallRejectIcon />
           </View>
+          <Text style={styles.buttonText}>Reject</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconContainer}
@@ -52,6 +66,7 @@ export const VoiceCall = ({route, navigation}: any) => {
             ]}>
             <CallAcceptIcon />
           </View>
+          <Text style={styles.buttonText}>Accept</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -96,5 +111,11 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     fontSize: 12,
     color: 'rgba(255, 255, 255, 1)',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '400',
+    fontSize: 10,
+    marginVertical: 8,
   },
 });
