@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-import axiosInstance from '../../api/interceptor';
 import {Avatar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 

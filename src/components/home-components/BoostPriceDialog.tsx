@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import CustomButton from 'components/shared-components/CustomButton';
-import {moderateScale, verticalScale} from 'utils/metrics';
+import CustomButton from '../shared-components/CustomButton';
+import {moderateScale, verticalScale} from '../../utils/metrics';
 
 const BoostPriceDialog = ({selectedOptionInternal, onYes, onNo}: any) => {
   return (

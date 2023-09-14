@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import {Comment} from '../../components/home-components/Comment';
 import {CustomPost} from '../../components/home-components/CustomPost';
-import axiosInstance from '../../api/interceptor';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import {useFocusEffect} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -26,7 +25,10 @@ import {
   verticalScale,
 } from '../../utils/metrics';
 import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 const SendIcon = require('../../../assets/icons/send.png');
 const CancelIcon = require('../../../assets/icons/cancel.png');
 
@@ -36,7 +38,6 @@ const CommentsScreen = ({route, navigation}: any) => {
   const selectedPost = useSelector(
     (state: RootState) => state.post.selectedPost,
   );
-  console.log(selectedPost);
   const {userId} = route.params;
   const profileScreen = route?.params?.profileScreen;
   const [comments, setComments] = useState([]);
@@ -71,7 +72,6 @@ const CommentsScreen = ({route, navigation}: any) => {
       setCommentsCount('Loading');
       setCommentScreenActive(true);
       setLoading(true);
-      fetchComments();
     }, [selectedPost]),
   );
 
@@ -86,93 +86,9 @@ const CommentsScreen = ({route, navigation}: any) => {
     };
   }, [comments]);
 
-  const fetchComments = () => {
-    axiosInstance
-      .get(`posts/comments/${selectedPost._id}`)
-      .then(res => {
-        setComments(res.data);
-        setCommentsCount(res.data.length);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error while fetching comments:', error);
-        setLoading(false);
-      });
-  };
-
   const handleImageOpen = (imageUri: any) => {
     setMedia(imageUri);
     setImageFullscreen(true);
-  };
-
-  const handleCommentPostPress = (commentText: string, mediaUri: any) => {
-    console.log(commentText);
-    if (!commentText.trim()) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('text', commentText);
-    if (mediaUri) {
-      const mediaFile = {
-        uri: mediaUri,
-        type: 'image/jpeg',
-        name: 'comment_media.jpg',
-      };
-      formData.append('commentMedia', mediaFile);
-    }
-
-    const apiEndpoint = `posts/comments/${selectedPost._id}`;
-    axiosInstance
-      .patch(apiEndpoint, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(response => {
-        console.log('Comment Posted successfully!');
-        setCommentsCount(commentsCount + 1);
-        fetchComments();
-      })
-      .catch(error => {
-        console.error('Error while commenting on the post:', error);
-      });
-  };
-
-  const handleReplyPostPress = (
-    commentText: string,
-    mediaUri: any,
-    commentId: any,
-  ) => {
-    setIsReplying(false);
-    if (!commentText.trim()) {
-      return;
-    }
-    console.log('Reply', commentId);
-    const formData = new FormData();
-    formData.append('text', commentText);
-    if (mediaUri) {
-      const mediaFile = {
-        uri: mediaUri,
-        type: 'image/jpeg',
-        name: 'comment_media.jpg',
-      };
-      formData.append('commentMedia', mediaFile);
-    }
-    const apiEndpoint = `/posts/${selectedPost._id}/comments/${commentId}/replies`;
-    axiosInstance
-      .post(apiEndpoint, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(response => {
-        console.log('Comment Posted successfully!');
-        fetchComments();
-      })
-      .catch(error => {
-        console.error('Error while commenting on the post:', error);
-      });
   };
 
   const handleImageClose = () => {
@@ -224,9 +140,9 @@ const CommentsScreen = ({route, navigation}: any) => {
                 comments={comments}
                 setmedia={setMediaUri}
                 setcomment={setCommentText}
-                handleCommentPostSubmit={handleCommentPostPress}
+                // handleCommentPostSubmit={handleCommentPostPress}
                 handleBackPress={handleBackPress}
-                handleReplyPostPress={handleReplyPostPress}
+                // handleReplyPostPress={handleReplyPostPress}
                 handleImageOpen={handleImageOpen}
                 setIsReplying={setIsReplying}
                 isReplying={isReplying}
@@ -260,13 +176,7 @@ const CommentsScreen = ({route, navigation}: any) => {
             style={{
               backgroundColor: '#00abd2',
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-                padding: 10,
-              }}>
+            <View style={styles.attachmentDialog}>
               <View>
                 <Text style={{color: '#fff', marginRight: 20}}>
                   Photo Attached
@@ -288,13 +198,7 @@ const CommentsScreen = ({route, navigation}: any) => {
             style={{
               backgroundColor: '#00abd2',
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-                padding: 10,
-              }}>
+            <View style={styles.attachmentDialog}>
               <View>
                 <Text style={{color: '#fff', marginRight: 20}}>Replying</Text>
               </View>
@@ -314,13 +218,7 @@ const CommentsScreen = ({route, navigation}: any) => {
             style={{
               backgroundColor: '#00abd2',
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-                padding: 10,
-              }}>
+            <View style={styles.attachmentDialog}>
               <View>
                 <Text style={{color: '#fff', marginRight: 20}}>
                   Photo Attached in Reply
@@ -355,12 +253,7 @@ const CommentsScreen = ({route, navigation}: any) => {
               onChangeText={text => setCommentText(text)}
             />
             <TouchableOpacity
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: horizontalScale(13),
-                opacity: 0.8,
-              }}
+              style={styles.photoButton}
               onPress={handlePhotoButtonPress}>
               <CreatePostCommentSvgIcon />
             </TouchableOpacity>
@@ -414,6 +307,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: verticalScale(8),
     paddingHorizontal: horizontalScale(12),
+  },
+  attachmentDialog: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 10,
+    padding: 10,
+  },
+  photoButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: horizontalScale(13),
+    opacity: 0.8,
   },
 });
 

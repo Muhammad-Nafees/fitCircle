@@ -13,7 +13,7 @@ import {Avatar} from 'react-native-paper';
 import Modal from 'react-native-modal';
 import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
 const Heart = require('../../../assets/icons/heart.png');
-const Like = require('../../../assets/icons/like.png');
+import LikeIcon from '../../../assets/icons/like';
 const LikeFilled = require('../../../assets/icons/likeFilled.png');
 const Share = require('../../../assets/icons/share.png');
 const CommentIcon = require('../../../assets/icons/comment.png');
@@ -21,7 +21,6 @@ const OptionIcon = require('../../../assets/icons/customPostOption.png');
 const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 import {BackHandler} from 'react-native';
 import CustomButton from '../shared-components/CustomButton';
-import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import Toast from 'react-native-toast-message';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -140,16 +139,6 @@ export const CustomPost = ({
   const handleLikeButtonPress = () => {
     setIsLiked(!isLiked);
     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-    const apiEndpoint = `posts/likes/${_id}`;
-    axiosInstance
-      .patch(apiEndpoint)
-      .then(response => {
-        console.log('Post liked successfully!');
-      })
-      .catch(error => {
-        console.error('Error while liking the post:', error);
-        setIsLiked(!isLiked);
-      });
   };
 
   const handleShareModal = () => {
@@ -158,26 +147,6 @@ export const CustomPost = ({
 
   const handleShareButtonPress = (text: string | null = null) => {
     setShareModalVisible(false);
-    const apiEndpoint = `posts/shares/${_id}`;
-    const shareData = text ? {text} : null;
-    axiosInstance
-      .patch(apiEndpoint, shareData)
-      .then(response => {
-        console.log('Post shared successfully!');
-        Toast.show({
-          type: 'success',
-          text1: 'Post Shared Successfully!',
-          visibilityTime: 2000,
-        });
-      })
-      .catch(error => {
-        console.error('Error while sharing the post:', error);
-        Toast.show({
-          type: 'error',
-          text1: 'Error Sharing Post!',
-          visibilityTime: 2000,
-        });
-      });
   };
 
   const handleImagePress = () => {
@@ -296,7 +265,10 @@ export const CustomPost = ({
       <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
         <View style={styles.postButtonsContainer}>
           <View style={styles.likesContainer}>
-            <Image style={styles.heartIcon} source={Heart} />
+            <Image
+              style={[styles.heartIcon, {marginRight: horizontalScale(5)}]}
+              source={Heart}
+            />
             <Text style={styles.likesCount}>{`${likesCount} ${
               likesCount === 1 ? 'like' : 'likes'
             }`}</Text>
@@ -309,10 +281,11 @@ export const CustomPost = ({
           <TouchableOpacity
             style={styles.button}
             onPress={handleLikeButtonPress}>
-            <Image
-              style={styles.heartIcon}
-              source={isLiked ? LikeFilled : Like}
-            />
+            {isLiked ? (
+              <Image style={styles.heartIcon} source={LikeFilled} />
+            ) : (
+              <LikeIcon />
+            )}
             <Text style={styles.buttonText}>Like</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -472,9 +445,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heartIcon: {
-    width: horizontalScale(18),
-    height: verticalScale(18),
-    marginRight: horizontalScale(5),
+    width: horizontalScale(14),
+    height: verticalScale(14),
   },
   likesCount: {
     fontSize: 12,
@@ -487,6 +459,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E1E1E1',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 5,
     alignItems: 'center',
   },
   postIcon: {

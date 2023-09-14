@@ -30,6 +30,7 @@ import {
 } from '../../redux/postSlice';
 const SearchIcon = require('../../../assets/icons/search.png');
 import {setSelectedPost} from '../../redux/postSlice';
+import {PostsData} from '../dummyData';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -45,7 +46,7 @@ const HomeScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState();
   const [hasMore, setHasMore] = useState(true);
-  const [fetchedPosts, setFetchedPosts] = useState([]);
+  const [fetchedPosts, setFetchedPosts] = useState<any>(PostsData);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const tabBarHeight = useBottomTabBarHeight();
 
@@ -64,16 +65,16 @@ const HomeScreen = () => {
     navigation.navigate('CommentsScreen', {userId});
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      handleRefresh();
-    }, []),
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     handleRefresh();
+  //   }, []),
+  // );
 
   useEffect(() => {
-    setIsRefreshing(true);
-    setIsLoadingMore(false);
-    setFetchedPosts([]);
+    // setIsRefreshing(true);
+    // setIsLoadingMore(false);
+    setFetchedPosts(PostsData);
     dispatch(fetchPostsStart());
   }, []);
 
@@ -101,7 +102,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const filteredData = filteredVideos.sort(
-      (a, b) =>
+      (a: any, b: any) =>
         new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
     );
     setFilteredVideos(filteredData);
@@ -194,10 +195,10 @@ const HomeScreen = () => {
           <FlatList
             data={fetchedPosts}
             renderItem={renderCustomPost}
-            keyExtractor={item => item._id}
+            keyExtractor={(item: any) => item._id}
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            onEndReached={handleLoadMore}
+            // onEndReached={handleLoadMore}
             onEndReachedThreshold={2.7}
             onScroll={e => {
               scrollY.setValue(e.nativeEvent.contentOffset.y);
@@ -226,6 +227,7 @@ const HomeScreen = () => {
                   index={index}
                   userId={userId}
                   tabBarHeight={tabBarHeight}
+                  isProfile={true}
                 />
               )}
             />

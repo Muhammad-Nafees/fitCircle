@@ -59,7 +59,7 @@ export const ReelsComponent = ({
   const {_id, media, content, user, cost, favorites, thumbnail} = post;
   const {profileImageUrl, username, email} = user;
 
-  const videoRef = useRef(null);
+  const videoRef = useRef<any>(null);
   const isLocked = cost && cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
   const [play, setPlay] = useState(false);

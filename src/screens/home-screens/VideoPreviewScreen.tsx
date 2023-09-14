@@ -78,7 +78,7 @@ export const VideoPreviewScreen = ({
     '72hrs': '72hours',
     '7 Days': '7days',
   };
-  const videoRef = React.useRef(null);
+  const videoRef = React.useRef<any>(null);
   const userData = useSelector((state: RootState) => state.auth.user);
   const [profileImageUrl, setProfileImageUrl] = useState();
   const isBoostAvailable = userData?.role !== 'user';
@@ -214,7 +214,7 @@ export const VideoPreviewScreen = ({
 
     launchImageLibrary(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setThumbnail(response.assets[0].uri);
+        setThumbnail(response.assets[0].uri as never);
       }
     });
   };
@@ -233,7 +233,7 @@ export const VideoPreviewScreen = ({
     };
     launchCamera(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setThumbnail(response.assets[0].uri);
+        setThumbnail(response.assets[0].uri as never);
       }
     });
   };
