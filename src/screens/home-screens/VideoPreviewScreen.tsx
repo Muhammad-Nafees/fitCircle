@@ -203,37 +203,23 @@ export const VideoPreviewScreen = ({
           name: `image_${Date.now()}.jpg`,
         });
       }
-      const response = await axios.post(
-        'http://fitcircle.yameenyousuf.com/posts/create',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      const response = await axiosInstance.post('posts/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-      );
-      if (response.data.success) {
+      });
+      if (response.status == 201) {
+        setIsLoading(false);
+        // handleBackButtonPress();
+        handleClose();
+        navigation.navigate('Home');
         Toast.show({
           type: 'success',
           text1: payment ? 'Post Boosted Successfully!' : 'Post Shared!',
           visibilityTime: 5000,
         });
-        setIsLoading(false);
-        handleBackButtonPress();
-        handleClose();
-        navigation.navigate('Home');
-      } else {
-        Toast.show({
-          type: 'success',
-          text1: payment ? 'Post Boosted Successfully!' : 'Post Shared!',
-          visibilityTime: 5000,
-        });
-        console.log(response);
-        setIsLoading(false);
-        handleBackButtonPress();
-        handleClose();
-        navigation.navigate('Home');
       }
+      console.log(response.status, 'rada');
     } catch (error: any) {
       console.log('API call error:', error?.response);
       Toast.show({
