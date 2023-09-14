@@ -25,7 +25,8 @@ export const MealPlanOne = ({navigation}: any) => {
   }, [navigation]);
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      <Text style={{color: 'white'}}>Meal Plan coming soon!</Text>
+      {/* <TouchableOpacity
         style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
         onPress={() => navigation.goBack()}>
         <Image
@@ -66,7 +67,7 @@ export const MealPlanOne = ({navigation}: any) => {
         <CustomButton onPress={() => navigation.navigate('MealPlanTwo')}>
           Request a Meal Plan
         </CustomButton>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -75,6 +76,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292A2C',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonContainer: {
     flex: 0.19,
