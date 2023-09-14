@@ -115,7 +115,6 @@ export const AddPostScreen = ({route}: any) => {
   const authToken = useSelector(
     (state: RootState) => state.auth.authorizationToken,
   );
-  console.log(authToken, 'aaaaaaaaaaaaaaaaa');
 
   const handlePostButtonPress = async () => {
     if (textInputValue == '') {

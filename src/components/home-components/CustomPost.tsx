@@ -65,6 +65,7 @@ export const CustomPost = ({
   const {_id, media, content, likes, createdAt, user, hexCode, cost} = post;
   let isGradient = hexCode && hexCode.includes(',');
 
+
   const {profileImageUrl, username} = user;
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);

@@ -12,6 +12,7 @@ export const UserSearch = ({
 }: any) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const navigation = useNavigation();
+  console.log(profileImageUrl,"profile")
 
   // const handleFollow = () => {
   //   axiosInstance

@@ -105,6 +105,7 @@ export const SearchScreen = () => {
     try {
       const response = await searchUser(searchQuery.toLowerCase());
       const users = response?.data;
+      console.log(users,"ssss")
       setSearchData(users);
       setIsLoading(false);
     } catch (error: any) {

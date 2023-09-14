@@ -30,6 +30,14 @@ const SearchIcon = require('../../../assets/icons/search.png');
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import {setSelectedPost} from '../../redux/postSlice';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import {AuthStackParamList} from 'interfaces/navigation.type';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+type NavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'Search',
+  'CommentsScreen'
+>;
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -40,7 +48,7 @@ const HomeScreen = () => {
   const username = userData?.username;
   const [userId, setUserId] = useState(userData?._id);
   const [selectedButton, setSelectedButton] = useState('My Circle');
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [filteredVideos, setFilteredVideos] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState();
@@ -73,10 +81,10 @@ const HomeScreen = () => {
   );
 
   useEffect(() => {
-    setIsRefreshing(true);
-    setIsLoadingMore(false);
-    setFetchedPosts([]);
-    dispatch(fetchPostsStart());
+    // setIsRefreshing(true);
+    // setIsLoadingMore(false);
+    // setFetchedPosts([]);
+    // dispatch(fetchPostsStart());
   }, []);
 
   const handleRefresh = () => {
@@ -86,13 +94,16 @@ const HomeScreen = () => {
   };
 
   const getVideoPosts = (allPosts: any) => {
-    return allPosts.filter(post => post.media && post.media.endsWith('.mp4'));
+    return allPosts.filter(
+      (post: any) => post.media && post.media.endsWith('.mp4'),
+    );
   };
 
   useEffect(() => {
     setUserId(userData?._id);
     handleButtonPress('My Circle');
-    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    // const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    const imageUri = userData?.profileImage?.uri;
     setProfileImageUrl(imageUri);
   }, [userData]);
 
@@ -102,7 +113,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const filteredData = filteredVideos.sort(
-      (a, b) =>
+      (a: any, b: any) =>
         new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
     );
     setFilteredVideos(filteredData);
@@ -126,13 +137,12 @@ const HomeScreen = () => {
         setHasMore(data.docs.length >= 10);
         if (page === 1) {
           setFetchedPosts(data.docs);
-
           dispatch(fetchPostsSuccess(data.docs));
           const videoPosts = getVideoPosts(data.docs);
           setFilteredVideos(videoPosts);
           // setFilteredVideos(() => getVideoPosts(data.docs));
         } else {
-          const posts = [...fetchedPosts, ...data.docs];
+          const posts: any = [...fetchedPosts, ...data.docs];
           setFetchedPosts(posts);
           const videoPosts = getVideoPosts(posts);
           setFilteredVideos(videoPosts);
@@ -169,13 +179,12 @@ const HomeScreen = () => {
       <CustomPost
         key={item._id}
         post={item}
-        userId={userId}
+        userId={userId as string}
         countComment={item.comments.length}
         handleCommentButtonPress={handleCommentButtonPress}
       />
     );
   };
- console.log(profileImageUrl,"profile,,")
 
   return (
     <View style={styles.container}>

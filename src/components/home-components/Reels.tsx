@@ -96,7 +96,6 @@ export const ReelsComponent = ({
   const [showThumbnail, setShowThumbnail] = useState(thumbnail !== null);
   const navigation = useNavigation();
   const [videoThumbnail, setVideoThumbnail] = useState<any>();
-  console.log(thumbnail,"thumbnail")
 
   const fetchThumbnail = async () => {
     if (thumbnail !== null) {
@@ -164,6 +163,7 @@ export const ReelsComponent = ({
       navigation.navigate('FavoriteDialog');
     }
   };
+  console.log(post,"item")
 
   const handleShareVideo = async () => {
     try {

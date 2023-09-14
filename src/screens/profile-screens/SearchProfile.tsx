@@ -182,7 +182,6 @@ const SearchProfileScreen = ({route, navigation}: any) => {
         setModalOpenFor(item._id);
       }
     };
-    console.log(item.profileImageUrl,"nnnn")
     return (
       <View style={styles.profileContainer}>
         <View style={styles.profileInfo}>
