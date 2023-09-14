@@ -12,7 +12,7 @@ export const UserSearch = ({
 }: any) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const navigation = useNavigation();
-  console.log(profileImageUrl,"profile")
+  console.log(profileImageUrl, 'profile');
 
   // const handleFollow = () => {
   //   axiosInstance
@@ -37,9 +37,7 @@ export const UserSearch = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.rowContainer}
-        onPress={() => navigation.navigate('Profile', {isTrainerView: true})}>
+      <TouchableOpacity style={styles.rowContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
           {profileImageUrl ? (
             <Avatar.Image size={40} source={{uri: profileImageUrl}} />

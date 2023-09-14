@@ -1,15 +1,29 @@
-import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  BackHandler,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {Formik} from 'formik';
 import {STYLES} from '../../../styles/globalStyles';
 import {TdeeCalculatorSchema} from '../../../validations';
 import {CustomSelect} from '../../../components/shared-components/CustomSelect';
 import CustomInput from '../../../components/shared-components/CustomInput';
-import {moderateScale, verticalScale} from '../../../utils/metrics';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../utils/metrics';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
 import axiosInstance from '../../../api/interceptor';
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {format} from 'date-fns';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 const activityFactors = {
   'Sedentary (Little or no exercise)': {
@@ -82,6 +96,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       console.log('🚀 ~ handleFormSave ~ error:', error);
     }
   };
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
   useEffect(() => {
     formikRef.current?.resetForm();
@@ -235,7 +250,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     borderRadius: 0,
                   }}
                 />
-                <CustomInput
+                {/* <CustomInput
                   label="Start Date (dd/mm/yyyy)"
                   placeholder="Type here"
                   value={values.startDate}
@@ -245,7 +260,46 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   handleChange={handleChange('startDate')}
                   setFieldError={setFieldError}
                   fieldName="startDate"
-                />
+                /> */}
+                <TouchableWithoutFeedback
+                  onPress={() => setDatePickerVisible(true)}>
+                  <View style={{position: 'relative'}}>
+                    <CustomInput
+                      label="Start Date (dd/mm/yyyy)"
+                      placeholder="Type here"
+                      value={values.startDate}
+                      error={errors.startDate}
+                      touched={touched.startDate}
+                      initialTouched={true}
+                      handleChange={handleChange('dob')}
+                      setFieldError={setFieldError}
+                      fieldName="startDate"
+                      editable={false}
+                    />
+                    <Icon
+                      name="calendar-outline"
+                      size={23}
+                      color="black"
+                      style={{
+                        position: 'absolute',
+                        right: horizontalScale(12),
+                        top: verticalScale(34),
+                      }}
+                    />
+                    <DateTimePickerModal
+                      isVisible={isDatePickerVisible}
+                      mode="date"
+                      onConfirm={(e: any) => {
+                        const formattedDate = format(e, 'dd/MM/yyyy');
+                        setFieldValue('startDate', formattedDate);
+                        setFieldError('startDate', '');
+                        setDatePickerVisible(false);
+                      }}
+                      onCancel={() => setDatePickerVisible(false)}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+
                 <View style={{width: '85%'}}>
                   <Text style={styles.label}>Goal Weight</Text>
                   <DropdownTextInput

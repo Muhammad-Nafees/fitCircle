@@ -52,7 +52,7 @@ const CustomBottomSheet = ({setMusicModalVisible, setMusic}: any) => {
       });
     }
   };
-  console.log(isMusicPlay, 'Ss');
+  console.log(isMusicPlay, 'Ss');i
 
   const renderItem = useCallback(({item}) => {
     console.log(item.file, 'item');

@@ -191,7 +191,7 @@ const HomeScreen = () => {
       <Animated.View
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <TouchableOpacity>
             {profileImageUrl ? (
               <Avatar.Image size={40} source={{uri: profileImageUrl}} />
             ) : (

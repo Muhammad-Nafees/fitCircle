@@ -104,6 +104,7 @@ export const VideoPreviewScreen = ({
   const [isPlay, setIsPlay] = useState<boolean>(false);
   const [showPlayIcon, setShowPlayIcon] = useState<boolean>(true);
   const viewShotRef = React.useRef<any>();
+  const [isThumbnailSelected, setIsThumbnailSelected] = useState<boolean>(true);
 
   useEffect(() => {
     let hideButtonTimer: any;
@@ -303,6 +304,7 @@ export const VideoPreviewScreen = ({
       if (!response.didCancel && !response.errorMessage && response.assets) {
         setThumbnail(response.assets[0].uri);
       }
+      setIsThumbnailSelected(false);
     });
   };
 
@@ -321,6 +323,7 @@ export const VideoPreviewScreen = ({
     launchCamera(options, (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
         setThumbnail(response.assets[0].uri);
+        setIsThumbnailSelected(false);
       }
     });
   };
@@ -508,7 +511,9 @@ export const VideoPreviewScreen = ({
                 </Text>
               </View>
               <TouchableOpacity
-                onPress={() => setThumbnail(null)}
+                onPress={() => {
+                  setThumbnail(null), setIsThumbnailSelected(true);
+                }}
                 style={{marginRight: 8}}>
                 <Image
                   source={CancelIcon}
@@ -535,7 +540,8 @@ export const VideoPreviewScreen = ({
             <View>
               <CustomButton
                 extraStyles={{paddingHorizontal: 30}}
-                onPress={handleThumbnailSelect}>
+                onPress={handleThumbnailSelect}
+                isDisabled={isThumbnailSelected}>
                 Select as thumbnail
               </CustomButton>
             </View>
