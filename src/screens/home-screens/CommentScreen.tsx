@@ -91,6 +91,7 @@ const CommentsScreen = ({route, navigation}: any) => {
       .get(`posts/comments/${selectedPost._id}`)
       .then(res => {
         setComments(res.data);
+        console.log(res.data,"comments")
         setCommentsCount(res.data.length);
         setLoading(false);
       })

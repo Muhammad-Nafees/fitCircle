@@ -87,7 +87,9 @@ const CommentItem = ({
       (currentDate.getTime() - commentDate.getTime()) / 1000,
     );
 
-    if (differenceInSeconds < 60) {
+    if (differenceInSeconds <= 0) {
+      return `Just now`;
+    } else if (differenceInSeconds < 60) {
       return `${differenceInSeconds} seconds ago`;
     } else if (differenceInSeconds < 3600) {
       const minutes = Math.floor(differenceInSeconds / 60);
@@ -100,6 +102,8 @@ const CommentItem = ({
       return `${days} ${days === 1 ? 'day' : 'days'} ago`;
     }
   };
+
+  console.log(timeDifference, 'timeDifference');
 
   return (
     <View style={styles.rowContainer}>
