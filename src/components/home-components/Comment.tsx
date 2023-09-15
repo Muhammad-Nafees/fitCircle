@@ -12,8 +12,8 @@ import {
   moderateScale,
   verticalScale,
 } from '../../utils/metrics';
-import {Avatar} from 'react-native-paper';
 import Entypo from 'react-native-vector-icons/Entypo';
+import CustomProfileAvatar from 'components/shared-components/CustomProfileAvatar';
 const CancelIcon = require('../../../assets/icons/cancel.png');
 
 interface CommentProps {
@@ -91,18 +91,10 @@ const CommentItem = ({
   return (
     <View style={styles.rowContainer}>
       <View style={styles.profileImageContainer}>
-        {comment.user?.profileImageUrl ? (
-          <Avatar.Image
-            source={{uri: comment.user.profileImageUrl}}
-            size={40}
-          />
-        ) : (
-          <Avatar.Text
-            label={comment.user?.username?.charAt(0)?.toUpperCase() || 'SA'}
-            size={40}
-            style={{backgroundColor: '#5e01a9'}}
-          />
-        )}
+        <CustomProfileAvatar
+          profileImageUrl={comment.user?.profileImageUrl}
+          username={comment.user?.username}
+        />
       </View>
       <View style={styles.commentsContainer}>
         <View style={styles.commentContainer}>

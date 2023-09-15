@@ -7,7 +7,6 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Text,
   BackHandler,
 } from 'react-native';
 import {Comment} from '../../components/home-components/Comment';
@@ -29,8 +28,8 @@ import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
 const SendIcon = require('../../../assets/icons/send.png');
-const CancelIcon = require('../../../assets/icons/cancel.png');
 
 const width = Dimensions.get('window').width;
 
@@ -172,71 +171,28 @@ const CommentsScreen = ({route, navigation}: any) => {
       </KeyboardAwareScrollView>
       <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
         {mediaUri && !isReplying && (
-          <View
-            style={{
-              backgroundColor: '#00abd2',
-            }}>
-            <View style={styles.attachmentDialog}>
-              <View>
-                <Text style={{color: '#fff', marginRight: 20}}>
-                  Photo Attached
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => setMediaUri(null)}
-                style={{marginRight: 8}}>
-                <Image
-                  source={CancelIcon}
-                  style={{tintColor: '#fff', width: 18, height: 18}}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <CustomAttachmentDialog
+            message="Photo Attached"
+            showCancel={true}
+            onCancel={() => setMediaUri(null)}
+          />
         )}
         {isReplying && !mediaUri && (
-          <View
-            style={{
-              backgroundColor: '#00abd2',
-            }}>
-            <View style={styles.attachmentDialog}>
-              <View>
-                <Text style={{color: '#fff', marginRight: 20}}>Replying</Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => setIsReplying(false)}
-                style={{marginRight: 8}}>
-                <Image
-                  source={CancelIcon}
-                  style={{tintColor: '#fff', width: 18, height: 18}}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <CustomAttachmentDialog
+            message="Replying"
+            showCancel={true}
+            onCancel={() => setIsReplying(false)}
+          />
         )}
         {isReplying && mediaUri && (
-          <View
-            style={{
-              backgroundColor: '#00abd2',
-            }}>
-            <View style={styles.attachmentDialog}>
-              <View>
-                <Text style={{color: '#fff', marginRight: 20}}>
-                  Photo Attached in Reply
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => {
-                  setIsReplying(false);
-                  setMediaUri(null);
-                }}
-                style={{marginRight: 8}}>
-                <Image
-                  source={CancelIcon}
-                  style={{tintColor: '#fff', width: 18, height: 18}}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <CustomAttachmentDialog
+            message="Photo Attached in Reply"
+            showCancel={true}
+            onCancel={() => {
+              setIsReplying(false);
+              setMediaUri(null);
+            }}
+          />
         )}
         <View style={styles.inputContainer}>
           <View

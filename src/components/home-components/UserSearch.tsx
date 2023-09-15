@@ -12,18 +12,6 @@ export const UserSearch = ({
   const [isFollowing, setIsFollowing] = useState(false);
   const navigation = useNavigation();
 
-  // const handleFollow = () => {
-  //   axiosInstance
-  //     .patch(`/users/follow/${id}`)
-  //     .then(response => {
-  //       console.log('Follow successful!', response.data);
-  //       setIsFollowing(true);
-  //     })
-  //     .catch(error => {
-  //       console.error('Follow failed.', error);
-  //     });
-  // };
-
   const handlePress = () => {
     if (isFollowing === false) {
       setIsFollowing(true);

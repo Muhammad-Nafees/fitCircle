@@ -8,19 +8,14 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
-  Dimensions,
   Animated,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
-import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {Avatar} from 'react-native-paper';
 // ---------------------------------------------------------------------//
 import {RootState} from '../../redux/store';
-import {CustomPost} from '../../components/home-components/CustomPost';
-import {ReelsComponent} from '../../components/home-components/Reels';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import NotificationIcon from '../../../assets/icons/NotificationIcon';
 import {
@@ -31,23 +26,22 @@ import {
 const SearchIcon = require('../../../assets/icons/search.png');
 import {setSelectedPost} from '../../redux/postSlice';
 import {PostsData} from '../dummyData';
+import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
+import SwiperContainer from '../../components/home-components/SwiperContainer';
+import FlatListContainer from '../../components/home-components/FlatlistContainer';
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
   const postsRedux = useSelector((state: RootState) => state.post.posts);
   const username = userData?.username;
-  const [userId, setUserId] = useState(userData?._id);
+  const [userId, setUserId] = useState<any>(userData?._id);
   const [selectedButton, setSelectedButton] = useState('My Circle');
   const navigation = useNavigation();
   const [filteredVideos, setFilteredVideos] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState();
-  const [hasMore, setHasMore] = useState(true);
   const [fetchedPosts, setFetchedPosts] = useState<any>(PostsData);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const tabBarHeight = useBottomTabBarHeight();
 
   const scrollY = new Animated.Value(0);
@@ -71,22 +65,9 @@ const HomeScreen = () => {
   //   }, []),
   // );
 
-  useEffect(() => {
-    // setIsRefreshing(true);
-    // setIsLoadingMore(false);
-    setFetchedPosts(PostsData);
-    dispatch(fetchPostsStart());
-  }, []);
-
   const handleRefresh = () => {
     dispatch(setSelectedPost(null));
     setIsRefreshing(true);
-  };
-
-  const getVideoPosts = (allPosts: any) => {
-    return allPosts.filter(
-      (post: any) => post.media && post.media.endsWith('.mp4'),
-    );
   };
 
   useEffect(() => {
@@ -95,10 +76,6 @@ const HomeScreen = () => {
     const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
     setProfileImageUrl(imageUri);
   }, [userData]);
-
-  useEffect(() => {
-    setFilteredVideos(getVideoPosts(postsRedux));
-  }, [postsRedux]);
 
   useEffect(() => {
     const filteredData = filteredVideos.sort(
@@ -112,37 +89,18 @@ const HomeScreen = () => {
     setSelectedButton(button);
   };
 
-  const renderCustomPost = ({item}: any) => {
-    if (item && item.media && item.media.endsWith('.mp4')) {
-      return null;
-    }
-    return (
-      <CustomPost
-        key={item._id}
-        post={item}
-        userId={userId}
-        countComment={item.comments.length}
-        handleCommentButtonPress={handleCommentButtonPress}
-      />
-    );
-  };
-
   return (
     <View style={styles.container}>
       <Animated.View
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Profile' as never)}>
-            {profileImageUrl ? (
-              <Avatar.Image size={40} source={{uri: profileImageUrl}} />
-            ) : (
-              <Avatar.Text
-                size={40}
-                label={username ? username[0].toUpperCase() : 'SA'}
-                style={{backgroundColor: '#5e01a9'}}
-              />
-            )}
+          // onPress={() => navigation.navigate('Profile' as never)}
+          >
+            <CustomProfileAvatar
+              profileImageUrl={profileImageUrl}
+              username={username}
+            />
           </TouchableOpacity>
           <View style={styles.textinputContainer}>
             <Image source={SearchIcon} style={styles.searchIcon} />
@@ -192,46 +150,21 @@ const HomeScreen = () => {
         {isRefreshing ? (
           <ActivityIndicator size="large" color="#ffffff" />
         ) : selectedButton === 'My Circle' ? (
-          <FlatList
+          <FlatListContainer
             data={fetchedPosts}
-            renderItem={renderCustomPost}
-            keyExtractor={(item: any) => item._id}
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            // onEndReached={handleLoadMore}
-            onEndReachedThreshold={2.7}
-            onScroll={e => {
-              scrollY.setValue(e.nativeEvent.contentOffset.y);
-            }}
+            userId={userId}
+            isRefreshing={isRefreshing}
+            handleRefresh={handleRefresh}
+            handleCommentButtonPress={handleCommentButtonPress}
           />
         ) : (
-          <View
-            style={{
-              width: width,
-              height: height - 120 - tabBarHeight,
-            }}>
-            <SwiperFlatList
-              onScroll={e => {
-                scrollY.setValue(e.nativeEvent.contentOffset.y);
-              }}
-              vertical={true}
-              data={filteredVideos}
-              keyExtractor={item => item._id}
-              refreshing={isRefreshing}
-              onRefresh={handleRefresh}
-              onEndReachedThreshold={3}
-              onChangeIndex={i => console.log(i)}
-              renderItem={({item, index}: any) => (
-                <ReelsComponent
-                  post={item}
-                  index={index}
-                  userId={userId}
-                  tabBarHeight={tabBarHeight}
-                  isProfile={true}
-                />
-              )}
-            />
-          </View>
+          <SwiperContainer
+            data={filteredVideos}
+            userId={userId}
+            tabBarHeight={tabBarHeight}
+            isProfile={true}
+            handleRefresh={handleRefresh}
+          />
         )}
       </View>
     </View>

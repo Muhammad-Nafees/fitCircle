@@ -9,7 +9,6 @@ import {
   BackHandler,
 } from 'react-native';
 import Video from 'react-native-video';
-import {Avatar} from 'react-native-paper';
 import Modal from 'react-native-modal';
 import {format} from 'date-fns';
 import {
@@ -43,13 +42,14 @@ import TextIcon from '../../../assets/icons/TextIcon';
 import {RootState} from '../../redux/store';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
-const CancelIcon = require('../../../assets/icons/cancel.png');
 import Cameraicon from '../../../assets/icons/Cameraicon';
 import MusicIcon from '../../../assets/icons/MusicIcon';
 import CustomBottomSheet from '../../components/shared-components/CustomBottomSheet';
 import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
 import DiscIcon from '../../../assets/icons/DiscIcon';
 import BoostPriceDialog from '../../components/home-components/BoostPriceDialog';
+import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
+import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
 
 interface VideoPreviewScreenProps {
   videoUri: string;
@@ -114,7 +114,6 @@ export const VideoPreviewScreen = ({
   );
 
   const onSelectCost = (value: number) => {
-    console.log(value);
     setCostValue(value);
   };
   const handleDateConfirm = (date: Date) => {
@@ -165,7 +164,6 @@ export const VideoPreviewScreen = ({
 
   const handleTextModal = () => {
     setTextModalVisible(!isTextModalVisible);
-    console.log(content);
   };
 
   const handleOptionSelect = (option: string) => {
@@ -245,15 +243,10 @@ export const VideoPreviewScreen = ({
     <>
       <View style={styles.container}>
         <View style={styles.topLeftContent}>
-          {profileImageUrl ? (
-            <Avatar.Image size={40} source={{uri: profileImageUrl}} />
-          ) : (
-            <Avatar.Text
-              size={40}
-              style={styles.avatarText}
-              label={username ? username[0].toUpperCase() : 'SA'}
-            />
-          )}
+          <CustomProfileAvatar
+            profileImageUrl={profileImageUrl}
+            username={username}
+          />
           <View style={styles.postTextContainer}>
             <Text style={styles.postName}>{username}</Text>
             <Text style={styles.postId}>{`@${username
@@ -362,26 +355,11 @@ export const VideoPreviewScreen = ({
           </View>
         </Modal>
         {thumbnail !== null && (
-          <View
-            style={{
-              backgroundColor: '#00abd2',
-            }}>
-            <View style={styles.thumbnailContainer}>
-              <View>
-                <Text style={{color: '#fff', marginRight: 20}}>
-                  Thumbnail Attached
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => setThumbnail(null)}
-                style={{marginRight: 8}}>
-                <Image
-                  source={CancelIcon}
-                  style={{tintColor: '#fff', width: 18, height: 18}}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <CustomAttachmentDialog
+            message="Thumbnail Attached"
+            onCancel={() => setThumbnail(null)}
+            showCancel={true}
+          />
         )}
         {thumbnailOpen ? (
           <View
@@ -486,9 +464,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-  },
-  avatarText: {
-    backgroundColor: '#5e01a9',
   },
   avatarButton: {
     borderWidth: 1,
@@ -598,12 +573,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
-  cancelIcon: {
-    width: horizontalScale(24),
-    height: verticalScale(24),
-    tintColor: 'white',
-    position: 'absolute',
-  },
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -627,12 +596,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '74%',
-  },
-  thumbnailContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 10,
-    padding: 10,
   },
   musicContainer: {
     position: 'absolute',

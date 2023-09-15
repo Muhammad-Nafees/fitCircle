@@ -25,6 +25,7 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import Toast from 'react-native-toast-message';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 
 const Dot = require('../../../assets/icons/dot.png');
 
@@ -160,19 +161,10 @@ export const CustomPost = ({
   return (
     <View>
       <View style={[styles.postContainer, isLocked ? {zIndex: 1000} : null]}>
-        {profileImageUrl ? (
-          <Avatar.Image
-            size={40}
-            source={{uri: profileImageUrl}}
-            style={styles.avatarImage}
-          />
-        ) : (
-          <Avatar.Text
-            size={40}
-            label={username ? username[0].toUpperCase() : 'SA'}
-            style={styles.avatarText}
-          />
-        )}
+        <CustomProfileAvatar
+          profileImageUrl={profileImageUrl}
+          username={username}
+        />
         <View style={styles.postParentContainer}>
           <View style={styles.postTextContainer}>
             <Text style={styles.postName}>{username}</Text>
@@ -476,12 +468,6 @@ const styles = StyleSheet.create({
   },
   contentText: {
     color: '#fff',
-  },
-  avatarImage: {
-    backgroundColor: 'transparent',
-  },
-  avatarText: {
-    backgroundColor: '#5e01a9',
   },
   modalContainer: {
     margin: 0,

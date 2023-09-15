@@ -21,7 +21,6 @@ import {
   ImagePickerResponse,
 } from 'react-native-image-picker';
 import {useSelector} from 'react-redux';
-import {Avatar} from 'react-native-paper';
 import {
   ParamListBase,
   useNavigation,
@@ -46,6 +45,7 @@ import {
 import {RootState} from '../../redux/store';
 import VideoPreviewScreen from './VideoPreviewScreen';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
@@ -332,14 +332,10 @@ export const AddPostScreen = ({route}: any) => {
           showsVerticalScrollIndicator={false}>
           <View style={styles.topContainer}>
             <View style={styles.avatarContainer}>
-              {profileImageUrl ? (
-                <Avatar.Image size={40} source={{uri: profileImageUrl}} />
-              ) : (
-                <Avatar.Text
-                  size={40}
-                  label={username ? username[0].toUpperCase() : 'SA'}
-                />
-              )}
+              <CustomProfileAvatar
+                profileImageUrl={profileImageUrl}
+                username={username}
+              />
               <TouchableOpacity
                 style={styles.avatarButton}
                 onPress={handleAvatarButtonPress}>
