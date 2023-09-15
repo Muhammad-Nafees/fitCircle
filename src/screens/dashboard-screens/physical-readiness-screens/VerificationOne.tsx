@@ -64,9 +64,19 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
     if (isFocused && route?.params?.clearValues) formikRef.current?.resetForm();
   }, [isFocused]);
 
+  const handleNavigation = () => {
+    if (route.params?.isAddPost === true) {
+      navigation.goBack();
+      return;
+    } else {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      return;
+    }
+  };
+
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      handleNavigation();
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -74,17 +84,13 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  }, [navigation, route]);
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <View style={{paddingBottom: 10}}>
         {route?.name == 'VerificationOne' && (
-          <CustomHeader
-            onPress={() =>
-              navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
-            }
-          />
+          <CustomHeader onPress={handleNavigation} />
         )}
       </View>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -282,7 +288,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       width: horizontalScale(80),
                       height: verticalScale(47),
                       alignItems: 'center',
-                      marginTop: 7
+                      marginTop: 7,
                     }}
                     fieldName="age"
                   />

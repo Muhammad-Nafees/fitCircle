@@ -24,7 +24,6 @@ import {format} from 'date-fns';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-
 const activityFactors = {
   'Sedentary (Little or no exercise)': {
     value: 1.2,
@@ -32,7 +31,7 @@ const activityFactors = {
   'Lightly active (Light exercise/sports 1-3 days a week)': {
     value: 1.3,
   },
-  'Moderately active (Moderate exercise/sports 3-5 days aweek)': {
+  'Moderately active (Moderate exercise/sports 3-5 days a week)': {
     value: 1.5,
   },
   'Very active (Hard exercise/sports 6-7 days a week)': {
@@ -44,10 +43,20 @@ const activityFactors = {
 };
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 
-export const TdeeCalculator = ({navigation, disabled}: any) => {
+export const TdeeCalculator = ({navigation, disabled, route}: any) => {
+  const handleNavigation = () => {
+    if (route.params?.isAddPost === true) {
+      navigation.goBack();
+      return;
+    } else {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      return;
+    }
+  };
+
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      handleNavigation();
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -55,7 +64,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  }, [navigation, route]);
 
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
@@ -104,11 +113,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <View style={{paddingBottom: 10}}>
-        <CustomHeader
-          onPress={() =>
-            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
-          }
-        />
+        <CustomHeader onPress={handleNavigation} />
       </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
@@ -188,7 +193,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   setFieldError={setFieldError}
                   fieldName="age"
                 />
-                <View style={{width: '85%'}}>
+                <View style={{width: '85%', zIndex: 9999}}>
                   <Text style={styles.label}>
                     Height
                     <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
@@ -207,7 +212,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     tdee={true}
                   />
                 </View>
-                <View style={{width: '85%'}}>
+                <View style={{width: '85%', zIndex: 999}}>
                   <Text style={styles.label}>
                     Weight
                     <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
@@ -300,7 +305,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   </View>
                 </TouchableWithoutFeedback>
 
-                <View style={{width: '85%'}}>
+                <View style={{width: '85%', zIndex: 9999}}>
                   <Text style={styles.label}>Goal Weight</Text>
                   <DropdownTextInput
                     value={values.goalWeight}
@@ -359,7 +364,9 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   fieldName="activityFactor"
                   extraRowTextStyle={{
                     color: 'white',
-                    fontSize: 10,
+                    fontSize: 12,
+                    width: '100%',
+                    textAlign: 'left',
                   }}
                   extraRowStyle={{
                     backgroundColor: 'rgba(68, 68, 68, 1)',
