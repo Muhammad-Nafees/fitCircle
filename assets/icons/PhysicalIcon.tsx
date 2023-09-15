@@ -2,7 +2,11 @@ import Svg, {Circle, Path} from 'react-native-svg';
 
 const PhysicalSvgIcon = () => {
   return (
-    <Svg width="22" height="25.76" viewBox="0 0 22 22" fill="none">
+    <Svg
+      width="20"
+      height="20"
+      viewBox="0 0 22 20"
+      fill="none">
       <Path
         d="M1.30859 18.1998L14.9771 4.78816L12.8265 2.36865L9.86929 5.057"
         stroke="#209BCC"
@@ -21,12 +25,7 @@ const PhysicalSvgIcon = () => {
         stroke-width="1.61301"
         stroke-linecap="round"
       />
-      <Circle
-        cx="17.9198"
-        cy="2.6249"
-        r="1.86904"
-        fill="#209BCC"
-      />
+      <Circle cx="17.9198" cy="2.6249" r="1.86904" fill="#209BCC" />
     </Svg>
   );
 };

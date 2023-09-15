@@ -12,6 +12,7 @@ import WalletSvgIcon from '../../../assets/icons/WalletIcon';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import PackageIcon from '../../../assets/icons/PackageIcon';
 
 export const PostOptionsIcon = ({
   handleCreatePostIconPress,
@@ -20,6 +21,8 @@ export const PostOptionsIcon = ({
   handleScheduleRoute,
 }: any) => {
   const navigation = useNavigation();
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
+  console.log(userRole);
   return (
     <View style={styles.bottomOptions}>
       <TouchableOpacity
@@ -29,7 +32,7 @@ export const PostOptionsIcon = ({
         style={styles.bottomContainerButtons}
         onPress={handleCreatePostIconPress}>
         <CreatePostSvgIcon />
-        <Text style={styles.options}>Create Post</Text>
+        <Text style={styles.options}>Create post</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.bottomContainerButtons}
@@ -39,8 +42,14 @@ export const PostOptionsIcon = ({
       </TouchableOpacity>
       <TouchableOpacity style={styles.bottomContainerButtons}>
         <ProfileSvgIcon />
-        <Text style={styles.options}>My profile</Text>
+        <Text style={[styles.options, {paddingLeft: 2}]}>My Profile</Text>
       </TouchableOpacity>
+      {userRole === 'trainer' && (
+        <TouchableOpacity style={styles.bottomContainerButtons}>
+          <PackageIcon />
+          <Text style={[styles.options]}>My Package</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity style={styles.bottomContainerButtons}>
         <MealPlanSvgIcon />
         <Text style={styles.options}>My Meal Plan</Text>
@@ -54,30 +63,34 @@ export const PostOptionsIcon = ({
         <ScheduleSvgIcon />
         <Text style={styles.options}>My Schedule</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.bottomContainerButtons}
-        onPress={() => {
-          handlePostOptionsIconModalClose();
-          navigation.navigate('Tdee', {
-            screen: 'TdeeCalculator',
-            params: {isAddPost: true},
-          });
-        }}>
-        <CalculatorSvgIcon />
-        <Text style={styles.options}>My TDEE Calculator</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.bottomContainerButtons}
-        onPress={() => {
-          handlePostOptionsIconModalClose();
-          navigation.navigate('PhysicalReadiness', {
-            screen: 'VerificationOne',
-            params: {isAddPost: true},
-          });
-        }}>
-        <PhysicalSvgIcon />
-        <Text style={styles.options}>My Physical Readiness Test</Text>
-      </TouchableOpacity>
+      {userRole !== 'trainer' && (
+        <>
+          <TouchableOpacity
+            style={styles.bottomContainerButtons}
+            onPress={() => {
+              handlePostOptionsIconModalClose();
+              navigation.navigate('Tdee', {
+                screen: 'TdeeCalculator',
+                params: {isAddPost: true},
+              });
+            }}>
+            <CalculatorSvgIcon />
+            <Text style={styles.options}>My TDEE Calculator</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.bottomContainerButtons}
+            onPress={() => {
+              handlePostOptionsIconModalClose();
+              navigation.navigate('PhysicalReadiness', {
+                screen: 'VerificationOne',
+                params: {isAddPost: true},
+              });
+            }}>
+            <PhysicalSvgIcon />
+            <Text style={styles.options}>My Physical Readiness Test</Text>
+          </TouchableOpacity>
+        </>
+      )}
       <TouchableOpacity style={styles.bottomContainerButtons}>
         <WalletSvgIcon />
         <Text style={styles.options}>My Wallet</Text>
@@ -96,7 +109,7 @@ const styles = StyleSheet.create({
   bottomContainerButtons: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: verticalScale(5),
+    marginVertical: verticalScale(6),
     marginHorizontal: horizontalScale(8),
   },
   options: {
