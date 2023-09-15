@@ -22,8 +22,6 @@ import {useIsFocused} from '@react-navigation/native';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
-const {width, height} = Dimensions.get('window');
-
 export const Slot = ({navigation}: any) => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const months = [
@@ -54,10 +52,7 @@ export const Slot = ({navigation}: any) => {
     (state: RootState) => state.auth.authorizationToken,
   );
   const route = useRoute();
-  const focus = useIsFocused(); // useIsFocused as shown
-
-  console.log(userData?._id, 'SSSSS');
-  console.log(authorizationToken);
+  const focus = useIsFocused();
 
   const getTrainerSchedule = async () => {
     try {
@@ -100,9 +95,19 @@ export const Slot = ({navigation}: any) => {
     );
   };
 
+  const handleNavigation = () => {
+    if (route.params?.isAddPost === true) {
+      navigation.navigate('DashboardScreen', {screen: 'Post'});
+      return true;
+    } else {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      return true;
+    }
+  };
+
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      handleNavigation();
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -115,10 +120,7 @@ export const Slot = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
-          }>
+        <TouchableOpacity onPress={handleNavigation}>
           <Image source={ArrowBackIcon} style={styles.arrowBack} />
         </TouchableOpacity>
         <Text style={styles.heading}>Schedule</Text>

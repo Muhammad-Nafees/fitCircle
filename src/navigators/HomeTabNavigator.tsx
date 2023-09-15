@@ -203,7 +203,6 @@ const HomeTabNavigator = () => {
               <CustomTabBarIcon focused={focused} icon="Message" />
             </View>
           ),
-          tabBarStyle: {display: 'none'},
         }}
       />
       <Tab.Screen

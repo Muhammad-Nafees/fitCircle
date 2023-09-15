@@ -216,9 +216,19 @@ export const AddPostScreen = ({route}: any) => {
 
   const handleScheduleRoute = () => {
     if (userData?.role === 'trainer') {
-      navigation.navigate('MySche', {screen: 'Slot'});
+      navigation.navigate('MySche', {
+        screen: 'Slot',
+        params: {
+          isAddPost: true,
+        },
+      });
     } else {
-      navigation.navigate('MySche', {screen: 'SetSchedule'});
+      navigation.navigate('HomeTab', {
+        screen: 'UserSchedule',
+        params: {
+          isAddPost: true,
+        },
+      });
     }
   };
 

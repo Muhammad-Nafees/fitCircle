@@ -20,7 +20,6 @@ export const PostOptionsIcon = ({
   handleScheduleRoute,
 }: any) => {
   const navigation = useNavigation();
-  const userData = useSelector((state: RootState) => state.auth.user);
   return (
     <View style={styles.bottomOptions}>
       <TouchableOpacity
@@ -38,16 +37,11 @@ export const PostOptionsIcon = ({
         <VideoSvgIcon />
         <Text style={styles.options}>Take a video</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons} onPress={() => navigation.navigate('Profile')}>
+      <TouchableOpacity style={styles.bottomContainerButtons}>
         <ProfileSvgIcon />
         <Text style={styles.options}>My profile</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.bottomContainerButtons}
-        onPress={() => {
-          handlePostOptionsIconModalClose();
-          navigation.navigate('MealPlan');
-        }}>
+      <TouchableOpacity style={styles.bottomContainerButtons}>
         <MealPlanSvgIcon />
         <Text style={styles.options}>My Meal Plan</Text>
       </TouchableOpacity>
@@ -64,7 +58,10 @@ export const PostOptionsIcon = ({
         style={styles.bottomContainerButtons}
         onPress={() => {
           handlePostOptionsIconModalClose();
-          navigation.navigate('Tdee');
+          navigation.navigate('Tdee', {
+            screen: 'TdeeCalculator',
+            params: {isAddPost: true},
+          });
         }}>
         <CalculatorSvgIcon />
         <Text style={styles.options}>My TDEE Calculator</Text>
@@ -73,7 +70,10 @@ export const PostOptionsIcon = ({
         style={styles.bottomContainerButtons}
         onPress={() => {
           handlePostOptionsIconModalClose();
-          navigation.navigate('PhysicalReadiness');
+          navigation.navigate('PhysicalReadiness', {
+            screen: 'VerificationOne',
+            params: {isAddPost: true},
+          });
         }}>
         <PhysicalSvgIcon />
         <Text style={styles.options}>My Physical Readiness Test</Text>

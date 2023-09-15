@@ -5,16 +5,16 @@ import {
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
 import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store';
 import MealPlanStackNavigator from './MealPlanStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessStackNavigator';
 import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
+import HomeTabNavigator from './HomeTabNavigator';
 
 const Stack = createStackNavigator();
 const HomeStackNavigator = () => {
-
   return (
     <Stack.Navigator
       screenOptions={{
@@ -32,6 +32,11 @@ const HomeStackNavigator = () => {
       <Stack.Screen
         name="AddPostScreen"
         component={AddPostScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="HomeTab"
+        component={HomeTabNavigator}
         options={{headerShown: false}}
       />
       <Stack.Screen

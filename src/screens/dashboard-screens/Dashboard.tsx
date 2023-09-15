@@ -65,13 +65,6 @@ const DashboardScreen = ({navigation}: any) => {
           {
             text: 'Packages / Meal Plan',
             icon: <PackagesMealIcon />,
-            dropdown: isDropdownVisible,
-            selectOption: option => {
-              setSelectedOption(option);
-              if (option === 'Meal Plan') {
-                navigation.navigate('MealPlanScreen');
-              }
-            },
           },
           {
             text: 'Wallet',
@@ -99,6 +92,10 @@ const DashboardScreen = ({navigation}: any) => {
             icon: <ScheduleDashboardIcon />,
             routeName: 'UserSchedule',
           },
+          {
+            text: 'Wallet',
+            icon: <WalletDashboardIcon />,
+          },
         ];
 
   const renderItem = ({item}: any) => {
@@ -115,7 +112,15 @@ const DashboardScreen = ({navigation}: any) => {
           }
           style={styles.carouselItem}>
           {item.icon}
-          <Text style={styles.carouselItemText}>{item.text}</Text>
+          <Text
+            style={[
+              styles.carouselItemText,
+              item.text === 'Total Daily Exercise Expenditure Calculator' && {
+                marginVertical: 4,
+              },
+            ]}>
+            {item.text}
+          </Text>
         </TouchableOpacity>
         {item.text === 'Packages / Meal Plan' &&
           item.dropdown &&

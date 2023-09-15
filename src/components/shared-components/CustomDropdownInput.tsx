@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(5),
     borderBottomWidth: 1,
     borderColor: '#fff',
+    zIndex: 99999,
   },
   selectedOption: {
     backgroundColor: '#F3F3F3',

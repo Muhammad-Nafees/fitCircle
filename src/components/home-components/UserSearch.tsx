@@ -50,11 +50,11 @@ export const UserSearch = ({
           )}
           <Text style={styles.username}>{username}</Text>
         </View>
-        <TouchableOpacity onPress={handlePress}>
+        {/* <TouchableOpacity onPress={handlePress}>
           <Text style={styles.followButtonText}>
             {isFollowing ? 'Following' : 'Follow'}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </TouchableOpacity>
     </View>
   );

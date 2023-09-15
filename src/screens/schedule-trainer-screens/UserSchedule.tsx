@@ -57,21 +57,6 @@ const SetSchedule = ({route, navigation}: any) => {
     setProfileImageUrl(imageUri);
   }, [userData]);
 
-  // const customDatesStyles = {};
-  // customDatesStyles[currentMonth] = {textStyle: {color: '#fff'}};
-
-  // const saturdayAndSundayStyle = {
-  //   textStyle: {color: 'red'},
-  //   containerStyle: {backgroundColor: 'transparent'},
-  // };
-  // for (let i = 0; i < 31; i++) {
-  //   const currentDate = new Date(currentMonth);
-  //   currentDate.setDate(i + 1);
-  //   if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
-  //     customDatesStyles[currentDate] = saturdayAndSundayStyle;
-  //   }
-  // }
-
   const handleDayPress = (day: DateData) => {
     const selected = day.dateString;
 
@@ -105,9 +90,19 @@ const SetSchedule = ({route, navigation}: any) => {
     return moment(date).format('ddd, D MMM');
   };
 
+  const handleNavigation = () => {
+    if (route.params?.isAddPost === true) {
+      navigation.navigate('Post');
+      return true;
+    } else {
+      navigation.navigate('Dashboard');
+      return true;
+    }
+  };
+
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate('Dashboard');
+      handleNavigation();
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -158,28 +153,6 @@ const SetSchedule = ({route, navigation}: any) => {
     }
   };
 
-  // const customDatesStyles: MarkedDates | undefined = {
-  //   [today]: {
-  //     selected: true,
-  //     selectedColor: '#209BCC',
-  //     selectedTextColor: '#FFF',
-  //   },
-  //   [selectedDate]: {
-  //     selected: true,
-  //     selectedColor: '#209BCC',
-  //     selectedTextColor: '#FFF',
-  //   },
-  //   '2023-09-09': {
-  //     customStyles: {
-  //       container: {
-  //         borderWidth: 1,
-  //         borderColor: '#FFF',
-  //         borderRadius: 50,
-  //       },
-  //     },
-  //   },
-  // };
-
   useEffect(() => {
     getSchedule();
   }, []);
@@ -187,7 +160,7 @@ const SetSchedule = ({route, navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
-        <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
+        <TouchableOpacity onPress={handleNavigation}>
           <Image source={ArrowBackIcon} style={styles.arrowBack} />
         </TouchableOpacity>
         <Text style={styles.heading}>My Schedule</Text>
