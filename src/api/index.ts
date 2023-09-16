@@ -6,7 +6,7 @@ import axiosInstance from './interceptor';
 export const loginIn = async (email: string, password: string) => {
   try {
     const response = await axios.post(
-      'http://3.128.201.197/users/login',
+      'http://fitcircle.yameenyousuf.com/users/login',
       {
         email: email.toLowerCase(),
         password: password,
@@ -21,7 +21,7 @@ export const loginIn = async (email: string, password: string) => {
 export const register = async (values: CreateAccountFormValues) => {
   try {
     const response = await axios.post(
-      'http://3.128.201.197/users/register',
+      'http://fitcircle.yameenyousuf.com/users/register',
       {
         email: values.email.toLowerCase(),
         phone: values.phone,
@@ -74,7 +74,7 @@ export const createProfile = async (
   }
 
   const response = await axios.post(
-    'http://3.128.201.197/home/createProfile',
+    'http://fitcircle.yameenyousuf.com/home/createProfile',
     formData,
     {
       headers: {

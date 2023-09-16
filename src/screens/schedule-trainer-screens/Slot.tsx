@@ -65,16 +65,32 @@ export const Slot = ({navigation}: any) => {
       // }
 
       if (response.status === 200) {
-        const sortedData = [...response.data];
-        sortedData.sort((a: any, b: any) => {
-          const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
-          const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
-          console.log(dateA, dateB);
-          return dateB.getTime() - dateA.getTime();
+        const currentDate = new Date(); // Get current date
+        const formattedCurrentDate = format(currentDate, 'MM/dd/yyyy');
+
+        const filteredData = response.data.filter(item => {
+          const date = parse(item.date, 'MM/dd/yyyy', new Date());
+          return date >= currentDate; // Only keep dates equal to or after today
         });
 
-        setTrainerSchedules(sortedData as any);
-        console.log(sortedData, 'Sorted Data');
+        filteredData.sort((a: any, b: any) => {
+          const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
+          const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
+          return dateA.getTime() - dateB.getTime();
+        });
+
+        // Find today's date
+        const todayIndex = filteredData.findIndex(
+          item => item.date === formattedCurrentDate,
+        );
+
+        if (todayIndex > -1) {
+          const todayData = filteredData.splice(todayIndex, 1);
+          filteredData.unshift(todayData[0]);
+        }
+
+        setTrainerSchedules(filteredData as any);
+        console.log(filteredData, 'Filtered and Sorted Data');
       }
     } catch (error: any) {
       console.log('🚀 ~ getTrainerSlots ~ error:', error.response.data);

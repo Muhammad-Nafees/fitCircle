@@ -42,6 +42,7 @@ const VerifyScreen = ({navigation}: any) => {
         console.log('try');
         const response = await createProfile({...userData}, authToken);
         const data = response?.data;
+        console.log(data,"data")
         dispatch(setUserData(response?.data));
         storeData(authToken);
         console.log(response);

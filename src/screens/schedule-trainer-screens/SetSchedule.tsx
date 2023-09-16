@@ -19,6 +19,7 @@ import {RootState} from '../../redux/store';
 import {vertical} from 'react-native-swiper-flatlist/src/themes';
 import {verticalScale} from '../../utils/metrics';
 import {enUS} from 'date-fns/locale';
+import Toast from 'react-native-toast-message';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -82,8 +83,14 @@ const SetSchedule = ({route, navigation}: any) => {
   const handleDayPress = (day: DateData) => {
     setIsDateFormatted(false);
     const selected = day.dateString;
-    console.log(selected, selectedDate, selectedSlotDate, 'daypress');
+    if (moment(selected).isSameOrBefore(moment(today))) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please select a present or future date!',
+      });
 
+      return; // Do not update if the selected date is in the past
+    }
     if (selected === selectedDate) {
       setSelectedDate(undefined);
       return;
