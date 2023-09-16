@@ -2,10 +2,7 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
-import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
 import {MealPlanOne} from '../screens/dashboard-screens/meal-plan-screens/MealPlanOne';
-import {Image, TouchableOpacity} from 'react-native';
 import {MealPlanTwo} from '../screens/dashboard-screens/meal-plan-screens/MealPlanTwo';
 import {MealPlanThree} from '../screens/dashboard-screens/meal-plan-screens/MealPlanThree';
 import {MealPlanFour} from '../screens/dashboard-screens/meal-plan-screens/MealPlanFour';
@@ -28,11 +25,6 @@ const MealPlanStackNavigator = () => {
       <Stack.Screen name="MealPlanThree" component={MealPlanThree} />
       <Stack.Screen name="MealPlanFour" component={MealPlanFour} />
       <Stack.Screen
-        name="SuccessfulMealDialog"
-        component={SuccessfulDialog}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
         name="RequestMealPlan"
         component={RequestMealPlan}
         options={{headerShown: false}}
@@ -40,11 +32,6 @@ const MealPlanStackNavigator = () => {
       <Stack.Screen
         name="DashboardScreen"
         component={HomeTabNavigator}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="UnsuccessfulDialog"
-        component={UnsuccessfulDialog}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

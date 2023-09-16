@@ -11,7 +11,6 @@ import {
   ScrollView,
 } from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
-import axiosInstance from '../../api/interceptor';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
@@ -58,24 +57,6 @@ export const Slot = ({navigation}: any) => {
 
   console.log(userData?._id, 'SSSSS');
   console.log(authorizationToken);
-
-  const getTrainerSchedule = async () => {
-    try {
-      const response = await axiosInstance.get(`schedules/${userData?._id}`);
-
-      if (response.status === 200) {
-        setTrainerSchedules(response.data);
-      }
-    } catch (error: any) {
-      console.log('🚀 ~ getTrainerSlots ~ error:', error.response.data);
-    }
-  };
-
-  useEffect(() => {
-    if (focus == true) {
-      getTrainerSchedule();
-    }
-  }, [focus]);
 
   const renderCarouselItem = ({item}) => {
     const inputDateString = item?.date;

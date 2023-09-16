@@ -7,7 +7,6 @@ import VerificationFour from './VerificationFour';
 import VerificationFive from './VerificationFive';
 import VerificationSix from './VerificationSix';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import axiosInstance from '../../../api/interceptor';
 
 type Mcq = {
   question: string;
@@ -52,62 +51,6 @@ const VerificationSeven = ({navigation, route}: any) => {
   };
 
   const handleFormSave = async () => {
-    // try {
-    //   const goals = optionals;
-    //   let mcqs: Mcq[] = [];
-    //   if (verificationFour)
-    //     verificationFour?.physicalAReadiness?.forEach((elem: Mcq) => {
-    //       const newMcqs = addMcq(elem, mcqs);
-    //       mcqs = [...newMcqs];
-    //     });
-    //   if (verificationTwo)
-    //     verificationTwo?.forEach((elem: Mcq) => {
-    //       const newMcqs = addMcq(elem, mcqs);
-    //       mcqs = [...newMcqs];
-    //     });
-    //   if (verificationFive)
-    //     for (var key in verificationFive) {
-    //       if (verificationFive.hasOwnProperty(key)) {
-    //         mcqs.push({
-    //           question:
-    //             key === 'desiredBodyFat'
-    //               ? 'Desired Body Fat'
-    //               : key === 'desiredLeanMuscle'
-    //               ? 'Desired lean Muscle'
-    //               : key === 'desiredWeight'
-    //               ? 'Desired Weight'
-    //               : 'I plan to exercise ___ times of the week',
-    //           answer: verificationFive[key],
-    //         });
-    //       }
-    //     }
-    //   const dateArr = verificationOne?.date?.split('/');
-    //   const reqDate = `${dateArr[1]}/${dateArr[0]}/${dateArr[2]}`;
-    //   const reqObj = {
-    //     date: reqDate,
-    //     email: verificationOne?.email,
-    //     firstName: verificationOne?.firstName,
-    //     lastName: verificationOne?.lastName,
-    //     address: verificationOne?.address,
-    //     city: verificationOne?.city,
-    //     zip: verificationOne?.zip,
-    //     homePhone: verificationOne?.homePhone,
-    //     cellphone: verificationOne?.cellPhone,
-    //     age: verificationOne?.age,
-    //     height: verificationOne?.height,
-    //     weight: verificationOne?.weight,
-    //     goal: goals,
-    //     mcqs: mcqs,
-    //   };
-    //   const response = await axiosInstance.post(`physical-readiness`, reqObj);
-    //   console.log(
-    //     '🚀 ~ file: VerificationSeven.tsx:97 ~ handleFormSave ~ response:',
-    //     response,
-    //   );
-    //   navigation.navigate('FormSaved');
-    // } catch (error) {
-    //   console.log('🚀 ~ handleFormSave ~ error:', error);
-    // }
     navigation.navigate('FormSaved');
   };
 

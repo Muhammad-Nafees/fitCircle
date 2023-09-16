@@ -14,7 +14,6 @@ import CustomButton from '../../components/shared-components/CustomButton';
 import {CustomScheduleTime} from '../../components/dashboard-components/CustomScheduleTime';
 import {RootState} from '../../redux/store';
 import {useSelector} from 'react-redux';
-import axiosInstance from '../../api/interceptor';
 import {format} from 'date-fns';
 import {DateData, MarkedDates} from 'react-native-calendars/src/types';
 
@@ -120,69 +119,6 @@ const SetSchedule = ({route, navigation}: any) => {
   const formattedSelectedDate = selectedDate
     ? formatDate(selectedDate)
     : formatDate(new Date());
-
-  const getSchedule = async () => {
-    try {
-      const response = await axiosInstance.get(`schedules/user/slots`);
-
-      console.log(
-        '🚀 ~ file: UserSchedule.tsx:66 ~ getSchedule ~ response:',
-        response.data,
-      );
-      if (response.status === 200) {
-        let arr: ScheduleItem[] = [];
-        response?.data?.forEach((data: ScheduleItem) => {
-          const dateArr = data.scheduleDate.split('/');
-          setCustomDatesStyles(prevState => ({
-            [`${dateArr[2]}-${dateArr[0]}-${dateArr[1]}`]: {
-              customStyles: {
-                container: {
-                  borderWidth: 1,
-                  borderColor: '#FFF',
-                  borderRadius: 50,
-                },
-              },
-            },
-            ...prevState,
-          }));
-
-          arr.push({
-            ...data,
-            scheduleDate: `${dateArr[2]}-${dateArr[0]}-${dateArr[1]}`,
-          });
-        });
-        setSchedule(arr);
-      }
-    } catch (error) {
-      console.log('🚀 ~ getSchedule ~ error:', error);
-    }
-  };
-
-  // const customDatesStyles: MarkedDates | undefined = {
-  //   [today]: {
-  //     selected: true,
-  //     selectedColor: '#209BCC',
-  //     selectedTextColor: '#FFF',
-  //   },
-  //   [selectedDate]: {
-  //     selected: true,
-  //     selectedColor: '#209BCC',
-  //     selectedTextColor: '#FFF',
-  //   },
-  //   '2023-09-09': {
-  //     customStyles: {
-  //       container: {
-  //         borderWidth: 1,
-  //         borderColor: '#FFF',
-  //         borderRadius: 50,
-  //       },
-  //     },
-  //   },
-  // };
-
-  useEffect(() => {
-    getSchedule();
-  }, []);
 
   return (
     <View style={styles.container}>

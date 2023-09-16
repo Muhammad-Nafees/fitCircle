@@ -2,11 +2,6 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {View, Text, Image, Keyboard} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import HomeScreen from '../screens/home-screens';
-import {SearchScreen} from '../screens/home-screens/SearchScreen';
-import HomeStackNavigator from './HomeStackNavigator';
-import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
-import CommentsScreen from '../screens/home-screens/CommentScreen';
 import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
@@ -14,24 +9,19 @@ import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
 import DashboardScreen from '../screens/dashboard-screens/Dashboard';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
-import {TdeeCalculator} from '../screens/dashboard-screens/tdee-calculator-screens/TdeeCalculator';
 import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
 import MealPlanStackNavigator from './MealPlanStackNavigator';
 import {Transaction} from '../screens/dashboard-screens/Transaction';
 import UserSchedule from '../screens/schedule-trainer-screens/UserSchedule';
-import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
-import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
-import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
-import ReelsComponent from '../components/home-components/Reels';
-import {useSelector} from 'react-redux';
-import {RootState} from '../redux/store';
-import MessageStackNavigator from './MessageStackNavigator';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
 
 const Tab = createBottomTabNavigator();
-const MessageScreen = () => <ScreenContent title="Message" />;
+const MessageStackNavigator = () => <ScreenContent title="Message" />;
+const HomeScreen = () => <ScreenContent title="Home" />;
+const SearchScreen = () => <ScreenContent title="Home" />;
+const HomeStackNavigator = () => <ScreenContent title="AddPost" />;
 
 interface ScreenContentProps {
   title: string;
@@ -214,45 +204,6 @@ const HomeTabNavigator = () => {
               <CustomTabBarIcon focused={focused} icon="Dashboard" />
             </View>
           ),
-        }}
-      />
-      <Tab.Screen
-        name="FavoriteDialog"
-        component={FavoriteDialogScreen}
-        options={{
-          tabBarStyle: {display: 'none'},
-          tabBarButton: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarButton: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="PackageDetail"
-        component={PackageDetailScreen}
-        options={{
-          tabBarStyle: {display: 'none'},
-          tabBarButton: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="SearchProfile"
-        component={SearchProfileScreen}
-        options={{
-          tabBarStyle: {display: 'none'},
-          tabBarButton: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="CommentsScreen"
-        component={CommentsScreen}
-        options={{
-          tabBarStyle: {display: 'none'},
-          tabBarButton: () => null,
         }}
       />
       <Tab.Screen

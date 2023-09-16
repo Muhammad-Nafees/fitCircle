@@ -3,8 +3,6 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import {VerificationOne} from '../screens/dashboard-screens/physical-readiness-screens/VerificationOne';
-import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
-import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
 import CustomHeader from '../components/shared-components/CustomHeader';
 import {verticalScale} from '../utils/metrics';
 import VerificationTwo from '../screens/dashboard-screens/physical-readiness-screens/VerificationTwo';
@@ -45,16 +43,6 @@ const PhysicalReadinessStackNavigator = () => {
       <Stack.Screen
         name="DashboardScreen"
         component={HomeTabNavigator}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="FormSaved"
-        component={SuccessfulDialog}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="UnsuccessfulDialog"
-        component={UnsuccessfulDialog}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
