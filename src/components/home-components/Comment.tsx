@@ -13,7 +13,7 @@ import {
   verticalScale,
 } from '../../utils/metrics';
 import Entypo from 'react-native-vector-icons/Entypo';
-import CustomProfileAvatar from 'components/shared-components/CustomProfileAvatar';
+import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 const CancelIcon = require('../../../assets/icons/cancel.png');
 
 interface CommentProps {
