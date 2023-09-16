@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {BackHandler, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Formik} from 'formik';
 import CustomButton from '../../../components/shared-components/CustomButton';
@@ -24,14 +24,12 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
     return () => backHandler.remove();
   }, [navigation]);
   const formdata: null | any = data;
-  const handleSubmit = values => {
+  const handleSubmit = (values: any) => {
     console.log('Form values:', values);
     navigation.navigate('VerificationSix', {
       ...route.params,
       verificationFive: values,
     });
-
-    // Handle form submission or navigation here
   };
 
   return (
@@ -69,29 +67,12 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
                     ]}>
                     Physical Activity Readiness
                   </Text>
-                  <Text
-                    style={{
-                      fontWeight: '400',
-                      fontSize: 12,
-                      color: 'white',
-                      paddingBottom: 28,
-                    }}>
+                  <Text style={styles.subHeading}>
                     Please list your desired fitness goals:
                   </Text>
                 </View>
               )}
               <View style={styles.formContainer}>
-                {/* <CustomInput
-                  label="Email"
-                  placeholder="lincolnsmith@gmail.com"
-                  value={values.email}
-                  error={errors.email}
-                  touched={touched.email}
-                  handleChange={handleChange('email')}
-                  setFieldError={setFieldError}
-                  fieldName="email"
-                  keyboardType="email-address"
-                /> */}
                 <CustomInput
                   editable={!disabled}
                   label="Desired Body Fat"
@@ -179,6 +160,12 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(100),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
+  },
+  subHeading: {
+    fontWeight: '400',
+    fontSize: 12,
+    color: 'white',
+    paddingBottom: 28,
   },
 });
 
