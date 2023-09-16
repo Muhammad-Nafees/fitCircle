@@ -585,7 +585,6 @@ export const AddPostScreen = ({route}: any) => {
         </View>
         {!mediaUri && (
           <View style={{paddingTop: verticalScale(40)}}>
-            <View>
               <ColorSelectionSlider
                 colors={[
                   '#CC5252',
@@ -600,7 +599,6 @@ export const AddPostScreen = ({route}: any) => {
                 ]}
                 onColorSelected={handleColorSelected}
               />
-            </View>
           </View>
         )}
         <View style={styles.minimizedContainer} {...panResponder.panHandlers}>

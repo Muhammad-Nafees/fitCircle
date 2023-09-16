@@ -57,9 +57,24 @@ export const Slot = ({navigation}: any) => {
   const getTrainerSchedule = async () => {
     try {
       const response = await axiosInstance.get(`schedules/${userData?._id}`);
+      console.log(response.data, 'data');
+
+      // if (response.status === 200) {
+      //   setTrainerSchedules(response.data);
+      //   console.log(response.data, 'Data');
+      // }
 
       if (response.status === 200) {
-        setTrainerSchedules(response.data);
+        const sortedData = [...response.data];
+        sortedData.sort((a: any, b: any) => {
+          const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
+          const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
+          console.log(dateA, dateB);
+          return dateB.getTime() - dateA.getTime();
+        });
+
+        setTrainerSchedules(sortedData as any);
+        console.log(sortedData, 'Sorted Data');
       }
     } catch (error: any) {
       console.log('🚀 ~ getTrainerSlots ~ error:', error.response.data);

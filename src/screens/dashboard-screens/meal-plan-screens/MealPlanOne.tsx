@@ -26,6 +26,12 @@ export const MealPlanOne = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <Text style={{color: 'white'}}>Meal Plan coming soon!</Text>
+      <CustomButton
+        extraStyles={{width: 300, marginTop: 10}}
+        onPress={() => navigation.navigate('Home')}>
+        Go To Home
+      </CustomButton>
+
       {/* <TouchableOpacity
         style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
         onPress={() => navigation.goBack()}>

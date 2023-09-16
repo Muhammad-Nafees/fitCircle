@@ -56,10 +56,6 @@ const AuthStackNavigator = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="ForgetPasswordEmail"
-        component={ForgetPasswordEmail}
-      />
-      <Stack.Screen
         name="ForgetPasswordNumber"
         component={ForgetPasswordNumber}
       />

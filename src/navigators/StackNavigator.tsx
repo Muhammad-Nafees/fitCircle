@@ -104,6 +104,26 @@ const StackNavigator = () => {
         component={VerifyScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="ForgetPasswordEmail"
+        component={ForgetPasswordEmail}
+      />
+        <Stack.Screen
+        name="ForgetPasswordNumber"
+        component={ForgetPasswordNumber}
+      />
+      <Stack.Screen name="ForgetPasswordOtp" component={ForgetPasswordOtp} />
+      <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
+      <Stack.Screen
+        name="PasswordChangedDialog"
+        component={FavoriteDialogScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="BlankButtonRender"
+        component={BlankButtonRenderScreen}
+        options={{headerShown: false}}
+      />
       {/* <Stack.Screen
         name="HomeScreen"
         component={HomeTabNavigator}

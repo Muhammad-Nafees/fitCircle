@@ -103,8 +103,8 @@ const HomeScreen = () => {
   useEffect(() => {
     setUserId(userData?._id);
     handleButtonPress('My Circle');
-    // const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-    const imageUri = userData?.profileImage?.uri;
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    // const imageUri = userData?.profileImage?.uri;
     setProfileImageUrl(imageUri);
   }, [userData]);
 
