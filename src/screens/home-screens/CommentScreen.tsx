@@ -36,7 +36,6 @@ const CommentsScreen = ({route, navigation}: any) => {
   const selectedPost = useSelector(
     (state: RootState) => state.post.selectedPost,
   );
-  console.log(selectedPost);
   const {userId} = route.params;
   const profileScreen = route?.params?.profileScreen;
   const [comments, setComments] = useState([]);

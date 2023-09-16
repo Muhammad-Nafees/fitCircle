@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 const getData = async () => {
   try {
     const authToken = await AsyncStorage.getItem('authToken');
-    console.log(authToken,"authtoken")
+    console.log(authToken, 'authtoken');
     return authToken;
   } catch (e) {
     console.log(e);
