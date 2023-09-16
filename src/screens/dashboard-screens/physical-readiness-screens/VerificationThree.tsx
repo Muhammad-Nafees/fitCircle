@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
 import {LinearGradient} from 'react-native-linear-gradient';
 import {STYLES} from '../../../styles/globalStyles';
@@ -76,7 +76,7 @@ const VerificationThree = ({navigation, route}: any) => {
                   </Text>
                 </ScrollView>
               </LinearGradient>
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              <View style={styles.input}>
                 <CustomInput
                   label="Initial"
                   placeholder="LS"
@@ -86,19 +86,11 @@ const VerificationThree = ({navigation, route}: any) => {
                   handleChange={handleChange('initial')}
                   setFieldError={setFieldError}
                   fieldName="initial"
-                  // editable={false}
-                  // value={initial}
-                  // handleChange={handleChange}
                 />
               </View>
             </View>
             <View style={styles.buttonContainer}>
-              <CustomButton
-                // isDisabled={initial.length === 0}
-                onPress={handleSubmit}>
-                {/* onPress={() => navigation.navigate('VerificationFour')}> */}
-                Continue
-              </CustomButton>
+              <CustomButton onPress={handleSubmit}>Continue</CustomButton>
             </View>
           </>
         )}
@@ -137,6 +129,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     marginHorizontal: 20,
   },
+  input: {justifyContent: 'center', alignItems: 'center'},
 });
 
 export default VerificationThree;
