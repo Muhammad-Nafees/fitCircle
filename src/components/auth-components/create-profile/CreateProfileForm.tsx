@@ -118,7 +118,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const handleUsernameBlur = async (username: any) => {
     try {
       const response = await fetch(
-        'http://fitcircle.yameenyousuf.com/users/check-username',
+        'http://3.128.201.197/users/check-username',
         {
           method: 'POST',
           headers: {

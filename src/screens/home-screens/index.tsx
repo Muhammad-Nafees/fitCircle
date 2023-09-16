@@ -125,7 +125,7 @@ const HomeScreen = () => {
     setIsLoadingMore(true);
     try {
       const response = await axios.get(
-        'http://fitcircle.yameenyousuf.com/posts',
+        'http://3.128.201.197/posts',
         {
           params: {
             page,
