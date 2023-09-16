@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import {Formik, useFormik} from 'formik';
+import {Formik} from 'formik';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {format} from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -21,8 +21,6 @@ import {
 import {PhysicalReadinessTestSchema} from '../../../validations';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {useDispatch} from 'react-redux';
-import {setAnswers} from '../../../redux/readinessTestSlice';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 import PhoneInput from 'react-native-phone-number-input';
 import {useIsFocused, useRoute} from '@react-navigation/native';
@@ -43,8 +41,6 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
       setIsError('');
     }
   };
-  const dispatch = useDispatch();
-
   const editable = typeof disabled === 'boolean' ? !disabled : true;
 
   const isFocused = useIsFocused();
@@ -118,16 +114,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
           }) => (
             <>
               {disabled !== true && (
-                <Text
-                  style={[
-                    STYLES.text16,
-                    {
-                      fontWeight: '700',
-                      marginTop: 16,
-                      paddingHorizontal: 16,
-                      paddingBottom: 28,
-                    },
-                  ]}>
+                <Text style={[STYLES.text16, styles.title]}>
                   Physical Activity Readiness
                 </Text>
               )}
@@ -150,11 +137,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       name="calendar-outline"
                       size={23}
                       color="black"
-                      style={{
-                        position: 'absolute',
-                        right: horizontalScale(12),
-                        top: verticalScale(34),
-                      }}
+                      style={styles.icon}
                     />
                     <DateTimePickerModal
                       isVisible={isDatePickerVisible}
@@ -278,12 +261,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                     keyboardType="numeric"
                     handleChange={handleChange('age')}
                     setFieldError={setFieldError}
-                    extraStyles={{
-                      width: horizontalScale(80),
-                      height: verticalScale(47),
-                      alignItems: 'center',
-                      marginTop: 7
-                    }}
+                    extraStyles={styles.ageInput}
                     fieldName="age"
                   />
                   <View style={styles.inputContainer}>
@@ -362,5 +340,22 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(50),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
+  },
+  ageInput: {
+    width: horizontalScale(80),
+    height: verticalScale(47),
+    alignItems: 'center',
+    marginTop: 7,
+  },
+  icon: {
+    position: 'absolute',
+    right: horizontalScale(12),
+    top: verticalScale(34),
+  },
+  title: {
+    fontWeight: '700',
+    marginTop: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 28,
   },
 });
