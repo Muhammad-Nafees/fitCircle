@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  FlatList,
+  ScrollView,
+  KeyboardAvoidingView,
+  Dimensions,
 } from 'react-native';
 import {
   horizontalScale,
@@ -14,9 +16,18 @@ import {
   verticalScale,
 } from '../../utils/metrics';
 import {Avatar} from 'react-native-paper';
+import {
+  ImageLibraryOptions,
+  ImagePickerResponse,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 const CancelIcon = require('../../../assets/icons/cancel.png');
+const SendIcon = require('../../../assets/icons/send.png');
+import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
+import CreatePostCommentSvgIcon from '../../../assets/icons/CreatePostIconComment';
 
 import Entypo from 'react-native-vector-icons/Entypo';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 interface CommentProps {
   comments: CommentItem[];
@@ -27,6 +38,8 @@ interface CommentProps {
   media: any;
   setmedia: any;
   setcomment: any;
+  isReplying: any;
+  setIsReplying: any;
   setCommentText: (commentText: string) => void;
   handleCommentPostSubmit: (commentText: string) => void;
   handleReplyPress: (commentId: string, parentCommentId?: string) => void;
@@ -74,7 +87,9 @@ const CommentItem = ({
       (currentDate.getTime() - commentDate.getTime()) / 1000,
     );
 
-    if (differenceInSeconds < 60) {
+    if (differenceInSeconds <= 0) {
+      return `Just now`;
+    } else if (differenceInSeconds < 60) {
       return `${differenceInSeconds} seconds ago`;
     } else if (differenceInSeconds < 3600) {
       const minutes = Math.floor(differenceInSeconds / 60);
@@ -87,6 +102,8 @@ const CommentItem = ({
       return `${days} ${days === 1 ? 'day' : 'days'} ago`;
     }
   };
+
+  console.log(timeDifference, 'timeDifference');
 
   return (
     <View style={styles.rowContainer}>
@@ -157,11 +174,14 @@ export const Comment = ({
   media,
   setmedia,
   setcomment,
+  isReplying,
+  setIsReplying,
 }: CommentProps) => {
-  const [isReplying, setIsReplying] = useState(false);
+  const [mediaUri, setMediaUri] = useState(null);
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(
     null,
   );
+  const [commentText, setCommentText] = useState('');
 
   useEffect(() => {
     if (available) {
@@ -174,6 +194,7 @@ export const Comment = ({
     setReplyingCommentId(commentId);
     setIsReplying(true);
   };
+
   const handleCommentSubmit = (a: any, b: any) => {
     if (a.trim() !== '' && b?.trim() !== '') {
       if (isReplying) {
@@ -185,6 +206,8 @@ export const Comment = ({
       setReplyingCommentId(null);
       setmedia(null);
       setcomment('');
+      setMediaUri(null);
+      setCommentText('');
     }
   };
 
@@ -214,19 +237,17 @@ export const Comment = ({
             </Text>
           </View>
         ) : null}
-        <FlatList
-          data={comments}
-          renderItem={({item: comment}) => (
+        <ScrollView style={styles.commentsAndInputContainer}>
+          {comments.map(comment => (
             <CommentItem
+              key={comment._id}
               comment={comment}
               handleReplyPress={handleReplyButtonPress}
               showReplyButton={true}
               handleImageOpen={handleImageOpen}
             />
-          )}
-          keyExtractor={item => item._id}
-          contentContainerStyle={styles.commentsAndInputContainer}
-        />
+          ))}
+        </ScrollView>
       </View>
     </>
   );
@@ -248,6 +269,10 @@ const styles = StyleSheet.create({
   },
   commentsAndInputContainer: {
     height: '100%',
+    justifyContent: 'center',
+  },
+  commentsAndInputContainer: {
+    flex: 1,
   },
   commentsList: {
     paddingBottom: verticalScale(10),
@@ -325,9 +350,15 @@ const styles = StyleSheet.create({
   replyButton: {
     fontSize: 10,
     fontWeight: '500',
-    color: '#888888',
+    color: 'rgba(0, 0, 0, 1)',
   },
   repliesContainer: {
     marginLeft: 0,
+  },
+  timeContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    width: '25%',
+    marginLeft: horizontalScale(20),
   },
 });
