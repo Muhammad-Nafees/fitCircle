@@ -58,7 +58,7 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
           initialValues={initialValues}
           validationSchema={PhysicalReadinessTwoSchema}
           onSubmit={handleSubmit}>
-          {({values, setFieldValue, handleSubmit, errors, setFieldError}) => (
+          {({values, setFieldValue, handleSubmit, errors}) => (
             <>
               {disabled !== true && (
                 <Text style={[STYLES.text16, styles.heading]}>
