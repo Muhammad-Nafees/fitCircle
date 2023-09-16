@@ -20,27 +20,30 @@ interface FavoritesProps {
   };
 }
 
-export const Favorites = ({post}: FavoritesProps) => {
-  console.log('Favorite Post', post);
-  const {media, content, createdAt, user} = post;
-  const {profileImageUrl, username, email} = user;
+export const Favorites = () => {
+  // console.log('Favorite Post', post);
+  // const {media, content, createdAt, user} = post;
+  // const {profileImageUrl, username, email} = user;
+  const username = 'IsaacButtler';
+  const email = '@isaacbutler';
+  const content = 'Weight loss experience';
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        {profileImageUrl ? (
+        {/* {profileImageUrl ? (
           <Avatar.Image
             size={40}
             source={{uri: profileImageUrl}}
             style={styles.avatarImage}
           />
-        ) : (
+        ) : ( */}
           <Avatar.Text
             size={40}
             label={username ? username[0].toUpperCase() : 'SA'}
             style={styles.avatarText}
           />
-        )}
+        {/* )} */}
         <View style={styles.childContainer}>
           <View style={{flexDirection: 'row', gap: 10, alignItems: 'center'}}>
             <Text style={styles.name}>{username}</Text>

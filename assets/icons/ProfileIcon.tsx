@@ -2,7 +2,7 @@ import Svg, {Path} from 'react-native-svg';
 
 const ProfileSvgIcon = () => {
   return (
-    <Svg width="22" height="25.76" viewBox="0 0 22 22" fill="none">
+    <Svg width="18" height="22" viewBox="0 0 18 22" fill="none">
       <Path
         fill-rule="evenodd"
         clip-rule="evenodd"

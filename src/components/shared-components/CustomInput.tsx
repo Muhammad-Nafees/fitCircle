@@ -14,6 +14,7 @@ import {
 } from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useRoute} from '@react-navigation/native';
 
 interface Props {
   placeholder: string;
@@ -31,22 +32,16 @@ interface Props {
   handleChange: (e: any) => void;
   isFirstLetterLowercase?: boolean;
   setFieldError: (name: any, error: any) => void;
+  labelStyles?: any;
   fieldName: string;
   editable?: boolean;
+  starlabel?: boolean;
 }
 
 const CustomInput = ({...props}: Props) => {
+  const route = useRoute();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-
-  const theme = {
-    colors: {
-      text: '#000',
-      placeholder: 'rgba(68, 68, 68, 0.5)',
-      primary: props.error && props.initialTouched ? '#292A2C' : '#292A2C',
-    },
-    roundness: 0, // Border radius value
-  };
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -74,16 +69,16 @@ const CustomInput = ({...props}: Props) => {
 
   const inputStyle = {
     ...styles.input,
-    // borderColor: isFocused
-    //   ? 'transparent'
-    //   : props.touched && props.error
-    //   ? 'red'
-    //   : 'transparent',
   };
 
   return (
-    <View style={{position: 'relative'}}>
-      <Text style={STYLES.text12}>{props.label}</Text>
+    <View style={[{position: 'relative'}]}>
+      <Text style={[STYLES.text12, props.labelStyles]}>
+        {props.label}
+        {props.starlabel ? (
+          <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
+        ) : null}
+      </Text>
       <View>
         <TextInput
           style={[
@@ -114,20 +109,32 @@ const CustomInput = ({...props}: Props) => {
         (props.error && props.value) ||
         isFocused) ? (
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 2,
-            marginTop: verticalScale(7),
-            marginBottom: verticalScale(4),
-          }}>
+          style={[
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 2,
+              marginTop: verticalScale(7),
+              marginBottom: verticalScale(4),
+            },
+            props.label === 'Age' &&
+              route.name === 'VerificationOne' && {
+                width: horizontalScale(75),
+                marginBottom: -verticalScale(0),
+              },
+          ]}>
           <Icon name="alert-circle" size={22} color="red" />
           <Text style={[STYLES.text12, {color: 'red'}]}>{props.error}</Text>
         </View>
       ) : (
-        <View style={{height: 35}} />
+        <View
+          style={[
+            {height: 35},
+            props.label === 'Age' &&
+              route.name === 'VerificationOne' && {height: verticalScale(35)},
+          ]}
+        />
       )}
-
       {props.isPasswordIcon && (
         <TouchableWithoutFeedback onPress={togglePasswordVisibility}>
           <Icon

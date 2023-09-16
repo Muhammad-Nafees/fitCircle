@@ -8,7 +8,7 @@ import SignInScreenOne from '../screens/auth-screens/signin-screens/SigninScreen
 import SignInScreenTwo from '../screens/auth-screens/signin-screens/SigninScreenTwo';
 import LoginFormScreen from '../screens/auth-screens/login-screens/LoginFormScreen';
 import CreateAccount from '../screens/auth-screens/create-profile-screens/CreateAccount';
-import {horizontalScale, verticalScale} from '../utils/metrics';
+import {verticalScale} from '../utils/metrics';
 import GenderScreen from '../screens/auth-screens/create-profile-screens/GenderScreen';
 import CustomHeader from '../components/shared-components/CustomHeader';
 import InterestScreen from '../screens/auth-screens/create-profile-screens/InterestScreen';
@@ -27,10 +27,15 @@ import BlankButtonRenderScreen from '../screens/auth-screens/forget-password-scr
 import ForgetPasswordNumber from '../screens/auth-screens/forget-password-screens/ForgotPasswordNumber';
 import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormScreen';
 import HomeTabNavigator from './HomeTabNavigator';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store';
 
 const Stack = createStackNavigator();
 
 const AuthStackNavigator = () => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
   return (
     <Stack.Navigator
       screenOptions={{
@@ -46,64 +51,9 @@ const AuthStackNavigator = () => {
       }}
       initialRouteName="SplashScreen">
       <Stack.Screen
-        name="SplashScreen"
-        component={SplashScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SigninScreenOne"
-        component={SignInScreenOne}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SigninScreenTwo"
-        component={SignInScreenTwo}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="LoginFormScreen"
-        component={LoginFormScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SignupFormScreen"
-        component={SignupFormScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen name="CreateAccount" component={CreateAccount} />
-      <Stack.Screen
-        name="CreateProfile"
-        component={CreateProfile}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen name="GenderScreen" component={GenderScreen} />
-      <Stack.Screen name="InterestScreen" component={InterestScreen} />
-      <Stack.Screen name="CommunitiesScreen" component={CommunitiesScreen} />
-      <Stack.Screen name="SocialMediaAccount" component={SocialMediaAccount} />
-      <Stack.Screen
-        name="ChooseVerificationType"
-        component={ChooseVerificationType}
-      />
-      <Stack.Screen name="OtpScreen" component={OtpScreen} />
-      <Stack.Screen
-        name="AccountVerified"
-        component={VerifyScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen name="UploadCertificate" component={UploadCertificate} />
-      <Stack.Screen
-        name="CertificateVerified"
-        component={VerifyScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
         name="HomeScreen"
         component={HomeTabNavigator}
         options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="ForgetPasswordEmail"
-        component={ForgetPasswordEmail}
       />
       <Stack.Screen
         name="ForgetPasswordNumber"

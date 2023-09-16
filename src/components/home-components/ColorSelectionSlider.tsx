@@ -45,10 +45,17 @@ const ColorSelectionSlider = ({colors, onColorSelected}: any) => {
         styles.colorDot,
         index === 0 && styles.firstColorDot,
         index === colors.length - 1 && styles.lastColorDot,
-        {overflow: 'hidden'}
+        {overflow: 'hidden'},
       ]}
       onPress={() => handleColorSelection(item)}>
-      <View style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%"}}>
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+        }}>
         <LinearGradient colors={item} style={{width: '100%', height: '100%'}} />
       </View>
       {index === 0 && <Image source={BackIcon} style={styles.backIcon} />}

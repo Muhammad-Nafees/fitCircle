@@ -1,8 +1,10 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
   "compilerOptions": {
-    "types": ["node"]
+    "baseUrl": "./src",
+    "paths": {
+      "@assets/*": ["assets/*"]
+    }
   },
-  "resolveJsonModule": true,
-
+  "resolveJsonModule": true
 }

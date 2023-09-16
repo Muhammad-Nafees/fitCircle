@@ -99,7 +99,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
             ...previousUserData,
             profileImage: {
               uri: response.assets[0].uri,
-              name: response.assets[0].fileName,
+              name:  response.assets[0].fileName,
               type: response.assets[0].type,
             },
           };

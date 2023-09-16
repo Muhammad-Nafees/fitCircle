@@ -65,6 +65,7 @@ export const CustomPost = ({
   const {_id, media, content, likes, createdAt, user, hexCode, cost} = post;
   let isGradient = hexCode && hexCode.includes(',');
 
+
   const {profileImageUrl, username} = user;
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);
@@ -265,7 +266,7 @@ export const CustomPost = ({
             <Text style={styles.lockedText}>{content}</Text>
             <TouchableOpacity style={styles.lockedButtonContainer}>
               <Text style={{color: '#fff'}}>
-                Unlock this video for{' '}
+                Unlock this post for{' '}
                 <Text
                   style={{color: '#30D298', fontWeight: '600', fontSize: 16}}>
                   ${cost}
@@ -290,7 +291,12 @@ export const CustomPost = ({
         ))}
       {media && (
         <TouchableOpacity onPress={handleImagePress}>
-          <Image style={styles.image} source={{uri: media}} />
+          <Image
+            style={styles.image}
+            source={{
+              uri: media,
+            }}
+          />
         </TouchableOpacity>
       )}
       <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
@@ -370,6 +376,12 @@ export const CustomPost = ({
                 </CustomButton>
               </View>
             </View>
+            <TouchableOpacity>
+              <Image
+                source={OptionIcon}
+                style={{width: 24, height: 35, tintColor: '#fff'}}
+              />
+            </TouchableOpacity>
           </View>
         </Modal>
       )}

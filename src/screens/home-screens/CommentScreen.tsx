@@ -37,6 +37,7 @@ const CommentsScreen = ({route, navigation}: any) => {
     (state: RootState) => state.post.selectedPost,
   );
   const {userId} = route.params;
+  const profileScreen = route?.params?.profileScreen;
   const [comments, setComments] = useState([]);
   const [commentsCount, setCommentsCount] = useState('Loading');
   const [loading, setLoading] = useState(false);
@@ -46,6 +47,7 @@ const CommentsScreen = ({route, navigation}: any) => {
   const [commentText, setCommentText] = useState('');
   const [mediaUri, setMediaUri] = useState(null);
   const [availableToComment, setAvailableToComment] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
 
   const handlePhotoButtonPress = () => {
     setMediaUri(null);
@@ -88,6 +90,7 @@ const CommentsScreen = ({route, navigation}: any) => {
       .get(`posts/comments/${selectedPost._id}`)
       .then(res => {
         setComments(res.data);
+        console.log(res.data,"comments")
         setCommentsCount(res.data.length);
         setLoading(false);
       })
@@ -141,6 +144,7 @@ const CommentsScreen = ({route, navigation}: any) => {
     mediaUri: any,
     commentId: any,
   ) => {
+    setIsReplying(false);
     if (!commentText.trim()) {
       return;
     }
@@ -179,13 +183,16 @@ const CommentsScreen = ({route, navigation}: any) => {
   const handleBackPress = async () => {
     setCommentScreenActive(false);
     await setComments([]);
-    navigation.goBack();
+    if (profileScreen) {
+      navigation.navigate('Profile');
+    } else {
+      navigation.goBack();
+    }
     return true;
   };
 
   return (
     <View style={{flex: 1, justifyContent: 'space-between'}}>
-      {/* <KeyboardAwareScrollView> */}
       {selectedPost !== null && (
         <View style={{backgroundColor: '#353535', zIndex: -1}}>
           <CustomPost
@@ -221,6 +228,8 @@ const CommentsScreen = ({route, navigation}: any) => {
                 handleBackPress={handleBackPress}
                 handleReplyPostPress={handleReplyPostPress}
                 handleImageOpen={handleImageOpen}
+                setIsReplying={setIsReplying}
+                isReplying={isReplying}
               />
               <View style={{height: 120}} />
             </View>
@@ -246,7 +255,7 @@ const CommentsScreen = ({route, navigation}: any) => {
         </Modal>
       </KeyboardAwareScrollView>
       <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
-        {mediaUri && (
+        {mediaUri && !isReplying && (
           <View
             style={{
               backgroundColor: '#00abd2',
@@ -265,6 +274,63 @@ const CommentsScreen = ({route, navigation}: any) => {
               </View>
               <TouchableOpacity
                 onPress={() => setMediaUri(null)}
+                style={{marginRight: 8}}>
+                <Image
+                  source={CancelIcon}
+                  style={{tintColor: '#fff', width: 18, height: 18}}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        {isReplying && !mediaUri && (
+          <View
+            style={{
+              backgroundColor: '#00abd2',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 10,
+                padding: 10,
+              }}>
+              <View>
+                <Text style={{color: '#fff', marginRight: 20}}>Replying</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setIsReplying(false)}
+                style={{marginRight: 8}}>
+                <Image
+                  source={CancelIcon}
+                  style={{tintColor: '#fff', width: 18, height: 18}}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        {isReplying && mediaUri && (
+          <View
+            style={{
+              backgroundColor: '#00abd2',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 10,
+                padding: 10,
+              }}>
+              <View>
+                <Text style={{color: '#fff', marginRight: 20}}>
+                  Photo Attached in Reply
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsReplying(false);
+                  setMediaUri(null);
+                }}
                 style={{marginRight: 8}}>
                 <Image
                   source={CancelIcon}

@@ -43,6 +43,9 @@ import {useFocusEffect} from '@react-navigation/native';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import LinearGradient from 'react-native-linear-gradient';
 
+import {Image as ImageCompress} from 'react-native-compressor';
+import {stat} from 'react-native-fs';
+
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 
@@ -65,6 +68,7 @@ export const AddPostScreen = ({route}: any) => {
   const [titleInput, setTitleInput] = useState('');
   const [costValue, setCostValue] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [compressedImage, setCompressedImage] = useState<any>();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -88,13 +92,41 @@ export const AddPostScreen = ({route}: any) => {
     setProfileImageUrl(imageUri);
   }, [userData]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsModalVisible(false);
+      setIsComponentMounted(true);
+      setIsCreatePostIconModalVisible(false);
+      setTextInputValue('');
+      setMediaUri('');
+    }, []),
+  );
+
+  useEffect(() => {
+    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
+    setProfileImageUrl(imageUri);
+  }, [userData]);
+
   const onSelectCost = (value: number) => {
     console.log(value);
     setCostValue(value);
   };
 
+  const authToken = useSelector(
+    (state: RootState) => state.auth.authorizationToken,
+  );
+
   const handlePostButtonPress = async () => {
+    if (textInputValue == '') {
+      Toast.show({
+        type: 'error',
+        text1: 'Post cannot be shared with text content!',
+        visibilityTime: 2000,
+      });
+      return;
+    }
     setIsLoading(true);
+
     if (textInputValue.trim().length === 0 && !mediaUri) {
       Toast.show({
         type: 'error',
@@ -113,12 +145,17 @@ export const AddPostScreen = ({route}: any) => {
         hexCode = textInputBackgroundColor;
       else {
         let str = '';
-
         textInputBackgroundColor.forEach((hex, i) => {
           str += hex + (i === textInputBackgroundColor.length - 1 ? '' : ',');
         });
 
         hexCode = str;
+      }
+      if (mediaUri) {
+        const result = await ImageCompress.compress(mediaUri, {
+          quality: 0.8,
+        });
+        setCompressedImage(result);
       }
       let postData = {
         content: textInputValue,
@@ -139,6 +176,7 @@ export const AddPostScreen = ({route}: any) => {
           cost: null,
         };
       }
+
       const response = await postContent(postData);
       if (response.status === 200) {
         Toast.show({
@@ -153,12 +191,12 @@ export const AddPostScreen = ({route}: any) => {
           text1: 'Post successful',
           visibilityTime: 2000,
         });
-        console.log('Post failed:', response.data);
+        console.log('Post data:', response.data);
         setIsLoading(false);
         navigation.navigate('Home');
       }
-    } catch (error) {
-      console.log('Error posting content:', error);
+    } catch (error: any) {
+      console.log('Error posting content:', error.response.data);
       Toast.show({
         type: 'error',
         text1: 'Post Failed',
@@ -174,6 +212,24 @@ export const AddPostScreen = ({route}: any) => {
   };
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
+  };
+
+  const handleScheduleRoute = () => {
+    if (userData?.role === 'trainer') {
+      navigation.navigate('MySche', {
+        screen: 'Slot',
+        params: {
+          isAddPost: true,
+        },
+      });
+    } else {
+      navigation.navigate('HomeTab', {
+        screen: 'UserSchedule',
+        params: {
+          isAddPost: true,
+        },
+      });
+    }
   };
 
   const handleCreatePostIconPress = () => {
@@ -196,13 +252,19 @@ export const AddPostScreen = ({route}: any) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
+
+      // maxWidth: 500,
+      // maxHeight: 500,
     };
 
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
+    launchImageLibrary(options, async (response: ImagePickerResponse) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
+        // setMediaUri(response?.assets[0]?.uri);
+        setMediaUri(
+          await ImageCompress.compress(response?.assets[0]?.uri, {
+            quality: 0.8,
+          }),
+        );
       }
     });
   };
@@ -451,7 +513,9 @@ export const AddPostScreen = ({route}: any) => {
                   placeholderTextColor="white"
                   value={textInputValue}
                   multiline
-                  onChangeText={text => setTextInputValue(text)}
+                  onChangeText={text => {
+                    console.log(text), setTextInputValue(text);
+                  }}
                   textAlignVertical={'top'}
                 />
               )}
@@ -499,6 +563,7 @@ export const AddPostScreen = ({route}: any) => {
                   handlePostOptionsIconModalClose
                 }
                 handleVideoButtonPress={handleVideoButtonPress}
+                handleScheduleRoute={handleScheduleRoute}
               />
             </View>
           </Modal>
@@ -520,7 +585,6 @@ export const AddPostScreen = ({route}: any) => {
         </View>
         {!mediaUri && (
           <View style={{paddingTop: verticalScale(40)}}>
-            <View>
               <ColorSelectionSlider
                 colors={[
                   '#CC5252',
@@ -535,7 +599,6 @@ export const AddPostScreen = ({route}: any) => {
                 ]}
                 onColorSelected={handleColorSelected}
               />
-            </View>
           </View>
         )}
         <View style={styles.minimizedContainer} {...panResponder.panHandlers}>

@@ -14,8 +14,8 @@ export interface IUser {
   _id?: string;
   email?: string;
   role?: IUserRole | undefined;
-  profileImage?: FileData | null;
-  coverImage?: FileData | null;
+  profileImage?: FileData | null | any;
+  coverImage?: FileData | null | any;
   phone?: any;
   firstName?: string;
   lastName?: string;
@@ -27,15 +27,16 @@ export interface IUser {
   physicalInformation?: string;
   dob?: string;
   hourlyRate?: string;
-  age?: string;
-  height?: string;
-  weight?: string;
+  age?: string | number;
+  height?: string | number;
+  weight?: string | number;
   activity?: string;
   bodytype?: string;
   interest?: string[];
   certificateImages?: any[];
   selectedCommunities?: string[];
   socialMediaLinks?: ISocial[];
+  password?: string;
 }
 
 export interface IPost {

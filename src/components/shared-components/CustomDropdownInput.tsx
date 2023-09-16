@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -13,6 +13,7 @@ import {
   moderateScale,
 } from '../../utils/metrics';
 import {STYLES} from '../../styles/globalStyles';
+import {useRoute} from '@react-navigation/native';
 
 const DropdownTextInput = ({
   value,
@@ -24,11 +25,15 @@ const DropdownTextInput = ({
   handleChange,
   setFieldError,
   fieldName,
+  placeholder,
+  tdee,
+  editable = true,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
   const [textInputValue, setTextInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
+  const route = useRoute();
 
   const handleDropdownSelection = (option: any) => {
     setShowDropdown(false);
@@ -45,10 +50,6 @@ const DropdownTextInput = ({
     setShowDropdown(false);
   };
 
-  const toggleDropdown = () => {
-    setShowDropdown(prev => !prev);
-  };
-
   const handleTextInputChange = (text: string) => {
     setTextInputValue(text);
     handleChange(text);
@@ -57,25 +58,47 @@ const DropdownTextInput = ({
     }
   };
 
+  useEffect(() => {
+    if (!value) {
+      setTextInputValue('');
+    }
+  }, [value]);
+
   return (
     <View>
       <View style={styles.container}>
         <TextInput
+          editable={editable}
           value={textInputValue}
           onChangeText={handleTextInputChange}
           style={styles.textInput}
           onFocus={handleInputFocus}
+          placeholder={placeholder}
           onBlur={handleInputBlur}
           keyboardType="numeric"
         />
         <View style={styles.dropdownContainer}>
-          <TouchableOpacity onPress={toggleDropdown}>
-            <View style={styles.dropdownIconContainer}>
-              <Text style={styles.selectedOptionText}>{selectedOption}</Text>
+          <TouchableOpacity
+            onPress={() => editable && setShowDropdown(!showDropdown)}>
+            <View
+              style={[
+                styles.dropdownIconContainer,
+                tdee && {backgroundColor: '#fff'},
+                route.name === 'VerificationOne' && {
+                  width: 48,
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.selectedOptionText,
+                  tdee && {color: 'rgba(68, 68, 68, 0.5)'},
+                ]}>
+                {selectedOption}
+              </Text>
               <Icon
                 name="chevron-down-outline"
                 size={18}
-                color="white"
+                color={tdee ? 'rgba(68, 68, 68, 0.5)' : 'white'}
                 style={styles.icon}
               />
             </View>
@@ -105,18 +128,26 @@ const DropdownTextInput = ({
       </View>
       {error && ((touched && !value) || (error && value) || isFocused) ? (
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 2,
-            marginTop: verticalScale(7),
-            marginBottom: verticalScale(4),
-          }}>
+          style={[
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 2,
+              marginTop: verticalScale(7),
+              marginBottom: verticalScale(4),
+            },
+            route.name === 'VerificationOne' && {width: horizontalScale(60)},
+          ]}>
           <Icon name="alert-circle" size={22} color="red" />
           <Text style={[STYLES.text12, {color: 'red'}]}>{error}</Text>
         </View>
       ) : (
-        <View style={{height: 35}} />
+        <View
+          style={[
+            {height: 35},
+            route.name === 'VerificationOne' && {height: verticalScale(40)},
+          ]}
+        />
       )}
     </View>
   );
@@ -146,6 +177,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
     height: verticalScale(47),
+    zIndex: 9999,
   },
   dropdownIconContainer: {
     backgroundColor: '#019acd',
@@ -154,6 +186,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(8),
     flexDirection: 'row',
     alignItems: 'center',
+    zIndex: 9999,
   },
   selectedOptionText: {
     color: 'white',
@@ -166,12 +199,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#FBFBFB',
+    zIndex: 99999,
   },
   dropdownOption: {
     paddingHorizontal: horizontalScale(10),
     paddingVertical: verticalScale(5),
     borderBottomWidth: 1,
     borderColor: '#fff',
+    zIndex: 99999,
   },
   selectedOption: {
     backgroundColor: '#F3F3F3',

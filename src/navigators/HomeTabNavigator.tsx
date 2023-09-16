@@ -11,13 +11,27 @@ import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
+import DashboardScreen from '../screens/dashboard-screens/Dashboard';
+import PhysicalReadinessStackNavigator from './PhysicalReadinessStackNavigator';
+import ScheduleStackNavigator from './ScheduleStackNavigator';
+import {TdeeCalculator} from '../screens/dashboard-screens/tdee-calculator-screens/TdeeCalculator';
+import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
+import MealPlanStackNavigator from './MealPlanStackNavigator';
+import {Transaction} from '../screens/dashboard-screens/Transaction';
+import UserSchedule from '../screens/schedule-trainer-screens/UserSchedule';
+import {ProfileScreen} from '../screens/profile-screens/ProfileScreen';
+import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
+import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
+import ReelsComponent from '../components/home-components/Reels';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store';
+import MessageStackNavigator from './MessageStackNavigator';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
 
 const Tab = createBottomTabNavigator();
 const MessageScreen = () => <ScreenContent title="Message" />;
-const DashboardScreen = () => <ScreenContent title="Dashboard" />;
 
 interface ScreenContentProps {
   title: string;
@@ -90,7 +104,7 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
           ) : icon === 'Search' ? (
             <SearchSvgIcon color={iconColor} />
           ) : icon === 'Message' ? (
-            <MessageSvgIcon color={iconColor} />
+            <MessageSvgIcon color={iconColor} widthAndHeight={24} />
           ) : (
             <DashboardSvgIcon color={iconColor} />
           )}
@@ -131,6 +145,7 @@ const HomeTabNavigator = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        unmountOnBlur: true,
         tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarStyle,
@@ -181,7 +196,7 @@ const HomeTabNavigator = () => {
       />
       <Tab.Screen
         name="Message"
-        component={MessageScreen}
+        component={MessageStackNavigator}
         options={{
           tabBarIcon: ({focused}) => (
             <View>
@@ -210,8 +225,79 @@ const HomeTabNavigator = () => {
         }}
       />
       <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="PackageDetail"
+        component={PackageDetailScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="SearchProfile"
+        component={SearchProfileScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
         name="CommentsScreen"
         component={CommentsScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="PhysicalReadiness"
+        component={PhysicalReadinessStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="ScheduleScreen"
+        component={ScheduleStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TdeeCalculatorScreen"
+        component={TdeeCalculatorStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="MealPlanScreen"
+        component={MealPlanStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TransactionScreen"
+        component={Transaction}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="UserSchedule"
+        component={UserSchedule}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,

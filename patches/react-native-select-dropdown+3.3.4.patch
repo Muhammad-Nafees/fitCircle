@@ -1,0 +1,69 @@
+diff --git a/node_modules/react-native-select-dropdown/index.d.ts b/node_modules/react-native-select-dropdown/index.d.ts
+index 2f7ab48..cb890a3 100644
+--- a/node_modules/react-native-select-dropdown/index.d.ts
++++ b/node_modules/react-native-select-dropdown/index.d.ts
+@@ -99,6 +99,11 @@ declare module 'react-native-select-dropdown' {
+      * enable search functionality
+      */
+     search?: boolean;
++    /** 
++     * 
++     * Placeholder On the Button by Sameer Ather
++    */
++    placeholder?: string;
+     /**
+      * style object for search input
+      */
+diff --git a/node_modules/react-native-select-dropdown/src/SelectDropdown.js b/node_modules/react-native-select-dropdown/src/SelectDropdown.js
+index e518000..2754dea 100644
+--- a/node_modules/react-native-select-dropdown/src/SelectDropdown.js
++++ b/node_modules/react-native-select-dropdown/src/SelectDropdown.js
+@@ -14,6 +14,7 @@ import {useRefs} from './hooks/useRefs';
+ const SelectDropdown = (
+   {
+     data /* array */,
++    placeholderColor = 'rgba(68, 68, 68, 0.5)',
+     onSelect /* function  */,
+     defaultButtonText /* String */,
+     buttonTextAfterSelection /* function */,
+@@ -21,6 +22,7 @@ const SelectDropdown = (
+     defaultValue /* any */,
+     defaultValueByIndex /* integer */,
+     disabled /* boolean */,
++    placeholder,
+     disableAutoScroll /* boolean */,
+     disabledIndexs /* array of disabled Row index */,
+     onFocus /* function  */,
+@@ -155,7 +157,7 @@ const SelectDropdown = (
+             <View style={styles.dropdownCustomizedRowParent}>{renderCustomizedRowChild(item, index, isSelected)}</View>
+           ) : (
+             <Text
+-              numberOfLines={1}
++              numberOfLines={2}
+               allowFontScaling={false}
+               style={mergeStyles(styles.dropdownRowText, rowTextStyle, isSelected && selectedRowTextStyle)}>
+               {rowTextForSelection ? rowTextForSelection(item, index) : item.toString()}
+@@ -212,12 +214,20 @@ const SelectDropdown = (
+         <Text
+           numberOfLines={1}
+           allowFontScaling={false}
+-          style={mergeStyles(styles.dropdownButtonText, buttonTextStyle)}>
+-          {isExist(selectedItem)
++          style={mergeStyles(styles.dropdownButtonText, buttonTextStyle, {
++            color: isExist(selectedItem)
++              ? 'black'
++              : selectedItem
++              ? placeholderColor 
++              : placeholderColor, 
++          })}>
++           {isExist(selectedItem)
+             ? buttonTextAfterSelection
+               ? buttonTextAfterSelection(selectedItem, selectedIndex)
+               : selectedItem.toString()
+-            : defaultButtonText || 'Select an option.'}
++            : selectedItem
++            ? defaultButtonText || 'Select an option.'
++            : placeholder || 'Select an option.'}
+         </Text>
+       )}
+     </TouchableOpacity>
