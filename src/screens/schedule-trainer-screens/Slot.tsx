@@ -66,12 +66,15 @@ export const Slot = ({navigation}: any) => {
 
       if (response.status === 200) {
         const currentDate = new Date(); // Get current date
+        console.log(response.data, 'ddd');
         const formattedCurrentDate = format(currentDate, 'MM/dd/yyyy');
 
-        const filteredData = response.data.filter(item => {
+        const filteredData = response.data.filter((item: any) => {
           const date = parse(item.date, 'MM/dd/yyyy', new Date());
+
           return date >= currentDate; // Only keep dates equal to or after today
         });
+        console.log(filteredData, 'filtrrrrr');
 
         filteredData.sort((a: any, b: any) => {
           const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
@@ -80,12 +83,14 @@ export const Slot = ({navigation}: any) => {
         });
 
         // Find today's date
-        const todayIndex = filteredData.findIndex(
-          item => item.date === formattedCurrentDate,
-        );
+        const todayIndex = filteredData.findIndex((item: any) => {
+          console.log(item.date), item.date === formattedCurrentDate;
+        });
 
         if (todayIndex > -1) {
           const todayData = filteredData.splice(todayIndex, 1);
+          console.log(todayData, 'todayDa');
+          console.log(todayData, 'today');
           filteredData.unshift(todayData[0]);
         }
 

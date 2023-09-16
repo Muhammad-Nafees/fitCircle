@@ -86,7 +86,7 @@ const SetSchedule = ({route, navigation}: any) => {
     if (moment(selected).isSameOrBefore(moment(today))) {
       Toast.show({
         type: 'error',
-        text1: 'Please select a present or future date!',
+        text1: 'Please select future date!',
       });
 
       return; // Do not update if the selected date is in the past
