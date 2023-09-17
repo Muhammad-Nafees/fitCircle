@@ -70,21 +70,35 @@ export const Slot = ({navigation}: any) => {
         const formattedCurrentDate = format(currentDate, 'MM/dd/yyyy');
 
         const filteredData = response.data.filter((item: any) => {
-          const date = parse(item.date, 'MM/dd/yyyy', new Date());
+          const dateParts = item.date.split('/');
+          const year = parseInt(dateParts[2], 10);
+          const month = parseInt(dateParts[0], 10) - 1; // Month is 0-indexed
+          const day = parseInt(dateParts[1], 10);
+          const date = new Date(year, month, day);
 
-          return date >= currentDate; // Only keep dates equal to or after today
+          if (
+            date >= currentDate ||
+            date.toISOString().split('T')[0] ===
+              currentDate.toISOString().split('T')[0]
+          ) {
+            return true;
+          } else {
+            console.log(`Excluded: ${item.date}`);
+            return false;
+          }
         });
-        console.log(filteredData, 'filtrrrrr');
 
         filteredData.sort((a: any, b: any) => {
           const dateA = parse(a.date, 'MM/dd/yyyy', new Date());
           const dateB = parse(b.date, 'MM/dd/yyyy', new Date());
+          console.log(a.date, 'from filter data');
           return dateA.getTime() - dateB.getTime();
         });
 
         // Find today's date
         const todayIndex = filteredData.findIndex((item: any) => {
-          console.log(item.date), item.date === formattedCurrentDate;
+          console.log(item.date);
+          return item.date === formattedCurrentDate;
         });
 
         if (todayIndex > -1) {

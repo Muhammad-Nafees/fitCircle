@@ -20,6 +20,8 @@ import {vertical} from 'react-native-swiper-flatlist/src/themes';
 import {verticalScale} from '../../utils/metrics';
 import {enUS} from 'date-fns/locale';
 import Toast from 'react-native-toast-message';
+import CustomLoader from 'components/shared-components/CustomLoader';
+import {ActivityIndicator} from 'react-native-paper';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -83,13 +85,13 @@ const SetSchedule = ({route, navigation}: any) => {
   const handleDayPress = (day: DateData) => {
     setIsDateFormatted(false);
     const selected = day.dateString;
-    if (moment(selected).isSameOrBefore(moment(today))) {
+    if (moment(selected).isBefore(moment(today))) {
       Toast.show({
         type: 'error',
         text1: 'Please select future date!',
       });
-
-      return; // Do not update if the selected date is in the past
+      setSelectedDate(undefined);
+      return;
     }
     if (selected === selectedDate) {
       setSelectedDate(undefined);
@@ -246,8 +248,9 @@ const SetSchedule = ({route, navigation}: any) => {
       </TouchableOpacity>
     );
   };
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const setSchedule = async () => {
+    setIsLoading(true);
     selectedOptionsWDate.forEach(async (element, index) => {
       try {
         const timeSlots = element.option.map(e => ({slot: e}));
@@ -262,6 +265,7 @@ const SetSchedule = ({route, navigation}: any) => {
           response.status === 200
         ) {
           navigation.navigate('Slot');
+          setIsLoading(false);
         }
       } catch (error) {
         console.log('🚀 ~ setSchedule ~ error:', error);
@@ -397,10 +401,14 @@ const SetSchedule = ({route, navigation}: any) => {
       </ScrollView>
       <View style={styles.buttonContainer}>
         <CustomButton
-          isDisabled={selectedOptions.length === 0}
+          isDisabled={selectedOptions.length === 0 || isLoading}
           extraStyles={{paddingHorizontal: 110}}
           onPress={setSchedule}>
-          Set Schedule
+          {isLoading ? (
+            <ActivityIndicator style={[{paddingTop: verticalScale(3)}]} />
+          ) : (
+            'Set Schedule'
+          )}
         </CustomButton>
       </View>
     </View>
