@@ -10,8 +10,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../redux/store';
+import Modal from 'react-native-modal';
 import {Avatar} from 'react-native-paper';
+// -------------------------------------------------------------------------------------//
+import {RootState} from '../../redux/store';
 import NotificationIcon from '../../../assets/icons/NotificationIcon';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import ReadinessTestIcon from '../../../assets/icons/ReadinessTestIcon';
@@ -20,7 +22,6 @@ import ScheduleDashboardIcon from '../../../assets/icons/ScheduleDashboardIcon';
 import WalletDashboardIcon from '../../../assets/icons/WalletDashboard';
 import PackagesMealIcon from '../../../assets/icons/PackagesMealIcon';
 import {CustomTransaction} from '../../components/dashboard-components/CustomTransaction';
-import Modal from 'react-native-modal';
 const ArrowDown = require('../../../assets/icons/arrow-down.png');
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 

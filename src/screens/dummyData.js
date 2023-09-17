@@ -137,10 +137,61 @@ const tdeeCalculatorData = {
   tdee: 2000,
 };
 
+const nutritionistInfo = {
+  name: 'Lindsey Middleton',
+  role: 'Nutritionist',
+  plans: [
+    {
+      planName: 'Weight Loss Meal Plan',
+      price: '$100',
+      description: 'For people who are losing weight',
+    },
+    {
+      planName: 'Weight Gain Meal Plan',
+      price: '$100',
+      description: 'For people who are gaining weight',
+    },
+    {
+      planName: 'Weight Gain Meal Plan',
+      price: '$100',
+      description: 'For people who are gaining weight',
+    },
+    {
+      planName: 'Weight Gain Meal Plan',
+      price: '$100',
+      description: 'For people who are gaining weight',
+    },
+    {
+      planName: 'Weight Gain Meal Plan',
+      price: '$100',
+      description: 'For people who are gaining weight',
+    },
+  ],
+};
+
+const nutritionistInfo2 = {
+  name: 'Lindsey Middleton',
+  role: '@lindseymiddleton',
+  plans: [
+    {
+      planName: 'Weight Loss Meal Plan',
+      price: '$100',
+      description: 'For people who are losing weight',
+    },
+    {
+      planName: 'Weight Gain Meal Plan',
+      price: '$100',
+      description: 'For people who are gaining weight',
+    },
+  ],
+};
+
 export {
   communitiesData,
   followersData,
   followingData,
   messageDummyData,
   tdeeCalculatorData,
+  nutritionistInfo,
+  nutritionistInfo2,
 };
