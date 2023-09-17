@@ -6,22 +6,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Dimensions,
   BackHandler,
   ScrollView,
 } from 'react-native';
-import ArrowForward from '../../../assets/icons/ArrowForward';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../redux/store';
 import {format, parse} from 'date-fns';
 import {enUS} from 'date-fns/locale';
-import {useRoute} from '@react-navigation/native';
-import {useIsFocused} from '@react-navigation/native';
-
+// ----------------------------------------------------------------------//
+import ArrowForward from '../../../assets/icons/ArrowForward';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
-
-const {width, height} = Dimensions.get('window');
 
 export const Slot = ({navigation}: any) => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -48,17 +41,7 @@ export const Slot = ({navigation}: any) => {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [trainerSchedules, setTrainerSchedules] = useState([]);
 
-  const userData = useSelector((state: RootState) => state.auth.user);
-  const authorizationToken = useSelector(
-    (state: RootState) => state.auth.authorizationToken,
-  );
-  const route = useRoute();
-  const focus = useIsFocused(); // useIsFocused as shown
-
-  console.log(userData?._id, 'SSSSS');
-  console.log(authorizationToken);
-
-  const renderCarouselItem = ({item}) => {
+  const renderCarouselItem = ({item}: any) => {
     const inputDateString = item?.date;
     const parsedDate = parse(inputDateString, 'MM/dd/yyyy', new Date());
     const month = format(parsedDate, 'MMM', {locale: enUS});

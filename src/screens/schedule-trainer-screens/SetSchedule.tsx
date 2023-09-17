@@ -12,12 +12,10 @@ import {
 import {Calendar, DateData} from 'react-native-calendars';
 import moment from 'moment';
 import CustomButton from '../../components/shared-components/CustomButton';
-import {format, parse, startOfDay} from 'date-fns';
+import {format, startOfDay} from 'date-fns';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
-import {vertical} from 'react-native-swiper-flatlist/src/themes';
 import {verticalScale} from '../../utils/metrics';
-import {enUS} from 'date-fns/locale';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -51,11 +49,9 @@ const SetSchedule = ({route, navigation}: any) => {
   const [selectedOptionsWDate, setSelectedOptionsWDate] = useState<TimeSlot[]>(
     [],
   );
-  const today = format(new Date(), 'u-MM-dd'); // Get the current date in 'YYYY-MM-DD' format
+  const today = format(new Date(), 'u-MM-dd');
   const userData = useSelector((state: RootState) => state.auth.user);
   const [selectedSlotDate, setSelectedSlotDate] = useState<any>();
-
-  const [data, setData] = useState<Schedule[]>([]);
 
   const handleDayPress = (day: DateData) => {
     setIsDateFormatted(false);
@@ -128,7 +124,6 @@ const SetSchedule = ({route, navigation}: any) => {
   }, [navigation]);
 
   const handleSelectOption = (option: string) => {
-    console.log(option);
     const selectedDateArr = isDateFormatted ? '' : selectedDate?.split('-');
     const selectedSlotDate = new Date(route.params.date);
 
@@ -143,7 +138,6 @@ const SetSchedule = ({route, navigation}: any) => {
     console.log(date);
     if (selectedOptions.includes(option)) {
       setSelectedOptions(selectedOptions.filter(item => item !== option));
-      // setSelectedOptionsWDate()
     } else {
       setSelectedOptions([...selectedOptions, option]);
     }
@@ -189,11 +183,6 @@ const SetSchedule = ({route, navigation}: any) => {
       );
     }
 
-    // const selectedSlot = data
-    //   .find(el => el.date === date)
-    //   ?.timeSlots.map(({slot}) => slot);
-
-    // const isSelected = selectedSlot?.includes(item);
     const selectedSlot = selectedOptionsWDate.find(
       el => el.date === slotsDate,
     )?.option;
@@ -219,7 +208,6 @@ const SetSchedule = ({route, navigation}: any) => {
   };
 
   useEffect(() => {
-    // getTrainerSchedule();
     if (route.params.date) {
       setSelectedDate(route.params.date);
       setIsDateFormatted(true);

@@ -30,7 +30,7 @@ const SetSchedule = ({route, navigation}: any) => {
   const currentMonth = moment().format('YYYY-MM-DD');
   const [selectedDate, setSelectedDate] = useState<any>();
   const [profileImageUrl, setProfileImageUrl] = useState();
-  const today = format(new Date(), 'u-MM-dd'); // Get the current date in 'YYYY-MM-DD' format
+  const today = format(new Date(), 'u-MM-dd');
   const [customDatesStyles, setCustomDatesStyles] = useState<
     MarkedDates | undefined
   >({
@@ -56,21 +56,6 @@ const SetSchedule = ({route, navigation}: any) => {
     setProfileImageUrl(imageUri);
   }, [userData]);
 
-  // const customDatesStyles = {};
-  // customDatesStyles[currentMonth] = {textStyle: {color: '#fff'}};
-
-  // const saturdayAndSundayStyle = {
-  //   textStyle: {color: 'red'},
-  //   containerStyle: {backgroundColor: 'transparent'},
-  // };
-  // for (let i = 0; i < 31; i++) {
-  //   const currentDate = new Date(currentMonth);
-  //   currentDate.setDate(i + 1);
-  //   if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
-  //     customDatesStyles[currentDate] = saturdayAndSundayStyle;
-  //   }
-  // }
-
   const handleDayPress = (day: DateData) => {
     const selected = day.dateString;
 
@@ -83,22 +68,9 @@ const SetSchedule = ({route, navigation}: any) => {
     const availableSlot = schedule.find(
       ({scheduleDate}) => scheduleDate === selected,
     );
-
     setSlot(availableSlot);
-
     setSelectedDate(selected);
   };
-
-  // useEffect(() => {
-  //   setCustomDatesStyles(prevState => ({
-  //     ...prevState,
-  //     [selectedDate]: {
-  //       selected: true,
-  //       selectedColor: '#209BCC',
-  //       selectedTextColor: '#FFF',
-  //     },
-  //   }));
-  // }, [selectedDate]);
 
   const formatDate = date => {
     return moment(date).format('ddd, D MMM');
