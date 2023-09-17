@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {CustomTransaction} from '../../components/dashboard-components/CustomTransaction';
 import {useSelector} from 'react-redux';
+// ---------------------------------------------------------------------------------------//
+import {CustomTransaction} from '../../components/dashboard-components/CustomTransaction';
 import {RootState} from '../../redux/store';
 import {horizontalScale} from '../../utils/metrics';
 
@@ -10,7 +11,7 @@ const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
 export const Transaction = ({navigation}: any) => {
   const [profileImageUrl, setProfileImageUrl] = useState();
-  const userData = useSelector((state: RootState) => state.auth.user);
+  const userData: any = useSelector((state: RootState) => state.auth.user);
   const [userId, setUserId] = useState(userData?._id);
 
   useEffect(() => {
@@ -22,33 +23,16 @@ export const Transaction = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={{
-          paddingTop: 24,
-          paddingBottom: 16,
-          paddingHorizontal: 12,
-          flex: 0.05,
-        }}
+        style={styles.navigationBack}
         onPress={() => navigation.navigate('Dashboard')}>
         <Image
           source={ArrowBack}
           style={{width: 24, height: 24, tintColor: 'white'}}
         />
       </TouchableOpacity>
-      <View
-        style={{
-          justifyContent: 'center',
-          flex: 1,
-          gap: 10,
-        }}>
+      <View style={styles.container1}>
         <View style={{alignItems: 'center', justifyContent: 'center'}}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              width: 325,
-              height: 400,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+          <View style={styles.contentContainer}>
             <View style={styles.icon}>
               <Icon name="checkmark-outline" color="white" size={24} />
             </View>
@@ -100,13 +84,7 @@ export const Transaction = ({navigation}: any) => {
                 <Text></Text>
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginHorizontal: 20,
-              }}>
+            <View style={styles.amountParentContainer}>
               <View
                 style={{
                   alignItems: 'flex-start',
@@ -147,10 +125,21 @@ export const Transaction = ({navigation}: any) => {
 };
 
 const styles = StyleSheet.create({
+  navigationBack: {
+    paddingTop: 24,
+    paddingBottom: 16,
+    paddingHorizontal: 12,
+    flex: 0.05,
+  },
   container: {
     backgroundColor: 'black',
     flex: 1,
     paddingHorizontal: horizontalScale(15),
+  },
+  container1: {
+    justifyContent: 'center',
+    flex: 1,
+    gap: 10,
   },
   icon: {
     width: 34,
@@ -206,6 +195,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: 'rgba(38, 38, 38, 1)',
+  },
+  amountParentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 20,
+  },
+  contentContainer: {
+    backgroundColor: 'white',
+    width: 325,
+    height: 400,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
