@@ -19,7 +19,6 @@ export const Results = ({navigation, route}: any) => {
     return () => backHandler.remove();
   }, [navigation]);
   const {data, weight} = route.params;
-  console.log('🚀 ~ file: Results.tsx:10 ~ Results ~ data:', data);
 
   const handleSubmit = () => {
     navigation.navigate('MacroCalculator', {data, weight});

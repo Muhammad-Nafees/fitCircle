@@ -1,34 +1,17 @@
+import {useEffect, useRef} from 'react';
 import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
-import CustomButton from '../../../components/shared-components/CustomButton';
 import {Formik} from 'formik';
+// ---------------------------------------------------------------------------------------//
+import CustomButton from '../../../components/shared-components/CustomButton';
 import {STYLES} from '../../../styles/globalStyles';
 import {TdeeCalculatorSchema} from '../../../validations';
 import {CustomSelect} from '../../../components/shared-components/CustomSelect';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {moderateScale, verticalScale} from '../../../utils/metrics';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
-import axiosInstance from '../../../api/interceptor';
-import {useEffect, useRef} from 'react';
-import {format} from 'date-fns';
-
-const activityFactors = {
-  'Sedentary (Little or no exercise)': {
-    value: 1.2,
-  },
-  'Lightly active (Light exercise/sports 1-3 days a week)': {
-    value: 1.3,
-  },
-  'Moderately active (Moderate exercise/sports 3-5 days aweek)': {
-    value: 1.5,
-  },
-  'Very active (Hard exercise/sports 6-7 days a week)': {
-    value: 1.7,
-  },
-  'Extra active (Hard exercise/sports 6-7 days a week, plus physical job)': {
-    value: 1.9,
-  },
-};
+import {activityFactors} from '../../../../data/data';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
+import {tdeeCalculatorData} from 'screens/dummyData';
 
 export const TdeeCalculator = ({navigation, disabled}: any) => {
   useEffect(() => {
@@ -45,42 +28,10 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
 
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
-    try {
-      const currentDate = format(new Date(), 'dd/LL/Y');
-      const reqObj = {
-        gender: values.gender.toLowerCase(),
-        age: values.age,
-        height: values.height,
-        weight: values.weight,
-        goal:
-          values.goal === 'Muscle Gain'
-            ? 'slow'
-            : values.goal === 'Weight loss/cutting'
-            ? 'moderate'
-            : 'aggressive',
-        calorieDeficit: values.calorieDeficit.includes('10')
-          ? 0.1
-          : values.calorieDeficit.includes('15')
-          ? 0.15
-          : 0.2,
-        startDate: currentDate,
-        goalWeight: values.goalWeight,
-        activityFactor:
-          activityFactors[values.activityFactor as keyof typeof activityFactors]
-            .value,
-      };
-
-      const response = await axiosInstance.post(`tdee/result`, reqObj);
-
-      formikRef.current?.resetForm();
-      if (response.status === 200)
-        navigation.navigate('Results', {
-          data: response.data,
-          weight: values.weight,
-        });
-    } catch (error) {
-      console.log('🚀 ~ handleFormSave ~ error:', error);
-    }
+    navigation.navigate('Results', {
+      data: tdeeCalculatorData,
+      weight: values.weight,
+    });
   };
 
   useEffect(() => {
@@ -97,7 +48,6 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
-          // const
           innerRef={formikRef}
           initialValues={{
             gender: '',
@@ -112,7 +62,6 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
           }}
           validateOnChange={false}
           validationSchema={TdeeCalculatorSchema}
-          validationSchema={TdeeCalculatorSchema}
           onSubmit={handleSubmit}>
           {({
             handleChange,
@@ -124,16 +73,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
             setFieldError,
           }) => (
             <>
-              <Text
-                style={[
-                  STYLES.text16,
-                  {
-                    fontWeight: '700',
-                    marginTop: 16,
-                    paddingHorizontal: 16,
-                    paddingBottom: 28,
-                  },
-                ]}>
+              <Text style={[STYLES.text16, styles.heading]}>
                 TDEE Calculator
               </Text>
               <View style={styles.formContainer}>
@@ -150,15 +90,8 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   fieldName="gender"
                   extraRowTextStyle={{color: 'white', fontSize: 12}}
                   extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
-                  extraDropdownStyle={{
-                    borderBottomRightRadius: 10,
-                    borderBottomLeftRadius: 10,
-                  }}
-                  extraSelectedRowStyle={{
-                    backgroundColor: 'rgba(68, 68, 68, 1)',
-                    marginVertical: 0,
-                    borderRadius: 0,
-                  }}
+                  extraDropdownStyle={styles.dropdownStyle}
+                  extraSelectedRowStyle={styles.dropdownSelectedRowStyle}
                 />
                 <CustomInput
                   label="Age"
@@ -225,15 +158,8 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   fieldName="goal"
                   extraRowTextStyle={{color: 'white', fontSize: 12}}
                   extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
-                  extraDropdownStyle={{
-                    borderBottomRightRadius: 10,
-                    borderBottomLeftRadius: 10,
-                  }}
-                  extraSelectedRowStyle={{
-                    backgroundColor: 'rgba(68, 68, 68, 1)',
-                    marginVertical: 0,
-                    borderRadius: 0,
-                  }}
+                  extraDropdownStyle={styles.dropdownStyle}
+                  extraSelectedRowStyle={styles.dropdownSelectedRowStyle}
                 />
                 <CustomInput
                   label="Start Date (dd/mm/yyyy)"
@@ -280,15 +206,8 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   fieldName="calorieDeficit"
                   extraRowTextStyle={{color: 'white', fontSize: 12}}
                   extraRowStyle={{backgroundColor: 'rgba(68, 68, 68, 1)'}}
-                  extraDropdownStyle={{
-                    borderBottomRightRadius: 10,
-                    borderBottomLeftRadius: 10,
-                  }}
-                  extraSelectedRowStyle={{
-                    backgroundColor: 'rgba(68, 68, 68, 1)',
-                    marginVertical: 0,
-                    borderRadius: 0,
-                  }}
+                  extraDropdownStyle={styles.dropdownStyle}
+                  extraSelectedRowStyle={styles.dropdownSelectedRowStyle}
                 />
                 <CustomSelect
                   placeholder="Choose here"
@@ -310,15 +229,8 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   extraRowStyle={{
                     backgroundColor: 'rgba(68, 68, 68, 1)',
                   }}
-                  extraDropdownStyle={{
-                    borderBottomRightRadius: 10,
-                    borderBottomLeftRadius: 10,
-                  }}
-                  extraSelectedRowStyle={{
-                    backgroundColor: 'rgba(68, 68, 68, 1)',
-                    marginVertical: 0,
-                    borderRadius: 0,
-                  }}
+                  extraDropdownStyle={styles.dropdownStyle}
+                  extraSelectedRowStyle={styles.dropdownSelectedRowStyle}
                 />
               </View>
               <View style={styles.button}>
@@ -336,6 +248,12 @@ const styles = StyleSheet.create({
   formContainer: {
     alignItems: 'center',
   },
+  heading: {
+    fontWeight: '700',
+    marginTop: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 28,
+  },
   button: {
     marginTop: verticalScale(100),
     marginHorizontal: verticalScale(41),
@@ -346,5 +264,14 @@ const styles = StyleSheet.create({
     lineHeight: verticalScale(17),
     fontWeight: '700',
     color: '#ffffff',
+  },
+  dropdownStyle: {
+    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  dropdownSelectedRowStyle: {
+    backgroundColor: 'rgba(68, 68, 68, 1)',
+    marginVertical: 0,
+    borderRadius: 0,
   },
 });

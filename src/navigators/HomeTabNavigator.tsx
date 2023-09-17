@@ -6,7 +6,7 @@ import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
-import DashboardScreen from '../screens/dashboard-screens/Dashboard';
+import DashboardScreen from '../screens/dashboard-screens';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
 import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';

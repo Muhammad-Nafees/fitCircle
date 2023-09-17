@@ -1,10 +1,11 @@
+import {useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import PieChart from 'react-native-pie-chart';
+// ---------------------------------------------------------------------------//
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import ColorChart from '../../../../assets/icons/ColorChart';
 import {NutritionData} from '../../../interfaces/extra.interface';
-import {useEffect, useState} from 'react';
 
 const legends = [
   {color: '#24A3CC', label: 'Protein'},
@@ -28,29 +29,12 @@ export const ChartScreen = ({navigation, route}: any) => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <Text
-          style={[
-            STYLES.text16,
-            {
-              fontWeight: '700',
-              marginTop: 16,
-              paddingHorizontal: 16,
-              paddingBottom: 28,
-            },
-          ]}>
-          Macro Split Chart
-        </Text>
+        <Text style={[STYLES.text16, styles.heading]}>Macro Split Chart</Text>
         <View style={styles.contentContainer}>
-          <Text style={{fontSize: 12, fontWeight: '700', color: 'white'}}>
+          <Text style={styles.subTextContent}>
             For your daily calories ({dailyCalories} Calories)
           </Text>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 35,
-              marginBottom: 90,
-            }}>
+          <View style={styles.chartContainer}>
             <PieChart
               widthAndHeight={widthAndHeight}
               series={series}
@@ -59,13 +43,7 @@ export const ChartScreen = ({navigation, route}: any) => {
               text2={`Carb: ${chartData.carbGrams} g`}
               text3={`Protien: ${chartData.proteinGrams} g`}
             />
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 30,
-                marginVertical: 24,
-              }}>
+            <View style={styles.iconText}>
               {legends.map((legend, index) => (
                 <View key={index} style={{flexDirection: 'row', gap: 5}}>
                   <ColorChart color={legend.color} />
@@ -95,5 +73,24 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 60,
     marginVertical: 16,
+  },
+  heading: {
+    fontWeight: '700',
+    marginTop: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 28,
+  },
+  subTextContent: {fontSize: 12, fontWeight: '700', color: 'white'},
+  chartContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 35,
+    marginBottom: 90,
+  },
+  iconText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 30,
+    marginVertical: 24,
   },
 });

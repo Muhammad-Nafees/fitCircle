@@ -127,4 +127,20 @@ const messageDummyData = [
   },
 ];
 
-export {communitiesData, followersData, followingData, messageDummyData};
+const tdeeCalculatorData = {
+  bmi: 24.5,
+  bmr: 1500,
+  calorieDeficit: 300,
+  dailyCalories: 1800,
+  daysToReachGoal: 30,
+  targetDate: '01/12/2023',
+  tdee: 2000,
+};
+
+export {
+  communitiesData,
+  followersData,
+  followingData,
+  messageDummyData,
+  tdeeCalculatorData,
+};
