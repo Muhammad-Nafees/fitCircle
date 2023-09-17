@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   BackHandler,
 } from 'react-native';
+// ---------------------------------------------------------------------------//
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 

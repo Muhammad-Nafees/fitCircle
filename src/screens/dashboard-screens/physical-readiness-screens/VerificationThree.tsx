@@ -1,11 +1,12 @@
 import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
 import {LinearGradient} from 'react-native-linear-gradient';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
+// ---------------------------------------------------------------------------//
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import CustomInput from '../../../components/shared-components/CustomInput';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
 
 const schema = Yup.object().shape({
   initial: Yup.string().required('Initial is required'),

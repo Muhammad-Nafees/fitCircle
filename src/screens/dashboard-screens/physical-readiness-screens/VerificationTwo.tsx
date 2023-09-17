@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, BackHandler} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Formik, Field} from 'formik';
+// ------------------------------------------------------------------------------------------//
 import CustomButton from '../../../components/shared-components/CustomButton';
 import CustomRadioButton from '../../../components/dashboard-components/CustomRadioButton';
 import {STYLES} from '../../../styles/globalStyles';
@@ -20,7 +21,6 @@ interface FormValues {
 
 const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
-  console.log(formdata, 'sss');
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
 
   useEffect(() => {

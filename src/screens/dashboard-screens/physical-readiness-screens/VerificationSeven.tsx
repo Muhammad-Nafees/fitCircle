@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {ScrollView, StyleSheet, View, Text, BackHandler} from 'react-native';
+// --------------------------------------------------------------------------//
 import {STYLES} from '../../../styles/globalStyles';
 import {VerificationOne} from './VerificationOne';
 import VerificationTwo from './VerificationTwo';
