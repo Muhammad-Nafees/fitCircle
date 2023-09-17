@@ -1,10 +1,11 @@
+import {useEffect} from 'react';
 import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
-import {STYLES} from '../../../styles/globalStyles';
 import {Formik} from 'formik';
+// ---------------------------------------------------------------------------//
+import {STYLES} from '../../../styles/globalStyles';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import {useEffect} from 'react';
 
 export const Results = ({navigation, route}: any) => {
   useEffect(() => {
@@ -37,28 +38,9 @@ export const Results = ({navigation, route}: any) => {
             tdee: `${data.tdee.toFixed(1)} Calories`,
           }}
           onSubmit={handleSubmit}>
-          {({
-            handleChange,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-            setFieldValue,
-            setFieldError,
-          }) => (
+          {({handleSubmit, values}) => (
             <>
-              <Text
-                style={[
-                  STYLES.text16,
-                  {
-                    fontWeight: '700',
-                    marginTop: 16,
-                    paddingHorizontal: 16,
-                    paddingBottom: 28,
-                  },
-                ]}>
-                Results
-              </Text>
+              <Text style={[STYLES.text16, styles.heading]}>Results</Text>
               <View style={styles.formContainer}>
                 <CustomInput
                   label="Your BMI score"
@@ -66,10 +48,7 @@ export const Results = ({navigation, route}: any) => {
                   value={values.bmi}
                   fieldName="bmi"
                   editable={false}
-                  extraStyles={{
-                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                  }}
+                  extraStyles={styles.textInputExtraStyles}
                 />
                 <CustomInput
                   label="Your BMR is"
@@ -77,10 +56,7 @@ export const Results = ({navigation, route}: any) => {
                   value={values.bmr}
                   fieldName="bmr"
                   editable={false}
-                  extraStyles={{
-                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                  }}
+                  extraStyles={styles.textInputExtraStyles}
                 />
                 <CustomInput
                   label="Deficit Calories"
@@ -88,10 +64,7 @@ export const Results = ({navigation, route}: any) => {
                   value={values.deficitCalories}
                   fieldName="deficitCalories"
                   editable={false}
-                  extraStyles={{
-                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                  }}
+                  extraStyles={styles.textInputExtraStyles}
                 />
                 <CustomInput
                   label="Daily Calories"
@@ -99,10 +72,7 @@ export const Results = ({navigation, route}: any) => {
                   value={values.dailyCalories}
                   fieldName="dailyCalories"
                   editable={false}
-                  extraStyles={{
-                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                  }}
+                  extraStyles={styles.textInputExtraStyles}
                 />
                 <CustomInput
                   label="Days to reach your goal"
@@ -110,10 +80,7 @@ export const Results = ({navigation, route}: any) => {
                   value={values.daysToReachGoal}
                   fieldName="daysToReachGoal"
                   editable={false}
-                  extraStyles={{
-                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                  }}
+                  extraStyles={styles.textInputExtraStyles}
                 />
                 <CustomInput
                   label="Target Date (dd/mm/yyyy)"
@@ -121,10 +88,7 @@ export const Results = ({navigation, route}: any) => {
                   value={values.targetDate}
                   fieldName="targetDate"
                   editable={false}
-                  extraStyles={{
-                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                  }}
+                  extraStyles={styles.textInputExtraStyles}
                 />
                 <CustomInput
                   label="Your TDEE is"
@@ -132,10 +96,7 @@ export const Results = ({navigation, route}: any) => {
                   value={values.tdee}
                   fieldName="tdee"
                   editable={false}
-                  extraStyles={{
-                    backgroundColor: 'rgba(68, 68, 68, 0.5)',
-                    color: 'rgba(255, 255, 255, 0.5)',
-                  }}
+                  extraStyles={styles.textInputExtraStyles}
                 />
               </View>
               <View style={styles.button}>
@@ -157,5 +118,15 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(100),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
+  },
+  heading: {
+    fontWeight: '700',
+    marginTop: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 28,
+  },
+  textInputExtraStyles: {
+    backgroundColor: 'rgba(68, 68, 68, 0.5)',
+    color: 'rgba(255, 255, 255, 0.5)',
   },
 });
