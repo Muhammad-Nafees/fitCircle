@@ -27,26 +27,11 @@ export const CustomTransaction = ({
           <Text style={{fontWeight: '400', fontSize: 12, color: 'white'}}>
             {name}
           </Text>
-          <Text
-            style={{
-              fontWeight: '400',
-              fontSize: 10,
-              color: 'rgba(255,255,255,0.5)',
-            }}>
-            {date}
-          </Text>
+          <Text style={styles.date}>{date}</Text>
         </View>
       </View>
       <View style={styles.amountList}>
-        <Text
-          style={{
-            color: '#DE3131',
-            fontSize: 14.33,
-            fontWeight: '500',
-            textAlign: 'right',
-          }}>
-          {amount}
-        </Text>
+        <Text style={styles.amount}>{amount}</Text>
         <Text style={{color: '#30D298', fontSize: 12.54}}>{listText}</Text>
       </View>
     </View>
@@ -77,5 +62,16 @@ const styles = StyleSheet.create({
   amountList: {
     flexDirection: 'column',
     justifyContent: 'flex-end',
+  },
+  amount: {
+    color: '#DE3131',
+    fontSize: 14.33,
+    fontWeight: '500',
+    textAlign: 'right',
+  },
+  date: {
+    fontWeight: '400',
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.5)',
   },
 });

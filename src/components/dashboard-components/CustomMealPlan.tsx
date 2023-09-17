@@ -8,22 +8,9 @@ export const CustomMealPlan = ({name}: any) => {
       <View style={{flex: 0.7, justifyContent: 'center', alignItems: 'center'}}>
         <MealPlanPdf width={48} height={64} />
       </View>
-      <View
-        style={{
-          width: '100%',
-          justifyContent: 'flex-end',
-          flex: 0.3,
-        }}>
+      <View style={styles.contentContainer}>
         <View style={styles.name}>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: '400',
-              color: '#000000',
-              textAlign: 'center',
-            }}>
-            {name}
-          </Text>
+          <Text style={styles.nameText}>{name}</Text>
         </View>
       </View>
     </View>
@@ -41,11 +28,22 @@ const styles = StyleSheet.create({
     height: 125,
     borderRadius: 10,
   },
+  contentContainer: {
+    width: '100%',
+    justifyContent: 'flex-end',
+    flex: 0.3,
+  },
   name: {
     backgroundColor: '#EBEBEB',
     width: '100%',
     paddingVertical: 10,
     borderBottomRightRadius: 10,
     borderBottomLeftRadius: 10,
+  },
+  nameText: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#000000',
+    textAlign: 'center',
   },
 });
