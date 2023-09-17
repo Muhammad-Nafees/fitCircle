@@ -1,15 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
-import {Formik, Field, FormikValues} from 'formik';
+import {Formik} from 'formik';
+// ---------------------------------------------------------------------------------------//
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {STYLES} from '../../../styles/globalStyles';
 import CustomRadioButton from '../../../components/dashboard-components/CustomRadioButton';
 import {PhysicalReadinessFourSchema} from '../../../validations';
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from '../../../utils/metrics';
+import {verticalScale} from '../../../utils/metrics';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {
   question7,
@@ -160,11 +157,6 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
       '',
   };
 
-  const labelStyles = {
-    fontSize: 12,
-    fontWeight: '400',
-    color: 'white',
-  };
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -181,20 +173,10 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
             setFieldValue,
             setFieldError,
           }) => {
-            console.log(values, 'valuesss');
             return (
               <>
                 {disabled !== true && (
-                  <Text
-                    style={[
-                      STYLES.text16,
-                      {
-                        fontWeight: '700',
-                        marginTop: 16,
-                        paddingHorizontal: 16,
-                        paddingBottom: 28,
-                      },
-                    ]}>
+                  <Text style={[STYLES.text16, styles.heading]}>
                     Physical Activity Readiness
                   </Text>
                 )}
@@ -223,7 +205,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       handleChange={handleChange('mealsEat')}
                       setFieldError={setFieldError}
                       fieldName="mealsEat"
-                      labelStyles={labelStyles}
+                      labelStyles={styles.labelStyles}
                     />
                   </View>
                   {questionTexts.map(question => (
@@ -256,7 +238,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       handleChange={handleChange('durationExercise')}
                       setFieldError={setFieldError}
                       fieldName="durationExercise"
-                      labelStyles={labelStyles}
+                      labelStyles={styles.labelStyles}
                     />
                   </View>
                   {questionTexts2.map(question => (
@@ -288,7 +270,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       handleChange={handleChange('seriousness')}
                       setFieldError={setFieldError}
                       fieldName="seriousness"
-                      labelStyles={labelStyles}
+                      labelStyles={styles.labelStyles}
                     />
                   </View>
                 </View>
@@ -312,17 +294,22 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
 };
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: moderateScale(12),
-    lineHeight: verticalScale(17),
-    fontWeight: '700',
-    color: '#ffffff',
+  labelStyles: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'white',
   },
   formContainer: {paddingHorizontal: 40},
   button: {
     marginTop: verticalScale(60),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
+  },
+  heading: {
+    fontWeight: '700',
+    marginTop: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 28,
   },
 });
 

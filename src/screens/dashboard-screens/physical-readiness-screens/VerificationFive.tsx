@@ -25,7 +25,6 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
   }, [navigation]);
   const formdata: null | any = data;
   const handleSubmit = (values: any) => {
-    console.log('Form values:', values);
     navigation.navigate('VerificationSix', {
       ...route.params,
       verificationFive: values,
