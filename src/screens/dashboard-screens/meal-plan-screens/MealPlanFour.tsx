@@ -3,55 +3,24 @@ import {
   Text,
   StyleSheet,
   Image,
-  TextInput,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {horizontalScale, verticalScale} from '../../../utils/metrics';
-import {CustomNutritionistPlan} from '../../../components/dashboard-components/CustomNutritionistPlan';
-const SearchIcon = require('../../../../assets/icons/search.png');
-const ArrowBack = require('../../../../assets/icons/arrow-back.png');
-import CustomButton from '../../../components/shared-components/CustomButton';
 import {BlurView} from '@react-native-community/blur';
 import Modal from 'react-native-modal';
+// ----------------------------------------------------------------------------------------------------//
+import {horizontalScale, verticalScale} from '../../../utils/metrics';
+import {CustomNutritionistPlan} from '../../../components/dashboard-components/CustomNutritionistPlan';
+const ArrowBack = require('../../../../assets/icons/arrow-back.png');
+import CustomButton from '../../../components/shared-components/CustomButton';
 import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
 import {useState} from 'react';
+import {nutritionistInfo} from '../../dummyData';
 
 export const MealPlanFour = ({navigation}: any) => {
   const [planModal, setPlanModal] = useState(false);
   const [modalText, setModalText] = useState('');
   const [modalPrice, setModalPrice] = useState('');
-  const nutritionistInfo = {
-    name: 'Lindsey Middleton',
-    role: 'Nutritionist',
-    plans: [
-      {
-        planName: 'Weight Loss Meal Plan',
-        price: '$100',
-        description: 'For people who are losing weight',
-      },
-      {
-        planName: 'Weight Gain Meal Plan',
-        price: '$100',
-        description: 'For people who are gaining weight',
-      },
-      {
-        planName: 'Weight Gain Meal Plan',
-        price: '$100',
-        description: 'For people who are gaining weight',
-      },
-      {
-        planName: 'Weight Gain Meal Plan',
-        price: '$100',
-        description: 'For people who are gaining weight',
-      },
-      {
-        planName: 'Weight Gain Meal Plan',
-        price: '$100',
-        description: 'For people who are gaining weight',
-      },
-    ],
-  };
 
   const handleModalOpen = (text: string, price: string) => {
     setModalPrice(price);
@@ -77,13 +46,7 @@ export const MealPlanFour = ({navigation}: any) => {
         />
       </TouchableOpacity>
       <ScrollView>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: '600',
-            color: 'white',
-            marginHorizontal: 14,
-          }}>
+        <Text style={[styles.buttonText, {marginHorizontal: 14}]}>
           Meal Plans
         </Text>
         <View style={{flex: 1, marginTop: 10}}>
@@ -109,13 +72,7 @@ export const MealPlanFour = ({navigation}: any) => {
             <TouchableOpacity
               onPress={() => setPlanModal(false)}
               style={styles.topLine}></TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '600',
-                color: 'white',
-                textAlign: 'center',
-              }}>
+            <Text style={[styles.buttonText, {textAlign: 'center'}]}>
               Buy Meal Plan
             </Text>
             <View
@@ -177,5 +134,10 @@ const styles = StyleSheet.create({
     marginTop: 14,
     alignSelf: 'center',
     borderRadius: 3,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
   },
 });

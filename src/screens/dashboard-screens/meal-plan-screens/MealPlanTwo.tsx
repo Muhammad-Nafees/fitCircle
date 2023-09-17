@@ -1,5 +1,4 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import MealPlanImage from '../../../../assets/icons/MealPlanImage';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {CustomMealPlan} from '../../../components/dashboard-components/CustomMealPlan';
 const ArrowBack = require('../../../../assets/icons/arrow-back.png');
@@ -15,15 +14,7 @@ export const MealPlanTwo = ({navigation}: any) => {
           style={{width: 24, height: 24, tintColor: 'white'}}
         />
       </TouchableOpacity>
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: '600',
-          color: 'white',
-          marginHorizontal: 14,
-        }}>
-        My Meal Plan
-      </Text>
+      <Text style={styles.text}>My Meal Plan</Text>
       <TouchableOpacity style={{flex: 1, marginLeft: 5}}>
         <CustomMealPlan name="Meal Plan ..." />
       </TouchableOpacity>
@@ -44,5 +35,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 0.19,
     marginHorizontal: 40,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
+    marginHorizontal: 14,
   },
 });

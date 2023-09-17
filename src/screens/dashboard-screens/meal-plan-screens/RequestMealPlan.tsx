@@ -21,20 +21,8 @@ const RequestMealPlan = ({navigation}: any) => {
           ]}>
           Request sent!
         </Text>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginHorizontal: 35,
-            marginTop: 25,
-          }}>
-          <Text
-            style={{
-              fontSize: 14,
-              fontWeight: '500',
-              color: 'white',
-              textAlign: 'center',
-            }}>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>
             Please wait for nutritionist to confirm
           </Text>
         </View>
@@ -70,5 +58,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#30D298',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  textContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 35,
+    marginTop: 25,
+  },
+  text: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'white',
+    textAlign: 'center',
   },
 });

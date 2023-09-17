@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   BackHandler,
 } from 'react-native';
+import {useEffect} from 'react';
+// ----------------------------------------------------------------------------//
 import MealPlanImage from '../../../../assets/icons/MealPlanImage';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import {useEffect} from 'react';
 const ArrowBack = require('../../../../assets/icons/arrow-back.png');
 
 export const MealPlanOne = ({navigation}: any) => {
@@ -33,31 +34,14 @@ export const MealPlanOne = ({navigation}: any) => {
           style={{width: 24, height: 24, tintColor: 'white'}}
         />
       </TouchableOpacity>
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: '600',
-          color: 'white',
-          marginHorizontal: 14,
-        }}>
-        My Meal Plan
-      </Text>
+      <Text style={styles.text1}>My Meal Plan</Text>
       <View
         style={{
           justifyContent: 'center',
           alignItems: 'center',
           flex: 1,
         }}>
-        <Text
-          style={{
-            marginHorizontal: 120,
-            textAlign: 'center',
-            color: 'white',
-            fontWeight: '500',
-            fontSize: 16,
-          }}>
-          You dont have any meal plans today
-        </Text>
+        <Text style={styles.text2}>You dont have any meal plans today</Text>
         <View style={{marginVertical: 40}}>
           <MealPlanImage />
         </View>
@@ -79,5 +63,18 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 0.19,
     marginHorizontal: 40,
+  },
+  text1: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
+    marginHorizontal: 14,
+  },
+  text2: {
+    marginHorizontal: 120,
+    textAlign: 'center',
+    color: 'white',
+    fontWeight: '500',
+    fontSize: 16,
   },
 });
