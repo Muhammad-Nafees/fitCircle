@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, BackHandler} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {Formik, Field} from 'formik';
+import {Formik} from 'formik';
 // ------------------------------------------------------------------------------------------//
 import CustomButton from '../../../components/shared-components/CustomButton';
 import CustomRadioButton from '../../../components/dashboard-components/CustomRadioButton';

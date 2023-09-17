@@ -8,13 +8,13 @@ import {
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import Modal from 'react-native-modal';
+import {useState} from 'react';
 // ----------------------------------------------------------------------------------------------------//
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {CustomNutritionistPlan} from '../../../components/dashboard-components/CustomNutritionistPlan';
 const ArrowBack = require('../../../../assets/icons/arrow-back.png');
 import CustomButton from '../../../components/shared-components/CustomButton';
 import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
-import {useState} from 'react';
 import {nutritionistInfo} from '../../dummyData';
 
 export const MealPlanFour = ({navigation}: any) => {

@@ -1,11 +1,11 @@
 import {useState, useEffect} from 'react';
 import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
+import Slider from '@react-native-community/slider';
 //-------------------------------------------------------------------------------//
 import {STYLES} from '../../../styles/globalStyles';
 import {verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {CustomSelect} from '../../../components/shared-components/CustomSelect';
-import Slider from '@react-native-community/slider';
 import {NutritionData} from '../../../interfaces/extra.interface';
 
 const presets = {

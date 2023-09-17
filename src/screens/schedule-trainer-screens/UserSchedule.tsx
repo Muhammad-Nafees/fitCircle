@@ -5,17 +5,16 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   BackHandler,
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment';
-import CustomButton from '../../components/shared-components/CustomButton';
-import {CustomScheduleTime} from '../../components/dashboard-components/CustomScheduleTime';
-import {RootState} from '../../redux/store';
 import {useSelector} from 'react-redux';
 import {format} from 'date-fns';
 import {DateData, MarkedDates} from 'react-native-calendars/src/types';
+// ----------------------------------------------------------------------------------------------//
+import {CustomScheduleTime} from '../../components/dashboard-components/CustomScheduleTime';
+import {RootState} from '../../redux/store';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
