@@ -6,13 +6,17 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {STYLES} from '../../../styles/globalStyles';
-import CustomButton from '../../../components/shared-components/CustomButton';
-import {Formik} from 'formik';
-import CustomInput from '../../../components/shared-components/CustomInput';
+import PhoneInput from 'react-native-phone-number-input';
+import {useIsFocused} from '@react-navigation/native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import React, {useRef, useState, useEffect} from 'react';
 import {format} from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
-import React, {useRef, useState, useEffect} from 'react';
+import {Formik} from 'formik';
+// --------------------------------------------------------------------------------------//
+import {STYLES} from '../../../styles/globalStyles';
+import CustomButton from '../../../components/shared-components/CustomButton';
+import CustomInput from '../../../components/shared-components/CustomInput';
 import {
   horizontalScale,
   moderateScale,
@@ -20,10 +24,7 @@ import {
 } from '../../../utils/metrics';
 import {PhysicalReadinessTestSchema} from '../../../validations';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
-import PhoneInput from 'react-native-phone-number-input';
-import {useIsFocused, useRoute} from '@react-navigation/native';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 
 export const VerificationOne = ({navigation, disabled, data, route}: any) => {
