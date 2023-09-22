@@ -75,6 +75,7 @@ const LoginForm = () => {
       }
     } catch (error: any) {
       setIsLoading(false);
+      console.log(error?.response);
       if (error.response.status === 400) {
         Toast.show({
           type: 'error',
@@ -91,7 +92,7 @@ const LoginForm = () => {
         Toast.show({
           type: 'error',
           text1: 'Login Unsuccessfull!',
-          text2: 'Network error. Please try again later',
+          text2: 'Servor error. Please try again later',
         });
       }
     }

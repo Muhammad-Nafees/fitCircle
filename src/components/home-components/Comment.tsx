@@ -79,6 +79,7 @@ const CommentItem = ({
   comment: CommentItem;
   handleReplyPress: any;
   showReplyButton: any;
+  handleImageOpen: any;
 }) => {
   const timeDifference = (createdAt: string) => {
     const commentDate = new Date(createdAt);
@@ -125,9 +126,9 @@ const CommentItem = ({
         <View style={styles.commentContainer}>
           <Text style={styles.commentName}>{comment.user.username}</Text>
           <Text style={styles.commentText}>{comment.text}</Text>
-          {comment.commentMedia && (
+          {comment?.commentMedia && (
             <TouchableOpacity
-              onPress={() => handleImageOpen(comment.commentMedia)}>
+              onPress={() => handleImageOpen(comment?.commentMedia)}>
               <Image
                 source={{uri: comment.commentMedia}}
                 style={styles.commentMediaImage}
@@ -154,6 +155,7 @@ const CommentItem = ({
               comment={reply}
               handleReplyPress={handleReplyPress}
               showReplyButton={false}
+              handleImageOpen={handleImageOpen}
             />
           ))}
         </View>
