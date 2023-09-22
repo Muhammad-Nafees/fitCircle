@@ -5,7 +5,8 @@ import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import store from './src/redux/store';
 import {persistStore} from 'redux-persist';
-import StackNavigator from './src/navigators/StackNavigator';
+// import StackNavigator from './src/navigators/StackNavigator';
+import HomeTabNavigator from './src/navigators/HomeTabNavigator';
 
 let persistor = persistStore(store);
 
@@ -14,7 +15,7 @@ const App = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
-          <StackNavigator />
+          <HomeTabNavigator />
           <Toast />
         </NavigationContainer>
       </PersistGate>
