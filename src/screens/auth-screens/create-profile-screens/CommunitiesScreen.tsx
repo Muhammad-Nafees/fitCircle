@@ -18,31 +18,58 @@ import {setUserData} from '../../../redux/authSlice';
 // import {createProfile, getCommunities} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import Toast from 'react-native-toast-message';
+import {getCommunities} from '../../../api/auth-module';
+import {s3bucketReference} from '../../../api';
 
 export interface ICommunities {
   _id: string;
   interest: string;
+  members: [];
 }
 
 const CommunitiesScreen = ({navigation}: any) => {
-  const [selectedCommunities, setSelectedCommunities] =
-    useState<any>(COMMUNITIES_LIST);
-  const [selectedCommunitiesName, setSelectedCommunitiesName] = useState<
-    string[]
-  >([]);
-  // const [communities, setCommunities] = useState<ICommunities[]>([]);
+  const [selectedCommunities, setSelectedCommunities] = useState<any>([]);
+  const [selectedCommunitiesName, setSelectedCommunitiesName] = useState<any[]>(
+    [],
+  );
   const [communities, setCommunities] = useState<any>(COMMUNITIES_LIST);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
+  console.log(previousUserData, 'from communities');
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getCommunities();
+        const data = response?.data.data;
+        console.log(data, 'data');
+        setCommunities(data.communities);
+      } catch (error: any) {
+        if (error?.response?.data?.message) {
+          Toast.show({
+            type: 'error',
+            text1: `${error?.response?.data.message}`,
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: `${error.message}!`,
+          });
+        }
+      }
+      setIsLoading(false);
+    };
+    fetchCommunities();
+  }, []);
 
   const handleSubmit = async () => {
     const partialUserData: Partial<IUser> = {
       ...previousUserData,
-      selectedCommunities: selectedCommunitiesName,
-      role: 'user',
+      communities: selectedCommunitiesName,
     };
-    dispatch(setUserData(partialUserData));
+    dispatch(setUserData(partialUserData as IUser));
     navigation.navigate('SocialMediaAccount');
   };
 
@@ -62,17 +89,20 @@ const CommunitiesScreen = ({navigation}: any) => {
       setSelectedCommunitiesName(filteredCommunitiesName);
     } else {
       setSelectedCommunities((prev: any) => [...prev, {communityName, _id}]);
-      setSelectedCommunitiesName((prev: any) => [...prev, communityName]);
+      setSelectedCommunitiesName((prev: any) => [...prev, _id]);
     }
   };
 
   const renderCommunity = ({item}: {item: any}) => {
+    console.log(item, 'item');
     return (
       <TouchableOpacity onPress={() => handleSelect(item.name, item._id)}>
         <View style={styles.contentContainer}>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
             <Image
-              source={{uri: item.image}}
+              source={{
+                uri: `${s3bucketReference}/${item.image}`,
+              }}
               style={{width: 50, height: 50, borderRadius: 25}}
             />
             <View style={{gap: 5}}>
@@ -102,39 +132,35 @@ const CommunitiesScreen = ({navigation}: any) => {
       </TouchableOpacity>
     );
   };
+  console.log(selectedCommunities.length, 'length');
 
   return (
     <View style={[STYLES.container, {justifyContent: 'space-between'}]}>
-      {communities?.length === 0 ? (
-        <CustomLoader isStyle={true} />
-      ) : (
-        <>
-          <View>
-            <Text style={[STYLES.text16, {fontWeight: '700'}]}>
-              Communities
-            </Text>
-
-            <View style={styles.listContainer}>
-              <FlatList
-                data={communities}
-                renderItem={renderCommunity}
-                keyExtractor={item => item._id}
-              />
-            </View>
+      <View>
+        <Text style={[STYLES.text16, {fontWeight: '700'}]}>Communities</Text>
+        {isLoading ? (
+          <CustomLoader />
+        ) : (
+          <View style={styles.listContainer}>
+            <FlatList
+              data={communities}
+              renderItem={renderCommunity}
+              keyExtractor={item => item._id}
+            />
           </View>
-          <View
-            style={{
-              marginBottom: verticalScale(40),
-              marginHorizontal: horizontalScale(20),
-            }}>
-            <CustomButton
-              isDisabled={selectedCommunities.length == 0 ? true : false}
-              onPress={handleSubmit}>
-              Continue
-            </CustomButton>
-          </View>
-        </>
-      )}
+        )}
+      </View>
+      <View
+        style={{
+          marginBottom: verticalScale(40),
+          marginHorizontal: horizontalScale(20),
+        }}>
+        <CustomButton
+          isDisabled={selectedCommunities.length === 0 ? true : false}
+          onPress={handleSubmit}>
+          Continue
+        </CustomButton>
+      </View>
     </View>
   );
 };

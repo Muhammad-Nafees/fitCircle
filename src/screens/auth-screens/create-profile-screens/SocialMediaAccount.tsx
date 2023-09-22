@@ -9,7 +9,6 @@ import {RootState} from '../../../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {ISocial, IUser} from '../../../interfaces/user.interface';
 import {setUserData} from '../../../redux/authSlice';
-import {createProfile} from '../../../api';
 import {socialMediaSchema} from '../../../validations/index';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import Toast from 'react-native-toast-message';
@@ -54,10 +53,9 @@ const SocialMediaAccount = ({navigation}: any) => {
     ];
     const partialUserData: Partial<IUser> = {
       ...previousUserData,
-      role: 'user',
       socialMediaLinks: socialMediaLinks,
     };
-    dispatch(setUserData(partialUserData));
+    dispatch(setUserData(partialUserData as IUser));
     navigation.navigate('ChooseVerificationType');
   };
   return (

@@ -33,6 +33,7 @@ const UploadCertificate = ({navigation}: any) => {
   const [uploadImage, setUploadImage] = useState<any>('');
   const [addMoreImages, setAddMoreImages] = useState<any>([]);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
+  console.log(previousUserData?.certificates, 'certifcates!');
   const dispatch = useDispatch();
 
   const handleNavigate = () => {
@@ -66,7 +67,17 @@ const UploadCertificate = ({navigation}: any) => {
         })
           .then((image: any) => {
             if (image.path) {
+              console.log(image, 'image');
               setSelectedCameraImage(image.path);
+              const partialUserData: Partial<IUser> = {
+                ...previousUserData,
+                certificates: previousUserData?.certificates.concat({
+                  uri: image.path,
+                  name: 'camera',
+                  type: image.mime,
+                }),
+              };
+              dispatch(setUserData({...partialUserData} as IUser));
             }
           })
           .catch((error: any) => {
@@ -81,19 +92,28 @@ const UploadCertificate = ({navigation}: any) => {
           setUploadImage(response?.assets[0].uri);
           const partialUserData: Partial<IUser> = {
             ...previousUserData,
-            certificateImages: {
+            certificates: previousUserData?.certificates.concat({
               uri: response.assets[0].uri,
               name: response.assets[0].fileName,
               type: response.assets[0].type,
-            },
+            }),
           };
-          dispatch(setUserData({...partialUserData}));
+          dispatch(setUserData({...partialUserData} as IUser));
         }
       });
     } else {
       await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
           setAddMoreImages((prev: any) => [...prev, response?.assets[0].uri]);
+          const partialUserData: Partial<IUser> = {
+            ...previousUserData,
+            certificates: previousUserData?.certificates.concat({
+              uri: response.assets[0].uri,
+              name: response.assets[0].fileName,
+              type: response.assets[0].type,
+            }),
+          };
+          dispatch(setUserData({...partialUserData} as IUser));
         }
       });
     }
@@ -101,6 +121,7 @@ const UploadCertificate = ({navigation}: any) => {
 
   const handleDelete = (img: string) => {
     setAddMoreImages(addMoreImages.filter((image: string) => image !== img));
+    
   };
 
   return (

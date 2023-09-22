@@ -6,11 +6,11 @@ import {INTERESTS} from '../../../../data/data';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-// import {getInterest} from '../../../api';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import Toast from 'react-native-toast-message';
 import {IUser} from '../../../interfaces/user.interface';
 import {setUserData} from '../../../redux/authSlice';
+import Toast from 'react-native-toast-message';
+import {getInterest} from '../../../api/auth-module';
 
 export interface IInterest {
   _id: string;
@@ -19,20 +19,43 @@ export interface IInterest {
 
 const InterestScreen = ({navigation}: any) => {
   const [selectedInterest, setSelectedInterest] = useState<IInterest[]>([]);
-  const [selectedInterestName, setSelectedInterestName] = useState<string[]>(
-    [],
-  );
-  console.log(useSelector((state: RootState) => state.auth.user));
+  const [selectedInterestName, setSelectedInterestName] = useState<any[]>([]);
   const [interests, setInterest] = useState<any>(INTERESTS);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchInterest = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getInterest();
+        const data = response?.data.data;
+        setInterest(data.interests);
+      } catch (error: any) {
+        if (error?.response?.data?.message) {
+          Toast.show({
+            type: 'error',
+            text1: `${error?.response?.data.message}`,
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: `${error.message}!`,
+          });
+        }
+      }
+      setIsLoading(false);
+    };
+    fetchInterest();
+  }, []);
 
   const handleSubmit = () => {
     const partialUserData: Partial<IUser> = {
       ...previousUserData,
-      interest: selectedInterestName,
+      interests: selectedInterestName,
     };
-    dispatch(setUserData(partialUserData));
+    dispatch(setUserData(partialUserData as IUser));
     navigation.navigate('CommunitiesScreen');
   };
 
@@ -44,7 +67,7 @@ const InterestScreen = ({navigation}: any) => {
       setSelectedInterest(filteredCategories);
     } else {
       setSelectedInterest(prev => [...prev, {interest, _id}]);
-      setSelectedInterestName(prev => [...prev, interest]);
+      setSelectedInterestName(prev => [...prev, _id]);
     }
   };
 
@@ -54,32 +77,37 @@ const InterestScreen = ({navigation}: any) => {
         <Text style={[STYLES.text16, {fontWeight: '700'}]}>
           Select your interests
         </Text>
-        <View style={styles.itemsContainer}>
-          {interests?.length === 0 ? (
-            <CustomLoader isStyle={true} />
-          ) : (
-            interests?.map(data => {
-              const isSelected = selectedInterest.some(
-                item => item._id === data.id,
-              );
-
-              return (
-                <TouchableOpacity
-                  key={data.id}
-                  style={[
-                    styles.itemsInnerContainer,
-                    {
-                      backgroundColor: isSelected ? '#209BCC' : 'transparent',
-                      borderColor: isSelected ? 'transparent' : 'white',
-                    },
-                  ]}
-                  onPress={() => handleSelect(data.interestName, data.id)}>
-                  <Text style={STYLES.text14}>{data.interestName}</Text>
-                </TouchableOpacity>
-              );
-            })
-          )}
-        </View>
+        {isLoading ? (
+          <View style={{marginTop: 40}}>
+            <CustomLoader />
+          </View>
+        ) : (
+          <View style={styles.itemsContainer}>
+            {interests?.length === 0 ? (
+              <CustomLoader isStyle={true} />
+            ) : (
+              interests?.map((data: any) => {
+                const isSelected = selectedInterest.some(
+                  item => item._id === data._id,
+                );
+                return (
+                  <TouchableOpacity
+                    key={data._id}
+                    style={[
+                      styles.itemsInnerContainer,
+                      {
+                        backgroundColor: isSelected ? '#209BCC' : 'transparent',
+                        borderColor: isSelected ? 'transparent' : 'white',
+                      },
+                    ]}
+                    onPress={() => handleSelect(data?.name, data._id)}>
+                    <Text style={STYLES.text14}>{data?.name}</Text>
+                  </TouchableOpacity>
+                );
+              })
+            )}
+          </View>
+        )}
       </View>
       <View style={{marginHorizontal: 20, marginBottom: 40}}>
         <CustomButton

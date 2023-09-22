@@ -11,9 +11,7 @@ import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
-import ReelsComponent from '../components/home-components/Reels';
-import {useSelector} from 'react-redux';
-import {RootState} from '../redux/store';
+
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');

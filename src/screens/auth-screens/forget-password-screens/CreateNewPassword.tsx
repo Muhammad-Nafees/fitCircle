@@ -14,6 +14,7 @@ import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import {createNewPasswordSchema} from '../../../validations';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {resetPassword} from '../../../api/auth-module';
 
 interface FormValues {
   newPassword: string;
@@ -41,7 +42,36 @@ const CreateNewPassword = ({navigation, route}: any) => {
   };
 
   const handleSubmit = async (values: FormValues) => {
-    navigation.navigate('PasswordChangedDialog');
+    console.log(values);
+    setIsLoading(true);
+    const reqData = {
+      newPassword: values.newPassword,
+      confirmPassword: values.confirmNewPassword,
+    };
+    console.log(reqData, 'reqw');
+    try {
+      const response = await resetPassword(reqData);
+      navigation.navigate('PasswordChangedDialog');
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data.message}`,
+        visibilityTime: 5000,
+      });
+    } catch (error: any) {
+      console.log(error?.response);
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data.message}`,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error.message}!`,
+        });
+      }
+    }
+    setIsLoading(false);
   };
 
   const handleFocus = (fieldName: string) => {

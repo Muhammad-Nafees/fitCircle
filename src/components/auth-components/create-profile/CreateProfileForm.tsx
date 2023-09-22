@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {Text, View, StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {View, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {Formik} from 'formik';
 import CustomInput from '../../shared-components/CustomInput';
@@ -13,16 +13,16 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import {createProfileSchema} from '../../../validations';
 import {setUserData} from '../../../redux/authSlice';
-import {IUserRole} from '../../../interfaces/auth.interface';
 import {IUser} from '../../../interfaces/user.interface';
-import {checkUsernameAvailability, getCities, getCountries} from '../../../api';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {format} from 'date-fns';
+import {checkUsername, getCities, getCountries} from '../../../api/auth-module';
 import PhoneInput from 'react-native-phone-number-input';
 
 interface Props {
   profilePicture: any;
+  route?: any;
 }
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -30,7 +30,7 @@ type NavigationProp = NativeStackNavigationProp<
   'UploadCertificate'
 >;
 
-const CreateProfileForm = ({profilePicture}: Props) => {
+const CreateProfileForm = ({profilePicture, route}: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
   const userData = useSelector((state: RootState) => state.auth.user);
@@ -40,41 +40,57 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [country, setCountry] = useState();
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
-  const [countryCode, setCountryCode] = useState();
   const [phoneCode, setPhoneCode] = useState('1');
   const [usernameError, setUsernameError] = useState<string>('');
-  // useEffect(() => {
-  //   const fetchCountries = async () => {
-  //     try {
-  //       const response = await getCountries();
-  //       setAllCountries(['Pakistan']);
-  //     } catch (error: any) {
-  //       console.log('Error fetching countries:', error.response);
-  //     }
-  //   };
+  const [userPhone, setUserPhone] = useState<string>('');
+  const [countryCode, setCountryCode] = useState();
+  const [allData, setAllData] = useState<any | null>([]);
 
-  //   fetchCountries();
-  // }, []);
-  // useEffect(() => {
-  //   const getCountryCode = async (selectedCountry: string) => {
-  //     const country = allCountries.filter(
-  //       (country: any) => country.name == selectedCountry,
-  //     );
-  //     setCountryCode(country[0].isoCode);
-  //   };
+  useEffect(() => {
+    if (userData?.phone) {
+      setUserPhone(userData.phone);
+    }
+  }, []);
 
-  //   if (country) {
-  //     getCountryCode(country);
-  //   }
-  // }, [country]);
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await getCountries();
+        setAllData(response?.data.data);
+        const fetchedCountries = response?.data?.data.map((country: any) => {
+          return country.name;
+        });
+        setAllCountries(fetchedCountries);
+      } catch (error: any) {
+        console.log('Error fetching countries:', error.response);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+  useEffect(() => {
+    const getCountryCode = async (selectedCountry: string) => {
+      console.log(selectedCountry, 'selecteds');
+      const country = allData.filter(
+        (country: any) => country.name == selectedCountry,
+      );
+      setCountryCode(country[0].isoCode);
+    };
+
+    if (country) {
+      getCountryCode(country);
+    }
+  }, [country]);
   useEffect(() => {
     const fetchCities = async (countryCode: string) => {
       try {
         const response = await getCities(countryCode);
-        const cities = response?.data;
-        setAllCities(cities);
+        const fetchedCities = response?.data?.data.map((city: any) => {
+          return city.name;
+        });
+        setAllCities(fetchedCities);
       } catch (error: any) {
-        console.log('Error fetching cities:', error);
+        console.log('Error fetching cities:', error?.response?.data);
       }
     };
     if (countryCode) {
@@ -84,21 +100,15 @@ const CreateProfileForm = ({profilePicture}: Props) => {
 
   const dispatch = useDispatch();
 
-  const initialValues: IUser = {
-    role: userRole || undefined,
+  const initialValues: Partial<IUser> = {
     firstName: '',
     lastName: '',
     username: '',
     bio: '',
-    phone: '',
+    phone: userData?.phone,
     country: '',
     city: '',
     gender: '',
-    age: '',
-    activity: '',
-    bodytype: '',
-    height: '',
-    weight: '',
     physicalInformation: '',
     dob: '',
     hourlyRate: '',
@@ -106,59 +116,43 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     coverImage: null,
   };
 
-  const phoneNumberCheck = (values: any) => {
-    const isValid = phoneInput.current?.isValidNumber(values);
-    if (!isValid) {
-      setIsError('Invalid phone number!');
-    } else {
-      setIsError('');
-    }
-  };
+  const getCode = phoneInput.current?.getCountryCode();
+  console.log(getCode, 'code');
 
-  const handleUsernameBlur = async (username: any) => {
-    try {
-      // const data = await checkUsernameAvailability(username);
-      // if (!data.unique) {
-      //   setUsernameError('Username already exists');
-      // } else {
-      setUsernameError('');
-      // }
-    } catch (error) {
-      console.log('Error checking username:', error);
-      setUsernameError('Error checking username. Please try again later.');
-    }
-  };
-
-  const handleSubmit = (values: IUser) => {
+  const handleSubmit = async (values: Partial<IUser>) => {
     if (isError) {
       return;
     }
+
     const partialUserData: Partial<IUser> = {
       ...userData,
-      role: userRole,
       firstName: values.firstName,
       lastName: values.lastName,
       username: values.username,
       bio: values.bio,
-      phone: `+${phoneCode}${values.phone}`,
+      phone: userData?.phone,
       country: values.country,
       city: values.city,
       gender: values.gender,
-      age: values.age,
-      activity: values.activity,
-      bodytype: values.bodytype,
-      height: values.height,
-      weight: values.weight,
       physicalInformation: values.physicalInformation,
       dob: values.dob,
       hourlyRate: values.hourlyRate,
       profileImage: userData?.profileImage,
       coverImage: userData?.coverImage,
+      height: {
+        value: 0,
+        unit: 'ft',
+      },
+      weight: {
+        value: 0,
+        unit: 'kg',
+      },
+      age: '18',
     };
     if (usernameError) {
       return;
     }
-    dispatch(setUserData({...partialUserData}));
+    dispatch(setUserData({...partialUserData} as IUser));
     if (userRole == 'user')
       navigation.navigate('GenderScreen', {
         profilePicture: profilePicture,
@@ -167,24 +161,33 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       navigation.navigate('UploadCertificate');
     }
   };
+  const handleChangeUserName = async (text: string, setFieldValue: any) => {
+    setFieldValue('username', text);
+    try {
+      const response = await checkUsername({username: text});
+      console.log(response.data);
+      setUsernameError('');
+    } catch (error: any) {
+      console.log(error.response.data);
+      if (error?.response.status == 409) {
+        setUsernameError(error?.response.data.message);
+      }
+    }
+  };
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={createProfileSchema(userRole)}
-      validationContext={{userRole: userRole}} // Provide the context here
+      validationContext={{userRole: userRole}}
       onSubmit={handleSubmit}>
       {({
         handleChange,
         handleSubmit,
-        handleBlur,
-        submitForm,
         values,
         errors,
         touched,
-        initialTouched,
         setFieldValue,
         setFieldError,
-        resetForm,
       }) => (
         <>
           <View style={[styles.formContainer, {marginTop: verticalScale(35)}]}>
@@ -217,8 +220,9 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               error={errors.username || usernameError}
               touched={touched.username}
               initialTouched={true}
-              handleChange={handleChange('username')}
-              // handleBlur={() => handleUsernameBlur(values.username)}
+              setFieldError={setFieldError}
+              fieldName="username"
+              handleChange={text => handleChangeUserName(text, setFieldValue)}
             />
             <CustomInput
               label="Add bio"
@@ -235,7 +239,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               fieldName="bio"
             />
             <CustomPhoneInput
-              value={values.phone}
+              value={route?.params?.phoneNumber || userData?.phone}
               error={errors.phone}
               touched={touched.phone}
               handleChange={handleChange('phone')}
@@ -245,12 +249,13 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               setFieldError={setFieldError}
               isError={isError}
               setPhoneCode={setPhoneCode}
-              countryCode={countryCode}
+              countryCode={route?.params?.countryCode}
+              isDisable={true}
             />
             <CustomSelect
               label="Country"
               selectedValue={values.country}
-              values={['Pakistan']}
+              values={allCountries}
               error={errors.country}
               initialTouched={true}
               setCountry={setCountry}
@@ -262,7 +267,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             <CustomSelect
               label="City"
               selectedValue={values.city}
-              values={['Karachi']}
+              values={allCities}
               error={errors.city}
               initialTouched={true}
               touched={touched.city}
@@ -270,7 +275,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               setFieldError={setFieldError}
               fieldName="city"
             />
-            {userRole == 'trainer' && (
+            {userRole == 'admin' && (
               <CustomSelect
                 label="Gender"
                 selectedValue={values.gender}
@@ -332,7 +337,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                 />
               </View>
             </TouchableWithoutFeedback>
-            {userRole == 'trainer' && (
+            {userRole == 'admin' && (
               <CustomInput
                 label="Hourly Rate"
                 placeholder="$20.00"
@@ -348,14 +353,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
             )}
           </View>
           <View style={styles.button}>
-            <CustomButton
-              onPress={async () => {
-                await handleUsernameBlur(values.username);
-                await phoneNumberCheck(values.phone);
-                handleSubmit();
-              }}>
-              Continue
-            </CustomButton>
+            <CustomButton onPress={handleSubmit}>Continue</CustomButton>
           </View>
         </>
       )}

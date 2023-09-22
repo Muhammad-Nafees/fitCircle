@@ -3,8 +3,8 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
-import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
-import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
+// import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
+// import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 
@@ -24,7 +24,7 @@ const HomeStackNavigator = () => {
         component={AddPostScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="SuccessfulDialog"
         component={SuccessfulDialog}
         options={{headerShown: false}}
@@ -33,7 +33,7 @@ const HomeStackNavigator = () => {
         name="UnsuccessfulDialog"
         component={UnsuccessfulDialog}
         options={{headerShown: false}}
-      />
+      /> */}
     </Stack.Navigator>
   );
 };

@@ -3,6 +3,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import {View} from 'react-native';
+import SplashSc from "../screens"
 import SplashScreen from '../screens';
 import SignInScreenOne from '../screens/auth-screens/signin-screens/SigninScreenOne';
 import SignInScreenTwo from '../screens/auth-screens/signin-screens/SigninScreenTwo';
@@ -36,7 +37,7 @@ const StackNavigator = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
-  // if (isAuthenticated) return <AuthStackNavigator />;
+  if (isAuthenticated) return <AuthStackNavigator />;
 
   return (
     <Stack.Navigator

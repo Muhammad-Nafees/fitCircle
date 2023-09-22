@@ -6,7 +6,7 @@ import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import ProfilePhotos from '../../../components/auth-components/create-profile/ProfilePhotos';
 import CreateProfileForm from '../../../components/auth-components/create-profile/CreateProfileForm';
 
-const CreateProfile = ({navigation}: any) => {
+const CreateProfile = ({navigation, route}: any) => {
   const [profilePicture, setProfilePicture] = useState<any>();
   const handleSelectProfilePicture = (image: any) => {
     setProfilePicture(image);
@@ -27,7 +27,7 @@ const CreateProfile = ({navigation}: any) => {
           />
           <ProfilePhotos onSelectProfilePicture={handleSelectProfilePicture} />
         </View>
-        <CreateProfileForm profilePicture={profilePicture} />
+        <CreateProfileForm profilePicture={profilePicture} route={route} />
       </ScrollView>
     </View>
   );

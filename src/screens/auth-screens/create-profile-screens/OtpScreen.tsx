@@ -10,9 +10,12 @@ import {
 import {STYLES} from '../../../styles/globalStyles';
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+import {verifyCode} from '../../../api/auth-module';
+import Toast from 'react-native-toast-message';
+import {setAccessToken} from '../../../redux/authSlice';
 
 const OtpScreen = ({navigation, route}: any) => {
   const inputRefs = useRef<Array<TextInput | null>>([]);
@@ -25,6 +28,7 @@ const OtpScreen = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
   const [verificationType, setVerificationType] = useState('');
+  const dispatch = useDispatch();
 
   const [secondsRemaining, setSecondsRemaining] = useState(60);
   useEffect(() => {
@@ -41,17 +45,31 @@ const OtpScreen = ({navigation, route}: any) => {
         setPhone('');
       }
     }
-    // setGeneratedOtp(route?.params?.otp);
+    setGeneratedOtp(route?.params?.otp);
   }, [route?.params?.verificationType]);
 
   const handleSubmit = async () => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
     setIsLoading(true);
-    // const response = await otpValidationByEmail(convertOtpIntoNumber, email);
-    setIsLoading(false);
-    setSecondsRemaining(0);
-    navigation.navigate('AccountVerified');
+    try {
+      const response = await verifyCode(convertOtpIntoNumber);
+      const data = response?.data.data;
+      dispatch(setAccessToken(data.accessToken));
+      setIsLoading(false);
+      setSecondsRemaining(0);
+      navigation.navigate('AccountVerified');
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data.message}`,
+      });
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response.data.message}`,
+      });
+      setIsLoading(false);
+    }
   };
   useEffect(() => {
     if (secondsRemaining == 0) {
@@ -86,7 +104,9 @@ const OtpScreen = ({navigation, route}: any) => {
 
   return (
     <View style={STYLES.container}>
-      <ScrollView>
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        showsVerticalScrollIndicator={false}>
         <View style={{gap: 10}}>
           <Text style={[STYLES.text16, {fontWeight: '700'}]}>
             Let's Verify You
@@ -158,7 +178,11 @@ const OtpScreen = ({navigation, route}: any) => {
                 marginTop: verticalScale(50),
               }}>
               <CustomButton
-                isDisabled={secondsRemaining == 0 || isLoading ? true : false}
+                isDisabled={
+                  secondsRemaining == 0 || isLoading
+                    ? true
+                    : false || otp.length < 6
+                }
                 onPress={handleSubmit}>
                 {isLoading ? <CustomLoader /> : 'Verify'}
               </CustomButton>

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   BackHandler,
+  ScrollView,
 } from 'react-native';
 import Video from 'react-native-video';
 import Modal from 'react-native-modal';
@@ -43,26 +44,31 @@ import {RootState} from '../../redux/store';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
 import Cameraicon from '../../../assets/icons/Cameraicon';
-import MusicIcon from '../../../assets/icons/MusicIcon';
-import CustomBottomSheet from '../../components/shared-components/CustomBottomSheet';
-import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
-import DiscIcon from '../../../assets/icons/DiscIcon';
 import BoostPriceDialog from '../../components/home-components/BoostPriceDialog';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
+import {FileData, IPost, IPostVisibility} from 'interfaces/user.interface';
+import {
+  Video as VideoCompress,
+  Image as ImageCompress,
+} from 'react-native-compressor';
+import {createPostWithVideo} from '../../api/home-module';
 
 interface VideoPreviewScreenProps {
-  videoUri: string;
+  videoUri: FileData;
   username?: string;
   email?: string;
   handleNavigation: () => void;
   setIsComponentMounted: (value: boolean) => void;
   handleBackButtonPress: () => void;
+  costValue?: number;
+  visibility?: IPostVisibility;
 }
 
 export const VideoPreviewScreen = ({
   videoUri,
   username,
+  visibility,
   handleNavigation,
   setIsComponentMounted,
   handleBackButtonPress,
@@ -97,10 +103,8 @@ export const VideoPreviewScreen = ({
   const [titleInputValue, setTitleInputValue] = useState('');
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnail, setThumbnail] = useState<FileData | null>(null);
   const [thumbnailOpen, setThumbnailOpen] = useState(false);
-  const [isMusicModalVisible, setMusicModalVisible] = useState(false);
-  const [music, setMusic] = useState<any>();
 
   const handleBoostOptionSelect = (optionLabel: any) => {
     setSelectedOptionInternal(optionLabel);
@@ -136,11 +140,6 @@ export const VideoPreviewScreen = ({
     };
   }, [handleNavigation]);
 
-  useEffect(() => {
-    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-    setProfileImageUrl(imageUri);
-  }, [userData]);
-
   const handleClose = () => {
     setIsModalVisible(false);
     setBoostModalVisible(false);
@@ -169,9 +168,6 @@ export const VideoPreviewScreen = ({
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
   };
-  const handleMusicModal = () => {
-    setMusicModalVisible(!isMusicModalVisible);
-  };
 
   const onError = () => {
     console.log('onError');
@@ -182,7 +178,6 @@ export const VideoPreviewScreen = ({
   };
 
   const handleContentChange = (text: string) => {
-    console.log(text);
     setContent(text);
   };
 
@@ -201,18 +196,20 @@ export const VideoPreviewScreen = ({
     navigation.navigate('UnsuccessfulDialog');
   };
 
-  const handlePhotoButtonPress = () => {
+  const handlePhotoButtonPress = async () => {
     setThumbnail(null);
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
-      quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
+      quality: 0.8,
     };
-
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
-        setThumbnail(response.assets[0].uri as never);
+    await launchImageLibrary(options, (response: any) => {
+      if (response.assets) {
+        console.log(response?.assets, 'assets');
+        setThumbnail({
+          uri: response.assets[0].uri,
+          name: response.assets[0].fileName,
+          type: response.assets[0].type,
+        });
       }
     });
   };
@@ -223,15 +220,18 @@ export const VideoPreviewScreen = ({
 
   const handleCaptureButtonPress = async () => {
     setThumbnail(null);
-    const options: CameraOptions = {
+    const options: ImageLibraryOptions = {
       mediaType: 'photo',
-      quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
+      includeBase64: false,
+      quality: 0.8,
     };
-    launchCamera(options, (response: ImagePickerResponse) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
-        setThumbnail(response.assets[0].uri as never);
+    await launchCamera(options, (response: any) => {
+      if (response.assets) {
+        setThumbnail({
+          uri: response.assets[0].uri,
+          name: response.assets[0].fileName,
+          type: response.assets[0].type,
+        });
       }
     });
   };
@@ -239,14 +239,75 @@ export const VideoPreviewScreen = ({
   const handleTitleInputChange = (text: string) => {
     setTitleInputValue(text);
   };
+
+  // api call
+
+  const handleShareVideo = async () => {
+    if (content == '') {
+      Toast.show({
+        type: 'error',
+        text1: `Add text to post a video!`,
+      });
+      return;
+    }
+    setIsLoading(true);
+    try {
+      if (videoUri) {
+        let compressedVideo = null;
+        let compressedThumbnail = null;
+        const result = await VideoCompress.compress(videoUri.uri);
+        compressedVideo = {
+          name: videoUri?.name as string,
+          type: videoUri?.type as string,
+          uri: result,
+        };
+        if (thumbnail) {
+          const result = await ImageCompress.compress(thumbnail.uri);
+          compressedThumbnail = {
+            name: thumbnail?.name as string,
+            type: thumbnail?.type as string,
+            uri: result,
+          };
+        }
+        const reqData: Partial<IPost> = {
+          text: content,
+          media: compressedVideo,
+          mediaType: 'video',
+          visibility: visibility,
+          ...(costValue !== 0 && {cost: costValue}),
+          ...(thumbnail !== null && {thumbnail: compressedThumbnail}),
+        };
+        const response = await createPostWithVideo(reqData);
+        console.log(response?.data, 'from video!');
+        navigation.navigate('Home');
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data.message}`,
+        });
+      }
+
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log(error?.response.data);
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data.message}`,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error.message}!`,
+        });
+      }
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       <View style={styles.container}>
         <View style={styles.topLeftContent}>
-          <CustomProfileAvatar
-            profileImageUrl={profileImageUrl}
-            username={username}
-          />
+          <CustomProfileAvatar username={'S'} />
           <View style={styles.postTextContainer}>
             <Text style={styles.postName}>{username}</Text>
             <Text style={styles.postId}>{`@${username
@@ -257,8 +318,9 @@ export const VideoPreviewScreen = ({
         <Video
           ref={videoRef}
           onError={onError}
+          repeat={true}
           resizeMode="cover"
-          source={{uri: videoUri}}
+          source={{uri: videoUri.uri}}
           style={styles.video}
         />
         <View style={styles.textContentContainer}>
@@ -272,10 +334,7 @@ export const VideoPreviewScreen = ({
               {thumbnailOpen ? 'Back' : 'Select Thumbnail'}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.music} onPress={handleMusicModal}>
-            <MusicIcon />
-            <Text style={styles.iconText}>Music</Text>
-          </TouchableOpacity>
+
           {!thumbnailOpen && (
             <TouchableOpacity
               style={styles.singleIconContainer}
@@ -292,17 +351,7 @@ export const VideoPreviewScreen = ({
             </TouchableOpacity>
           )}
         </View>
-        <View style={styles.musicContainer}>
-          <View style={styles.musicModal}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-              <MusicIconTwo />
-              <Text style={{color: 'white', opacity: 0.7}}>
-                Avicii - Push it ft.{' '}
-              </Text>
-            </View>
-            <DiscIcon />
-          </View>
-        </View>
+
         <Modal
           onBackButtonPress={() => setIsModalVisible(false)}
           isVisible={isModalVisible}
@@ -404,7 +453,7 @@ export const VideoPreviewScreen = ({
               </TouchableOpacity>
             </View>
             <View style={styles.buttonContainer}>
-              <CustomButton onPress={() => console.log('Something')}>
+              <CustomButton onPress={handleShareVideo} isDisabled={isLoading}>
                 {isLoading ? <CustomLoader /> : 'Share'}
               </CustomButton>
             </View>
@@ -416,14 +465,6 @@ export const VideoPreviewScreen = ({
           <BoostPriceDialog
             onYes={unsuccessfulCompletion}
             onNo={unsuccessfulCompletion}
-          />
-        </>
-      )}
-      {isMusicModalVisible && (
-        <>
-          <CustomBottomSheet
-            setMusicModalVisible={setMusicModalVisible}
-            setMusic={setMusic}
           />
         </>
       )}
@@ -464,6 +505,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+    opacity: 0.9,
   },
   avatarButton: {
     borderWidth: 1,

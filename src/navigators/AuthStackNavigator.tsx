@@ -26,6 +26,7 @@ import ForgetPasswordNumber from '../screens/auth-screens/forget-password-screen
 import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormScreen';
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
+import HomeTabNavigator from './HomeTabNavigator';
 
 const Stack = createStackNavigator();
 
@@ -46,7 +47,12 @@ const AuthStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="SplashScreen">
+      initialRouteName="HomeScreen">
+      <Stack.Screen
+        name="HomeScreen"
+        component={HomeTabNavigator}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="ForgetPasswordEmail"
         component={ForgetPasswordEmail}
