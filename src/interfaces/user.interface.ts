@@ -24,7 +24,7 @@ export interface IUser {
   role: IUserRole;
   isProfileCompleted: boolean;
   isActive: boolean;
-  profileImage: FileData | null | string | undefined;
+  profileImage: FileData | null;
   coverImage: FileData | null;
   firstName: string;
   lastName: string;

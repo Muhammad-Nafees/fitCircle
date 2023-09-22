@@ -8,7 +8,6 @@ import {useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import {FileData, ISocial, IUser} from 'interfaces/user.interface';
 import {updateProfile} from '../../../api/auth-module';
 import Toast from 'react-native-toast-message';
 import {
@@ -20,6 +19,7 @@ import {
 } from '../../../redux/authSlice';
 import {format, parse} from 'date-fns';
 import {Image as ImageCompress} from 'react-native-compressor';
+import {IUser} from 'interfaces/user.interface';
 
 const VerifyScreen = ({navigation}: any) => {
   const {name} = useRoute();
@@ -28,12 +28,6 @@ const VerifyScreen = ({navigation}: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
 
   const isPendingDialog = name === 'CertificateVerified';
-
-  // const [compressedProfileImage, setCompressedProfileImage] =
-  //   useState<FileData | null>(null);
-  // const [compressedCoverImage, setCompressedCoverImage] =
-  //   useState<FileData | null>(null);
-  //   console.log(userData?.certificates,"certifcates")
 
   const handleNavigation = async () => {
     if (name == 'CertificateVerified') {
