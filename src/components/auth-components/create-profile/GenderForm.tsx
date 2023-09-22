@@ -15,33 +15,57 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setUserData} from '../../../redux/authSlice';
 import {IUser} from '../../../interfaces/user.interface';
 import {RootState} from '../../../redux/store';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {useState} from 'react';
 import DropdownTextInput from '../../shared-components/CustomDropdownInput';
+
+interface Unit {
+  kg: string;
+  lb: string;
+  ft: string;
+  m: string;
+}
 
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
+   console.log(previousUserData?.phone,"phone")
   const dispatch = useDispatch();
+  const [weightUnit, setWeightUnit] = useState<Unit['kg']>('kg');
+  const [heightUnit, setHeightUnit] = useState<Unit['ft']>('ft');
 
-  const initialValues: IUser = {
+  const handleSelectUnit = (unit: keyof Unit, type: string) => {
+    if (type == 'kg') {
+      setWeightUnit(unit);
+    } else {
+      setHeightUnit(unit);
+    }
+  };
+
+  const initialValues: Partial<IUser> = {
     gender: '',
     age: '',
-    height: '',
-    weight: '',
+    height: '' as any,
+    weight: '' as any,
     bodytype: '',
     activity: '',
   };
-  const handleSubmit = (values: IUser) => {
+  const handleSubmit = (values: Partial<IUser>) => {
     const partialUserData: Partial<IUser> = {
       ...previousUserData,
       gender: values.gender,
       age: values.age,
-      height: values.height,
-      weight: values.weight,
+      height: {
+        value: values.height as any,
+        unit: heightUnit,
+      },
+      weight: {
+        value: values.weight as any,
+        unit: weightUnit,
+      },
       bodytype: values.bodytype,
       activity: values.activity,
     };
-    dispatch(setUserData(partialUserData));
+    dispatch(setUserData({...partialUserData} as IUser));
     navigation.navigate('InterestScreen');
   };
 
@@ -100,6 +124,7 @@ const GenderForm = () => {
                     initialTouched={true}
                     setFieldError={setFieldError}
                     fieldName="height"
+                    onSelectUnit={handleSelectUnit}
                   />
                 </View>
                 <View style={styles.inputContainer}>
@@ -114,6 +139,7 @@ const GenderForm = () => {
                     initialTouched={true}
                     setFieldError={setFieldError}
                     fieldName="weight"
+                    onSelectUnit={handleSelectUnit}
                   />
                 </View>
               </View>

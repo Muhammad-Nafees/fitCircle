@@ -92,8 +92,8 @@ const CommentItem = ({
     <View style={styles.rowContainer}>
       <View style={styles.profileImageContainer}>
         <CustomProfileAvatar
-          profileImageUrl={comment.user?.profileImageUrl}
-          username={comment.user?.username}
+          // profileImageUrl={comment.user?.profileImageUrl}
+          username={'S'}
         />
       </View>
       <View style={styles.commentsContainer}>

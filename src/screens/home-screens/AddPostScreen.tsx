@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -6,11 +6,7 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  PermissionsAndroid,
   PanResponder,
-  Alert,
   ScrollView,
 } from 'react-native';
 import {
@@ -21,11 +17,7 @@ import {
   ImagePickerResponse,
 } from 'react-native-image-picker';
 import {useSelector} from 'react-redux';
-import {
-  ParamListBase,
-  useNavigation,
-  useFocusEffect,
-} from '@react-navigation/native';
+import {ParamListBase, useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import {Image as ImageCompress} from 'react-native-compressor';
 import LinearGradient from 'react-native-linear-gradient';
@@ -46,6 +38,12 @@ import {RootState} from '../../redux/store';
 import VideoPreviewScreen from './VideoPreviewScreen';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
+import {FileData, IPost, IPostVisibility} from 'interfaces/user.interface';
+import {
+  createPostWithContent,
+  createPostWithImage,
+} from '../../api/home-module';
+import Toast from 'react-native-toast-message';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
@@ -53,75 +51,34 @@ const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 export const AddPostScreen = ({route}: any) => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const userData: any = useSelector((state: RootState) => state.auth.user);
-  const [profileImageUrl, setProfileImageUrl] = useState();
-  const username = userData?.username;
-  const [selectedOption, setSelectedOption] = useState('Public');
+  const [visibility, setVisibility] = useState<IPostVisibility>('Public');
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isComponentMounted, setIsComponentMounted] = useState(false);
+  const [isComponentMounted, setIsComponentMounted] = useState(true);
   const [isCreatePostIconModalVisible, setIsCreatePostIconModalVisible] =
     useState(false);
   const [textInputValue, setTextInputValue] = useState('');
   const [textInputBackgroundColor, setTextInputBackgroundColor] = useState<
     string | string[]
   >('transparent');
-  const [mediaUri, setMediaUri] = useState<string | null>(null);
-  const [videoUri, setVideoUri] = useState<string | null>();
+  const [mediaUri, setMediaUri] = useState<FileData | null>(null);
+  const [videoUri, setVideoUri] = useState<FileData | null>();
   const [titleInput, setTitleInput] = useState('');
   const [costValue, setCostValue] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [compressedImage, setCompressedImage] = useState<any>();
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsModalVisible(false);
-      setIsComponentMounted(true);
-      setIsCreatePostIconModalVisible(false);
-      setTextInputValue('');
-      setMediaUri('');
-      setTextInputBackgroundColor('transparent');
-      setIsLoading(false);
-      setTitleInput('');
-    }, []),
-  );
-
-  useEffect(() => {
-    requestCameraPermission();
-  }, []);
-
-  useEffect(() => {
-    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-    setProfileImageUrl(imageUri);
-  }, [userData]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsModalVisible(false);
-      setIsComponentMounted(true);
-      setIsCreatePostIconModalVisible(false);
-      setTextInputValue('');
-      setMediaUri('');
-    }, []),
-  );
-
-  useEffect(() => {
-    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-    setProfileImageUrl(imageUri);
-  }, [userData]);
 
   const onSelectCost = (value: number) => {
-    console.log(value);
     setCostValue(value);
   };
 
   const handleAvatarButtonPress = () => {
     setIsModalVisible(!isModalVisible);
   };
-  const handleOptionSelect = (option: string) => {
-    setSelectedOption(option);
+  const handleOptionSelect = (option: IPostVisibility) => {
+    setVisibility(option);
   };
 
   const handleScheduleRoute = () => {
-    if (userData.role === 'trainer') {
+    if (userData.role === 'admin') {
       navigation.navigate('MySche', {screen: 'Slot'});
     } else {
       navigation.navigate('MySche', {screen: 'SetSchedule'});
@@ -141,20 +98,23 @@ export const AddPostScreen = ({route}: any) => {
     setTextInputBackgroundColor(color);
   };
 
-  const handlePhotoButtonPress = () => {
+  const handlePhotoButtonPress = async () => {
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
-      quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
+      quality: 0.8,
     };
-
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri as any);
+    await launchImageLibrary(options, (response: any) => {
+      if (response.assets) {
+        console.log(response?.assets, 'assets');
+        setMediaUri({
+          uri: response.assets[0].uri,
+          name: response.assets[0].fileName,
+          type: response.assets[0].type,
+        });
+        setIsCreatePostIconModalVisible(false);
       }
     });
   };
@@ -170,77 +130,64 @@ export const AddPostScreen = ({route}: any) => {
     }),
   ).current;
 
-  const handleVideoLibrary = () => {
+  const handleVideoLibrary = async () => {
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
     const options: ImageLibraryOptions = {
       mediaType: 'video',
     };
-
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
+    await launchImageLibrary(options, (response: any) => {
+      if (response.assets) {
+        setVideoUri({
+          uri: response.assets[0].uri,
+          name: response.assets[0].fileName,
+          type: response.assets[0].type,
+        });
         setIsCreatePostIconModalVisible(false);
-        setVideoUri(response.assets[0].uri);
       }
     });
   };
-
   const handleCaptureButtonPress = async () => {
-    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
-      Alert.alert('Permission denied', 'Allow permission to access images');
-      console.log('Camera permission denied');
-      return;
-    }
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
-    const options: CameraOptions = {
+    const options: ImageLibraryOptions = {
       mediaType: 'photo',
-      quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
+      includeBase64: false,
+      quality: 0.8,
+      maxHeight: 10000,
+      maxWidth: 10000,
     };
-    launchCamera(options, (response: ImagePickerResponse) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri as any);
+    await launchCamera(options, (response: any) => {
+      if (response.assets) {
+        setMediaUri({
+          uri: response.assets[0].uri,
+          name: response.assets[0].fileName,
+          type: response.assets[0].type,
+        });
       }
     });
   };
 
-  async function hasAndroidPermission() {
-    const permission =
-      Platform.Version >= '33'
-        ? PermissionsAndroid.PERMISSIONS.CAMERA
-        : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
-
-    const hasPermission = await PermissionsAndroid.check(permission);
-    if (hasPermission) {
-      return true;
-    }
-
-    const status = await PermissionsAndroid.request(permission);
-    return status === 'granted';
-  }
-
   const handleVideoButtonPress = async () => {
-    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
-      Alert.alert('Permission denied', 'Allow permission to access images');
-      return;
-    }
     setIsCreatePostIconModalVisible(false);
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
     const options: CameraOptions = {
       mediaType: 'video',
-      videoQuality: 'low',
+      videoQuality: 'high',
       durationLimit: 120,
       saveToPhotos: true,
     };
-    launchCamera(options, (response: ImagePickerResponse) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
-        setVideoUri(response.assets[0].uri);
+    await launchCamera(options, (response: ImagePickerResponse) => {
+      if (response?.assets) {
+        setVideoUri({
+          uri: response.assets[0].uri as string,
+          name: response.assets[0].fileName as string,
+          type: response.assets[0].type as string,
+        });
       }
     });
   };
@@ -252,29 +199,6 @@ export const AddPostScreen = ({route}: any) => {
     setTextInputBackgroundColor('transparent');
     setTitleInput('');
     navigation.navigate('Home');
-  };
-
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      ]);
-      const cameraPermission =
-        granted['android.permission.CAMERA'] ===
-        PermissionsAndroid.RESULTS.GRANTED;
-      const storagePermission =
-        granted['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-        PermissionsAndroid.RESULTS.GRANTED;
-
-      if (cameraPermission && storagePermission) {
-        console.log('Camera permissions granted');
-      } else {
-        console.log('Camera permissions denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
   };
 
   const handleCancelImage = () => {
@@ -289,10 +213,80 @@ export const AddPostScreen = ({route}: any) => {
     setTitleInput('');
   };
 
+  // api call here
+  const handleCreatePost = async () => {
+    console.log(videoUri, mediaUri, textInputValue);
+    if (textInputValue == '') {
+      Toast.show({
+        type: 'error',
+        text1: `Add text to post a photo!`,
+      });
+      return;
+    }
+    setIsLoading(true);
+    try {
+      if (mediaUri) {
+        let compressedImage = null;
+        const result = await ImageCompress.compress(mediaUri.uri, {
+          quality: 0.8,
+        });
+        compressedImage = {
+          name: mediaUri?.name as string,
+          type: mediaUri?.type as string,
+          uri: result,
+        };
+        const reqData: Partial<IPost> = {
+          text: textInputValue,
+          media: compressedImage,
+          mediaType: 'image',
+          visibility: visibility,
+          ...(costValue !== 0 && {cost: costValue}),
+        };
+        const response = await createPostWithImage(reqData);
+        console.log(response?.data, 'response!');
+        handleBackButtonPress();
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data.message}`,
+        });
+      } else {
+        const reqData: Partial<IPost> = {
+          text: textInputValue,
+          hexCode:
+            textInputBackgroundColor == 'transparent'
+              ? '#FFFFFF'
+              : textInputBackgroundColor,
+          visibility: visibility,
+          ...(costValue !== 0 && {cost: costValue}),
+        };
+        const response = await createPostWithContent(reqData);
+        console.log(response?.data, 'response!');
+        handleBackButtonPress();
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data.message}`,
+        });
+      }
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log(error?.response.data);
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data.message}`,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error.message}!`,
+        });
+      }
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <View style={styles.container}>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.buttonContainer}>
@@ -310,11 +304,12 @@ export const AddPostScreen = ({route}: any) => {
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
               <CustomButton
-                onPress={() => console.log('Something')}
+                onPress={handleCreatePost}
                 extraStyles={{
                   width: 56,
                   height: 31,
-                }}>
+                }}
+                isDisabled={isLoading}>
                 {isLoading ? <CustomLoader /> : 'Post'}
               </CustomButton>
             </TouchableOpacity>
@@ -333,15 +328,15 @@ export const AddPostScreen = ({route}: any) => {
           <View style={styles.topContainer}>
             <View style={styles.avatarContainer}>
               <CustomProfileAvatar
-                profileImageUrl={profileImageUrl}
-                username={username}
+                profileImage={userData?.profileImage}
+                username={userData?.username}
               />
               <TouchableOpacity
                 style={styles.avatarButton}
                 onPress={handleAvatarButtonPress}>
                 <Text
                   style={{color: 'white', textAlign: 'center', fontSize: 10}}>
-                  {selectedOption}
+                  {visibility}
                 </Text>
                 <Image source={ArrowDownIcon} style={styles.arrowDown} />
               </TouchableOpacity>
@@ -399,7 +394,7 @@ export const AddPostScreen = ({route}: any) => {
             <View style={styles.postContainer}>
               {mediaUri && !videoUri && (
                 <View style={styles.mediaContainer}>
-                  <Image source={{uri: mediaUri}} style={styles.media} />
+                  <Image source={{uri: mediaUri.uri}} style={styles.media} />
                   <TouchableOpacity
                     style={styles.cancelIconContainer}
                     onPress={handleCancelImage}>
@@ -419,7 +414,7 @@ export const AddPostScreen = ({route}: any) => {
             backdropOpacity={0.3}>
             <View style={styles.modal}>
               <WhoCanSeeThisPost
-                selectedOption={selectedOption}
+                selectedOption={visibility}
                 onSelectOption={handleOptionSelect}
                 modalClose={handleAvatarButtonPress}
                 onSelectCost={onSelectCost}
@@ -461,22 +456,20 @@ export const AddPostScreen = ({route}: any) => {
         </View>
         {!mediaUri && (
           <View style={{paddingTop: verticalScale(40)}}>
-            <View>
-              <ColorSelectionSlider
-                colors={[
-                  '#CC5252',
-                  '#88BD91',
-                  ['#DC8686', '#274B6C'],
-                  '#654848',
-                  '#AF3E3E',
-                  '#42A883',
-                  ['#4A8D21', '#9CE271', '#BF3A3A'],
-                  '#FFFF00',
-                  '#FF00FF',
-                ]}
-                onColorSelected={handleColorSelected}
-              />
-            </View>
+            <ColorSelectionSlider
+              colors={[
+                '#CC5252',
+                '#88BD91',
+                ['#DC8686', '#274B6C'],
+                '#654848',
+                '#AF3E3E',
+                '#42A883',
+                ['#4A8D21', '#9CE271', '#BF3A3A'],
+                '#FFFF00',
+                '#FF00FF',
+              ]}
+              onColorSelected={handleColorSelected}
+            />
           </View>
         )}
         <View style={styles.minimizedContainer} {...panResponder.panHandlers}>
@@ -494,11 +487,13 @@ export const AddPostScreen = ({route}: any) => {
             handleBackButtonPress={handleBackButtonPress}
             username={userData?.username}
             handleNavigation={handleVideoNullify}
+            costValue={costValue}
+            visibility={visibility}
             setIsComponentMounted={setIsComponentMounted}
           />
         </View>
       )}
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

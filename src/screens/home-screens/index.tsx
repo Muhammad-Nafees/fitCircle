@@ -18,11 +18,6 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootState} from '../../redux/store';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import NotificationIcon from '../../../assets/icons/NotificationIcon';
-import {
-  fetchPostsFailure,
-  fetchPostsStart,
-  fetchPostsSuccess,
-} from '../../redux/postSlice';
 const SearchIcon = require('../../../assets/icons/search.png');
 import {setSelectedPost} from '../../redux/postSlice';
 import {PostsData} from '../dummyData';
@@ -33,16 +28,14 @@ import FlatListContainer from '../../components/home-components/FlatlistContaine
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
-  const postsRedux = useSelector((state: RootState) => state.post.posts);
-  const username = userData?.username;
   const [userId, setUserId] = useState<any>(userData?._id);
   const [selectedButton, setSelectedButton] = useState('My Circle');
   const navigation = useNavigation();
   const [filteredVideos, setFilteredVideos] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [profileImageUrl, setProfileImageUrl] = useState();
   const [fetchedPosts, setFetchedPosts] = useState<any>(PostsData);
   const tabBarHeight = useBottomTabBarHeight();
+  console.log(userData, 'userData');
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -59,23 +52,10 @@ const HomeScreen = () => {
     navigation.navigate('CommentsScreen', {userId});
   };
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     handleRefresh();
-  //   }, []),
-  // );
-
   const handleRefresh = () => {
     dispatch(setSelectedPost(null));
     setIsRefreshing(true);
   };
-
-  useEffect(() => {
-    setUserId(userData?._id);
-    handleButtonPress('My Circle');
-    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-    setProfileImageUrl(imageUri);
-  }, [userData]);
 
   useEffect(() => {
     const filteredData = filteredVideos.sort(
@@ -95,11 +75,10 @@ const HomeScreen = () => {
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
           <TouchableOpacity
-          // onPress={() => navigation.navigate('Profile' as never)}
-          >
+            onPress={() => navigation.navigate('Profile' as never)}>
             <CustomProfileAvatar
-              profileImageUrl={profileImageUrl}
-              username={username}
+              username={userData?.username as string}
+              profileImage={userData?.profileImage as string}
             />
           </TouchableOpacity>
           <View style={styles.textinputContainer}>

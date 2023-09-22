@@ -18,6 +18,8 @@ import PhoneInput from 'react-native-phone-number-input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Yup from 'yup';
 import {ScrollView} from 'react-native-gesture-handler';
+import {getOtpCode} from '../../../api/auth-module';
+import Toast from 'react-native-toast-message';
 
 interface FormValues {
   phone: string;
@@ -37,17 +39,35 @@ const ForgetPasswordNumber = ({navigation}: any) => {
     phone: '',
   };
   const handleSubmit = async (values: any) => {
-    setIsLoading(true);
-
     const checkValid = phoneInput.current?.isValidNumber(value);
     if (!checkValid) {
       setIsLoading(false);
       return setError('Invalid phone number');
     }
-    navigation.navigate('ForgetPasswordOtp', {
-      otp: '243691',
-      phone: values.phone,
-    });
+    setIsLoading(true);
+    try {
+      const response = await getOtpCode(values);
+      const data = response?.data.data;
+      navigation.navigate('ForgetPasswordOtp', {
+        otp: data.code,
+        phone: values.phone,
+      });
+      setIsLoading(false);
+    } catch (error: any) {
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data.message}`,
+        });
+        console.log(error.response, 'error');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error.message}!`,
+        });
+      }
+      setIsLoading(false);
+    }
   };
 
   const handleInputFocus = () => {
@@ -84,12 +104,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
         {({
           handleChange,
           handleSubmit,
-          handleBlur,
-          submitForm,
           values,
-          errors,
-          touched,
-          initialTouched,
           setFieldValue,
         }) => (
           <View style={{flex: 1}}>

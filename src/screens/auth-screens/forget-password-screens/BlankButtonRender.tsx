@@ -1,17 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+import Toast from 'react-native-toast-message';
 const CheckCircle = require('../../../../assets/icons/check-circle.png');
 
 const BlankButtonRenderScreen = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     setTimeout(() => {
-      setIsLoading(false);
-      setTimeout(() => {
+      if (!route.params.isLoading) {
+        setIsLoading(false);
+        Toast.show({
+          type: 'success',
+          text1: `Code verified!`,
+        });
         handleVerify();
-      }, 2000);
+      }
     }, 3000);
   }, []);
 

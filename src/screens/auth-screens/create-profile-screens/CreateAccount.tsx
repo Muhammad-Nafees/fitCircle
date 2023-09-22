@@ -13,9 +13,17 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 import {Formik, Field} from 'formik';
 import {signupSchema} from '../../../validations';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import PhoneInput from 'react-native-phone-number-input';
+import {register} from '../../../api/auth-module';
+import {RootState} from 'redux/store';
+import Toast from 'react-native-toast-message';
+import {
+  setAccessToken,
+  setRefreshToken,
+  setUserData,
+} from '../../../redux/authSlice';
 
 export interface CreateAccountFormValues {
   email: string;
@@ -25,12 +33,13 @@ export interface CreateAccountFormValues {
 }
 
 const CreateAccount = ({navigation, route}: any) => {
-  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
-  const [phoneCode, setPhoneCode] = useState('1');
+  const [phoneCode, setPhoneCode] = useState(route.params.phoneCode);
   const [countryCode, setCountryCode] = useState(route.params.countryCode);
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
+  const dispatch = useDispatch();
 
   const phoneNumberCheck = (values: any) => {
     const isValid = phoneInput.current?.isValidNumber(values);
@@ -40,6 +49,7 @@ const CreateAccount = ({navigation, route}: any) => {
       setIsError('');
     }
   };
+  const getCode = phoneInput.current?.getCountryCode();
 
   const initialValues: CreateAccountFormValues = {
     email: route.params.email,
@@ -48,12 +58,45 @@ const CreateAccount = ({navigation, route}: any) => {
     confirmPassword: route.params.password,
   };
   const handleSubmit = async (values: CreateAccountFormValues) => {
-    setIsLoading(true);
     if (isError) {
-      setIsLoading(false);
       return;
     }
-    navigation.navigate('CreateProfile');
+    setIsLoading(true);
+    const {confirmPassword, ...reqData} = values;
+    try {
+      const response = await register({
+        ...reqData,
+        phone: `+${phoneCode}${values.phone}`,
+        role: userRole,
+        fcmToken: 'abcabsdflskdjflskdj',
+      });
+      const data = response?.data.data;
+      dispatch(setUserData(data.user));
+      dispatch(setAccessToken(data?.accessToken));
+      dispatch(setRefreshToken(data?.refreshToken));
+      navigation.navigate('CreateProfile', {
+        phoneCode: phoneCode,
+        countryCode: getCode,
+      });
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data.message}`,
+      });
+    } catch (error: any) {
+      console.log(error.response.data, 'error');
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data.message}`,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error.message}!`,
+        });
+      }
+    }
+    setIsLoading(false);
   };
   return (
     <ScrollView style={STYLES.container} keyboardShouldPersistTaps="always">
@@ -152,7 +195,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   button: {
-    marginTop: verticalScale(125),
+    marginTop: verticalScale(100),
     paddingHorizontal: horizontalScale(22),
     paddingBottom: verticalScale(20),
   },

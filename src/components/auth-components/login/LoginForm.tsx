@@ -15,20 +15,18 @@ import CustomButton from '../../shared-components/CustomButton';
 import {Formik} from 'formik';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthStackParamList} from '../../../interfaces/navigation.type';
 import {useState} from 'react';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../shared-components/CustomLoader';
-import {loginIn} from '../../../api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import {
   authenticate,
-  setaccessToken,
-  setAuthorizationToken,
+  setAccessToken,
+  setRefreshToken,
   setUserData,
   setuserRole,
 } from '../../../redux/authSlice';
+import {login} from '../../../api/auth-module';
 
 interface FormValues {
   email: string;
@@ -45,53 +43,47 @@ const LoginForm = () => {
   };
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
+    const reqData = {
+      ...values,
+      fcmToken: 'asdfsdfsdfsd211',
+    };
     try {
-      const response = await loginIn(values.email, values.password);
-      setIsLoading(false);
-      if (response?.status === 200) {
+      const response = await login(reqData);
+      const data = response?.data.data;
+      if (data?.user.isProfileCompleted) {
         dispatch(authenticate(true));
-        dispatch(setAuthorizationToken(response?.headers.authorization));
-        storeData(response?.headers.authorization);
-        dispatch(setuserRole(response.data.role));
-        dispatch(setaccessToken(response?.data.token));
-        dispatch(setUserData(response?.data));
+        navigation.navigate('Home');
         Toast.show({
           type: 'success',
-          text1: 'Login Successful!',
-          text2: 'Welcome!',
+          text1: `${response?.data.message}`,
         });
-        navigation.navigate('HomeScreen');
+      } else {
+        navigation.navigate('CreateProfile');
+        Toast.show({
+          type: 'success',
+          text1: `Complete Your Profile To Continue!`,
+          visibilityTime: 5000,
+        });
       }
+      dispatch(setuserRole(data?.user.role));
+      dispatch(setUserData(data?.user));
+      dispatch(setAccessToken(data?.accessToken));
+      dispatch(setRefreshToken(data?.refreshToken));
     } catch (error: any) {
-      setIsLoading(false);
-      if (error.response.status === 400) {
+      console.log(error?.response);
+      if (error?.response?.data?.message) {
         Toast.show({
           type: 'error',
-          text1: 'Login Unsuccessfull!',
-          text2: 'Invalid email or password!',
-        });
-      } else if (error.response.status === 500) {
-        Toast.show({
-          type: 'error',
-          text1: 'Login Unsuccessfull!',
-          text2: 'Internal Server Error. Please try again later',
+          text1: `${error?.response?.data.message}`,
         });
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Login Unsuccessfull!',
-          text2: 'Network error. Please try again later',
+          text1: `${error.message}!`,
         });
       }
     }
-  };
-
-  const storeData = async (value: any) => {
-    try {
-      await AsyncStorage.setItem('authToken', value);
-    } catch (e) {
-      console.log(e);
-    }
+    setIsLoading(false);
   };
 
   return (

@@ -15,6 +15,7 @@ import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 // import {generateEmailOtp} from '../../../api';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {getOtpCode} from '../../../api/auth-module';
 
 interface FormValues {
   email: string;
@@ -27,10 +28,31 @@ const ForgetPasswordEmail = ({navigation}: any) => {
     email: '',
   };
   const handleSubmit = async (values: FormValues) => {
-    navigation.navigate('ForgetPasswordOtp', {
-      otp: '234598',
-      email: values.email.toLowerCase(),
-    });
+    setIsLoading(true);
+    try {
+      const response = await getOtpCode(values);
+      const data = response?.data.data;
+      navigation.navigate('ForgetPasswordOtp', {
+        otp: data.code,
+        email: values.email.toLowerCase(),
+      });
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log(error?.response?.data,"forgetpass error!!")
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data.message}`,
+        });
+        console.log(error.response, 'error');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error.message}!`,
+        });
+      }
+      setIsLoading(false);
+    }
   };
 
   const handleFocus = () => {
@@ -38,7 +60,7 @@ const ForgetPasswordEmail = ({navigation}: any) => {
   };
 
   return (
-    <ScrollView style={STYLES.container}>
+    <ScrollView style={STYLES.container} keyboardShouldPersistTaps="always">
       <View style={{gap: 10}}>
         <Text
           style={[
