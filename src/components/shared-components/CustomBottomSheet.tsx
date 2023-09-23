@@ -19,7 +19,6 @@ import MusicRemoveIcon from '../../../assets/icons/MusicRemoveIcon';
 import MusicPlayIcon from '../../../assets/icons/MusicPlayIcon';
 import {MUSIC_LIST} from '../../../data/data';
 import {BlurView} from '@react-native-community/blur';
-import Sound from 'react-native-sound';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const CustomBottomSheet = ({setMusicModalVisible, setMusic}: any) => {
@@ -41,32 +40,6 @@ const CustomBottomSheet = ({setMusicModalVisible, setMusic}: any) => {
   const musicFile = require('../../../assets/audio/the-best-jazz-club-in-new-orleans-164472.mp3');
   const [sound, setSound] = useState<any>();
 
-  const handlePlayMusic = id => {
-    setMusicModalVisible(false);
-    setIsMusicPlay(true);
-
-    const soundObj = new Sound(musicFile, error => {
-      if (error) {
-        console.log('Error loading sound: ', error);
-        return;
-      }
-
-      soundObj.play(success => {
-        setMusic(musicFile);
-        console.log(soundObj, 'ss');
-        if (success) {
-          console.log('Sound played successfully');
-        } else {
-          console.log('Error playing sound');
-        }
-        setMusicId(id);
-        soundObj.release(); // Release the sound once it's done playing
-      });
-    });
-
-    setSound(soundObj);
-  };
-
   const handleStopMusic = () => {
     setIsMusicPlay(false);
 
@@ -79,7 +52,7 @@ const CustomBottomSheet = ({setMusicModalVisible, setMusic}: any) => {
       });
     }
   };
-  console.log(isMusicPlay, 'Ss');
+  console.log(isMusicPlay, 'Ss');i
 
   const renderItem = useCallback(({item}) => {
     console.log(item.file, 'item');

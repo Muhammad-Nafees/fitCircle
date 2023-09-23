@@ -11,7 +11,7 @@ import {moderateScale, verticalScale} from '../../../utils/metrics';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
 import {activityFactors} from '../../../../data/data';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
-import {tdeeCalculatorData} from 'screens/dummyData';
+import {tdeeCalculatorData} from '../../dummyData';
 
 export const TdeeCalculator = ({navigation, disabled}: any) => {
   useEffect(() => {
