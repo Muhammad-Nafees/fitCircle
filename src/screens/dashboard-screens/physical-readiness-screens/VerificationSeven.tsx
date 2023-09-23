@@ -77,13 +77,7 @@ const VerificationSeven = ({navigation, route}: any) => {
           <VerificationFive data={verificationFive} disabled={true} />
           <VerificationSix data={optionals} disabled={true} />
         </View>
-        <View
-          style={{
-            gap: 15,
-            marginTop: 20,
-            marginBottom: 50,
-            marginHorizontal: 50,
-          }}>
+        <View style={styles.buttonContainer}>
           <CustomButton
             onPress={() =>
               navigation.navigate('VerificationOne', {clearValues: true})
@@ -100,6 +94,12 @@ const VerificationSeven = ({navigation, route}: any) => {
 const styles = StyleSheet.create({
   formContainer: {
     paddingHorizontal: 0,
+  },
+  buttonContainer: {
+    gap: 15,
+    marginTop: 20,
+    marginBottom: 50,
+    marginHorizontal: 50,
   },
 });
 
