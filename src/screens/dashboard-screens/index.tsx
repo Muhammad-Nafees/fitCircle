@@ -20,6 +20,7 @@ import {ScheduleContainer} from '../../components/dashboard-components/ScheduleC
 import {TransactionModal} from '../../components/dashboard-components/TransactionModal';
 import {HeaderContainer} from '../../components/dashboard-components/HeaderContainer';
 import {userBasedItems} from '../../components/dashboard-components/UserBasedItems';
+import {DashboardCarouselItem} from '../../components/dashboard-components/DashboardCarouselItem';
 
 const DashboardScreen = ({navigation}: any) => {
   const userData: any = useSelector((state: RootState) => state.auth.user);
@@ -81,40 +82,15 @@ const DashboardScreen = ({navigation}: any) => {
 
   const renderItem = ({item}: any) => {
     return (
-      <View
-        style={{
-          flex: 1,
-        }}>
-        <TouchableOpacity
-          onPress={
-            item.text === 'Packages / Meal Plan'
-              ? () => setIsDropdownVisible(!isDropdownVisible)
-              : item.routeName && withNavigationAction(item.routeName)
-          }
-          style={styles.carouselItem}>
-          {item.icon}
-          <Text style={styles.carouselItemText}>{item.text}</Text>
-        </TouchableOpacity>
-        {item.text === 'Packages / Meal Plan' &&
-          item.dropdown &&
-          isDropdownVisible && (
-            <View style={styles.dropdown}>
-              <Text
-                onPress={() => console.log('Packages')}
-                style={styles.dropdownOption}>
-                Packages
-              </Text>
-              <View style={styles.horizontalLine} />
-              <TouchableOpacity>
-                <Text
-                  onPress={() => item.selectOption('Meal Plan')}
-                  style={styles.dropdownOption}>
-                  Meal Plan
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-      </View>
+      <DashboardCarouselItem
+        isDropdownVisible={isDropdownVisible}
+        item={item}
+        onPress={
+          item.text === 'Packages / Meal Plan'
+            ? () => setIsDropdownVisible(!isDropdownVisible)
+            : item.routeName && withNavigationAction(item.routeName)
+        }
+      />
     );
   };
 
@@ -211,51 +187,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     zIndex: -1,
   },
-  carouselItem: {
-    backgroundColor: '#209BCC',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: horizontalScale(106),
-    height: verticalScale(115),
-    borderRadius: 10,
-  },
-  carouselItemText: {
-    color: 'white',
-    fontSize: 9,
-    fontWeight: '500',
-    marginVertical: 10,
-    marginHorizontal: 6,
-    textAlign: 'center',
-    lineHeight: 11.77,
-  },
   transactionText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
     paddingHorizontal: 20,
     paddingVertical: 20,
-  },
-  dropdown: {
-    top: 100,
-    position: 'absolute',
-    backgroundColor: 'rgba(68, 68, 68, 1)',
-    borderRadius: 5,
-    width: 110,
-    left: 5,
-    zIndex: 9999999,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dropdownOption: {
-    paddingVertical: 7,
-    paddingHorizontal: 12,
-    fontSize: 10,
-    color: 'white',
-  },
-  horizontalLine: {
-    width: '75%',
-    height: 1,
-    backgroundColor: 'gray',
   },
   modal: {
     margin: 0,
