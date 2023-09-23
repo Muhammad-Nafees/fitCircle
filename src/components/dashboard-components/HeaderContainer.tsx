@@ -23,27 +23,13 @@ export const HeaderContainer = ({
       </View>
       {isTrainerAvailable ? (
         <View>
-          <View
-            style={{
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexDirection: 'row',
-              marginTop: verticalScale(10),
-              marginHorizontal: horizontalScale(5),
-            }}>
+          <View style={styles.earningContainer}>
             <Text style={{fontSize: 16, fontWeight: '600', color: '#ffff'}}>
               Earnings
             </Text>
             <NotificationIcon />
           </View>
-          <View
-            style={{
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexDirection: 'row',
-              marginTop: verticalScale(10),
-              marginHorizontal: horizontalScale(5),
-            }}>
+          <View style={styles.walletContainer}>
             <Text
               style={{
                 fontSize: 10,
@@ -58,13 +44,7 @@ export const HeaderContainer = ({
           </View>
         </View>
       ) : (
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'flex-end',
-            marginTop: verticalScale(10),
-            marginHorizontal: horizontalScale(5),
-          }}>
+        <View style={styles.notificationIconContainer}>
           <NotificationIcon />
         </View>
       )}
@@ -90,5 +70,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ffffff',
     marginRight: 10,
+  },
+  earningContainer: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: verticalScale(10),
+    marginHorizontal: horizontalScale(5),
+  },
+  walletContainer: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: verticalScale(10),
+    marginHorizontal: horizontalScale(5),
+  },
+  notificationIconContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginTop: verticalScale(10),
+    marginHorizontal: horizontalScale(5),
   },
 });
