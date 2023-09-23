@@ -1,3 +1,4 @@
+import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {Avatar} from 'react-native-paper';
 const Options = require('../../../assets/icons/customPostOption.png');
@@ -13,15 +14,7 @@ export const CustomScheduleTime = ({
     <View style={styles.container}>
       <View style={styles.avatarName}>
         <View>
-          {profileImageUrl ? (
-            <Avatar.Image size={48} source={{uri: profileImageUrl}} />
-          ) : (
-            <Avatar.Text
-              size={40}
-              label={username ? username[0].toUpperCase() : 'SA'}
-              style={{backgroundColor: '#5e01a9'}}
-            />
-          )}
+          <CustomProfileAvatar username={username} />
         </View>
         <View style={styles.data}>
           <Text
