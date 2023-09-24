@@ -114,6 +114,24 @@ export const questionTexts2 = [
   },
 ];
 
+export const activityFactors = {
+  'Sedentary (Little or no exercise)': {
+    value: 1.2,
+  },
+  'Lightly active (Light exercise/sports 1-3 days a week)': {
+    value: 1.3,
+  },
+  'Moderately active (Moderate exercise/sports 3-5 days aweek)': {
+    value: 1.5,
+  },
+  'Very active (Hard exercise/sports 6-7 days a week)': {
+    value: 1.7,
+  },
+  'Extra active (Hard exercise/sports 6-7 days a week, plus physical job)': {
+    value: 1.9,
+  },
+};
+
 export const question7 = 'Do you ever feel weak, fatigued, or sluggish?';
 export const questionMealsEat = 'How many meals do you eat each day?';
 export const questionDurationExercise = 'How long have you been exercising?';
@@ -125,15 +143,15 @@ export const questionSeriousness =
 import audio1 from '../assets/audio/the-best-jazz-club-in-new-orleans-164472.mp3';
 
 export const MUSIC_LIST = [
-  {id: "id1", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-  {id: "id2", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-  {id: "id3", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-  {id: "id4", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-  {id: "id5", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-  {id: "id6", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-  {id: "id7", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-  {id: "id8", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-  {id: "id9", name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id1', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id2', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id3', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id4', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id5', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id6', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id7', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id8', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
+  {id: 'id9', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
 
   // Add more music options here
 ];

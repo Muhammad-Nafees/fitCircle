@@ -78,7 +78,7 @@ const HomeScreen = () => {
             onPress={() => navigation.navigate('Profile' as never)}>
             <CustomProfileAvatar
               username={userData?.username as string}
-              profileImage={userData?.profileImage as string}
+              profileImageUrl={userData?.profileImage as any}
             />
           </TouchableOpacity>
           <View style={styles.textinputContainer}>
