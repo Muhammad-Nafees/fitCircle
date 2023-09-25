@@ -48,6 +48,7 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
 
   useEffect(() => {
     if (userData?.phone) {
+      console.log(userData?.phone, 'sS');
       setUserPhone(userData.phone);
     }
   }, []);
@@ -240,7 +241,7 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
             />
             <CustomPhoneInput
               value={route?.params?.phoneNumber || userData?.phone}
-              error={errors.phone}
+              // error={errors.phone}
               touched={touched.phone}
               handleChange={handleChange('phone')}
               setFieldValue={setFieldValue}
