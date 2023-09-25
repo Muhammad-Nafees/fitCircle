@@ -1,36 +1,38 @@
 import React from 'react';
 import {FlatList} from 'react-native';
 import {CustomPost} from './CustomPost';
+import CustomLoader from '../../components/shared-components/CustomLoader';
+import {View} from 'react-native';
 
-interface FlatlistContainerProps {
-  data: never[];
-  userId: string;
+interface MyCirclePostsProps {
+  data: any;
+  // userId: string;
+  isLoading: boolean;
   isRefreshing: any;
   handleRefresh: () => void;
   handleCommentButtonPress: any;
+  loadMoreItems: () => void;
 }
 
-const FlatListContainer = ({
+const MyCirclePosts = ({
   data,
-  userId,
+  // userId,
+  isLoading,
   isRefreshing,
   handleRefresh,
+  loadMoreItems,
   handleCommentButtonPress,
-}: FlatlistContainerProps) => {
+}: MyCirclePostsProps) => {
   const renderCustomPost = ({item}: any) => {
-    if (item && item.media && item.media.endsWith('.mp4')) {
-      return null;
-    }
     return (
       <CustomPost
-        key={item._id}
+        key={item?._id}
         post={item}
-        userId={userId}
-        countComment={item.comments.length}
         handleCommentButtonPress={handleCommentButtonPress}
       />
     );
   };
+
   return (
     <FlatList
       data={data}
@@ -38,9 +40,15 @@ const FlatListContainer = ({
       keyExtractor={(item: any) => item._id}
       refreshing={isRefreshing}
       onRefresh={handleRefresh}
-      onEndReachedThreshold={2.7}
+      ListFooterComponent={
+        isLoading ? (
+          <CustomLoader extraStyles={{marginVertical: 20}} isStyle={true} />
+        ) : null
+      }
+      onEndReached={loadMoreItems}
+      onEndReachedThreshold={0}
     />
   );
 };
 
-export default FlatListContainer;
+export default MyCirclePosts;

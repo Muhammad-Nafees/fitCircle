@@ -26,6 +26,8 @@ import Toast from 'react-native-toast-message';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
+import {s3bucketReference} from '../../api';
+import {likePost} from '../../api/home-module';
 
 const Dot = require('../../../assets/icons/dot.png');
 
@@ -35,59 +37,44 @@ interface CustomPostProps {
   isCommentsScreenActive?: boolean;
   handleCommentButtonPress?: (post: any, userId: string) => void;
   handleBackPress?: () => void;
-  userId: string;
-  post: {
-    _id: string;
-    media?: string;
-    content?: string;
-    likes: any[];
-    comments: any[];
-    shares: any[];
-    createdAt: string;
-    hexCode: string;
-    cost: number | null;
-    user: {
-      profileImageUrl?: string;
-      username: string;
-      email?: string;
-    };
-  };
+  // userId: string;
+  post: any;
 }
 
 export const CustomPost = ({
   post,
-  userId,
   countComment,
   isCommentsScreenActive,
   handleBackPress,
   handleCommentButtonPress,
 }: CustomPostProps) => {
-  const {_id, media, content, likes, createdAt, user, hexCode, cost} = post;
-  let isGradient = hexCode && hexCode.includes(',');
+  // const { likes, createdAt, user, hexCode, cost} = post;
+  let isGradient = post?.hexCode && post?.hexCode.includes(',');
 
-  const {profileImageUrl, username} = user;
   const [isShareModalVisible, setShareModalVisible] = useState(false);
-  const [likesCount, setLikesCount] = useState(likes.length);
-  const [commentsCount, setCommentsCount] = useState<number>(countComment);
+  const [likesCount, setLikesCount] = useState(post?.likes?.length);
+  const [commentsCount, setCommentsCount] = useState<number>(
+    post?.comments?.length,
+  );
   const [shareText, setShareText] = useState('');
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(post?.likedByMe);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
   const dropdownOptions =
-    userId === post.user._id ? ['Edit', 'Delete'] : ['Flag'];
-  const isLocked = cost && cost > 0;
+    post?.user?._id === post?.user?._id ? ['Edit', 'Delete'] : ['Flag'];
+  const isLocked = post?.cost && post?.cost > 0;
 
-  useEffect(() => {
-    const isCurrentUserLiked = likes.some(like => like.user._id === userId);
-    setIsLiked(isCurrentUserLiked);
-  }, [likes, userId]);
+  // useEffect(() => {
+  //   const isCurrentUserLiked = likes.some(like => like.user._id === userId);
+  //   setIsLiked(isCurrentUserLiked);
+  // }, [likes, userId]);
 
-  useEffect(() => {
-    setCommentsCount(countComment);
-  }, [countComment]);
+  // useEffect(() => {
+  //   setCommentsCount(countComment);
+  // }, [countComment]);
 
   const handleCommentPress = () => {
-    handleCommentButtonPress(post, userId);
+    handleCommentButtonPress(post, post?.user?._id);
   };
 
   useFocusEffect(
@@ -103,7 +90,7 @@ export const CustomPost = ({
   );
 
   const getTimeDifference = () => {
-    const postTime = new Date(createdAt).getTime();
+    const postTime = new Date(post?.createdAt).getTime();
     const currentTime = new Date().getTime();
     const timeDifference = currentTime - postTime;
     const seconds = Math.floor(timeDifference / 1000);
@@ -129,7 +116,7 @@ export const CustomPost = ({
 
   const handleOptionSelect = (option: string) => {
     setDropdownVisible(false);
-    if (userId === post.user._id) {
+    if (user === post.user._id) {
       if (option === 'Edit') {
       } else if (option === 'Delete') {
       }
@@ -137,8 +124,14 @@ export const CustomPost = ({
     }
   };
 
-  const handleLikeButtonPress = () => {
+  const handleLikeButtonPress = async () => {
     setIsLiked(!isLiked);
+    try {
+      const response = await likePost(post._id);
+      console.log(response.data, 'from likeeeeee');
+    } catch (error: any) {
+      console.log(error?.response, 'error from likepost!');
+    }
     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
   };
 
@@ -157,20 +150,21 @@ export const CustomPost = ({
   const handleImageClose = () => {
     setImageFullscreen(false);
   };
+  console.log(post, 'dataa');
 
   return (
     <View>
       <View style={[styles.postContainer, isLocked ? {zIndex: 1000} : null]}>
         <CustomProfileAvatar
-          profileImageUrl={profileImageUrl}
-          username={username}
+          profileImage={post?.user?.profileImage as any}
+          username={post?.user?.username}
         />
         <View style={styles.postParentContainer}>
           <View style={styles.postTextContainer}>
-            <Text style={styles.postName}>{username}</Text>
+            <Text style={styles.postName}>{post?.user?.username}</Text>
             <View style={styles.postDetails}>
               <Text style={styles.postId}>
-                {`@${username?.toLowerCase()?.replace(/\s/g, '')}`}
+                {`@${post?.user?.username?.toLowerCase()?.replace(/\s/g, '')}`}
               </Text>
               <Image
                 source={Dot}
@@ -196,7 +190,7 @@ export const CustomPost = ({
               style={styles.dropdown}
               onPress={() => setDropdownVisible(false)}>
               {dropdownOptions.map((option, index) => (
-                <React.Fragment key={index}>
+                <React.Fragment key={option}>
                   <View
                     style={styles.dropdownOption}
                     onPress={() => handleOptionSelect(option)}>
@@ -223,13 +217,13 @@ export const CustomPost = ({
       {isLocked ? (
         <View style={styles.lockedOverlay}>
           <View style={styles.lockedContainer}>
-            <Text style={styles.lockedText}>{content}</Text>
+            <Text style={styles.lockedText}>{post?.text}</Text>
             <TouchableOpacity style={styles.lockedButtonContainer}>
               <Text style={{color: '#fff'}}>
                 Unlock this post for{' '}
                 <Text
                   style={{color: '#30D298', fontWeight: '600', fontSize: 16}}>
-                  ${cost}
+                  ${post?.cost}
                 </Text>
               </Text>
               <View style={styles.lockedIconContainer}>
@@ -239,19 +233,24 @@ export const CustomPost = ({
           </View>
         </View>
       ) : null}
-      {content &&
+      {post?.text &&
         (!isGradient ? (
-          <View style={[styles.content, {backgroundColor: `${hexCode}`}]}>
-            <Text style={styles.contentText}>{content}</Text>
+          <View style={[styles.content, {backgroundColor: `${post?.hexCode}`}]}>
+            <Text style={styles.contentText}>{post?.text}</Text>
           </View>
         ) : (
-          <LinearGradient colors={hexCode.split(',')} style={styles.content}>
-            <Text style={styles.contentText}>{content}</Text>
+          <LinearGradient
+            colors={post?.hexCode.split(',')}
+            style={styles.content}>
+            <Text style={styles.contentText}>{post?.text}</Text>
           </LinearGradient>
         ))}
-      {media && (
+      {post?.media && (
         <TouchableOpacity onPress={handleImagePress}>
-          <Image style={styles.image} source={{uri: media}} />
+          <Image
+            style={styles.image}
+            source={{uri: `${s3bucketReference}/${post.media}`}}
+          />
         </TouchableOpacity>
       )}
       <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
@@ -354,7 +353,7 @@ export const CustomPost = ({
           onPress={handleImageClose}
           style={styles.fullscreenContainer}>
           <ImageZoom
-            uri={media}
+            uri={`${s3bucketReference}/${post?.media}`}
             minScale={1}
             maxScale={10}
             style={styles.imageZoom}

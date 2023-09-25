@@ -3,21 +3,21 @@ import {View, Dimensions} from 'react-native';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import ReelsComponent from './Reels';
 
-interface SwiperContainerProps {
-  data: never[];
+interface CreatorPostsProps {
+  data: any[];
   userId: string;
   tabBarHeight: any;
   isProfile: boolean;
   handleRefresh: () => void;
 }
 
-const SwiperContainer = ({
+const CreatorPosts = ({
   data,
-  userId,
   tabBarHeight,
+  userId,
   isProfile,
   handleRefresh,
-}: SwiperContainerProps) => {
+}: CreatorPostsProps) => {
   return (
     <View
       style={{
@@ -25,11 +25,12 @@ const SwiperContainer = ({
         height: Dimensions.get('window').height - 120 - tabBarHeight,
       }}>
       <SwiperFlatList
+        // vertical={true}
         data={data}
         keyExtractor={item => item._id}
         refreshing={false}
         onRefresh={handleRefresh}
-        onEndReachedThreshold={3}
+        // onEndReachedThreshold={3}
         onChangeIndex={i => console.log(i)}
         renderItem={({item, index}) => (
           <ReelsComponent
@@ -45,4 +46,4 @@ const SwiperContainer = ({
   );
 };
 
-export default SwiperContainer;
+export default CreatorPosts;

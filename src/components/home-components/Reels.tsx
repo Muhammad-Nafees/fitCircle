@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from 'react-native';
 import Video from 'react-native-video';
-import {Avatar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {createThumbnail} from 'react-native-create-thumbnail';
 // ---------------------------------------------------------------------//
@@ -20,25 +19,23 @@ const PauseIcon = require('../../../assets/icons/pauseIcon.png');
 const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 const CancelIcon = require('../../../assets/icons/cancel.png');
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
+import {s3bucketReference} from '../../api';
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
-  post: {
-    _id: string;
-    media: string;
-    content?: string;
-    likes: any[];
-    cost: 0;
-    thumbnail?: string;
-    shares: any[];
-    favorites: any[];
-    createdAt: string;
-    user: {
-      profileImageUrl?: string;
-      username: string;
-      email?: string;
-    };
-  };
+  // post: {
+  //   _id: string;
+  //   media: string;
+  //   content?: string;
+  //   likes: any[];
+  //   cost: 0;
+  //   thumbnail?: string;
+  //   shares: any[];
+  //   favorites: any[];
+  //   createdAt: string;
+  // };
+  post: any;
   userId: string | undefined;
   index: number;
   tabBarHeight: any;
@@ -49,48 +46,45 @@ interface ReelsProps {
 
 export const ReelsComponent = ({
   post,
-  userId,
-  index,
   tabBarHeight,
   isProfile = false,
   handleCancelPress,
   handleFavoriteDialog,
 }: ReelsProps) => {
-  const {_id, media, content, user, cost, favorites, thumbnail} = post;
-  const {profileImageUrl, username, email} = user;
+  console.log(post, 'fromm videosss');
 
   const videoRef = useRef<any>(null);
-  const isLocked = cost && cost > 0;
+  const isLocked = post?.cost && post?.cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
   const [play, setPlay] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
-  const [showThumbnail, setShowThumbnail] = useState(thumbnail !== null);
+  const [showThumbnail, setShowThumbnail] = useState(post?.thumbnail !== null);
   const navigation = useNavigation();
   const [videoThumbnail, setVideoThumbnail] = useState<any>();
 
-  const fetchThumbnail = async () => {
-    try {
-      const response = await createThumbnail({
-        url: media,
-        timeStamp: 1000,
-        format: 'jpeg',
-      });
-      setVideoThumbnail(response.path);
-    } catch (err) {
-      console.log('err', err);
-    }
-  };
+  // const fetchThumbnail = async () => {
+  //   try {
+  //     const response = await createThumbnail({
+  //       url: media,
+  //       timeStamp: 1000,
+  //       format: 'jpeg',
+  //     });
+  //     setVideoThumbnail(response.path);
+  //   } catch (err) {
+  //     console.log('err', err);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchThumbnail();
-  }, []);
+  // useEffect(() => {
+  //   fetchThumbnail();
+  // }, []);
 
-  useEffect(() => {
-    const isCurrentUserFavorited = favorites.some(
-      favorite => favorite._id === userId,
-    );
-    setIsFavorited(isCurrentUserFavorited);
-  }, [favorites]);
+  // useEffect(() => {
+  //   const isCurrentUserFavorited = favorites.some(
+  //     favorite => favorite._id === userId,
+  //   );
+  //   setIsFavorited(isCurrentUserFavorited);
+  // }, [favorites]);
 
   useEffect(() => {
     let hideButtonTimer: any;
@@ -124,7 +118,7 @@ export const ReelsComponent = ({
   const handleShareVideo = async () => {
     try {
       const result = await Share.share({
-        url: media,
+        uri: `${s3bucketReference}/${post?.media}`,
       });
 
       if (result.action === Share.sharedAction) {
@@ -146,22 +140,13 @@ export const ReelsComponent = ({
       ]}>
       <View style={[styles.topLeftContent, {padding: 0}]}>
         <View style={[styles.topLeftContent, {left: -15, top: -15}]}>
-          {profileImageUrl ? (
-            <Avatar.Image
-              size={40}
-              source={{uri: profileImageUrl}}
-              style={styles.avatarImage}
-            />
-          ) : (
-            <Avatar.Text
-              size={40}
-              label={username ? username[0].toUpperCase() : 'SA'}
-              style={styles.avatarText}
-            />
-          )}
+          <CustomProfileAvatar
+            profileImage={post?.user?.profileImage as any}
+            username={post?.user?.username}
+          />
           <View style={styles.postTextContainer}>
-            <Text style={styles.postName}>{username}</Text>
-            <Text style={styles.postId}>{`@${username
+            <Text style={styles.postName}>{post?.user?.username}</Text>
+            <Text style={styles.postId}>{`@${post?.user?.username
               ?.toLowerCase()
               ?.replace(/\s/g, '')}`}</Text>
           </View>
@@ -185,10 +170,11 @@ export const ReelsComponent = ({
       {isLocked ? (
         <View style={styles.lockedOverlay}>
           <View style={styles.lockedContainer}>
-            <Text style={styles.lockedText}>{content}</Text>
+            <Text style={styles.lockedText}>{post?.text}</Text>
             <TouchableOpacity style={styles.lockedButtonContainer}>
               <Text style={{color: '#fff'}}>
-                Unlock this video for <Text style={styles.cost}>${cost}</Text>
+                Unlock this video for{' '}
+                <Text style={styles.cost}>${post?.cost}</Text>
               </Text>
               <View style={styles.lockedIconContainer}>
                 <Image source={LockOpenIcon} style={styles.lockIcon} />
@@ -221,7 +207,7 @@ export const ReelsComponent = ({
         resizeMode="cover"
         repeat={true}
         source={{
-          uri: media,
+          uri: `${s3bucketReference}/${post?.media}`,
         }}
         style={styles.video}
         paused={!play}
@@ -231,7 +217,7 @@ export const ReelsComponent = ({
         }}
       />
       <View style={styles.textContentContainer}>
-        <Text style={styles.textContent}>{content}</Text>
+        <Text style={styles.textContent}>{post?.text}</Text>
       </View>
       <View style={styles.iconContainer}>
         <View style={styles.iconItem}>

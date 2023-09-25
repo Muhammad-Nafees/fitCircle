@@ -19,11 +19,17 @@ import {RootState} from '../../redux/store';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import NotificationIcon from '../../../assets/icons/NotificationIcon';
 const SearchIcon = require('../../../assets/icons/search.png');
-import {setSelectedPost} from '../../redux/postSlice';
+import {
+  IMyCirclePosts,
+  setAllPosts,
+  setPagination,
+  setSelectedPost,
+} from '../../redux/postSlice';
 import {PostsData} from '../dummyData';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
-import SwiperContainer from '../../components/home-components/SwiperContainer';
-import FlatListContainer from '../../components/home-components/FlatlistContainer';
+import MyCirclePosts from '../../components/home-components/MyCirclePosts';
+import {getPosts, getVideoPosts} from '../../api/home-module';
+import CreatorPosts from '../../components/home-components/CreatorPosts';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -35,7 +41,19 @@ const HomeScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [fetchedPosts, setFetchedPosts] = useState<any>(PostsData);
   const tabBarHeight = useBottomTabBarHeight();
-  console.log(userData, 'userData');
+
+  const hasMorePosts = useSelector(
+    (state: RootState) => state.post.pagination?.hasNextPage,
+  );
+
+  const [myCircleData, setMycirleData] = useState<any>();
+  const [creatorData, setCreatorData] = useState<any>();
+  const [creatorPage, setCreatorPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [hasMoreCirclePosts, setHasMoreCirclePosts] = useState<boolean>(false);
+  const [hasMoreVideos, setHasMoreVideos] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -48,6 +66,7 @@ const HomeScreen = () => {
   };
 
   const handleCommentButtonPress = (selectedPost: any, userId: any) => {
+    console.log(selectedPost, 'selected');
     dispatch(setSelectedPost(selectedPost));
     navigation.navigate('CommentsScreen', {userId});
   };
@@ -57,16 +76,83 @@ const HomeScreen = () => {
     setIsRefreshing(true);
   };
 
-  useEffect(() => {
-    const filteredData = filteredVideos.sort(
-      (a: any, b: any) =>
-        new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
-    );
-    setFilteredVideos(filteredData);
-  }, [filteredVideos]);
+  // useEffect(() => {
+  //   const filteredData = filteredVideos.sort(
+  //     (a: any, b: any) =>
+  //       new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
+  //   );
+  //   setFilteredVideos(filteredData);
+  // }, [filteredVideos]);
 
   const handleButtonPress = (button: string) => {
     setSelectedButton(button);
+  };
+  // console.log(myCirclePosts, 'mmmmm');
+
+  /// api call here
+
+  useEffect(() => {
+    console.log('useEffect called');
+    const fetchMyCirclePosts = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getPosts(page, limit);
+        const data = response?.data?.data;
+        if (myCircleData) {
+          console.log('sssads');
+          setMycirleData((prevData: any) => {
+            return [...prevData, ...data?.posts];
+          });
+        } else {
+          setMycirleData(data?.posts);
+        }
+        setHasMoreCirclePosts(data?.pagination?.hasNextPage);
+        // dispatch(setPagination(data?.pagination));
+      } catch (error: any) {
+        console.log(error, 'Error fetching my circle posts!');
+      }
+      setIsLoading(false);
+    };
+    fetchMyCirclePosts();
+  }, [page]);
+
+  const loadMoreItems = () => {
+    if (hasMoreCirclePosts) {
+      setPage((prevPage: number) => prevPage + 1);
+    }
+    return;
+  };
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getVideoPosts(creatorPage, limit);
+        const data = response?.data?.data;
+        console.log(data, 'videos');
+        if (creatorData) {
+          console.log('sssads');
+          setCreatorData((prevData: any) => {
+            return [...prevData, ...data?.posts];
+          });
+        } else {
+          setCreatorData(data?.posts);
+        }
+        setHasMoreVideos(data?.pagination?.hasNextPage);
+        // dispatch(setPagination(data?.pagination));
+      } catch (error: any) {
+        console.log(error, 'Error fetching my circle posts!');
+      }
+      setIsLoading(false);
+    };
+    fetchVideos();
+  }, [page]);
+
+  const loadMoreVideos = () => {
+    if (hasMoreCirclePosts) {
+      setCreatorPage((prevPage: number) => prevPage + 1);
+    }
+    return;
   };
 
   return (
@@ -78,7 +164,7 @@ const HomeScreen = () => {
             onPress={() => navigation.navigate('Profile' as never)}>
             <CustomProfileAvatar
               username={userData?.username as string}
-              profileImage={userData?.profileImage as string}
+              profileImage={userData?.profileImage as any}
             />
           </TouchableOpacity>
           <View style={styles.textinputContainer}>
@@ -129,16 +215,17 @@ const HomeScreen = () => {
         {isRefreshing ? (
           <ActivityIndicator size="large" color="#ffffff" />
         ) : selectedButton === 'My Circle' ? (
-          <FlatListContainer
-            data={fetchedPosts}
-            userId={userId}
+          <MyCirclePosts
+            data={myCircleData}
+            isLoading={isLoading}
             isRefreshing={isRefreshing}
             handleRefresh={handleRefresh}
+            loadMoreItems={loadMoreItems}
             handleCommentButtonPress={handleCommentButtonPress}
           />
         ) : (
-          <SwiperContainer
-            data={filteredVideos}
+          <CreatorPosts
+            data={creatorData}
             userId={userId}
             tabBarHeight={tabBarHeight}
             isProfile={true}

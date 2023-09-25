@@ -1,17 +1,21 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {IPost} from '../interfaces/user.interface';
+import {IPost, IUser} from '../interfaces/user.interface';
+import {IPagination} from 'interfaces/pagination.interface';
+
+export interface IMyCirclePosts {
+  user: IUser;
+  posts: IPost;
+}
 
 interface IPostState {
-  posts: IPost[];
-  isLoading: boolean;
-  error: string | null;
-  selectedPost: [] | null;
+  posts: IMyCirclePosts[] | null;
+  pagination: IPagination | null;
+  selectedPost: any | null;
 }
 
 const initialState: IPostState = {
-  posts: [],
-  isLoading: false,
-  error: null,
+  posts: null,
+  pagination: null,
   selectedPost: null,
 };
 
@@ -19,34 +23,18 @@ const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
-    fetchPostsStart: state => {
-      state.isLoading = true;
-      state.error = null;
+    setAllPosts: (state, action: PayloadAction<IMyCirclePosts[]>) => {
+      state.posts = action.payload;
     },
-    fetchPostsSuccess: (state, action: PayloadAction<IPost[]>) => {
-      state.isLoading = false;
-      const existingPostIds = new Set(state.posts.map(post => post._id));
-      const newPosts = action.payload.filter(
-        post => !existingPostIds.has(post._id),
-      );
-      state.posts = [...state.posts, ...newPosts];
-      state.error = null;
-    },
-    fetchPostsFailure: (state, action: PayloadAction<string>) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    setSelectedPost: (state, action) => {
+    setSelectedPost: (state, action: PayloadAction<any>) => {
       state.selectedPost = action.payload;
+    },
+    setPagination: (state, action: PayloadAction<IPagination>) => {
+      state.pagination = action.payload;
     },
   },
 });
 
-export const {
-  fetchPostsStart,
-  fetchPostsSuccess,
-  fetchPostsFailure,
-  setSelectedPost,
-} = postSlice.actions;
+export const {setAllPosts, setPagination, setSelectedPost} = postSlice.actions;
 
 export default postSlice.reducer;

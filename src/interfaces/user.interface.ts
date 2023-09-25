@@ -20,6 +20,7 @@ export interface IUser {
   _id: string;
   email: string;
   phone: string;
+  countryCode: string;
   fcmToken: string;
   role: IUserRole;
   isProfileCompleted: boolean;

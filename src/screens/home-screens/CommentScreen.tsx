@@ -29,6 +29,7 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
+import {getAllCommentsByPosts} from '../../api/home-module';
 const SendIcon = require('../../../assets/icons/send.png');
 
 const width = Dimensions.get('window').width;
@@ -37,7 +38,7 @@ const CommentsScreen = ({route, navigation}: any) => {
   const selectedPost = useSelector(
     (state: RootState) => state.post.selectedPost,
   );
-  const {userId} = route.params;
+  console.log(selectedPost._id, 'seleccc');
   const profileScreen = route?.params?.profileScreen;
   const [comments, setComments] = useState([]);
   const [commentsCount, setCommentsCount] = useState('Loading');
@@ -66,13 +67,20 @@ const CommentsScreen = ({route, navigation}: any) => {
     });
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setCommentsCount('Loading');
-      setCommentScreenActive(true);
-      setLoading(true);
-    }, [selectedPost]),
-  );
+  useEffect(() => {
+    console.log(selectedPost?._id, 'selectedPost');
+    const getComments = async () => {
+      try {
+        const response = await getAllCommentsByPosts(
+          selectedPost._id as string,
+        );
+        console.log(response?.data, 'res');
+      } catch (error: any) {
+        console.log('errorfrom fetching comments', error?.response?.data);
+      }
+    };
+    getComments();
+  });
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -97,7 +105,7 @@ const CommentsScreen = ({route, navigation}: any) => {
 
   const handleBackPress = async () => {
     setCommentScreenActive(false);
-    await setComments([]);
+    setComments([]);
     if (profileScreen) {
       navigation.navigate('Profile');
     } else {
@@ -113,7 +121,6 @@ const CommentsScreen = ({route, navigation}: any) => {
           <CustomPost
             post={selectedPost}
             countComment={commentsCount}
-            userId={userId}
             isCommentsScreenActive={commentScreenActive}
             handleBackPress={handleBackPress}
           />
