@@ -185,7 +185,7 @@ const HomeTabNavigator = () => {
       />
       <Tab.Screen
         name="Message"
-        component={MessageStackNavigator}
+        component={MessageScreen}
         options={{
           tabBarIcon: ({focused}) => (
             <View>

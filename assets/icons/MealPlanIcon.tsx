@@ -2,7 +2,7 @@ import Svg, {Path} from 'react-native-svg';
 
 const MealPlanSvgIcon = () => {
   return (
-    <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <Svg width="19" height="21" viewBox="0 0 19 21" fill="none">
       <Path
         fill-rule="evenodd"
         clip-rule="evenodd"

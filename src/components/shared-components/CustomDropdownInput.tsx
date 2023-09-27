@@ -28,6 +28,7 @@ const DropdownTextInput = ({
   placeholder,
   tdee,
   editable = true,
+  onSelectUnit,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
@@ -38,6 +39,7 @@ const DropdownTextInput = ({
   const handleDropdownSelection = (option: any) => {
     setShowDropdown(false);
     setSelectedOption(option);
+    onSelectUnit(option,defaultOption);
   };
 
   const handleInputFocus = () => {
@@ -206,6 +208,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(5),
     borderBottomWidth: 1,
     borderColor: '#fff',
+    zIndex: 99999,
   },
   selectedOption: {
     backgroundColor: '#F3F3F3',

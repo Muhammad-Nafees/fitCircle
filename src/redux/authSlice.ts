@@ -4,11 +4,11 @@ import {IUser} from '../interfaces/user.interface';
 
 const initialState: IAuth = {
   isAuthenticated: false,
-  accessToken: null,
   accountType: null,
   userRole: undefined,
   user: null,
-  authorizationToken: '',
+  accessToken: null,
+  refreshToken: null,
 };
 
 const authSlice = createSlice({
@@ -24,11 +24,11 @@ const authSlice = createSlice({
     authenticate: (state, action) => {
       state.isAuthenticated = action.payload;
     },
-    setaccessToken: (state, action) => {
-      state.user = action.payload;
+    setAccessToken: (state, action) => {
+      state.accessToken = action.payload;
     },
-    setAuthorizationToken: (state, action) => {
-      state.authorizationToken = action.payload;
+    setRefreshToken: (state, action) => {
+      state.refreshToken = action.payload;
     },
     logout: state => {
       state.isAuthenticated = false;
@@ -42,12 +42,12 @@ const authSlice = createSlice({
 
 export const {
   setuserRole,
-  setaccessToken,
   setAccountType,
   setUserData,
+  setAccessToken,
+  setRefreshToken,
   authenticate,
   logout,
-  setAuthorizationToken,
 } = authSlice.actions;
 
 export default authSlice.reducer;

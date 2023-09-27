@@ -2,7 +2,7 @@ import Svg, {Path} from 'react-native-svg';
 
 const ScheduleSvgIcon = () => {
   return (
-    <Svg width="22" height="25.76" viewBox="0 0 22 22" fill="none">
+    <Svg width="20" height="23" viewBox="0 0 20 23" fill="none">
       <Path
         fill-rule="evenodd"
         clip-rule="evenodd"

@@ -54,10 +54,13 @@ export const createProfileSchema = (userRole: any) => {
       .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
     username: Yup.string()
       .required('Username is required')
-      .matches(/^[A-Za-z0-9]+$/, 'Invalid input: No spaces allowed'),
+      .matches(/^[A-Za-z0-9]+$/, 'Invalid input: No spaces allowed')
+      .min(3, 'Username must be at least 3 characters')
+      .max(10, 'Username must be at most 10 characters'),
     bio: Yup.string()
       .required('Bio is required')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+      .min(10, 'Bio must be at least 10 characters'),
     phone: Yup.string().required('Phone number is required'),
     country: Yup.string().required('Select country'),
     city: Yup.string().required('Select city'),
@@ -269,4 +272,23 @@ export const TdeeCalculatorSchema = Yup.object().shape({
       );
     })
     .required('Start date is required'),
+});
+
+export const socialMediaSchema = Yup.object().shape({
+  facebook: Yup.string().matches(
+    /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/i,
+    'Invalid Facebook URL format',
+  ),
+  twitter: Yup.string().matches(
+    /^(https?:\/\/)?(www\.)?twitter\.com(\/\S*)?$/i,
+    'Invalid Twitter URL format',
+  ),
+  instagram: Yup.string().matches(
+    /^(https?:\/\/)?(www\.)?instagram\.com(\/\S*)?$/i,
+    'Invalid Instagram URL format',
+  ),
+  tiktok: Yup.string().matches(
+    /^(https?:\/\/)?(www\.)?tiktok\.com(\/\S*)?$/i,
+    'Invalid TikTok URL format',
+  ),
 });

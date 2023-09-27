@@ -2,7 +2,12 @@ import Svg, {Path} from 'react-native-svg';
 
 const CalculatorSvgIcon = () => {
   return (
-    <Svg width="22" height="25.76" viewBox="0 0 22 22" fill="none">
+    <Svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="22"
+      viewBox="0 0 20 22"
+      fill="none">
       <Path
         fill-rule="evenodd"
         clip-rule="evenodd"
