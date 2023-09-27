@@ -215,6 +215,7 @@ export const AddPostScreen = ({route}: any) => {
 
   // api call here
   const handleCreatePost = async () => {
+    console.log(textInputBackgroundColor, 'bg');
     console.log(videoUri, mediaUri, textInputValue);
     if (textInputValue == '') {
       Toast.show({
@@ -240,8 +241,10 @@ export const AddPostScreen = ({route}: any) => {
           media: compressedImage,
           mediaType: 'image',
           visibility: visibility,
+          ...(titleInput !== '' && {title: titleInput}),
           ...(costValue !== 0 && {cost: costValue}),
         };
+        console.log(reqData,"req")
         const response = await createPostWithImage(reqData);
         console.log(response?.data, 'response!');
         handleBackButtonPress();
@@ -254,13 +257,12 @@ export const AddPostScreen = ({route}: any) => {
           text: textInputValue,
           hexCode:
             textInputBackgroundColor == 'transparent'
-              ? '#FFFFFF'
-              : textInputBackgroundColor,
+              ? '#292A2C'
+              : textInputBackgroundColor.toString(),
           visibility: visibility,
           ...(costValue !== 0 && {cost: costValue}),
         };
         const response = await createPostWithContent(reqData);
-        console.log(response?.data, 'response!');
         handleBackButtonPress();
         Toast.show({
           type: 'success',

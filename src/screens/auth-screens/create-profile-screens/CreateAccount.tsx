@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -49,7 +49,6 @@ const CreateAccount = ({navigation, route}: any) => {
       setIsError('');
     }
   };
-  const getCode = phoneInput.current?.getCountryCode();
 
   const initialValues: CreateAccountFormValues = {
     email: route.params.email,
@@ -66,7 +65,9 @@ const CreateAccount = ({navigation, route}: any) => {
     try {
       const response = await register({
         ...reqData,
-        phone: `+${phoneCode}${values.phone}`,
+        phone: `${values.phone}`,
+        phoneCode: `+${phoneCode}`,
+        countryCode: countryCode,
         role: userRole,
         fcmToken: 'abcabsdflskdjflskdj',
       });
@@ -74,10 +75,7 @@ const CreateAccount = ({navigation, route}: any) => {
       dispatch(setUserData(data.user));
       dispatch(setAccessToken(data?.accessToken));
       dispatch(setRefreshToken(data?.refreshToken));
-      navigation.navigate('CreateProfile', {
-        phoneCode: phoneCode,
-        countryCode: getCode,
-      });
+      navigation.navigate('CreateProfile');
       Toast.show({
         type: 'success',
         text1: `${response?.data.message}`,

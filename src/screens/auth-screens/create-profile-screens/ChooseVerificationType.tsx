@@ -22,7 +22,7 @@ const ChooseVerificationType = ({navigation}: any) => {
       setVerificationType('email');
     } else {
       setVerificationType('phone');
-      reqData = {phone: userData?.phone};
+      reqData = {phone: `${userData?.phoneCode}${userData?.phone}`};
     }
     setIsLoading(true);
     try {

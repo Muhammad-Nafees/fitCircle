@@ -57,7 +57,7 @@ const OtpScreen = ({navigation, route}: any) => {
       const data = response?.data.data;
       dispatch(setAccessToken(data.accessToken));
       setIsLoading(false);
-      setSecondsRemaining(0);
+      // setSecondsRemaining(0);
       navigation.navigate('AccountVerified');
       Toast.show({
         type: 'success',

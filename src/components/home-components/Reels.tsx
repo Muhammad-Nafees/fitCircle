@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,9 @@ const CancelIcon = require('../../../assets/icons/cancel.png');
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import {s3bucketReference} from '../../api';
+import {sharePost} from '../../api/home-module';
+import Toast from 'react-native-toast-message';
+import {useFocusEffect} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
@@ -51,8 +54,6 @@ export const ReelsComponent = ({
   handleCancelPress,
   handleFavoriteDialog,
 }: ReelsProps) => {
-  console.log(post, 'fromm videosss');
-
   const videoRef = useRef<any>(null);
   const isLocked = post?.cost && post?.cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
@@ -62,22 +63,30 @@ export const ReelsComponent = ({
   const navigation = useNavigation();
   const [videoThumbnail, setVideoThumbnail] = useState<any>();
 
-  // const fetchThumbnail = async () => {
-  //   try {
-  //     const response = await createThumbnail({
-  //       url: media,
-  //       timeStamp: 1000,
-  //       format: 'jpeg',
-  //     });
-  //     setVideoThumbnail(response.path);
-  //   } catch (err) {
-  //     console.log('err', err);
-  //   }
-  // };
+  const fetchThumbnail = async () => {
+    if (post?.thumbnail) {
+      let uri = `${s3bucketReference}/${post.thumbnail}`;
+      setVideoThumbnail(uri);
+    } else {
+      try {
+        const response = await createThumbnail({
+          url: `${s3bucketReference}/${post.media}`,
+          timeStamp: 1000,
+          format: 'jpeg',
+        });
+        setVideoThumbnail(response.path);
+      } catch (err) {
+        console.log('err', err);
+      }
+    }
+  };
+  console.log(videoThumbnail, 'videothumbnail');
 
-  // useEffect(() => {
-  //   fetchThumbnail();
-  // }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchThumbnail();
+    }, [post]),
+  );
 
   // useEffect(() => {
   //   const isCurrentUserFavorited = favorites.some(
@@ -99,36 +108,37 @@ export const ReelsComponent = ({
     };
   }, [play, showPlayIcon]);
 
-  const onBuffer = () => {
+  const onBuffer = (buffer: any) => {
+    console.log(buffer, 'buffer');
     console.log('onBuffer1');
   };
 
-  const onError = () => {
+  const onError = (error: any) => {
+    console.log(error);
     console.log('onError');
   };
 
   const handleFavoritePress = () => {
-    if (isProfile === true) {
-      handleFavoriteDialog();
-    } else {
+    // if (isProfile === true) {
+    //   handleFavoriteDialog();
+    // } else {
       navigation.navigate('FavoriteDialog' as never);
-    }
+    // }
   };
 
   const handleShareVideo = async () => {
     try {
-      const result = await Share.share({
-        uri: `${s3bucketReference}/${post?.media}`,
+      const response = await sharePost(post._id);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
       });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-        } else {
-        }
-      } else if (result.action === Share.dismissedAction) {
-      }
-    } catch (error) {
-      console.error('Error sharing video:', error);
+    } catch (error: any) {
+      console.log(error?.response, 'from sharing post');
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
     }
   };
 
@@ -207,7 +217,7 @@ export const ReelsComponent = ({
         resizeMode="cover"
         repeat={true}
         source={{
-          uri: `${s3bucketReference}/${post?.media}`,
+          uri: `${s3bucketReference}/${post.media}`,
         }}
         style={styles.video}
         paused={!play}
@@ -215,6 +225,7 @@ export const ReelsComponent = ({
         onLoad={() => {
           videoRef.current.seek(0);
         }}
+        useTextureView={true}
       />
       <View style={styles.textContentContainer}>
         <Text style={styles.textContent}>{post?.text}</Text>
@@ -247,7 +258,7 @@ export const ReelsComponent = ({
 const styles = StyleSheet.create({
   container: {
     width: width,
-    backgroundColor: 'black',
+    // backgroundColor: 'transparent',
   },
   topLeftContent: {
     flexDirection: 'row',

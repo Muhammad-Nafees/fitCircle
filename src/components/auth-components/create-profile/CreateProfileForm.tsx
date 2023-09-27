@@ -240,7 +240,7 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
               fieldName="bio"
             />
             <CustomPhoneInput
-              value={route?.params?.phoneNumber || userData?.phone}
+              value={userData?.phone}
               // error={errors.phone}
               touched={touched.phone}
               handleChange={handleChange('phone')}
@@ -250,7 +250,7 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
               setFieldError={setFieldError}
               isError={isError}
               setPhoneCode={setPhoneCode}
-              countryCode={route?.params?.countryCode}
+              countryCode={userData?.countryCode}
               isDisable={true}
             />
             <CustomSelect
