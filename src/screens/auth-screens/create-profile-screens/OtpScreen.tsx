@@ -78,7 +78,7 @@ const OtpScreen = ({navigation, route}: any) => {
     let interval = setInterval(() => {
       setSecondsRemaining(secondsRemaining => {
         secondsRemaining <= 1 && clearInterval(interval);
-        return secondsRemaining - 1;
+        return secondsRemaining - 1;otp
       });
     }, 1000);
     return () => clearInterval(interval);

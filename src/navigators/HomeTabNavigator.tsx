@@ -2,22 +2,26 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {View, Text, Image, Keyboard} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import HomeScreen from '../screens/home-screens';
-import {SearchScreen} from '../screens/home-screens/SearchScreen';
-import HomeStackNavigator from './HomeStackNavigator';
-import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
-import CommentsScreen from '../screens/home-screens/CommentScreen';
 import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
+import DashboardScreen from '../screens/dashboard-screens';
+import PhysicalReadinessStackNavigator from './PhysicalReadinessStackNavigator';
+import ScheduleStackNavigator from './ScheduleStackNavigator';
+import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
+import MealPlanStackNavigator from './MealPlanStackNavigator';
+import {Transaction} from '../screens/dashboard-screens/Transaction';
+import UserSchedule from '../screens/schedule-trainer-screens/UserSchedule';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
 
 const Tab = createBottomTabNavigator();
-const MessageScreen = () => <ScreenContent title="Message" />;
-const DashboardScreen = () => <ScreenContent title="Message" />;
+const MessageStackNavigator = () => <ScreenContent title="Message" />;
+const HomeScreen = () => <ScreenContent title="Home" />;
+const SearchScreen = () => <ScreenContent title="Home" />;
+const HomeStackNavigator = () => <ScreenContent title="AddPost" />;
 
 interface ScreenContentProps {
   title: string;
@@ -203,17 +207,48 @@ const HomeTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="FavoriteDialog"
-        component={FavoriteDialogScreen}
+        name="PhysicalReadiness"
+        component={PhysicalReadinessStackNavigator}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
       />
-
       <Tab.Screen
-        name="CommentsScreen"
-        component={CommentsScreen}
+        name="ScheduleScreen"
+        component={ScheduleStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TdeeCalculatorScreen"
+        component={TdeeCalculatorStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="MealPlanScreen"
+        component={MealPlanStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TransactionScreen"
+        component={Transaction}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="UserSchedule"
+        component={UserSchedule}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
