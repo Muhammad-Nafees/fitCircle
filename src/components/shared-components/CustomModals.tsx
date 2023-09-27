@@ -1,6 +1,10 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import CrossIcon from '../../../assets/icons/Cross';
+import Icon from 'react-native-vector-icons/Ionicons';
+import CustomButton from './CustomButton';
+import {STYLES} from '../../styles/globalStyles';
 
 interface modalProps {
   onCancel: () => void;
@@ -11,9 +15,17 @@ interface modalProps {
   confirmColor: any;
   cancelColor: any;
   highlightedWord?: any;
+  modalHeading?: string;
 }
 
-const CustomConfirmationModal = ({
+interface OutputModalProps {
+  extraTextStyles?: any;
+  type: 'success' | 'failed';
+  onPress: any;
+  modalText: string;
+}
+
+export const CustomConfirmationModal = ({
   onCancel,
   onConfirm,
   modalText,
@@ -22,6 +34,7 @@ const CustomConfirmationModal = ({
   confirmColor,
   cancelColor,
   highlightedWord,
+  modalHeading = 'Please Confirm',
 }: modalProps) => {
   const highlightWord = (text: string, word: any, style: any): any => {
     if (word) {
@@ -47,7 +60,7 @@ const CustomConfirmationModal = ({
   return (
     <View style={styles.modalContent}>
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={styles.heading}>Please Confirm</Text>
+        <Text style={styles.heading}>{modalHeading}</Text>
         <Text style={styles.whiteText}>
           {highlightWord(modalText, highlightedWord, styles.coloredText)}
         </Text>
@@ -68,6 +81,33 @@ const CustomConfirmationModal = ({
             {confirmText}
           </Text>
         </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+export const CustomOutputModal = ({
+  type,
+  onPress,
+  extraTextStyles,
+  modalText,
+}: OutputModalProps) => {
+  return (
+    <View style={[styles.modalContent, {backgroundColor: 'transparent'}]}>
+      <View style={styles.card}>
+        {type === 'success' ? (
+          <View style={styles.iconModal}>
+            <Icon name="checkmark-outline" color="white" size={24} />
+          </View>
+        ) : (
+          <CrossIcon />
+        )}
+        <Text style={[STYLES.text14, {marginTop: 2}, extraTextStyles]}>
+          {modalText}
+        </Text>
+        <View style={{width: '75%', marginTop: verticalScale(25)}}>
+          <CustomButton onPress={onPress}>Return</CustomButton>
+        </View>
       </View>
     </View>
   );
@@ -135,6 +175,20 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(15),
     flex: 1,
   },
+  card: {
+    backgroundColor: 'rgba(107, 107, 107, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: horizontalScale(271),
+    height: verticalScale(180),
+    borderRadius: 30,
+  },
+  iconModal: {
+    width: horizontalScale(34),
+    height: verticalScale(34),
+    borderRadius: 17,
+    backgroundColor: '#30D298',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
-
-export default CustomConfirmationModal;

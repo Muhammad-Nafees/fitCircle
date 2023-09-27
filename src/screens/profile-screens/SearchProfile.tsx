@@ -20,7 +20,7 @@ import {
   SearchProfileItem,
 } from '../../components/profile-components/SearchProfleItem';
 import {SearchOptionContainer} from '../../components/profile-components/SearchOptionContainer';
-import CustomConfirmationModal from '../../components/shared-components/CustomConfirmationModal';
+import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 const SearchIcon = require('../../../assets/icons/search.png');
 

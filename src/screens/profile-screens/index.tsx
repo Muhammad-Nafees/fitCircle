@@ -23,7 +23,7 @@ import {communitiesData, followersData, followingData} from '../dummyData';
 import {ProfileBio} from '../../components/profile-components/ProfileBio';
 import {ProfileSuccessModal} from '../../components/profile-components/ProfileModals';
 import {ProfileHeaderContainer} from '../../components/profile-components/HeaderContainer';
-import CustomConfirmationModal from '../../components/shared-components/CustomConfirmationModal';
+import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
 
 export const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();

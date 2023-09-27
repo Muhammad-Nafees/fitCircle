@@ -11,7 +11,7 @@ import {ProfileSettingsIcon} from '../assets/icons/profilesettings';
 const DeleteIcon = require('../assets/icons/cancel.png');
 
 export const settingsData = [
-  {id: '1', icon: <SettingsPayment />, text: 'Payment'},
+  {id: '1', icon: <SettingsPayment />, text: 'Payment', routeName: 'Payment'},
   {
     id: '2',
     icon: <SettingsNotificationIcon />,

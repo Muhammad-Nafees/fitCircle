@@ -4,7 +4,7 @@ import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import ReelsComponent from './Reels';
 
 interface SwiperContainerProps {
-  data: never[];
+  data?: never[];
   userId: string;
   tabBarHeight: any;
   isProfile: boolean;
@@ -25,6 +25,7 @@ const SwiperContainer = ({
         height: Dimensions.get('window').height - 120 - tabBarHeight,
       }}>
       <SwiperFlatList
+        vertical={true}
         data={data}
         keyExtractor={item => item._id}
         refreshing={false}
