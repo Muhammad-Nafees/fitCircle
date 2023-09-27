@@ -4,7 +4,7 @@ import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import ReelsComponent from './Reels';
 
 interface CreatorPostsProps {
-  data: any[];
+  data: never[];
   userId: string;
   tabBarHeight: any;
   isProfile: boolean;
@@ -13,8 +13,8 @@ interface CreatorPostsProps {
 
 const CreatorPosts = ({
   data,
-  tabBarHeight,
   userId,
+  tabBarHeight,
   isProfile,
   handleRefresh,
 }: CreatorPostsProps) => {
@@ -27,10 +27,10 @@ const CreatorPosts = ({
       <SwiperFlatList
         // vertical={true}
         data={data}
-        keyExtractor={item => item._id}
+        keyExtractor={(item, index) => item._id + index + 1}
         refreshing={false}
         onRefresh={handleRefresh}
-        // onEndReachedThreshold={3}
+        onEndReachedThreshold={0}
         onChangeIndex={i => console.log(i)}
         renderItem={({item, index}) => (
           <ReelsComponent

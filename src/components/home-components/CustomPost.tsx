@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -23,39 +23,48 @@ import {BackHandler} from 'react-native';
 import CustomButton from '../shared-components/CustomButton';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import Toast from 'react-native-toast-message';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {s3bucketReference} from '../../api';
-import {likePost} from '../../api/home-module';
+import {likePost, sharePost} from '../../api/home-module';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import {cleanSingle} from 'react-native-image-crop-picker';
 
 const Dot = require('../../../assets/icons/dot.png');
 
 const width = Dimensions.get('window').width;
 interface CustomPostProps {
-  countComment?: any;
   isCommentsScreenActive?: boolean;
-  handleCommentButtonPress?: (post: any, userId: string) => void;
+  handleCommentButtonPress?: (post: any, id: string) => void;
   handleBackPress?: () => void;
+  isLoading?: boolean;
   // userId: string;
   post: any;
+  heightFull?: boolean;
+  commentCount?: any;
 }
 
 export const CustomPost = ({
   post,
-  countComment,
+  isLoading,
+  heightFull,
   isCommentsScreenActive,
   handleBackPress,
   handleCommentButtonPress,
+  commentCount,
 }: CustomPostProps) => {
   // const { likes, createdAt, user, hexCode, cost} = post;
   let isGradient = post?.hexCode && post?.hexCode.includes(',');
 
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [likesCount, setLikesCount] = useState(post?.likes?.length);
-  const [commentsCount, setCommentsCount] = useState<number>(
-    post?.comments?.length,
-  );
+  const [commentsCount, setCommentsCount] = useState<number | null>(0);
   const [shareText, setShareText] = useState('');
   const [isLiked, setIsLiked] = useState(post?.likedByMe);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -69,12 +78,26 @@ export const CustomPost = ({
   //   setIsLiked(isCurrentUserLiked);
   // }, [likes, userId]);
 
-  // useEffect(() => {
-  //   setCommentsCount(countComment);
-  // }, [countComment]);
+  useFocusEffect(
+    useCallback(() => {
+      // console.log(commentsLength,"comssmen")
+      // if (commentsLength !== 0) {
+      //   setCommentsCount(commentsLength);
+      // } else {
+      if (post && commentCount) {
+        console.log(commentCount);
+        setCommentsCount(commentCount);
+      }
+      if (post && !commentCount) {
+        setCommentsCount(post.comments.length);
+      }
+    }, [post, commentCount]),
+  );
 
-  const handleCommentPress = () => {
-    handleCommentButtonPress(post, post?.user?._id);
+  const handleCommentPress = (postData: any, id: string) => {
+    if (handleCommentButtonPress) {
+      handleCommentButtonPress(postData, id);
+    }
   };
 
   useFocusEffect(
@@ -139,8 +162,23 @@ export const CustomPost = ({
     setShareModalVisible(!isShareModalVisible);
   };
 
-  const handleShareButtonPress = (text: string | null = null) => {
-    setShareModalVisible(false);
+  const handleShareButtonPress = async (text: string | null = null) => {
+    try {
+      const response = await sharePost(post._id);
+      console.log(response?.data?.message);
+      console.log(response?.data);
+      setShareModalVisible(false);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+    } catch (error: any) {
+      console.log(error?.response, 'from sharing post');
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
+    }
   };
 
   const handleImagePress = () => {
@@ -150,7 +188,6 @@ export const CustomPost = ({
   const handleImageClose = () => {
     setImageFullscreen(false);
   };
-  console.log(post, 'dataa');
 
   return (
     <View>
@@ -235,7 +272,23 @@ export const CustomPost = ({
       ) : null}
       {post?.text &&
         (!isGradient ? (
-          <View style={[styles.content, {backgroundColor: `${post?.hexCode}`}]}>
+          <View
+            style={[
+              styles.content,
+              {
+                backgroundColor: `${post?.hexCode}`,
+                height: heightFull ? verticalScale(290) : undefined,
+              },
+            ]}>
+            {post?.title && (
+              <Text
+                style={[
+                  styles.contentText,
+                  {fontWeight: '600',fontSize:16, paddingBottom: 20},
+                ]}>
+                {post?.title}
+              </Text>
+            )}
             <Text style={styles.contentText}>{post?.text}</Text>
           </View>
         ) : (
@@ -282,7 +335,9 @@ export const CustomPost = ({
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              isCommentsScreenActive ? handleBackPress() : handleCommentPress();
+              isCommentsScreenActive
+                ? handleBackPress()
+                : handleCommentPress(post, post._id);
             }}>
             <Image
               style={[
@@ -311,7 +366,7 @@ export const CustomPost = ({
           isVisible={true}
           backdropOpacity={0.3}
           style={styles.modalContainer}>
-          <View style={styles.shareModal}>
+          <ScrollView style={styles.shareModal}>
             <View style={styles.shareContainer}>
               <TextInput
                 placeholder="Type here..."
@@ -334,13 +389,13 @@ export const CustomPost = ({
                 </CustomButton>
               </View>
             </View>
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
               <Image
                 source={OptionIcon}
                 style={{width: 24, height: 35, tintColor: '#fff'}}
               />
-            </TouchableOpacity>
-          </View>
+            </TouchableOpacity> */}
+          </ScrollView>
         </Modal>
       )}
       <Modal

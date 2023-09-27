@@ -4,7 +4,7 @@ import {Avatar} from 'react-native-paper';
 
 interface Props {
   profileImage: string;
-  username: string;
+  username?: string;
 }
 
 const CustomProfileAvatar = ({profileImage, username}: Props) => {

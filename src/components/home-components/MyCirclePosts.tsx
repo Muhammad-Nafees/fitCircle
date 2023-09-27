@@ -23,10 +23,10 @@ const MyCirclePosts = ({
   loadMoreItems,
   handleCommentButtonPress,
 }: MyCirclePostsProps) => {
-  const renderCustomPost = ({item}: any) => {
+  const renderCustomPost = ({item, index}: any) => {
     return (
       <CustomPost
-        key={item?._id}
+        key={item._id + index}
         post={item}
         handleCommentButtonPress={handleCommentButtonPress}
       />
@@ -37,7 +37,7 @@ const MyCirclePosts = ({
     <FlatList
       data={data}
       renderItem={renderCustomPost}
-      keyExtractor={(item: any) => item._id}
+      keyExtractor={(item: any, index: any) => item._id + index}
       refreshing={isRefreshing}
       onRefresh={handleRefresh}
       ListFooterComponent={

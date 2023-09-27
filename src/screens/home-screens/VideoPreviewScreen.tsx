@@ -200,7 +200,7 @@ export const VideoPreviewScreen = ({
     setThumbnail(null);
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
-      quality: 0.8,
+      quality: 0.9,
     };
     await launchImageLibrary(options, (response: any) => {
       if (response.assets) {
@@ -277,6 +277,7 @@ export const VideoPreviewScreen = ({
           ...(costValue !== 0 && {cost: costValue}),
           ...(thumbnail !== null && {thumbnail: compressedThumbnail}),
         };
+        console.log(reqData,"req")
         const response = await createPostWithVideo(reqData);
         console.log(response?.data, 'from video!');
         navigation.navigate('Home');
@@ -288,7 +289,7 @@ export const VideoPreviewScreen = ({
 
       setIsLoading(false);
     } catch (error: any) {
-      console.log(error?.response.data);
+      console.log(error?.response.data,"FROM VIDEO POST");
       if (error?.response?.data?.message) {
         Toast.show({
           type: 'error',

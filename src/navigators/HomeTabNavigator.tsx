@@ -12,7 +12,6 @@ import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
 
-
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
 
@@ -211,6 +210,7 @@ const HomeTabNavigator = () => {
           tabBarButton: () => null,
         }}
       />
+
       <Tab.Screen
         name="CommentsScreen"
         component={CommentsScreen}
