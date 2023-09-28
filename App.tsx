@@ -1,5 +1,4 @@
 import {NavigationContainer} from '@react-navigation/native';
-import AuthStackNavigator from './src/navigators/AuthStackNavigator';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';

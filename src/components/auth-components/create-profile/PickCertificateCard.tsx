@@ -27,9 +27,9 @@ const PickCertificateCard = ({
   onPress,
 }: Props) => {
   const handleDelete = () => {
-    setSelectedCameraImage('');
+    setSelectedCameraImage(null);
   };
-  return selectedCameraImage == '' ? (
+  return selectedCameraImage == null ? (
     <TouchableOpacity
       style={[styles.container]}
       activeOpacity={0.6}

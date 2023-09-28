@@ -86,13 +86,13 @@ const InterestScreen = ({navigation}: any) => {
             {interests?.length === 0 ? (
               <CustomLoader isStyle={true} />
             ) : (
-              interests?.map((data: any) => {
+              interests?.map((data: any,index:number) => {
                 const isSelected = selectedInterest.some(
                   item => item._id === data._id,
                 );
                 return (
                   <TouchableOpacity
-                    key={data._id}
+                    key={data._id+index+1}
                     style={[
                       styles.itemsInnerContainer,
                       {

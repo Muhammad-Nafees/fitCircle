@@ -1,8 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {IAccountType, IAuth, IUserRole} from '../interfaces/auth.interface';
 import {IUser} from '../interfaces/user.interface';
-import {useSelector} from 'react-redux';
-import {RootState} from './store';
 
 const initialState: IAuth = {
   isAuthenticated: false,

@@ -20,6 +20,8 @@ export interface IUser {
   _id: string;
   email: string;
   phone: string;
+  countryCode: string;
+  phoneCode: string;
   fcmToken: string;
   role: IUserRole;
   isProfileCompleted: boolean;
@@ -56,6 +58,7 @@ export type IPostVisibility = 'Public' | 'Followers' | 'Subscribers';
 export interface IPost {
   user: string;
   text: string;
+  title: string;
   media: FileData;
   mediaType: string;
   thumbnail: null;
@@ -71,4 +74,20 @@ export interface IPost {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IComment {
+  _id: string;
+  user: {
+    _id: string;
+    profileImage: FileData;
+    firstName: string;
+    lastName: string;
+  };
+  post: string;
+  media: FileData[];
+  text: string;
+  createdAt: Date;
+  parent: string;
+  nestedComments: IComment[];
 }

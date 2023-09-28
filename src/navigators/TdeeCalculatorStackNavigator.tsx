@@ -2,8 +2,6 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import UnsuccessfulDialog from '../screens/home-screens/UnsuccessfulDialogScreen';
-import SuccessfulDialog from '../screens/home-screens/SuccessfulDialogScreen';
 import CustomHeader from '../components/shared-components/CustomHeader';
 import {verticalScale} from '../utils/metrics';
 import {TdeeCalculator} from '../screens/dashboard-screens/tdee-calculator-screens/TdeeCalculator';
@@ -45,16 +43,6 @@ const TdeeCalculatorStackNavigator = () => {
       <Stack.Screen
         name="DashboardScreen"
         component={HomeTabNavigator}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SuccessfulDialog"
-        component={SuccessfulDialog}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="UnsuccessfulDialog"
-        component={UnsuccessfulDialog}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

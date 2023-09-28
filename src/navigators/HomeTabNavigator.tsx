@@ -5,7 +5,6 @@ import {TouchableOpacity} from 'react-native';
 import HomeScreen from '../screens/home-screens';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
-import FavoriteDialogScreen from '../screens/home-screens/FavoriteDialogScreen';
 import CommentsScreen from '../screens/home-screens/CommentScreen';
 import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
@@ -23,6 +22,7 @@ import ScheduleStackNavigator from './ScheduleStackNavigator';
 import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
 import SettingsStackNavigator from './SettingsStackNavigator';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
+import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -141,6 +141,7 @@ const HomeTabNavigator = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        unmountOnBlur: true,
         tabBarHideOnKeyboard: true,
         headerShown: false,
         tabBarStyle,
@@ -220,6 +221,7 @@ const HomeTabNavigator = () => {
           tabBarButton: () => null,
         }}
       />
+
       <Tab.Screen
         name="CommentsScreen"
         component={CommentsScreen}

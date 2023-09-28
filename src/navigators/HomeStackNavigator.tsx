@@ -24,6 +24,7 @@ const HomeStackNavigator = () => {
         component={AddPostScreen}
         options={{headerShown: false}}
       />
+
       {/* <Stack.Screen
         name="SuccessfulDialog"
         component={SuccessfulDialog}

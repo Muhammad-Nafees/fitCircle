@@ -27,7 +27,7 @@ const CreateProfile = ({navigation, route}: any) => {
           />
           <ProfilePhotos onSelectProfilePicture={handleSelectProfilePicture} />
         </View>
-        <CreateProfileForm profilePicture={profilePicture} route={route} />
+        <CreateProfileForm profilePicture={profilePicture} />
       </ScrollView>
     </View>
   );

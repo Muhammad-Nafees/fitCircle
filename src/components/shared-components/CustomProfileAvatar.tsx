@@ -2,24 +2,24 @@ import {View, StyleSheet} from 'react-native';
 import {Avatar} from 'react-native-paper';
 
 interface ProfileAvatarProps {
-  profileImageUrl?: any;
-  username?: string | null;
+  profileImage: string;
+  username?: string;
   size?: number;
   avatarTextStyles?: any;
 }
 
 const CustomProfileAvatar = ({
-  profileImageUrl,
+  profileImage,
   username,
   size = 40,
   avatarTextStyles,
 }: ProfileAvatarProps) => {
   return (
     <View>
-      {profileImageUrl ? (
+      {profileImage ? (
         <Avatar.Image
           size={size}
-          source={{uri: profileImageUrl}}
+          source={{uri: profileImage}}
           style={styles.avatarImage}
         />
       ) : (

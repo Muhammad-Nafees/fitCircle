@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from 'react-native';
 import Video from 'react-native-video';
-import {Avatar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {createThumbnail} from 'react-native-create-thumbnail';
 // ---------------------------------------------------------------------//
@@ -20,25 +19,26 @@ const PauseIcon = require('../../../assets/icons/pauseIcon.png');
 const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 const CancelIcon = require('../../../assets/icons/cancel.png');
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
+import {s3bucketReference} from '../../api';
+import {sharePost} from '../../api/home-module';
+import Toast from 'react-native-toast-message';
+import {useFocusEffect} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
-  post: {
-    _id: string;
-    media: string;
-    content?: string;
-    likes: any[];
-    cost: 0;
-    thumbnail?: string;
-    shares: any[];
-    favorites: any[];
-    createdAt: string;
-    user: {
-      profileImageUrl?: string;
-      username: string;
-      email?: string;
-    };
-  };
+  // post: {
+  //   _id: string;
+  //   media: string;
+  //   content?: string;
+  //   likes: any[];
+  //   cost: 0;
+  //   thumbnail?: string;
+  //   shares: any[];
+  //   favorites: any[];
+  //   createdAt: string;
+  // };
+  post: any;
   userId: string | undefined;
   index: number;
   tabBarHeight: any;
@@ -49,48 +49,51 @@ interface ReelsProps {
 
 export const ReelsComponent = ({
   post,
-  userId,
-  index,
   tabBarHeight,
   isProfile = false,
   handleCancelPress,
   handleFavoriteDialog,
 }: ReelsProps) => {
-  const {_id, media, content, user, cost, favorites, thumbnail} = post;
-  const {profileImageUrl, username, email} = user;
-
   const videoRef = useRef<any>(null);
-  const isLocked = cost && cost > 0;
+  const isLocked = post?.cost && post?.cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
   const [play, setPlay] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
-  const [showThumbnail, setShowThumbnail] = useState(thumbnail !== null);
+  const [showThumbnail, setShowThumbnail] = useState(post?.thumbnail !== null);
   const navigation = useNavigation();
   const [videoThumbnail, setVideoThumbnail] = useState<any>();
 
   const fetchThumbnail = async () => {
-    try {
-      const response = await createThumbnail({
-        url: media,
-        timeStamp: 1000,
-        format: 'jpeg',
-      });
-      setVideoThumbnail(response.path);
-    } catch (err) {
-      console.log('err', err);
+    if (post?.thumbnail) {
+      let uri = `${s3bucketReference}/${post.thumbnail}`;
+      setVideoThumbnail(uri);
+    } else {
+      try {
+        const response = await createThumbnail({
+          url: `${s3bucketReference}/${post.media}`,
+          timeStamp: 1000,
+          format: 'jpeg',
+        });
+        setVideoThumbnail(response.path);
+      } catch (err) {
+        console.log('err', err);
+      }
     }
   };
+  console.log(videoThumbnail, 'videothumbnail');
 
-  useEffect(() => {
-    fetchThumbnail();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchThumbnail();
+    }, [post]),
+  );
 
-  useEffect(() => {
-    const isCurrentUserFavorited = favorites.some(
-      favorite => favorite._id === userId,
-    );
-    setIsFavorited(isCurrentUserFavorited);
-  }, [favorites]);
+  // useEffect(() => {
+  //   const isCurrentUserFavorited = favorites.some(
+  //     favorite => favorite._id === userId,
+  //   );
+  //   setIsFavorited(isCurrentUserFavorited);
+  // }, [favorites]);
 
   useEffect(() => {
     let hideButtonTimer: any;
@@ -105,36 +108,37 @@ export const ReelsComponent = ({
     };
   }, [play, showPlayIcon]);
 
-  const onBuffer = () => {
+  const onBuffer = (buffer: any) => {
+    console.log(buffer, 'buffer');
     console.log('onBuffer1');
   };
 
-  const onError = () => {
+  const onError = (error: any) => {
+    console.log(error);
     console.log('onError');
   };
 
   const handleFavoritePress = () => {
-    if (isProfile === true) {
-      handleFavoriteDialog();
-    } else {
+    // if (isProfile === true) {
+    //   handleFavoriteDialog();
+    // } else {
       navigation.navigate('FavoriteDialog' as never);
-    }
+    // }
   };
 
   const handleShareVideo = async () => {
     try {
-      const result = await Share.share({
-        url: media,
+      const response = await sharePost(post._id);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
       });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-        } else {
-        }
-      } else if (result.action === Share.dismissedAction) {
-      }
-    } catch (error) {
-      console.error('Error sharing video:', error);
+    } catch (error: any) {
+      console.log(error?.response, 'from sharing post');
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
     }
   };
 
@@ -146,22 +150,13 @@ export const ReelsComponent = ({
       ]}>
       <View style={[styles.topLeftContent, {padding: 0}]}>
         <View style={[styles.topLeftContent, {left: -15, top: -15}]}>
-          {profileImageUrl ? (
-            <Avatar.Image
-              size={40}
-              source={{uri: profileImageUrl}}
-              style={styles.avatarImage}
-            />
-          ) : (
-            <Avatar.Text
-              size={40}
-              label={username ? username[0].toUpperCase() : 'SA'}
-              style={styles.avatarText}
-            />
-          )}
+          <CustomProfileAvatar
+            profileImage={post?.user?.profileImage as any}
+            username={post?.user?.username}
+          />
           <View style={styles.postTextContainer}>
-            <Text style={styles.postName}>{username}</Text>
-            <Text style={styles.postId}>{`@${username
+            <Text style={styles.postName}>{post?.user?.username}</Text>
+            <Text style={styles.postId}>{`@${post?.user?.username
               ?.toLowerCase()
               ?.replace(/\s/g, '')}`}</Text>
           </View>
@@ -185,10 +180,11 @@ export const ReelsComponent = ({
       {isLocked ? (
         <View style={styles.lockedOverlay}>
           <View style={styles.lockedContainer}>
-            <Text style={styles.lockedText}>{content}</Text>
+            <Text style={styles.lockedText}>{post?.text}</Text>
             <TouchableOpacity style={styles.lockedButtonContainer}>
               <Text style={{color: '#fff'}}>
-                Unlock this video for <Text style={styles.cost}>${cost}</Text>
+                Unlock this video for{' '}
+                <Text style={styles.cost}>${post?.cost}</Text>
               </Text>
               <View style={styles.lockedIconContainer}>
                 <Image source={LockOpenIcon} style={styles.lockIcon} />
@@ -221,7 +217,7 @@ export const ReelsComponent = ({
         resizeMode="cover"
         repeat={true}
         source={{
-          uri: media,
+          uri: `${s3bucketReference}/${post.media}`,
         }}
         style={styles.video}
         paused={!play}
@@ -229,9 +225,10 @@ export const ReelsComponent = ({
         onLoad={() => {
           videoRef.current.seek(0);
         }}
+        useTextureView={true}
       />
       <View style={styles.textContentContainer}>
-        <Text style={styles.textContent}>{content}</Text>
+        <Text style={styles.textContent}>{post?.text}</Text>
       </View>
       <View style={styles.iconContainer}>
         <View style={styles.iconItem}>
@@ -261,7 +258,7 @@ export const ReelsComponent = ({
 const styles = StyleSheet.create({
   container: {
     width: width,
-    backgroundColor: 'black',
+    // backgroundColor: 'transparent',
   },
   topLeftContent: {
     flexDirection: 'row',

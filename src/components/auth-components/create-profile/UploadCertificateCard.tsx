@@ -29,7 +29,7 @@ const UploadCertificate = ({
   const handleDelete = () => {
     setUploadImage('');
   };
-  return uploadImage == '' ? (
+  return uploadImage == null ? (
     <TouchableOpacity
       style={[styles.container]}
       activeOpacity={0.6}

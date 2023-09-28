@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import {
   Text,
   View,
@@ -13,29 +13,54 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  ParamListBase,
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 // ---------------------------------------------------------------------//
 import {RootState} from '../../redux/store';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import NotificationIcon from '../../../assets/icons/NotificationIcon';
 const SearchIcon = require('../../../assets/icons/search.png');
-import {setSelectedPost} from '../../redux/postSlice';
-import {PostsData} from '../dummyData';
+import {
+  IMyCirclePosts,
+  setAllPosts,
+  setPagination,
+  setSelectedPost,
+} from '../../redux/postSlice';
+// import {PostsData} from '../dummyData';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
-import SwiperContainer from '../../components/home-components/SwiperContainer';
-import FlatListContainer from '../../components/home-components/FlatlistContainer';
+import MyCirclePosts from '../../components/home-components/MyCirclePosts';
+import {getPosts, getVideoPosts} from '../../api/home-module';
+import CreatorPosts from '../../components/home-components/CreatorPosts';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
   const [userId, setUserId] = useState<any>(userData?._id);
   const [selectedButton, setSelectedButton] = useState('My Circle');
-  const navigation = useNavigation();
-  const [filteredVideos, setFilteredVideos] = useState([]);
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [fetchedPosts, setFetchedPosts] = useState<any>(PostsData);
   const tabBarHeight = useBottomTabBarHeight();
-  console.log(userData, 'userData');
+  const route = useRoute();
+
+  const [myCircleData, setMycirleData] = useState<any>();
+  const [creatorData, setCreatorData] = useState<any>();
+  const [creatorPage, setCreatorPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [hasMoreCirclePosts, setHasMoreCirclePosts] = useState<boolean>(false);
+  const [hasMoreVideos, setHasMoreVideos] = useState<boolean>(false);
+  const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isFocused = useIsFocused();
+  const selectedPosts = useSelector(
+    (state: RootState) => state.post.selectedPost,
+  );
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -47,28 +72,88 @@ const HomeScreen = () => {
     navigation.navigate('Search' as never);
   };
 
-  const handleCommentButtonPress = (selectedPost: any, userId: any) => {
+  const handleCommentButtonPress = (selectedPost: any, id: string) => {
+    console.log(selectedPost, 'selectedpppp');
     dispatch(setSelectedPost(selectedPost));
-    navigation.navigate('CommentsScreen', {userId});
+    navigation.navigate('CommentsScreen', {id: id});
   };
 
   const handleRefresh = () => {
-    dispatch(setSelectedPost(null));
     setIsRefreshing(true);
+    setPage(1);
   };
-
-  useEffect(() => {
-    const filteredData = filteredVideos.sort(
-      (a: any, b: any) =>
-        new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
-    );
-    setFilteredVideos(filteredData);
-  }, [filteredVideos]);
 
   const handleButtonPress = (button: string) => {
     setSelectedButton(button);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      console.log('useEffect running');
+      const fetchMyCirclePosts = async () => {
+        setIsLoading(true);
+        try {
+          const response = await getPosts(page, limit);
+          const data = response?.data?.data;
+          if (myCircleData && isLoadMore) {
+            setMycirleData((prevData: any) => {
+              return [...prevData, ...data?.posts];
+            });
+          } else {
+            setMycirleData(data?.posts);
+          }
+          setHasMoreCirclePosts(data?.pagination?.hasNextPage);
+          // dispatch(setPagination(data?.pagination));
+          setIsLoadMore(false);
+          setIsRefreshing(false);
+        } catch (error: any) {
+          console.log(error, 'Error fetching my circle posts!');
+        }
+        setIsLoading(false);
+      };
+      fetchMyCirclePosts();
+    }, [page, isRefreshing, isFocused]),
+  );
+
+  const loadMoreItems = () => {
+    if (hasMoreCirclePosts) {
+      setIsLoadMore(true);
+      setPage((prevPage: number) => prevPage + 1);
+    }
+    return;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchVideos = async () => {
+        setIsLoading(true);
+        try {
+          const response = await getVideoPosts(creatorPage, limit);
+          const data = response?.data?.data;
+          if (creatorData) {
+            setCreatorData((prevData: any) => {
+              return [...prevData, ...data?.posts];
+            });
+          } else {
+            setCreatorData(data?.posts);
+          }
+          setHasMoreVideos(data?.pagination?.hasNextPage);
+          // dispatch(setPagination(data?.pagination));
+        } catch (error: any) {
+          console.log(error, 'Error fetching my circle posts!');
+        }
+        setIsLoading(false);
+      };
+      fetchVideos();
+    }, [page]),
+  );
+
+  const loadMoreVideos = () => {
+    if (hasMoreCirclePosts) {
+      setCreatorPage((prevPage: number) => prevPage + 1);
+    }
+    return;
+  };
   return (
     <View style={styles.container}>
       <Animated.View
@@ -78,7 +163,7 @@ const HomeScreen = () => {
             onPress={() => navigation.navigate('Profile' as never)}>
             <CustomProfileAvatar
               username={userData?.username as string}
-              profileImageUrl={userData?.profileImage as any}
+              profileImage={userData?.profileImage as any}
             />
           </TouchableOpacity>
           <View style={styles.textinputContainer}>
@@ -126,25 +211,29 @@ const HomeScreen = () => {
         </View>
       </Animated.View>
       <View style={styles.bottomContainer}>
-        {isRefreshing ? (
-          <ActivityIndicator size="large" color="#ffffff" />
-        ) : selectedButton === 'My Circle' ? (
-          <FlatListContainer
-            data={fetchedPosts}
-            userId={userId}
-            isRefreshing={isRefreshing}
-            handleRefresh={handleRefresh}
-            handleCommentButtonPress={handleCommentButtonPress}
-          />
-        ) : (
-          <SwiperContainer
-            data={filteredVideos}
-            userId={userId}
-            tabBarHeight={tabBarHeight}
-            isProfile={true}
-            handleRefresh={handleRefresh}
-          />
-        )}
+        {
+          // isRefreshing ? (
+          //   <ActivityIndicator size="large" color="#ffffff" />
+          // ) :
+          selectedButton === 'My Circle' ? (
+            <MyCirclePosts
+              data={myCircleData}
+              isLoading={isLoading}
+              isRefreshing={isRefreshing}
+              handleRefresh={handleRefresh}
+              loadMoreItems={loadMoreItems}
+              handleCommentButtonPress={handleCommentButtonPress}
+            />
+          ) : (
+            <CreatorPosts
+              data={creatorData}
+              userId={userId}
+              tabBarHeight={tabBarHeight}
+              isProfile={true}
+              handleRefresh={handleRefresh}
+            />
+          )
+        }
       </View>
     </View>
   );

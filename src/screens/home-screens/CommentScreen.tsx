@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   ScrollView,
   View,
@@ -8,16 +8,17 @@ import {
   TouchableOpacity,
   TextInput,
   BackHandler,
+  Text,
+  ActivityIndicator,
 } from 'react-native';
-import {Comment} from '../../components/home-components/Comment';
 import {CustomPost} from '../../components/home-components/CustomPost';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import {useFocusEffect} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import Modal from 'react-native-modal';
 import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {Image as ImageCompress} from 'react-native-compressor';
 import {
   horizontalScale,
   moderateScale,
@@ -29,6 +30,13 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
+import {addComment, getAllCommentsByPosts} from '../../api/home-module';
+import NoComment from './NoComment';
+import {stat} from 'react-native-fs';
+import Comment from '../../components/home-components/Comment';
+import {FileData, IComment} from '../../interfaces/user.interface';
+import {setCommentCount} from '../../redux/postSlice';
+import Toast from 'react-native-toast-message';
 const SendIcon = require('../../../assets/icons/send.png');
 
 const width = Dimensions.get('window').width;
@@ -37,55 +45,109 @@ const CommentsScreen = ({route, navigation}: any) => {
   const selectedPost = useSelector(
     (state: RootState) => state.post.selectedPost,
   );
-  const {userId} = route.params;
   const profileScreen = route?.params?.profileScreen;
-  const [comments, setComments] = useState([]);
-  const [commentsCount, setCommentsCount] = useState('Loading');
+  const [comments, setComments] = useState<IComment[]>();
+  const [commentsCount, setCommentsCount] = useState<null | number>(0);
   const [loading, setLoading] = useState(false);
   const [commentScreenActive, setCommentScreenActive] = useState(false);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
   const [media, setMedia] = useState(null);
   const [commentText, setCommentText] = useState('');
-  const [mediaUri, setMediaUri] = useState(null);
-  const [availableToComment, setAvailableToComment] = useState(false);
+  const [mediaUri, setMediaUri] = useState<FileData | null | any>(null);
   const [isReplying, setIsReplying] = useState(false);
+  const [replyId, setReplyId] = useState<string>('');
+  const inputRef = useRef<any>();
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(100);
+  const [hasMoreComments, setHasMoreComments] = useState<boolean>(false);
+  const [loadMore, setLoadMore] = useState<boolean>(false);
 
-  const handlePhotoButtonPress = () => {
+  const handlePhotoButtonPress = async () => {
     setMediaUri(null);
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
-      quality: 1,
-      maxWidth: 500,
-      maxHeight: 500,
+      quality: 0.8,
     };
-
-    launchImageLibrary(options, (response: any) => {
-      if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
+    await launchImageLibrary(options, (response: any) => {
+      if (response.assets) {
+        console.log(response?.assets, 'assets');
+        setMediaUri({
+          uri: response.assets[0].uri,
+          name: response.assets[0].fileName,
+          type: response.assets[0].type,
+        });
       }
     });
   };
+  console.log(selectedPost,"from ccomment")
 
   useFocusEffect(
-    React.useCallback(() => {
-      setCommentsCount('Loading');
-      setCommentScreenActive(true);
-      setLoading(true);
-    }, [selectedPost]),
+    useCallback(() => {
+      setPage(1);
+    }, [comments]),
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      const getComments = async () => {
+        setLoading(true);
+        try {
+          const response = await getAllCommentsByPosts(
+            selectedPost._id as string,
+            limit,
+            page,
+          );
+          console.log(route.params.id, 'id');
+          const data = response?.data?.data;
+          const sortedData = data?.comments.sort((sortA: any, sortB: any) => {
+            const dateA = new Date(sortA.createdAt);
+            const dateB = new Date(sortB.createdAt);
+            return dateA - dateB;
+          });
+
+          if (loadMore) {
+            setComments((prev: any) => [...sortedData, ...prev]);
+          } else {
+            setComments(sortedData);
+          }
+          dispatch(setCommentCount(data?.pagination?.totalItems));
+          setCommentsCount(data?.pagination?.totalItems);
+          setHasMoreComments(data?.pagination?.hasNextPage);
+        } catch (error: any) {
+          console.log('errorfrom fetching comments', error);
+        }
+        setLoading(false);
+      };
+      getComments();
+    }, [isLoading, route.params.id, page, limit]),
+  );
+
+  const handleLoadMoreComments = () => {
+    if (hasMoreComments) {
+      setLoadMore(true);
+      setPage(prevPage => prevPage + 1);
+    }
+  };
+
   useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      handleBackPress,
+      backAction,
     );
 
-    return () => {
-      backHandler.remove();
-    };
-  }, [comments]);
+    return () => backHandler.remove();
+  }, [navigation, comments]);
 
   const handleImageOpen = (imageUri: any) => {
+    console.log(mediaUri, 'media');
     setMedia(imageUri);
     setImageFullscreen(true);
   };
@@ -94,62 +156,114 @@ const CommentsScreen = ({route, navigation}: any) => {
     setImageFullscreen(false);
     setMedia(null);
   };
-
-  const handleBackPress = async () => {
-    setCommentScreenActive(false);
-    await setComments([]);
-    if (profileScreen) {
-      navigation.navigate('Profile');
-    } else {
-      navigation.goBack();
+  const handleAddComment = async () => {
+    if (commentText == '') {
+      Toast.show({
+        type: 'error',
+        text1: `Add a comment message!`,
+      });
+      return;
     }
-    return true;
+
+    try {
+      let compressedImage = null;
+      if (mediaUri) {
+        const result = await ImageCompress.compress(mediaUri.uri, {
+          quality: 0.8,
+        });
+        compressedImage = {
+          name: mediaUri?.name as string,
+          type: mediaUri?.type as string,
+          uri: result,
+        };
+      }
+      const reqData: Partial<IComment> = {
+        post: selectedPost?._id,
+        text: commentText,
+        media: mediaUri || compressedImage,
+        ...(replyId !== '' && {parent: replyId}),
+      };
+      console.log(reqData, 'req');
+      setIsLoading(true);
+      const response = await addComment(reqData);
+      const data = response?.data.data;
+      console.log(data, 'response from add comment');
+    } catch (error: any) {
+      console.log(error?.response?.data, 'error from add comment');
+    }
+    setIsLoading(false);
+    setMediaUri(null);
+    setCommentText('');
+    setIsReplying(false);
+    setReplyId('');
   };
 
+  const handleReply = (id: string) => {
+    setReplyId(id);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    setIsReplying(true);
+  };
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
+  // const scrollViewRef = useRef<any>();
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (scrollViewRef.current) {
+  //       scrollViewRef.current.scrollToEnd({animated: true});
+  //     }
+  //   }, [comments]),
+  // );
+
   return (
-    <View style={{flex: 1, justifyContent: 'space-between'}}>
-      {selectedPost !== null && (
+    <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
+      <View style={{flex: 1, justifyContent: 'space-between'}}>
         <View style={{backgroundColor: '#353535', zIndex: -1}}>
           <CustomPost
             post={selectedPost}
-            countComment={commentsCount}
-            userId={userId}
+            commentCount={commentsCount}
             isCommentsScreenActive={commentScreenActive}
-            handleBackPress={handleBackPress}
+            // handleBackPress={handleBackPress}
+            isLoading={isLoading}
+            heightFull={!selectedPost?.media}
           />
         </View>
-      )}
-      <KeyboardAwareScrollView>
-        <ScrollView>
-          {loading ? (
-            <View>
-              <CustomLoader />
-            </View>
-          ) : (
-            <View
-              style={{
-                height: '100%',
-                width: '100%',
-              }}>
-              <Comment
-                available={availableToComment}
-                setAvailable={setAvailableToComment}
-                commentTxt={commentText}
-                media={mediaUri}
-                comments={comments}
-                setmedia={setMediaUri}
-                setcomment={setCommentText}
-                // handleCommentPostSubmit={handleCommentPostPress}
-                handleBackPress={handleBackPress}
-                // handleReplyPostPress={handleReplyPostPress}
-                handleImageOpen={handleImageOpen}
-                setIsReplying={setIsReplying}
-                isReplying={isReplying}
+        <View>
+          <ScrollView
+            style={{
+              height: verticalScale(350),
+              width: '100%',
+            }}
+            nestedScrollEnabled={true}
+            keyboardShouldPersistTaps="always">
+            {
+              // loading ? (
+              //   <CustomLoader isStyle={true} extraStyles={{marginTop: 80}} />
+              comments?.length !== 0 ? (
+                <Comment
+                  allComments={comments}
+                  commentsCount={commentsCount}
+                  onLoadComments={handleLoadMoreComments}
+                  hasMoreComments={hasMoreComments}
+                  onReply={handleReply}
+                />
+              ) : (
+                <NoComment />
+              )
+            }
+            {comments && comments.length > 0 ? (
+              <View
+                style={{
+                  height: comments.length < 3 ? 120 : 70,
+                  backgroundColor: '#ffffff',
+                }}
               />
-              <View style={{height: 120}} />
-            </View>
-          )}
-        </ScrollView>
+            ) : null}
+          </ScrollView>
+        </View>
         <Modal
           onBackButtonPress={() => setImageFullscreen(false)}
           isVisible={isImageFullscreen}
@@ -168,63 +282,70 @@ const CommentsScreen = ({route, navigation}: any) => {
             />
           </TouchableOpacity>
         </Modal>
-      </KeyboardAwareScrollView>
-      <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
-        {mediaUri && !isReplying && (
-          <CustomAttachmentDialog
-            message="Photo Attached"
-            showCancel={true}
-            onCancel={() => setMediaUri(null)}
-          />
-        )}
-        {isReplying && !mediaUri && (
-          <CustomAttachmentDialog
-            message="Replying"
-            showCancel={true}
-            onCancel={() => setIsReplying(false)}
-          />
-        )}
-        {isReplying && mediaUri && (
-          <CustomAttachmentDialog
-            message="Photo Attached in Reply"
-            showCancel={true}
-            onCancel={() => {
-              setIsReplying(false);
-              setMediaUri(null);
-            }}
-          />
-        )}
-        <View style={styles.inputContainer}>
-          <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor: '#00abd2',
-              width: '85%',
-            }}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Message"
-              placeholderTextColor="#fff"
-              value={commentText}
-              onChangeText={text => setCommentText(text)}
+        <View
+          style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
+          {mediaUri && !isReplying && (
+            <CustomAttachmentDialog
+              message="Photo Attached"
+              showCancel={true}
+              onCancel={() => setMediaUri(null)}
             />
+          )}
+          {isReplying && (
+            <CustomAttachmentDialog
+              message="Replying"
+              showCancel={true}
+              onCancel={() => setIsReplying(false)}
+            />
+          )}
+          {isReplying && mediaUri && (
+            <CustomAttachmentDialog
+              message="Photo Attached in Reply"
+              showCancel={true}
+              onCancel={() => {
+                setIsReplying(false);
+                setMediaUri(null);
+              }}
+            />
+          )}
+          <View style={styles.inputContainer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                backgroundColor: '#00abd2',
+                width: '85%',
+              }}>
+              <TextInput
+                style={styles.textInput}
+                ref={inputRef}
+                placeholder="Message"
+                placeholderTextColor="#fff"
+                value={commentText}
+                onChangeText={text => setCommentText(text)}
+              />
+              <TouchableOpacity
+                style={styles.photoButton}
+                onPress={handlePhotoButtonPress}>
+                <CreatePostCommentSvgIcon />
+              </TouchableOpacity>
+            </View>
+
             <TouchableOpacity
-              style={styles.photoButton}
-              onPress={handlePhotoButtonPress}>
-              <CreatePostCommentSvgIcon />
+              style={styles.commentButton}
+              onPress={handleAddComment}>
+              {isLoading ? (
+                <CustomLoader />
+              ) : (
+                <Image
+                  source={SendIcon}
+                  style={{width: 20, height: 20, tintColor: '#fff'}}
+                />
+              )}
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.commentButton}
-            onPress={() => setAvailableToComment(prevState => !prevState)}>
-            <Image
-              source={SendIcon}
-              style={{width: 20, height: 20, tintColor: '#fff'}}
-            />
-          </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -275,6 +396,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: horizontalScale(13),
     opacity: 0.8,
+  },
+  cancelIconContainer: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
+    zIndex: 10,
+  },
+  cancelIcon: {
+    width: horizontalScale(24),
+    height: verticalScale(24),
+    tintColor: '#000',
   },
 });
 

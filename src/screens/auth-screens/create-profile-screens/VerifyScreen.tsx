@@ -101,19 +101,19 @@ const VerifyScreen = ({navigation}: any) => {
         };
 
         const response = await updateProfile(reqUserData as IUser);
-        const data = response?.data?.data;
-        // dispatch(setuserRole(data?.user.role));
+        const data = response?.data;
+        console.log(data, 'from create prof');
+        dispatch(setuserRole(data?.data?.role));
         dispatch(authenticate(true));
-        dispatch(setUserData(data?.user));
-
+        dispatch(setUserData(data?.data));
         // dispatch(setAccessToken(data?.accessToken));
         // dispatch(setRefreshToken(data?.refreshToken));
+        navigation.navigate('Home');
 
         Toast.show({
           type: 'success',
           text1: 'Profile Created Successfully!',
         });
-        navigation.navigate('HomeScreen');
       } catch (error: any) {
         console.log(error.response.data, 'error');
         Toast.show({

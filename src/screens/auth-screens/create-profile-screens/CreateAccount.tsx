@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -66,18 +66,18 @@ const CreateAccount = ({navigation, route}: any) => {
     try {
       const response = await register({
         ...reqData,
-        phone: `+${phoneCode}${values.phone}`,
+        phone: `${values.phone}`,
+        phoneCode: `+${phoneCode}`,
+        countryCode: getCode ? getCode : countryCode,
         role: userRole,
         fcmToken: 'abcabsdflskdjflskdj',
       });
       const data = response?.data.data;
+      console.log(data.user);
       dispatch(setUserData(data.user));
       dispatch(setAccessToken(data?.accessToken));
       dispatch(setRefreshToken(data?.refreshToken));
-      navigation.navigate('CreateProfile', {
-        phoneCode: phoneCode,
-        countryCode: getCode,
-      });
+      navigation.navigate('CreateProfile');
       Toast.show({
         type: 'success',
         text1: `${response?.data.message}`,

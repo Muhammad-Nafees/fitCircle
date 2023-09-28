@@ -4,12 +4,16 @@ import {verticalScale} from '../../utils/metrics';
 
 interface Props {
   isStyle?: boolean;
+  extraStyles?: any;
 }
 
-const CustomLoader = ({isStyle}: Props) => {
+const CustomLoader = ({isStyle, extraStyles}: Props) => {
   return (
     <ActivityIndicator
-      style={[isStyle ? styles.container : {paddingTop: verticalScale(3)}]}
+      style={[
+        isStyle ? styles.container : {paddingTop: verticalScale(3)},
+        extraStyles,
+      ]}
     />
   );
 };

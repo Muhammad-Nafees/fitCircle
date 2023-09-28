@@ -9,9 +9,10 @@ export type AuthStackParamList = {
   HomeScreen: any;
   ForgetPassword: any;
   SigninScreenTwo: any;
-  Search: any
+  Search: any;
   CommentsScreen: any;
-  Profile: any
+  Profile: any;
+  commentsScreen: any;
 
   // Add other routes here...
 };
