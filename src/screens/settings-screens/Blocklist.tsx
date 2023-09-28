@@ -2,7 +2,7 @@ import {useState} from 'react';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {verticalScale} from '../../utils/metrics';
 
 export const BlocklistScreen = () => {
   const dummyUserData = [

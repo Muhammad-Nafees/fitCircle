@@ -8,7 +8,6 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
-
 import Modal from 'react-native-modal';
 // -----------------------------------------------------------------------------//
 import {horizontalScale, verticalScale} from '../../utils/metrics';
@@ -17,9 +16,9 @@ const ArrowBack = require('../../../assets/icons/arrow-back.png');
 const SearchIcon = require('../../../assets/icons/search.png');
 import {messageDummyData} from '../dummyData';
 import {
-  BlockDeleteModal,
-  SuccessModal,
-} from '../../components/message-components/MessageOneModals';
+  CustomConfirmationModal,
+  CustomOutputModal,
+} from '../../components/shared-components/CustomModals';
 
 export const MessagesOne = ({navigation}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -91,19 +90,28 @@ export const MessagesOne = ({navigation}: any) => {
         isVisible={isModalVisible}
         style={styles.modal}
         onBackButtonPress={() => setIsModalVisible(false)}>
-        <BlockDeleteModal
-          onPress={() => setIsModalVisible(false)}
-          handleDeleteUser={handleDeleteUser}
-          actionType={actionType}
+        <CustomConfirmationModal
+          confirmText="Return"
+          cancelText={actionType === 'Blocked' ? 'Block' : 'Delete'}
+          modalHeading="Please Confirm"
+          modalText={`Are you sure you want to ${
+            actionType === 'Blocked' ? 'Block' : 'Delete'
+          } this user?`}
+          highlightedWord={actionType === 'Blocked' ? 'Block' : 'Delete'}
+          onConfirm={() => setIsModalVisible(false)}
+          onCancel={handleDeleteUser}
+          confirmColor="rgba(32, 128, 183, 1)"
+          cancelColor="rgba(220, 77, 77, 1)"
         />
       </Modal>
       <Modal
         isVisible={removeModal}
         style={styles.modal}
         onBackButtonPress={() => setRemoveModal(false)}>
-        <SuccessModal
+        <CustomOutputModal
+          type={actionType === 'Blocked' ? 'success' : 'failed'}
+          modalText={actionType === 'Blocked' ? 'Blocked' : 'Deleted'}
           onPress={() => setRemoveModal(false)}
-          actionType={actionType}
         />
       </Modal>
     </View>

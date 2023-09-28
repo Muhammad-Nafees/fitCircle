@@ -1,4 +1,5 @@
 import {View, Text, StyleSheet} from 'react-native';
+// --------------------------------------------------------------------------------------//
 import CustomToggleButton from '../../components/settings-components/CustomToggleButton';
 
 export const PrivacySettingsScreen = () => {

@@ -1,6 +1,7 @@
 import {StyleSheet, View, Text, FlatList} from 'react-native';
-import CustomSettingTransaction from '../../components/settings-components/CustomSettingTransaction';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+// ----------------------------------------------------------------------------------------------------//
+import CustomSettingTransaction from '../../components/settings-components/CustomSettingTransaction';
 import {dummyTransactions} from '../dummyData';
 
 export const SettingsTransactionScreen = ({navigation}: any) => {

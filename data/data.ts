@@ -152,9 +152,4 @@ export const MUSIC_LIST = [
   {id: 'id7', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
   {id: 'id8', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
   {id: 'id9', name: 'Orb', singerName: 'Ichika Nito', file: audio1},
-<<<<<<< HEAD
-
-  // Add more music options here
-=======
->>>>>>> origin/dev
 ];

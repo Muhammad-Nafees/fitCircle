@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import Toggle from 'react-native-toggle-element';
+//----------------------------------------------------------------------------------------//
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import LogoutButton from '../../components/settings-components/LogoutButton';
-import Toggle from 'react-native-toggle-element';
 import {settingsData} from '../../../data/settingsData';
 
 export const SettingsOne = ({navigation}: any) => {
@@ -54,7 +55,7 @@ export const SettingsOne = ({navigation}: any) => {
           }}
         />
       ) : (
-        <ArrowForward width="15" height="15" />
+        <ArrowForward widthAndHeight={18} />
       )}
     </TouchableOpacity>
   );

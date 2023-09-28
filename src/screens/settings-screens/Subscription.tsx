@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/AntDesign';
+// ----------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
 const backgroundImage = require('../../../assets/images/backgroundImage.jpg');
 

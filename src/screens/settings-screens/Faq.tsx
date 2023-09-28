@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+// ----------------------------------------------------------------//
 import {questionsAndAnswers} from '../dummyData';
 
 export const FaqScreen = () => {

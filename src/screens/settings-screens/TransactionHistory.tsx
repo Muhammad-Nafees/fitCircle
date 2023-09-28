@@ -1,4 +1,5 @@
 import {View, Text} from 'react-native';
+// ----------------------------------------------------------------//
 import Transaction from '../dashboard-screens/Transaction';
 
 export const TransactionHistoryScreen = ({route}: any) => {

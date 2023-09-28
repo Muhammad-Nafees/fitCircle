@@ -13,7 +13,7 @@ import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 // ----------------------------------------------------------------------------------------------//
 import {RootState} from '../../redux/store';
 import {CustomPost} from '../../components/home-components/CustomPost';
-import {Favorites} from '../../components/home-components/Favourites';
+import {Favorites} from '../../components/profile-components/Favourites';
 import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
 import {setSelectedPost} from '../../redux/postSlice';
 import CustomVideo from '../../components/profile-components/CustomVideo';
@@ -33,13 +33,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
   const [communities, setCommunities] = useState(communitiesData);
   const tabBarHeight = useBottomTabBarHeight();
-  const [firstName, setFirstName] = useState<string | undefined>(
-    userData?.firstName,
-  );
   let isTrainerView = route.params?.isTrainerView || false;
-  const [lastName, setLastName] = useState<string | undefined>(
-    userData?.lastName,
-  );
   const [following, setFollowing] = useState(followingData);
   const [followers, setFollowers] = useState(followersData);
   const [selectedOption, setSelectedOption] = useState<string>('Feed');
