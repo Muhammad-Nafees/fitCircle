@@ -31,7 +31,7 @@ import {
   setPagination,
   setSelectedPost,
 } from '../../redux/postSlice';
-import {PostsData} from '../dummyData';
+// import {PostsData} from '../dummyData';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import MyCirclePosts from '../../components/home-components/MyCirclePosts';
 import {getPosts, getVideoPosts} from '../../api/home-module';
@@ -46,6 +46,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const tabBarHeight = useBottomTabBarHeight();
+  const route = useRoute();
 
   const [myCircleData, setMycirleData] = useState<any>();
   const [creatorData, setCreatorData] = useState<any>();
@@ -57,6 +58,9 @@ const HomeScreen = () => {
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isFocused = useIsFocused();
+  const selectedPosts = useSelector(
+    (state: RootState) => state.post.selectedPost,
+  );
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -69,6 +73,7 @@ const HomeScreen = () => {
   };
 
   const handleCommentButtonPress = (selectedPost: any, id: string) => {
+    console.log(selectedPost, 'selectedpppp');
     dispatch(setSelectedPost(selectedPost));
     navigation.navigate('CommentsScreen', {id: id});
   };

@@ -22,7 +22,6 @@ import PhoneInput from 'react-native-phone-number-input';
 
 interface Props {
   profilePicture: any;
-  route?: any;
 }
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -30,7 +29,7 @@ type NavigationProp = NativeStackNavigationProp<
   'UploadCertificate'
 >;
 
-const CreateProfileForm = ({profilePicture, route}: Props) => {
+const CreateProfileForm = ({profilePicture}: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
   const userData = useSelector((state: RootState) => state.auth.user);
@@ -118,7 +117,6 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
   };
 
   const getCode = phoneInput.current?.getCountryCode();
-  console.log(getCode, 'code');
 
   const handleSubmit = async (values: Partial<IUser>) => {
     if (isError) {
@@ -191,7 +189,7 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
         setFieldError,
       }) => (
         <>
-          <View style={[styles.formContainer, {marginTop: verticalScale(35)}]}>
+          <View style={[styles.formContainer, {marginTop: verticalScale(0)}]}>
             <CustomInput
               label="First Name"
               placeholder="Enter your first name"
@@ -239,20 +237,22 @@ const CreateProfileForm = ({profilePicture, route}: Props) => {
               setFieldError={setFieldError}
               fieldName="bio"
             />
-            <CustomPhoneInput
-              value={userData?.phone}
-              // error={errors.phone}
-              touched={touched.phone}
-              handleChange={handleChange('phone')}
-              setFieldValue={setFieldValue}
-              phoneInput={phoneInput}
-              setIsError={setIsError}
-              setFieldError={setFieldError}
-              isError={isError}
-              setPhoneCode={setPhoneCode}
-              countryCode={userData?.countryCode}
-              isDisable={true}
-            />
+            {userRole == 'user' && (
+              <CustomPhoneInput
+                value={userData?.phone}
+                error={errors.phone}
+                touched={touched.phone}
+                handleChange={handleChange('phone')}
+                setFieldValue={setFieldValue}
+                phoneInput={phoneInput}
+                setIsError={setIsError}
+                setFieldError={setFieldError}
+                isError={isError}
+                setPhoneCode={setPhoneCode}
+                countryCode={userData?.countryCode}
+                disabled={true}
+              />
+            )}
             <CustomSelect
               label="Country"
               selectedValue={values.country}
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    marginTop: verticalScale(100),
+    marginTop: verticalScale(35),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
   },

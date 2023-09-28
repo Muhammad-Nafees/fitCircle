@@ -17,14 +17,14 @@ interface Props {
   error?: string;
   touched?: boolean;
   handleChange: (number: string) => void;
-  phoneInput: any;
+  phoneInput?: any;
   isError?: any;
   setIsError?: any;
   setPhoneCode: (code: string) => void;
   setFieldError?: any;
   countryCode?: any;
   placeholder?: string;
-  isDisable?: boolean;
+  disabled?: boolean;
 }
 
 const CustomPhoneInput = ({
@@ -41,7 +41,7 @@ const CustomPhoneInput = ({
   setFieldError,
   countryCode,
   placeholder,
-  isDisable,
+  disabled = false,
 }: Props) => {
   const handleCountryChange = () => {
     phoneInput.current?.setState({number: ''});
@@ -66,7 +66,7 @@ const CustomPhoneInput = ({
           <PhoneInput
             ref={phoneInput}
             placeholder={placeholder}
-            disabled={isDisable ? true : false}
+            disabled={disabled}
             defaultCode={countryCode === undefined ? 'US' : countryCode}
             textInputStyle={{
               height: 20,

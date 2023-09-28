@@ -32,9 +32,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {s3bucketReference} from '../../api';
 import {likePost, sharePost} from '../../api/home-module';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {cleanSingle} from 'react-native-image-crop-picker';
+import {setSelectedPost} from '../../redux/postSlice';
 
 const Dot = require('../../../assets/icons/dot.png');
 
@@ -64,6 +65,7 @@ export const CustomPost = ({
 
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [likesCount, setLikesCount] = useState(post?.likes?.length);
+  const [likes,setLikes] = useState<number | null>(null);
   const [commentsCount, setCommentsCount] = useState<number | null>(0);
   const [shareText, setShareText] = useState('');
   const [isLiked, setIsLiked] = useState(post?.likedByMe);
@@ -72,6 +74,7 @@ export const CustomPost = ({
   const dropdownOptions =
     post?.user?._id === post?.user?._id ? ['Edit', 'Delete'] : ['Flag'];
   const isLocked = post?.cost && post?.cost > 0;
+  const dispatch = useDispatch();
 
   // useEffect(() => {
   //   const isCurrentUserLiked = likes.some(like => like.user._id === userId);
@@ -80,12 +83,7 @@ export const CustomPost = ({
 
   useFocusEffect(
     useCallback(() => {
-      // console.log(commentsLength,"comssmen")
-      // if (commentsLength !== 0) {
-      //   setCommentsCount(commentsLength);
-      // } else {
       if (post && commentCount) {
-        console.log(commentCount);
         setCommentsCount(commentCount);
       }
       if (post && !commentCount) {
@@ -147,15 +145,22 @@ export const CustomPost = ({
     }
   };
 
+  // useFocusEffect(useCallback(() => {
+  //   console.log(selectedP)
+  // }, [isLiked]));
+
   const handleLikeButtonPress = async () => {
     setIsLiked(!isLiked);
     try {
       const response = await likePost(post._id);
-      console.log(response.data, 'from likeeeeee');
+      const data = response?.data.data;
+      // setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
+      setLikesCount(data.likes.length);
+      setSelectedPost(data);
+      // setLikes(data?.likes);
     } catch (error: any) {
       console.log(error?.response, 'error from likepost!');
     }
-    setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
   };
 
   const handleShareModal = () => {
@@ -284,7 +289,7 @@ export const CustomPost = ({
               <Text
                 style={[
                   styles.contentText,
-                  {fontWeight: '600',fontSize:16, paddingBottom: 20},
+                  {fontWeight: '600', fontSize: 16, paddingBottom: 20},
                 ]}>
                 {post?.title}
               </Text>

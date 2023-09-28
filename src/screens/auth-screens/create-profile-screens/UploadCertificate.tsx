@@ -25,15 +25,20 @@ import UploadCertificateCard from '../../../components/auth-components/create-pr
 import ImageCard from '../../../components/auth-components/create-profile/ImageCard';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
-import {IUser} from '../../../interfaces/user.interface';
+import {FileData, IUser} from '../../../interfaces/user.interface';
 import {setUserData} from '../../../redux/authSlice';
 
 const UploadCertificate = ({navigation}: any) => {
-  const [selectedCameraImage, setSelectedCameraImage] = useState('');
-  const [uploadImage, setUploadImage] = useState<any>('');
-  const [addMoreImages, setAddMoreImages] = useState<any>([]);
+  const [selectedCameraImage, setSelectedCameraImage] =
+    useState<FileData | null>(null);
+  const [uploadImage, setUploadImage] = useState<FileData | null | any>(null);
+  const [addMoreImages, setAddMoreImages] = useState<FileData[] | null | any>(
+    null,
+  );
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData?.certificates, 'certifcates!');
+  const [certificateImages, setCertificateImages] = useState<
+    FileData[] | null | any
+  >(null);
   const dispatch = useDispatch();
 
   const handleNavigate = () => {
@@ -68,16 +73,11 @@ const UploadCertificate = ({navigation}: any) => {
           .then((image: any) => {
             if (image.path) {
               console.log(image, 'image');
-              setSelectedCameraImage(image.path);
-              const partialUserData: Partial<IUser> = {
-                ...previousUserData,
-                certificates: previousUserData?.certificates.concat({
-                  uri: image.path,
-                  name: 'camera',
-                  type: image.mime,
-                }),
-              };
-              dispatch(setUserData({...partialUserData} as IUser));
+              setSelectedCameraImage({
+                uri: image.path,
+                name: 'camera',
+                type: image.mime,
+              });
             }
           })
           .catch((error: any) => {
@@ -89,39 +89,50 @@ const UploadCertificate = ({navigation}: any) => {
     } else if (type == 'upload') {
       await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
-          setUploadImage(response?.assets[0].uri);
-          const partialUserData: Partial<IUser> = {
-            ...previousUserData,
-            certificates: previousUserData?.certificates.concat({
-              uri: response.assets[0].uri,
-              name: response.assets[0].fileName,
-              type: response.assets[0].type,
-            }),
-          };
-          dispatch(setUserData({...partialUserData} as IUser));
+          setUploadImage({
+            uri: response.assets[0].uri,
+            name: response.assets[0].fileName,
+            type: response.assets[0].type,
+          });
         }
       });
     } else {
       await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
-          setAddMoreImages((prev: any) => [...prev, response?.assets[0].uri]);
-          const partialUserData: Partial<IUser> = {
-            ...previousUserData,
-            certificates: previousUserData?.certificates.concat({
+          setAddMoreImages((prev: FileData[] | null) => [
+            ...(prev || []),
+            {
               uri: response.assets[0].uri,
               name: response.assets[0].fileName,
               type: response.assets[0].type,
-            }),
-          };
-          dispatch(setUserData({...partialUserData} as IUser));
+            },
+          ]);
         }
       });
     }
   };
 
-  const handleDelete = (img: string) => {
-    setAddMoreImages(addMoreImages.filter((image: string) => image !== img));
-    
+  const handleDelete = (img: any) => {
+    const filterImages = addMoreImages?.filter(
+      (image: any) => image.uri !== img.uri,
+    );
+    setAddMoreImages(filterImages);
+  };
+  const handleSubmit = () => {
+    const combinedImages = [
+      ...(selectedCameraImage ? [selectedCameraImage] : []),
+      ...(uploadImage ? [uploadImage] : []),
+      ...(addMoreImages ? [addMoreImages] : []),
+    ].flat();
+
+    setCertificateImages(combinedImages);
+
+    const partialUserData: Partial<IUser> = {
+      ...previousUserData,
+      certificates: certificateImages,
+    };
+    dispatch(setUserData({...partialUserData} as IUser));
+    navigation.navigate('CertificateVerified');
   };
 
   return (
@@ -142,27 +153,27 @@ const UploadCertificate = ({navigation}: any) => {
           <PickCertificateCard
             iconName="camera-outline"
             text="camera"
-            selectedCameraImage={selectedCameraImage}
+            selectedCameraImage={selectedCameraImage?.uri}
             setSelectedCameraImage={setSelectedCameraImage}
             onPress={() => handleCapture('camera')}
           />
           <UploadCertificateCard
             iconName="cloud-upload-outline"
             text="Upload"
-            uploadImage={uploadImage}
+            uploadImage={uploadImage?.uri}
             setUploadImage={setUploadImage}
             onPress={() => handleCapture('upload')}
           />
-          {addMoreImages.map((image: any) => {
+          {addMoreImages?.map((image: any) => {
             return (
               <ImageCard
-                key={image}
-                uri={image}
+                key={image.uri}
+                uri={image.uri}
                 onPress={() => handleDelete(image)}
               />
             );
           })}
-          {uploadImage !== '' && (
+          {uploadImage !== null && (
             <TouchableOpacity
               style={[styles.container]}
               activeOpacity={0.6}
@@ -177,10 +188,7 @@ const UploadCertificate = ({navigation}: any) => {
             marginVertical: verticalScale(42),
             marginHorizontal: horizontalScale(30),
           }}>
-          <CustomButton
-            onPress={() => navigation.navigate('CertificateVerified')}>
-            Continue
-          </CustomButton>
+          <CustomButton onPress={handleSubmit}>Continue</CustomButton>
         </View>
       </ScrollView>
     </View>

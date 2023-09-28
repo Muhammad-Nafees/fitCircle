@@ -53,6 +53,9 @@ const StackNavigator = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
       initialRouteName="SplashScreen">
+      {/* // initialRouteName="CreateProfile"> */}
+
+  
       <Stack.Screen
         name="SplashScreen"
         component={SplashScreen}

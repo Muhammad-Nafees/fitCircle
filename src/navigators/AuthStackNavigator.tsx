@@ -4,7 +4,6 @@ import {
 } from '@react-navigation/stack';
 import {View} from 'react-native';
 import SplashScreen from '../screens';
-import SignInScreenOne from '../screens/auth-screens/signin-screens/SigninScreenOne';
 import SignInScreenTwo from '../screens/auth-screens/signin-screens/SigninScreenTwo';
 import LoginFormScreen from '../screens/auth-screens/login-screens/LoginFormScreen';
 import CreateAccount from '../screens/auth-screens/create-profile-screens/CreateAccount';
