@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
 import {Formik} from 'formik';
+//----------------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
 import CustomBankInput from '../../components/payment-components/CustomBankInput';
 import {bankSchema} from '../../validations';

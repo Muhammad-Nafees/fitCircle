@@ -15,6 +15,7 @@ import LogoutButton from '../../components/settings-components/LogoutButton';
 import {settingsData} from '../../../data/settingsData';
 import CustomHeader from '../../components/shared-components/CustomHeader';
 import {verticalScale} from '../../utils/metrics';
+import {useFocusEffect} from '@react-navigation/native';
 
 export const SettingsOne = ({navigation}: any) => {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -23,7 +24,7 @@ export const SettingsOne = ({navigation}: any) => {
     setIsEnabled(!isEnabled);
   };
 
-  useEffect(() => {
+  useFocusEffect(() => {
     const backAction = () => {
       navigation.navigate('Profile');
       return true;
@@ -33,7 +34,7 @@ export const SettingsOne = ({navigation}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  });
 
   const withNavigationAction = (routeName: any) => {
     return () => {

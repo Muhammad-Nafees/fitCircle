@@ -13,7 +13,11 @@ export const PaymentMethodScreen = ({navigation}: any) => {
       </View>
       <View style={{marginTop: 10}}>
         <Text style={styles.subheading}>Payment Methods</Text>
-        <CardPayment arrowColor={'rgba(43,47,50,255)'} cardNumber="**** 4637" />
+        <CardPayment
+          arrowColor={'rgba(43,47,50,255)'}
+          cardNumber="**** 4637"
+          type="Mastercard"
+        />
         <Text style={styles.subheading}>
           YOU CAN USE MULTIPLE PAYMENT METHODS
         </Text>

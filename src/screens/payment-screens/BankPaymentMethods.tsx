@@ -1,10 +1,10 @@
 import {useState} from 'react';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import Modal from 'react-native-modal';
+//----------------------------------------------------------------------------------------//
 import CardPayment from '../../components/payment-components/CardPayment';
 import CustomPaymentMethod from '../../components/payment-components/CustomPaymentMethod';
-import {View, Text, StyleSheet} from 'react-native';
-import Modal from 'react-native-modal';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
-import {ScrollView} from 'react-native-gesture-handler';
 
 const BankPaymentMethodsScreen = ({navigation}: any) => {
   const [cardNumber, setCardNumber] = useState('**** 4637');

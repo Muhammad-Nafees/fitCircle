@@ -7,13 +7,14 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import Modal from 'react-native-modal';
+//--------------------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
 import CustomInput from '../../components/shared-components/CustomInput';
 import {CustomSelect} from '../../components/shared-components/CustomSelect';
 import {getCountries} from '../../api/auth-module';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import CardPayment from '../../components/payment-components/CardPayment';
-import Modal from 'react-native-modal';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
 import {cardSchema} from '../../validations';
 
@@ -69,7 +70,11 @@ const AddCardScreen = () => {
           </TouchableOpacity>
         </View>
         <View>
-          <CardPayment arrowColor={'rgba(43,47,50,255)'} />
+          <CardPayment
+            arrowColor={'rgba(43,47,50,255)'}
+            type="Mastercard"
+            cardNumber="**** 4637"
+          />
         </View>
         <Formik
           initialValues={initialValues}

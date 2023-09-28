@@ -4,9 +4,10 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView, // Add ScrollView for content
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+//--------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
 
 const paymentMethods = [
