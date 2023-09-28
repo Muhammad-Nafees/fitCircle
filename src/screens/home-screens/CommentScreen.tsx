@@ -82,6 +82,7 @@ const CommentsScreen = ({route, navigation}: any) => {
       }
     });
   };
+  console.log(selectedPost,"from ccomment")
 
   useFocusEffect(
     useCallback(() => {

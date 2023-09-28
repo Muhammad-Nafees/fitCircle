@@ -132,7 +132,6 @@ const CommunitiesScreen = ({navigation}: any) => {
       </TouchableOpacity>
     );
   };
-  console.log(selectedCommunities.length, 'length');
 
   return (
     <View style={[STYLES.container, {justifyContent: 'space-between'}]}>
@@ -145,7 +144,7 @@ const CommunitiesScreen = ({navigation}: any) => {
             <FlatList
               data={communities}
               renderItem={renderCommunity}
-              keyExtractor={item => item._id}
+              keyExtractor={(item, index) => item._id + index + 1}
             />
           </View>
         )}

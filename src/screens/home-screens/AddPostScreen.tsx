@@ -26,7 +26,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import CustomButton from '../../components/shared-components/CustomButton';
 import {PostOptionsIcon} from '../../components/home-components/PostOptionsIcon';
 import {WhoCanSeeThisPost} from '../../components/home-components/WhoCanSeePost';
-import {CreatePostIcon} from '../../components/home-components/CreatePostIcon';
 import {BottomMinimizedContainer} from '../../components/home-components/BottomMinimizedContainer';
 import ColorSelectionSlider from '../../components/home-components/ColorSelectionSlider';
 import {
@@ -44,6 +43,7 @@ import {
   createPostWithImage,
 } from '../../api/home-module';
 import Toast from 'react-native-toast-message';
+import {CreatePostIcon} from '../../components/home-components/CreatePostIcon';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');

@@ -25,6 +25,7 @@ const Comment = ({
   onReply,
   onLoadComments,
 }: Props) => {
+  console.log(allComments,"allcmnts!!!!!s")
   return (
     <View style={styles.container}>
       {/* {hasMoreComments && commentsCount > 3 && (
@@ -63,7 +64,8 @@ export default Comment;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
     backgroundColor: '#ffffff',
     gap: 10,
   },

@@ -49,6 +49,7 @@ const CreateAccount = ({navigation, route}: any) => {
       setIsError('');
     }
   };
+  const getCode = phoneInput.current?.getCountryCode();
 
   const initialValues: CreateAccountFormValues = {
     email: route.params.email,
@@ -67,11 +68,12 @@ const CreateAccount = ({navigation, route}: any) => {
         ...reqData,
         phone: `${values.phone}`,
         phoneCode: `+${phoneCode}`,
-        countryCode: countryCode,
+        countryCode: getCode ? getCode : countryCode,
         role: userRole,
         fcmToken: 'abcabsdflskdjflskdj',
       });
       const data = response?.data.data;
+      console.log(data.user);
       dispatch(setUserData(data.user));
       dispatch(setAccessToken(data?.accessToken));
       dispatch(setRefreshToken(data?.refreshToken));
