@@ -68,20 +68,47 @@ const PaymentScreen = ({navigation}: any) => {
       </View>
       {userRole === 'admin' ? (
         <View>
-          <Text>Transfer To</Text>
+          <Text
+            style={{
+              fontWeight: '500',
+              fontSize: 12,
+              color: 'rgba(125, 125, 125, 1)',
+              marginVertical: 5,
+            }}>
+            Transfer To
+          </Text>
           <CardPayment
             defaultView={false}
             type={'Bank'}
             cardName="Bank of US"
             extraCardNumberStyles={{color: 'white'}}
+            cardNumber="**** 3257"
+            extraStyles={{borderRadius: 10}}
           />
-          <Text>You can add multiple bank accounts</Text>
+          <Text
+            style={{
+              fontWeight: '400',
+              fontSize: 10,
+              color: 'rgba(125, 125, 125, 1)',
+              marginVertical: 5,
+            }}>
+            You can add multiple bank accounts
+          </Text>
           <CustomPaymentMethod
             text={'Add Bank Account'}
             onPress={() => navigation.navigate('AddBank')}
+            extraStyles={{paddingVertical: 12, borderRadius: 10}}
           />
-          <Text>Payment Methods</Text>
-          <CardPayment type="Mastercard" />
+          <Text
+            style={{
+              fontWeight: '500',
+              fontSize: 12,
+              color: 'rgba(255, 255, 255, 0.7)',
+              marginTop: 8,
+            }}>
+            Payment Methods
+          </Text>
+          <CardPayment type="Mastercard" cardNumber="**** 4637" />
         </View>
       ) : (
         <View>

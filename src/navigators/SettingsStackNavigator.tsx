@@ -32,7 +32,11 @@ const SettingsStackNavigator = () => {
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
       initialRouteName="SettingsOne">
-      <Stack.Screen name="SettingsOne" component={SettingsOne} />
+      <Stack.Screen
+        name="SettingsOne"
+        component={SettingsOne}
+        options={{headerShown: false}}
+      />
       <Stack.Screen name="Notification" component={NotificationScreen} />
       <Stack.Screen name="Faq" component={FaqScreen} />
       <Stack.Screen name="TermsConditions" component={TermsPolicyScreen} />

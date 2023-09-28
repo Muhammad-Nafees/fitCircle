@@ -26,7 +26,7 @@ const PaymentStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="BankPaymentMethods">
+      initialRouteName="Wallet">
       <Stack.Screen name="Wallet" component={PaymentScreen} />
       <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
       <Stack.Screen name="AddPayment" component={AddPaymentScreen} />

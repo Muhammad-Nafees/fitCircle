@@ -6,6 +6,7 @@ interface CustomPaymentProps {
   miniText?: string;
   arrowColor?: string;
   onPress: any;
+  extraStyles?: any;
 }
 
 const CustomPaymentMethod = ({
@@ -13,9 +14,10 @@ const CustomPaymentMethod = ({
   miniText,
   arrowColor = 'white',
   onPress,
+  extraStyles,
 }: CustomPaymentProps) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={[styles.container, extraStyles]} onPress={onPress}>
       <View style={[styles.textContainer, miniText ? {gap: 5} : {}]}>
         <Text style={styles.paymentText}>{text}</Text>
         {miniText && <Text style={styles.miniText}>{miniText}</Text>}

@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 import Toggle from 'react-native-toggle-element';
 //----------------------------------------------------------------------------------------//
@@ -12,6 +13,8 @@ import ArrowForward from '../../../assets/icons/ArrowForward';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import LogoutButton from '../../components/settings-components/LogoutButton';
 import {settingsData} from '../../../data/settingsData';
+import CustomHeader from '../../components/shared-components/CustomHeader';
+import {verticalScale} from '../../utils/metrics';
 
 export const SettingsOne = ({navigation}: any) => {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -19,6 +22,18 @@ export const SettingsOne = ({navigation}: any) => {
   const onToggle = () => {
     setIsEnabled(!isEnabled);
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('Profile');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   const withNavigationAction = (routeName: any) => {
     return () => {
@@ -62,6 +77,9 @@ export const SettingsOne = ({navigation}: any) => {
 
   return (
     <View style={styles.container}>
+      <View style={{height: verticalScale(85)}}>
+        <CustomHeader onPress={() => navigation.navigate('Profile')} />
+      </View>
       <ScrollView>
         <View style={styles.headingContainer}>
           <Text style={styles.heading}>Settings</Text>
@@ -71,7 +89,7 @@ export const SettingsOne = ({navigation}: any) => {
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.avatarContainer}>
-            <CustomProfileAvatar username={'Sameer'} size={60} />
+            <CustomProfileAvatar username={'Lincoln'} size={60} />
             <View>
               <Text style={{fontSize: 20, color: 'white', fontWeight: '700'}}>
                 Lincoln Smith
