@@ -3,11 +3,12 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 // ----------------------------------------------------------------------------------------------------//
 import CustomSettingTransaction from '../../components/settings-components/CustomSettingTransaction';
 import {dummyTransactions} from '../dummyData';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 export const SettingsTransactionScreen = ({navigation}: any) => {
   return (
     <View style={styles.container}>
-      <View style={{paddingBottom: 16}}>
+      <View style={{paddingBottom: verticalScale(16)}}>
         <Text style={styles.heading}>Transactions</Text>
       </View>
       <FlatList
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',

@@ -2,7 +2,7 @@ import {useState} from 'react';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modal';
-import {verticalScale} from '../../utils/metrics';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 export const BlocklistScreen = () => {
   const dummyUserData = [
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: verticalScale(8),
   },
   username: {
     fontSize: 14,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: 'rgba(255, 255, 255, 1)',
-    marginHorizontal: 28,
+    marginHorizontal: horizontalScale(28),
     textAlign: 'center',
   },
   modal: {
@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
   modalAvatarText: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 30,
-    paddingTop: 15,
+    paddingBottom: verticalScale(30),
+    paddingTop: verticalScale(15),
     gap: 15,
   },
   name: {

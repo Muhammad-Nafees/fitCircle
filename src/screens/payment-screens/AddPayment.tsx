@@ -9,6 +9,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 //--------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const paymentMethods = [
   {label: 'Credit/Debit Card', miniText: 'Visa, MasterCard, American Express'},
@@ -40,13 +41,13 @@ const AddPaymentScreen = ({navigation}: any) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginVertical: 5,
+              marginVertical: verticalScale(5),
               backgroundColor:
                 selectedMethod === index
                   ? 'rgba(54, 55, 56, 1)'
                   : 'transparent',
-              paddingHorizontal: 14,
-              paddingVertical: 16,
+              paddingHorizontal: horizontalScale(14),
+              paddingVertical: verticalScale(16),
               borderRadius: 5,
             }}>
             <View style={{justifyContent: 'center'}}>
@@ -64,7 +65,10 @@ const AddPaymentScreen = ({navigation}: any) => {
               <Icon
                 size={14}
                 name="check"
-                style={{marginRight: 10, color: 'rgba(32, 155, 204, 1)'}}
+                style={{
+                  marginRight: horizontalScale(10),
+                  color: 'rgba(32, 155, 204, 1)',
+                }}
               />
             )}
           </TouchableOpacity>
@@ -83,7 +87,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   scrollContainer: {
     flex: 1,
@@ -108,8 +112,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   buttonContainer: {
-    paddingBottom: 30,
-    marginHorizontal: 16,
+    paddingBottom: verticalScale(30),
+    marginHorizontal: horizontalScale(16),
   },
 });
 

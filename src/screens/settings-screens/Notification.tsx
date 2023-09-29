@@ -1,6 +1,7 @@
 import CustomToggleButton from '../../components/settings-components/CustomToggleButton';
 import {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {horizontalScale} from '../../utils/metrics';
 
 export const NotificationScreen = () => {
   return (
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   headingContainer: {
     marginHorizontal: 0,

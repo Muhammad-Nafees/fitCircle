@@ -10,6 +10,11 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/AntDesign';
 // ----------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
 const backgroundImage = require('../../../assets/images/backgroundImage.jpg');
 
 const SubscriptionScreen = ({navigation}: any) => {
@@ -97,7 +102,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: horizontalScale(24),
   },
   contentContainer: {
     flexGrow: 1,
@@ -116,12 +121,12 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 100,
+    paddingTop: verticalScale(100),
   },
   iconWrapper: {
     backgroundColor: 'rgba(19, 114, 140, 1)',
     borderRadius: 12,
-    padding: 10,
+    padding: moderateScale(10),
   },
   box: {
     width: 105,
@@ -180,7 +185,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   buttonContainer: {
-    paddingBottom: 20,
+    paddingBottom: verticalScale(20),
     alignItems: 'center',
   },
 });

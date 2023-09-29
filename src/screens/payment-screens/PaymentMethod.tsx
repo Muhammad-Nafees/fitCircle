@@ -1,6 +1,7 @@
 import CustomPaymentMethod from '../../components/payment-components/CustomPaymentMethod';
 import CardPayment from '../../components/payment-components/CardPayment';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 export const PaymentMethodScreen = ({navigation}: any) => {
   return (
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   headingContainer: {
     flexDirection: 'row',
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 12,
     color: 'rgba(255, 255, 255, 0.7)',
-    marginTop: 10,
-    marginBottom: 5,
+    marginTop: verticalScale(10),
+    marginBottom: verticalScale(5),
   },
 });

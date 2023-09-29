@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   textInput: {
     backgroundColor: 'rgba(54, 55, 56, 1)',
     borderRadius: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
     width: horizontalScale(340),
     color: 'white',
   },

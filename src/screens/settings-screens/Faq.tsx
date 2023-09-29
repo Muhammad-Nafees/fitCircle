@@ -9,6 +9,11 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // ----------------------------------------------------------------//
 import {questionsAndAnswers} from '../dummyData';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../utils/metrics';
 
 export const FaqScreen = () => {
   const [showAnswers, setShowAnswers] = useState({});
@@ -64,7 +69,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   headingContainer: {
     marginHorizontal: 0,
@@ -72,9 +77,9 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 25,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    marginVertical: verticalScale(25),
+    paddingVertical: verticalScale(8),
+    paddingHorizontal: horizontalScale(16),
     justifyContent: 'space-between',
   },
   heading: {
@@ -83,8 +88,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   answerContainer: {
-    marginTop: 10,
-    padding: 16,
+    marginTop: verticalScale(10),
+    padding: moderateScale(16),
     borderRadius: 8,
   },
   answerText: {
@@ -99,11 +104,11 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.5)',
-    marginRight: 50,
+    marginRight: horizontalScale(50),
   },
   contentContainer: {
-    marginHorizontal: 30,
-    marginVertical: 40,
+    marginHorizontal: horizontalScale(30),
+    marginVertical: verticalScale(40),
   },
   iconBackground: {
     backgroundColor: '#209BCC',

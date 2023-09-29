@@ -5,6 +5,7 @@ import {Formik} from 'formik';
 import CustomButton from '../../components/shared-components/CustomButton';
 import CustomBankInput from '../../components/payment-components/CustomBankInput';
 import {bankSchema} from '../../validations';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 const BankImage = require('../../../assets/images/bank.png');
 
 const initialValues = {
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',
@@ -134,16 +135,16 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   button: {
-    marginTop: 40,
-    marginHorizontal: 30,
+    marginTop: verticalScale(40),
+    marginHorizontal: verticalScale(30),
   },
   bankImageTextContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(68, 68, 68, 1)',
     borderRadius: 5,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: horizontalScale(14),
+    paddingVertical: verticalScale(8),
     gap: 14,
   },
 });

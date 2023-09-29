@@ -17,7 +17,7 @@ import {RootState} from '../../redux/store';
 import {
   AdminSettingsView,
   UserSettingsView,
-} from '../../components/settings-components/SettingsView';
+} from '../../components/payment-components/SettingsView';
 
 const PaymentScreen = ({navigation}: any) => {
   const [topupVisible, setTopupVisible] = useState(false);
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   topContainer: {
-    marginTop: 12,
-    marginBottom: 8,
+    marginTop: verticalScale(12),
+    marginBottom: verticalScale(8),
     backgroundColor: '#209BCC',
     borderRadius: 15,
   },
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 20,
+    paddingBottom: verticalScale(20),
   },
   balanceLabel: {
     fontSize: 12,
@@ -192,11 +192,11 @@ const styles = StyleSheet.create({
   textInput: {
     backgroundColor: 'rgba(54, 55, 56, 1)',
     borderRadius: 5,
-    paddingLeft: 22,
+    paddingLeft: horizontalScale(22),
     color: 'white',
   },
   textInputContainer: {
-    marginVertical: 54,
+    marginVertical: verticalScale(54),
     width: '100%',
   },
 });

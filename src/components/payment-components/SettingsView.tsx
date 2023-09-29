@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
-import CardPayment from '../payment-components/CardPayment';
-import CustomPaymentMethod from '../payment-components/CustomPaymentMethod';
+import CardPayment from './CardPayment';
+import CustomPaymentMethod from './CustomPaymentMethod';
 import {View, Text} from 'react-native';
 
 export const AdminSettingsView = () => {

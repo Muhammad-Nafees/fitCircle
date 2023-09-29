@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {horizontalScale} from '../../utils/metrics';
 
 export const TermsPolicyScreen = ({route}: any) => {
   const isTermsConditionsRoute = route.name === 'TermsConditions';
@@ -53,10 +54,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   contentContainer: {
-    marginHorizontal: 16,
+    marginHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',

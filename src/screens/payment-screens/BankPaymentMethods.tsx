@@ -5,6 +5,7 @@ import Modal from 'react-native-modal';
 import CardPayment from '../../components/payment-components/CardPayment';
 import CustomPaymentMethod from '../../components/payment-components/CustomPaymentMethod';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const BankPaymentMethodsScreen = ({navigation}: any) => {
   const [cardNumber, setCardNumber] = useState('**** 4637');
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',
@@ -106,8 +107,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   contentContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 50,
+    paddingHorizontal: horizontalScale(16),
+    marginBottom: verticalScale(50),
   },
   cardTypeHeading: {
     textTransform: 'uppercase',
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '400',
     color: 'white',
-    marginTop: 10,
+    marginTop: verticalScale(10),
   },
 });
 
