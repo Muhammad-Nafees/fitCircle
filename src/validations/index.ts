@@ -292,3 +292,28 @@ export const socialMediaSchema = Yup.object().shape({
     'Invalid TikTok URL format',
   ),
 });
+
+export const cardSchema = Yup.object().shape({
+  number: Yup.string().required('Required'),
+  expiry: Yup.string()
+    .matches(
+      /^(0[1-9]|1[0-2])\/(2[3-9]|[3-9][0-9])$/,
+      'Invalid expiration date',
+    )
+    .required('Required'),
+  cvv: Yup.string()
+    .matches(/^\d{3,4}$/, 'Invalid CVV')
+    .required('Required'),
+  firstName: Yup.string().required('Required'),
+  lastName: Yup.string().required('Required'),
+  country: Yup.string().required('Required'),
+});
+
+export const bankSchema = Yup.object().shape({
+  lastName: Yup.string().required('Last Name is required'),
+  firstName: Yup.string().required('First Name is required'),
+  bankName: Yup.string().required('Bank Name is required'),
+  accountNumber: Yup.string().required('Account Number is required'),
+  routingNumber: Yup.string().required('Routing Number is required'),
+  country: Yup.string().required('Country is required'),
+});

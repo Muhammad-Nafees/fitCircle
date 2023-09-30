@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   disabledButtonText: {
-    opacity: 0.3,
+    opacity: 0.5,
   },
   pressed: {
     opacity: 0.75,

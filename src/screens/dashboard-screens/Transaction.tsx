@@ -9,7 +9,11 @@ import CustomTransactionReceipt from '../../components/shared-components/CustomT
 
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
-export const Transaction = ({navigation}: any) => {
+export const Transaction = ({
+  navigation,
+  settingsView = false,
+  transaction,
+}: any) => {
   const [profileImageUrl, setProfileImageUrl] = useState();
   const userData: any = useSelector((state: RootState) => state.auth.user);
   const [userId, setUserId] = useState(userData?._id);
@@ -21,27 +25,40 @@ export const Transaction = ({navigation}: any) => {
   }, [userData]);
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.navigationBack}
-        onPress={() => navigation.navigate('Dashboard')}>
-        <Image
-          source={ArrowBack}
-          style={{width: 24, height: 24, tintColor: 'white'}}
-        />
-      </TouchableOpacity>
-      <View style={styles.container1}>
-        <CustomTransactionReceipt />
-        <View>
-          <CustomTransaction
-            profileImageUrl={profileImageUrl}
-            username="Sam"
-            name="Sameer Ather"
-            date={'May 4'}
-            amount="- $50"
-            listText="Unlocked Content"
+    <View
+      style={[styles.container, settingsView && {backgroundColor: '#292a2c'}]}>
+      {!settingsView && (
+        <TouchableOpacity
+          style={styles.navigationBack}
+          onPress={() => navigation.navigate('Dashboard')}>
+          <Image
+            source={ArrowBack}
+            style={{width: 24, height: 24, tintColor: 'white'}}
           />
-        </View>
+        </TouchableOpacity>
+      )}
+      {settingsView && (
+        <Text style={{fontWeight: '700', fontSize: 16, color: 'white'}}>
+          Transaction History
+        </Text>
+      )}
+      <View style={[styles.container1, settingsView && {paddingBottom: 60}]}>
+        <CustomTransactionReceipt
+          transaction={transaction}
+          settingsView={settingsView}
+        />
+        {!settingsView && (
+          <View>
+            <CustomTransaction
+              profileImageUrl={profileImageUrl}
+              username="Sam"
+              name="Sameer Ather"
+              date={'May 4'}
+              amount="- $50"
+              listText="Unlocked Content"
+            />
+          </View>
+        )}
       </View>
     </View>
   );
@@ -63,6 +80,83 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
     gap: 10,
+  },
+  icon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(48, 210, 152, 1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dottedLineContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  halfCircleLeft: {
+    width: 8,
+    height: 15,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    backgroundColor: 'black',
+  },
+  halfCircleRight: {
+    width: 8,
+    height: 15,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    backgroundColor: 'black',
+  },
+  dottedLine: {
+    flex: 1,
+    height: 1,
+    borderBottomWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: 'rgba(0, 0, 0, 0.3)',
+    marginHorizontal: 20,
+  },
+  transactionDetailsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    paddingBottom: 14,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 6,
+  },
+  detail: {
+    color: 'rgba(38, 38, 38, 1)',
+    fontSize: 12,
+    fontWeight: '400',
+    marginTop: 10,
+    marginRight: 5,
+  },
+  detailData: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(38, 38, 38, 1)',
+    marginTop: 10,
+  },
+  detailsColumn: {
+    flex: 1,
+  },
+  amountParentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 20,
+  },
+  contentContainer: {
+    backgroundColor: 'white',
+    width: 325,
+    height: 400,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

@@ -2,7 +2,6 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-
 import {Slot} from '../screens/schedule-trainer-screens/Slot';
 import SetSchedule from '../screens/schedule-trainer-screens/SetSchedule';
 import HomeTabNavigator from './HomeTabNavigator';

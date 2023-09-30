@@ -27,6 +27,7 @@ interface Props {
   extraRowStyle?: any;
   extraDropdownStyle?: any;
   extraSelectedRowStyle?: any;
+  extraButtonStyles?: any;
   starlabel?: boolean;
   handleChange?: any;
   placeholder?: string;
@@ -56,6 +57,7 @@ export const CustomSelect: React.FC<Props> = ({
   starlabel,
   handleChange,
   placeholder,
+  extraButtonStyles,
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
 
@@ -129,6 +131,7 @@ export const CustomSelect: React.FC<Props> = ({
           height: height ? height : verticalScale(45),
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '85%',
+          ...extraButtonStyles,
         }}
         dropdownStyle={{...extraDropdownStyle}}
       />

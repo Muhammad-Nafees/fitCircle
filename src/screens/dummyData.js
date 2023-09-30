@@ -186,6 +186,97 @@ const nutritionistInfo2 = {
   ],
 };
 
+export const questionsAndAnswers = [
+  {
+    id: 1,
+    question: 'How can I use Fit Circle?',
+    answer:
+      'This is a dummy answer for question 1. Replace it with your actual answer.',
+  },
+  {
+    id: 2,
+    question: 'Can I start Fit Circle App with a free month package?',
+    answer:
+      'This is a dummy answer for question 2. Replace it with your actual answer.',
+  },
+  {
+    id: 3,
+    question: 'Does Fit Circle App support earning skills badges?',
+    answer:
+      'Enter your email ID  or phone number associated with your account and we’ll send an verification code for reset your password',
+  },
+  {
+    id: 4,
+    question: 'How can I find a good workout?',
+    answer:
+      'This is a dummy answer for question 4. Replace it with your actual answer.',
+  },
+  {
+    id: 5,
+    question: 'What methods of payment does?',
+    answer:
+      'This is a dummy answer for question 5. Replace it with your actual answer.',
+  },
+];
+
+export const dummyTransactions = [
+  {
+    id: 1,
+    name: 'Isaac Buttler',
+    date: '02 / 10 / 23',
+    time: '10:30 AM',
+    email: 'isaac@example.com',
+    transactionType: 'negative',
+    amount: '$50.00',
+    type: 'Subscription',
+    fullDate: 'October 2, 2023',
+  },
+  {
+    id: 2,
+    name: 'John Doe',
+    date: '03 / 15 / 23',
+    time: '11:45 AM',
+    email: 'john@example.com',
+    transactionType: 'negative',
+    amount: '$30.00',
+    type: 'Subscription',
+    fullDate: 'March 15, 2023',
+  },
+  {
+    id: 3,
+    name: 'Jane Smith',
+    date: '04 / 20 / 23',
+    time: '09:15 AM',
+    email: 'jane@example.com',
+    transactionType: 'negative',
+    amount: '$25.00',
+    type: 'Subscription',
+    fullDate: 'April 20, 2023',
+  },
+  {
+    id: 4,
+    name: 'Alice Johnson',
+    date: '05 / 25 / 23',
+    time: '02:00 PM',
+    email: 'alice@example.com',
+    transactionType: 'negative',
+    amount: '$40.00',
+    type: 'Subscription',
+    fullDate: 'May 25, 2023',
+  },
+  {
+    id: 5,
+    name: 'Bob Wilson',
+    date: '06 / 30 / 23',
+    time: '03:30 PM',
+    email: 'bob@example.com',
+    transactionType: 'negative',
+    amount: '$35.00',
+    type: 'Subscription',
+    fullDate: 'June 30, 2023',
+  },
+];
+
 export {
   communitiesData,
   followersData,
