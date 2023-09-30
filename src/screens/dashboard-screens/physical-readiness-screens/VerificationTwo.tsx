@@ -9,19 +9,25 @@ import {STYLES} from '../../../styles/globalStyles';
 import {verticalScale} from '../../../utils/metrics';
 import {PhysicalReadinessTwoSchema} from '../../../validations';
 import {verficationTwoquestionTexts} from '../../../../data/data';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
 
 interface FormValues {
-  answer1: string;
-  answer2: string;
-  answer3: string;
-  answer4: string;
-  answer5: string;
-  answer6: string;
+  isHighCholesterol: string;
+  isHeartTrouble: string;
+  isBoneTrouble: string;
+  isHighBloodPressure: string;
+  isOverAge: string;
+  isAnyReasonNotToParticipate: string;
 }
 
 const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   const formdata: null | any = data;
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
+  const physicalData = useSelector(
+    (state: RootState) => state.phyiscalReadiness.data,
+  );
+  console.log(physicalData,"reduxddata")
 
   useEffect(() => {
     const backAction = () => {
@@ -36,12 +42,12 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   }, [navigation]);
 
   const initialValues = {
-    answer1: (formdata && formdata?.answer1) ?? '',
-    answer2: (formdata && formdata?.answer2) ?? '',
-    answer3: (formdata && formdata?.answer3) ?? '',
-    answer4: (formdata && formdata?.answer4) ?? '',
-    answer5: (formdata && formdata?.answer5) ?? '',
-    answer6: (formdata && formdata?.answer6) ?? '',
+    isHighCholesterol: (formdata && formdata?.isHighCholesterol) ?? '',
+    isHeartTrouble: (formdata && formdata?.isHeartTrouble) ?? '',
+    isBoneTrouble: (formdata && formdata?.isBoneTrouble) ?? '',
+    isHighBloodPressure: (formdata && formdata?.isHighBloodPressure) ?? '',
+    isOverAge: (formdata && formdata?.isOverAge) ?? '',
+    isAnyReasonNotToParticipate: (formdata && formdata?.isAnyReasonNotToParticipate) ?? '',
   };
 
   const handleSubmit = (answers: any) => {

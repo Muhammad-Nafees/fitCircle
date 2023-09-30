@@ -244,7 +244,7 @@ export const AddPostScreen = ({route}: any) => {
           ...(titleInput !== '' && {title: titleInput}),
           ...(costValue !== 0 && {cost: costValue}),
         };
-        console.log(reqData,"req")
+        console.log(reqData, 'req');
         const response = await createPostWithImage(reqData);
         console.log(response?.data, 'response!');
         handleBackButtonPress();
@@ -255,10 +255,11 @@ export const AddPostScreen = ({route}: any) => {
       } else {
         const reqData: Partial<IPost> = {
           text: textInputValue,
-          hexCode:
-            textInputBackgroundColor == 'transparent'
+          hexCode: [
+            textInputBackgroundColor === 'transparent'
               ? '#292A2C'
               : textInputBackgroundColor.toString(),
+          ],
           visibility: visibility,
           ...(costValue !== 0 && {cost: costValue}),
         };

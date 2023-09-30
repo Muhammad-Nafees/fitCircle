@@ -61,7 +61,7 @@ const DashboardScreen = ({navigation}: any) => {
             text: 'Packages / Meal Plan',
             icon: <PackagesMealIcon />,
             dropdown: isDropdownVisible,
-            selectOption: option => {
+            selectOption: (option: any) => {
               setSelectedOption(option);
               if (option === 'Meal Plan') {
                 navigation.navigate('MealPlanScreen');

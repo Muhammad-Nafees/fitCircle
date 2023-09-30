@@ -13,7 +13,7 @@ const CustomRadioButton = ({
   error,
   isFormSubmitted,
 }: any) => {
-  const handleSelect = (selected: string) => {
+  const handleSelect = (selected: boolean) => {
     setFieldValue(`${name}`, selected);
   };
 
@@ -53,9 +53,9 @@ const CustomRadioButton = ({
         }}>
         <RadioButton.Item
           label="Yes"
-          value="Yes"
-          status={value === 'Yes' ? 'checked' : 'unchecked'}
-          onPress={() => !disabled && handleSelect('Yes')}
+          value="true"
+          status={value === true ? 'checked' : 'unchecked'}
+          onPress={() => !disabled && handleSelect(true)}
           color="#209BCC"
           labelStyle={{
             marginLeft: 5,
@@ -67,9 +67,9 @@ const CustomRadioButton = ({
         />
         <RadioButton.Item
           label="No"
-          value="No"
-          status={value === 'No' ? 'checked' : 'unchecked'}
-          onPress={() => !disabled && handleSelect('No')}
+          value="false"
+          status={value === false ? 'checked' : 'unchecked'}
+          onPress={() => !disabled && handleSelect(false)}
           color="#209BCC"
           labelStyle={{
             marginLeft: 5,

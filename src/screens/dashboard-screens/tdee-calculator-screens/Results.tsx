@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
 import {Formik} from 'formik';
 // ---------------------------------------------------------------------------//
@@ -6,8 +6,22 @@ import {STYLES} from '../../../styles/globalStyles';
 import CustomInput from '../../../components/shared-components/CustomInput';
 import {verticalScale} from '../../../utils/metrics';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import {format} from 'date-fns';
+import {useFocusEffect} from '@react-navigation/native';
 
 export const Results = ({navigation, route}: any) => {
+  const [targetDate, setTargetDate] = useState<Date | null | string>(null);
+  const {data, weight} = route.params;
+
+  useFocusEffect(
+    useCallback(() => {
+      const date = new Date(data?.targetDate);
+      const formattedDate = format(date, 'dd-MM-yyyy');
+      setTargetDate(formattedDate);
+    }, []),
+  );
+  console.log(targetDate,"target")
+
   useEffect(() => {
     const backAction = () => {
       navigation.goBack();
@@ -19,26 +33,25 @@ export const Results = ({navigation, route}: any) => {
     );
     return () => backHandler.remove();
   }, [navigation]);
-  const {data, weight} = route.params;
 
   const handleSubmit = () => {
-    navigation.navigate('MacroCalculator', {data, weight});
+    navigation.navigate('MacroCalculator', {data});
   };
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
           initialValues={{
-            bmi: data.bmi.toFixed(1),
-            bmr: `${data.bmr} Calories`,
-            deficitCalories: `${data.calorieDeficit} Calories`,
-            dailyCalories: `${data.dailyCalories} Calories`,
-            daysToReachGoal: `${data.daysToReachGoal} days`,
-            targetDate: data.targetDate,
-            tdee: `${data.tdee.toFixed(1)} Calories`,
+            bmi: data?.bmi.toFixed(1),
+            bmr: `${data?.bmr} Calories`,
+            deficitCalories: `${data?.calorieDeficit} Calories`,
+            dailyCalories: `${data?.dailyCaloriesIntake} Calories`,
+            daysToReachGoal: `${data?.daysToReachGoal.toFixed(1)} days`,
+            targetDate: targetDate,
+            tdee: `${data?.tdee.toFixed(1)} Calories`,
           }}
           onSubmit={handleSubmit}>
-          {({handleSubmit, values}) => (
+          {({handleSubmit, values, handleChange, setFieldError}) => (
             <>
               <Text style={[STYLES.text16, styles.heading]}>Results</Text>
               <View style={styles.formContainer}>
@@ -49,6 +62,8 @@ export const Results = ({navigation, route}: any) => {
                   fieldName="bmi"
                   editable={false}
                   extraStyles={styles.textInputExtraStyles}
+                  handleChange={handleChange}
+                  setFieldError={setFieldError}
                 />
                 <CustomInput
                   label="Your BMR is"
@@ -57,6 +72,8 @@ export const Results = ({navigation, route}: any) => {
                   fieldName="bmr"
                   editable={false}
                   extraStyles={styles.textInputExtraStyles}
+                  handleChange={handleChange}
+                  setFieldError={setFieldError}
                 />
                 <CustomInput
                   label="Deficit Calories"
@@ -65,6 +82,8 @@ export const Results = ({navigation, route}: any) => {
                   fieldName="deficitCalories"
                   editable={false}
                   extraStyles={styles.textInputExtraStyles}
+                  handleChange={handleChange}
+                  setFieldError={setFieldError}
                 />
                 <CustomInput
                   label="Daily Calories"
@@ -73,6 +92,8 @@ export const Results = ({navigation, route}: any) => {
                   fieldName="dailyCalories"
                   editable={false}
                   extraStyles={styles.textInputExtraStyles}
+                  handleChange={handleChange}
+                  setFieldError={setFieldError}
                 />
                 <CustomInput
                   label="Days to reach your goal"
@@ -81,14 +102,18 @@ export const Results = ({navigation, route}: any) => {
                   fieldName="daysToReachGoal"
                   editable={false}
                   extraStyles={styles.textInputExtraStyles}
+                  handleChange={handleChange}
+                  setFieldError={setFieldError}
                 />
                 <CustomInput
                   label="Target Date (dd/mm/yyyy)"
                   placeholder=""
-                  value={values.targetDate}
+                  value={targetDate || values.targetDate}
                   fieldName="targetDate"
                   editable={false}
                   extraStyles={styles.textInputExtraStyles}
+                  handleChange={handleChange}
+                  setFieldError={setFieldError}
                 />
                 <CustomInput
                   label="Your TDEE is"
@@ -97,6 +122,8 @@ export const Results = ({navigation, route}: any) => {
                   fieldName="tdee"
                   editable={false}
                   extraStyles={styles.textInputExtraStyles}
+                  handleChange={handleChange}
+                  setFieldError={setFieldError}
                 />
               </View>
               <View style={styles.button}>

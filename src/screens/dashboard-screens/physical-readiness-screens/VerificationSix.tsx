@@ -9,9 +9,35 @@ import {
 // ---------------------------------------------------------------------------//
 import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
+const options = [
+  {
+    increaseLeanMuscle: false,
+    name: 'Increase Lean Muscle',
+  },
+  {
+    loseBodyFat: false,
+    name: 'Lose Body Fat',
+  },
+  {
+    increaseStamina: false,
+    name: 'Increase Stamina',
+  },
+  {
+    increaseStrength: false,
+    name: 'Increase Strength',
+  },
+  {
+    improveHealth: false,
+    name: 'Improve Overall Health',
+  },
+  {
+    loseWeight: false,
+    name: 'Lose Weight',
+  },
+];
 
 const VerificationSix = ({navigation, disabled, route, data}: any) => {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>(options);
   const formdata: null | any = data;
 
   useEffect(() => {
@@ -26,16 +52,8 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
     return () => backHandler.remove();
   }, [navigation]);
 
-  const options = [
-    'Increase Lean Muscle',
-    'Lose Body Fat',
-    'Increase Stamina',
-    'Increase Strength',
-    'Improve Overall Health',
-    'Lose Weight',
-  ];
-
-  const handleSelectOption = (option: string) => {
+  const handleSelectOption = (option: any) => {
+    console.log(option,"opt")
     const isSelected = selectedOptions.includes(option);
 
     if (isSelected) {
@@ -50,6 +68,14 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
   useEffect(() => {
     if (formdata) setSelectedOptions(formdata);
   }, [formdata]);
+
+  const handleSubmit = () => {
+    console.log(selectedOptions, 'selected');
+    navigation.navigate('VerificationSeven', {
+      ...route.params,
+      optionals: selectedOptions,
+    });
+  };
 
   return (
     <View
@@ -86,12 +112,12 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
               key={index}
               style={styles.optionItem}
               onPress={() => !disabled && handleSelectOption(option)}>
-              <Text style={styles.optionText}>{option}</Text>
+              <Text style={styles.optionText}>{option.name}</Text>
               <View
                 style={[
                   styles.optionCheckbox,
                   {
-                    backgroundColor: selectedOptions.includes(option)
+                    backgroundColor: selectedOptions.includes(option.name)
                       ? '#209BCC'
                       : 'transparent',
                   },
@@ -104,13 +130,8 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
       {disabled !== true && (
         <View style={styles.buttonContainer}>
           <CustomButton
-            isDisabled={selectedOptions.length === 0}
-            onPress={() =>
-              navigation.navigate('VerificationSeven', {
-                ...route.params,
-                optionals: selectedOptions,
-              })
-            }>
+            // isDisabled={selectedOptions.length === 0}
+            onPress={handleSubmit}>
             Submit
           </CustomButton>
         </View>

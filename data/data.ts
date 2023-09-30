@@ -57,28 +57,28 @@ export const COMMUNITIES_LIST = [
 // verification 2 questions
 
 export const verficationTwoquestionTexts = [
-  {id: 'answer1', question: 'Do you have high cholesterol?'},
+  {id: 'isHighCholesterol', question: 'Do you have high cholesterol?'},
   {
-    id: 'answer2',
+    id: 'isHeartTrouble',
     question: 'Has your doctor ever said that you have heart trouble?',
   },
   {
-    id: 'answer3',
+    id: 'isBoneTrouble',
     question:
       'Has your doctor ever told you that you have a bone or joint problem (such as arthritis) that has been or may be exacerbated by physical activity?',
   },
   {
-    id: 'answer4',
+    id: 'isHighBloodPressure',
     question:
       'Has your doctor ever told you that your blood pressure was too high?',
   },
   {
-    id: 'answer5',
+    id: 'isOverAge',
     question:
       'Are you over 65 years of age and not accustomed to vigorous exercise?',
   },
   {
-    id: 'answer6',
+    id: 'isAnyReasonNotToParticipate',
     question:
       'Is there any reason, not mentioned thus far, that would not allow you to participate in a physical fitness program?',
   },
@@ -87,29 +87,38 @@ export const verficationTwoquestionTexts = [
 // verification 4 questions
 
 export const questionTexts = [
-  {id: 'answer8', question: 'Do you know how many calories you eat in a day?'},
-  {id: 'answer9', question: 'Do you eat breakfast?'},
   {
-    id: 'answer10',
+    id: 'isKnownCalorieConsumptionPerDay',
+    question: 'Do you know how many calories you eat in a day?',
+  },
+  {id: 'isEatBreakfast', question: 'Do you eat breakfast?'},
+  {
+    id: 'isTakingSupplements',
     question:
       'Are you taking supplements? (i.e. vitamins, amino acids, protein shakes, etc.)',
   },
   {
-    id: 'answer11',
+    id: 'isTakingSeveralCupsOfCoffee',
     question:
       'Do you need several cups of coffee to keep you going throughout the day?',
   },
-  {id: 'answer12', question: 'Do you often experience digestive difficulties?'},
   {
-    id: 'answer13',
+    id: 'isDigestiveProblems',
+    question: 'Do you often experience digestive difficulties?',
+  },
+  {
+    id: 'isNutritionOrExerciseBenefits',
     question:
       'Proper nutrition can increase the body’s ability to enhance physical and mental performance by up to 80%. Do you feel that a properly structured nutrition and exercise program would benefit you?',
   },
 ];
 export const questionTexts2 = [
-  {id: 'answer14', question: 'Have you reached and maintained your goals?'},
   {
-    id: 'answer15',
+    id: 'isMaintainGoals',
+    question: 'Have you reached and maintained your goals?',
+  },
+  {
+    id: 'isOkYourLookAndHealth',
     question: 'Are you happy with the way you look and your health?',
   },
 ];
@@ -119,13 +128,13 @@ export const activityFactors = {
     value: 1.2,
   },
   'Lightly active (Light exercise/sports 1-3 days a week)': {
-    value: 1.3,
+    value: 1.375,
   },
   'Moderately active (Moderate exercise/sports 3-5 days aweek)': {
-    value: 1.5,
+    value: 1.55,
   },
   'Very active (Hard exercise/sports 6-7 days a week)': {
-    value: 1.7,
+    value: 1.725,
   },
   'Extra active (Hard exercise/sports 6-7 days a week, plus physical job)': {
     value: 1.9,

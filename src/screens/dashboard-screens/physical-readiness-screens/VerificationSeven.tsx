@@ -8,6 +8,7 @@ import VerificationFour from './VerificationFour';
 import VerificationFive from './VerificationFive';
 import VerificationSix from './VerificationSix';
 import CustomButton from '../../../components/shared-components/CustomButton';
+import { IPhysicalActivity } from '../../../interfaces/user.interface';
 
 type Mcq = {
   question: string;
@@ -36,23 +37,22 @@ const VerificationSeven = ({navigation, route}: any) => {
     initial,
   } = route?.params;
 
-  const addMcq = (elem: Mcq, arr: Mcq[]) => {
-    const mcqs = [...arr];
-    const obj: Mcq = {
-      question: elem.question,
-      answer: elem.answer,
-    };
 
-    if (elem.answer === 'Yes' || elem.answer === 'No')
-      obj['options'] = ['Yes', 'No'];
-
-    mcqs.push(obj);
-
-    return mcqs;
-  };
 
   const handleFormSave = async () => {
-    navigation.navigate('FormSaved');
+    const data = {
+      ...verificationOne,
+      ...verificationTwo,
+      ...verificationFour,
+      ...VerificationFive,
+      optionals,
+    }
+    console.log(data,"daat")
+    // const reqData:IPhysicalActivity = {
+      
+
+    // }
+    // navigation.navigate('FormSaved');
   };
 
   return (

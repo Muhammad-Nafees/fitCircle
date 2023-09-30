@@ -1,5 +1,12 @@
-import {useEffect, useRef} from 'react';
-import {View, Text, ScrollView, StyleSheet, BackHandler} from 'react-native';
+import {useEffect, useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  BackHandler,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Formik} from 'formik';
 // ---------------------------------------------------------------------------------------//
 import CustomButton from '../../../components/shared-components/CustomButton';
@@ -7,13 +14,39 @@ import {STYLES} from '../../../styles/globalStyles';
 import {TdeeCalculatorSchema} from '../../../validations';
 import {CustomSelect} from '../../../components/shared-components/CustomSelect';
 import CustomInput from '../../../components/shared-components/CustomInput';
-import {moderateScale, verticalScale} from '../../../utils/metrics';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../utils/metrics';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
 import {activityFactors} from '../../../../data/data';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
-import {tdeeCalculatorData} from '../../dummyData';
+import {Unit} from '../../../components/auth-components/create-profile/GenderForm';
+import Icon from 'react-native-vector-icons/Ionicons';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {format, parse} from 'date-fns';
+import {ITDEE} from '../../../interfaces/user.interface';
+import {calculateTdee} from '../../../api/dashboard-module';
+import Toast from 'react-native-toast-message';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 export const TdeeCalculator = ({navigation, disabled}: any) => {
+  const [weightUnit, setWeightUnit] = useState<Unit['kg']>('kg');
+  const [heightUnit, setHeightUnit] = useState<Unit['ft']>('ft');
+  const [goalWeightUnit, setGoalWeightUnit] = useState<Unit['kg']>('kg');
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleSelectUnit = (unit: keyof Unit, type: string) => {
+    if (type == 'kg') {
+      setWeightUnit(unit);
+    } else if (type == 'ft') {
+      setHeightUnit(unit);
+    } else {
+      setGoalWeightUnit(unit);
+    }
+  };
   useEffect(() => {
     const backAction = () => {
       navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
@@ -28,10 +61,50 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
 
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
-    navigation.navigate('Results', {
-      data: tdeeCalculatorData,
-      weight: values.weight,
-    });
+    try {
+      const parsedDate = parse(values.startDate, 'dd/MM/yyyy', new Date());
+      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+      const reqData: ITDEE = {
+        age: values.age,
+        gender: values.gender.toLowerCase(),
+        goal: values.goal,
+        startDate: formattedDate,
+        height: {
+          value: values.height,
+          unit: heightUnit,
+        },
+        weight: {
+          value: values.weight,
+          unit: weightUnit,
+        },
+        goalWeight: {
+          value: values.goalWeight,
+          unit: goalWeightUnit,
+        },
+        calorieDeficitFactor: values.calorieDeficit.includes('10')
+          ? 0.1
+          : values.calorieDeficit.includes('15')
+          ? 0.15
+          : 0.2,
+        activityFactor:
+          activityFactors[values.activityFactor as keyof typeof activityFactors]
+            .value,
+      };
+      setIsLoading(true);
+      const response = await calculateTdee(reqData);
+      const data = response?.data?.data;
+      navigation.navigate('Results', {
+        data: data,
+      });
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'from calculate tdee');
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -123,6 +196,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     setFieldError={setFieldError}
                     fieldName="height"
                     tdee={true}
+                    onSelectUnit={handleSelectUnit}
                   />
                 </View>
                 <View style={{width: '85%'}}>
@@ -142,13 +216,14 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     setFieldError={setFieldError}
                     fieldName="weight"
                     tdee={true}
+                    onSelectUnit={handleSelectUnit}
                   />
                 </View>
                 <CustomSelect
                   label="Goal"
                   placeholder="Choose here"
                   starlabel={true}
-                  values={['Muscle Gain', 'Weight loss/cutting', 'Maintain']}
+                  values={['Muscle Gain', 'Weight Loss/Cutting', 'Maintain']}
                   selectedValue={values.goal}
                   error={errors.goal}
                   initialTouched={true}
@@ -161,24 +236,52 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   extraDropdownStyle={styles.dropdownStyle}
                   extraSelectedRowStyle={styles.dropdownSelectedRowStyle}
                 />
-                <CustomInput
-                  label="Start Date (dd/mm/yyyy)"
-                  placeholder="Type here"
-                  value={values.startDate}
-                  error={errors.startDate}
-                  touched={touched.startDate}
-                  initialTouched={true}
-                  handleChange={handleChange('startDate')}
-                  setFieldError={setFieldError}
-                  fieldName="startDate"
-                />
+
+                <TouchableWithoutFeedback
+                  onPress={() => setDatePickerVisible(true)}>
+                  <View style={{position: 'relative'}}>
+                    <CustomInput
+                      label="Start Date (dd/mm/yyyy)"
+                      placeholder="Type here"
+                      value={values.startDate}
+                      error={errors.startDate}
+                      touched={touched.startDate}
+                      initialTouched={true}
+                      handleChange={handleChange('dob')}
+                      setFieldError={setFieldError}
+                      fieldName="startDate"
+                      editable={false}
+                    />
+                    <Icon
+                      name="calendar-outline"
+                      size={23}
+                      color="black"
+                      style={{
+                        position: 'absolute',
+                        right: horizontalScale(12),
+                        top: verticalScale(34),
+                      }}
+                    />
+                    <DateTimePickerModal
+                      isVisible={isDatePickerVisible}
+                      mode="date"
+                      onConfirm={(e: any) => {
+                        const formattedDate = format(e, 'dd/MM/yyyy');
+                        setFieldValue('startDate', formattedDate);
+                        setFieldError('startDate', '');
+                        setDatePickerVisible(false);
+                      }}
+                      onCancel={() => setDatePickerVisible(false)}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
                 <View style={{width: '85%'}}>
                   <Text style={styles.label}>Goal Weight</Text>
                   <DropdownTextInput
                     value={values.goalWeight}
                     placeholder="Type here"
                     options={['kg', 'lb']}
-                    defaultOption="kg"
+                    defaultOption="Kg"
                     handleChange={handleChange('goalWeight')}
                     error={errors.goalWeight}
                     touched={touched.goalWeight}
@@ -186,6 +289,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     setFieldError={setFieldError}
                     fieldName="goalWeight"
                     tdee={true}
+                    onSelectUnit={handleSelectUnit}
                   />
                 </View>
                 <CustomSelect
@@ -234,7 +338,9 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                 />
               </View>
               <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                <CustomButton onPress={handleSubmit} isDisabled={isLoading}>
+                  {isLoading ? <CustomLoader /> : 'Continue'}{' '}
+                </CustomButton>
               </View>
             </>
           )}

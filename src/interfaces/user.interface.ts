@@ -91,3 +91,67 @@ export interface IComment {
   parent: string;
   nestedComments: IComment[];
 }
+
+export interface ITDEE {
+  gender: string;
+  age: number;
+  height: IUnit;
+  weight: IUnit;
+  goal: string;
+  startDate: Date | string;
+  goalWeight: IUnit;
+  activityFactor: number;
+  calorieDeficitFactor: number;
+}
+
+export interface IMacro {
+  goal: string;
+  tdee: number;
+  calorieDeficit: number;
+}
+
+export interface IPhysicalActivity {
+  date: Date | string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  zip: string;
+  homePhone: string;
+  cellPhone: string;
+  height: IUnit;
+  weight: IUnit;
+
+  isHighCholestero: boolean;
+  isHeartTrouble: boolean;
+  isBoneTrouble: boolean;
+  isHighBloodPressure: boolean;
+  isOverAge: boolean;
+  isAnyReasonNotToParticipate: boolean;
+
+  initial: string;
+
+  isFeelWeakEver: boolean;
+  mealsPerDay: number;
+  isKnownCalorieConsumptionPerDay: boolean;
+  isEatBreakfast: boolean;
+  isTakingSupplements: boolean;
+  isTakingSeveralCupsOfCoffee: boolean;
+  isDigestiveProblems: boolean;
+  isNutritionOrExerciseBenefits: boolean;
+  exerciseSince: string;
+  isMaintainGoals: boolean;
+  isOkYourLookAndHealth: boolean;
+  goalScale: 10;
+  desiredBodyFat: string;
+  desiredWeight: string;
+  desiredLeanMuscle: string;
+  exercisesPerWeek: number;
+  increaseLeanMuscle: boolean;
+  loseBodyFat: boolean;
+  increaseStamina: boolean;
+  increaseStrength: boolean;
+  improveHealth: boolean;
+  loseWeight: boolean;
+}

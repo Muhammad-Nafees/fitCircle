@@ -18,7 +18,7 @@ import {RootState} from '../../../redux/store';
 import {useState} from 'react';
 import DropdownTextInput from '../../shared-components/CustomDropdownInput';
 
-interface Unit {
+export interface Unit {
   kg: string;
   lb: string;
   ft: string;

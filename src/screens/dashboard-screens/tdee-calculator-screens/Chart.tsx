@@ -21,11 +21,11 @@ export const ChartScreen = ({navigation, route}: any) => {
 
   const widthAndHeight = 290;
   const series = [
-    chartData.fatGrams,
-    chartData.carbGrams,
-    chartData.proteinGrams,
+    chartData?.fats,
+    chartData?.carbohydrates,
+    chartData?.proteins,
   ];
-  const sliceColor = ['#21334E', '#209BCC', '#24A3CC'];
+  const sliceColor = ['#209BCC', '#21334E', '#24A3CC'];
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -39,9 +39,9 @@ export const ChartScreen = ({navigation, route}: any) => {
               widthAndHeight={widthAndHeight}
               series={series}
               sliceColor={sliceColor}
-              text1={`Fat: ${chartData.fatGrams} g`}
-              text2={`Carb: ${chartData.carbGrams} g`}
-              text3={`Protien: ${chartData.proteinGrams} g`}
+              text1={`Fat: ${chartData?.fats.toFixed(0)} g`}
+              text2={`Carb: ${chartData?.carbohydrates.toFixed(0)} g`}
+              text3={`Protien: ${chartData?.proteins.toFixed(0)} g`}
             />
             <View style={styles.iconText}>
               {legends.map((legend, index) => (
