@@ -107,7 +107,7 @@ const HomeScreen = () => {
           setIsLoadMore(false);
           setIsRefreshing(false);
         } catch (error: any) {
-          console.log(error, 'Error fetching my circle posts!');
+          console.log(error?.response, 'Error fetching my circle posts!');
         }
         setIsLoading(false);
       };

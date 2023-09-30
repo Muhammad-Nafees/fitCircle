@@ -11,9 +11,11 @@ import VerificationFive from '../screens/dashboard-screens/physical-readiness-sc
 import VerificationSix from '../screens/dashboard-screens/physical-readiness-screens/VerificationSix';
 import VerificationThree from '../screens/dashboard-screens/physical-readiness-screens/VerificationThree';
 import VerificationSeven from '../screens/dashboard-screens/physical-readiness-screens/VerificationSeven';
+import {useNavigation} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 const PhysicalReadinessStackNavigator = () => {
+  const navigation = useNavigation();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -27,8 +29,12 @@ const PhysicalReadinessStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="VerificationSeven">
-      <Stack.Screen name="VerificationOne" component={VerificationOne} />
+      initialRouteName="VerificationOne">
+      <Stack.Screen
+        name="VerificationOne"
+        component={VerificationOne}
+        options={{headerShown: false}}
+      />
       <Stack.Screen name="VerificationTwo" component={VerificationTwo} />
       <Stack.Screen name="VerificationThree" component={VerificationThree} />
       <Stack.Screen name="VerificationFour" component={VerificationFour} />

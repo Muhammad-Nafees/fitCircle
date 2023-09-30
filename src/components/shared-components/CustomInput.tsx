@@ -17,10 +17,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useRoute} from '@react-navigation/native';
 
 interface Props {
-  placeholder: string;
-  label: string;
-  value: any;
-  error?: string;
+  placeholder?: string;
+  label?: string;
+  value?: any;
+  error: string;
   touched: boolean | undefined;
   initialTouched?: boolean;
   keyboardType?: 'default' | 'numeric' | 'email-address';

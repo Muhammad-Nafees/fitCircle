@@ -40,7 +40,7 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
             desiredBodyFat: formdata?.desiredBodyFat ?? '',
             desiredWeight: formdata?.desiredWeight ?? '',
             desiredLeanMuscle: formdata?.desiredLeanMuscle ?? '',
-            exerciseFrequency: formdata?.exerciseFrequency ?? '',
+            exercisesPerWeek: formdata?.exercisesPerWeek ?? '',
           }}
           validateOnChange={false}
           validationSchema={PhysicalActivitySchema}
@@ -113,13 +113,13 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
                   label="I plan to exercise ______ times of the week."
                   editable={!disabled}
                   placeholder="6"
-                  value={values.exerciseFrequency}
-                  handleChange={handleChange('exerciseFrequency')}
+                  value={values.exercisesPerWeek}
+                  handleChange={handleChange('exercisesPerWeek')}
                   keyboardType="numeric"
-                  error={errors.exerciseFrequency}
-                  touched={touched.exerciseFrequency}
+                  error={errors.exercisesPerWeek}
+                  touched={touched.exercisesPerWeek}
                   setFieldError={setFieldError}
-                  fieldName="exerciseFrequency"
+                  fieldName="exercisesPerWeek"
                 />
               </View>
               {disabled !== true && (

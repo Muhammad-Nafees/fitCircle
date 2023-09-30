@@ -26,13 +26,23 @@ import {PhysicalReadinessTestSchema} from '../../../validations';
 import DropdownTextInput from '../../../components/shared-components/CustomDropdownInput';
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
+import {Unit} from '../../../components/auth-components/create-profile/GenderForm';
 
 export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
   const [phoneCode, setPhoneCode] = useState('1');
-  console.log(route, 'route');
+  const [weightUnit, setWeightUnit] = useState<Unit['kg']>('kg');
+  const [heightUnit, setHeightUnit] = useState<Unit['ft']>('ft');
+
+  const handleSelectUnit = (unit: keyof Unit, type: string) => {
+    if (type == 'kg') {
+      setWeightUnit(unit);
+    } else {
+      setHeightUnit(unit);
+    }
+  };
 
   const phoneNumberCheck = (values: any) => {
     const isValid = phoneInput.current?.isValidNumber(values);
@@ -57,9 +67,9 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
     navigation.navigate('VerificationTwo', {verificationOne: values});
   };
 
-  useEffect(() => {
-    if (isFocused && route?.params?.clearValues) formikRef.current?.resetForm();
-  }, [isFocused]);
+  // useEffect(() => {
+  //   if (isFocused && route?.params?.clearValues) formikRef.current?.resetForm();
+  // }, [isFocused]);
 
   useEffect(() => {
     const backAction = () => {
@@ -79,14 +89,14 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
         {route?.name == 'VerificationOne' && (
           <CustomHeader
             onPress={() =>
-              navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
+              navigation.navigate('Dashboard', {screen: 'Dashboard'})
             }
           />
         )}
       </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik
-          innerRef={formikRef}
+          // innerRef={formikRef}
           initialValues={{
             date: formdata?.date ?? '',
             email: formdata?.email ?? '',
@@ -133,6 +143,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       setFieldError={setFieldError}
                       fieldName="date"
                       editable={false}
+                      
                     />
                     <Icon
                       name="calendar-outline"
@@ -278,6 +289,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       initialTouched={true}
                       setFieldError={setFieldError}
                       fieldName="height"
+                      onSelectUnit={handleSelectUnit}
                     />
                   </View>
                   <View style={styles.inputContainer}>
@@ -293,6 +305,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       initialTouched={true}
                       setFieldError={setFieldError}
                       fieldName="weight"
+                      onSelectUnit={handleSelectUnit}
                     />
                   </View>
                 </View>

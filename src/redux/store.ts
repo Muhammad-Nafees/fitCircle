@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import authSlice from './authSlice';
 import postSlice from './postSlice';
 import readinessTestSlice from './readinessTestSlice';
+import physicalReadinessSlice from './physicalReadinessSlice';
 
 const persistConfig = {
   key: 'root',
@@ -22,6 +23,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authSlice,
   post: postSlice,
+  phyiscalReadiness: physicalReadinessSlice,
   profileReadinessTest: readinessTestSlice,
 });
 

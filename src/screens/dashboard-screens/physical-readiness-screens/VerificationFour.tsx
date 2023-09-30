@@ -18,18 +18,18 @@ import {
 } from '../../../../data/data';
 
 interface FormValues {
-  seriousness: string;
-  durationExercise: string;
-  mealsEat: string;
-  answer7: string;
-  answer8: string;
-  answer9: string;
-  answer10: string;
-  answer11: string;
-  answer12: string;
-  answer13: string;
-  answer14: string;
-  answer15: string;
+  isFeelWeakEver: string;
+  mealsPerDay: string;
+  isKnownCalorieConsumptionPerDay: string;
+  isEatBreakfast: string;
+  isTakingSupplements: string;
+  isTakingSeveralCupsOfCoffee: string;
+  isDigestiveProblems: string;
+  isNutritionOrExerciseBenefits: string;
+  exerciseSince: string;
+  isMaintainGoals: string;
+  isOkYourLookAndHealth: string;
+  goalScale: string;
 }
 
 const VerificationFour = ({disabled, navigation, route, data}: any) => {
@@ -49,112 +49,29 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
   }, [navigation]);
 
   const handleSubmit = async (values: FormValues) => {
+    console.log(values, 'vvvv');
     navigation.navigate('VerificationFive', {
       ...route.params,
-      verificationFour: {
-        physicalAReadiness: [
-          {
-            answer: values.answer7,
-            question: question7,
-          },
-          {
-            answer: values.mealsEat,
-            question: questionMealsEat,
-          },
-          {
-            answer: values.answer8,
-            question: questionTexts[0],
-          },
-          {
-            answer: values.answer9,
-            question: questionTexts[1],
-          },
-          {
-            answer: values.answer10,
-            question: questionTexts[2],
-          },
-          {
-            answer: values.answer11,
-            question: questionTexts[3],
-          },
-          {
-            answer: values.answer12,
-            question: questionTexts[4],
-          },
-          {
-            answer: values.answer13,
-            question: questionTexts[5],
-          },
-          {
-            answer: values.answer14,
-            question: questionTexts2[0],
-          },
-          {
-            answer: values.answer15,
-            question: questionTexts2[1],
-          },
-          {
-            answer: values.durationExercise,
-            question: questionDurationExercise,
-          },
-          {
-            answer: values.seriousness,
-            question: questionSeriousness,
-          },
-        ],
-      },
+      verificationFour: values,
     });
   };
+  console.log(formdata, 'ssssss');
 
   const initialValues: FormValues = {
-    answer7:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[0]?.answer) ??
-      '',
-    mealsEat:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[1]?.answer) ??
-      '',
-    answer8:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[2]?.answer) ??
-      '',
-    answer9:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[3]?.answer) ??
-      '',
-    answer10:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[4]?.answer) ??
-      '',
-    answer11:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[5]?.answer) ??
-      '',
-    answer12:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[6]?.answer) ??
-      '',
-    answer13:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[7]?.answer) ??
-      '',
-    answer14:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[8]?.answer) ??
-      '',
-    answer15:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[9]?.answer) ??
-      '',
-    durationExercise:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[10]?.answer) ??
-      '',
-    seriousness:
-      (formdata?.physicalAReadiness &&
-        formdata?.physicalAReadiness[11]?.answer) ??
-      '',
+    isFeelWeakEver: formdata?.isFeelWeakEver ?? '',
+    mealsPerDay: formdata?.mealsPerDay ?? '',
+    isKnownCalorieConsumptionPerDay:
+      formdata?.isKnownCalorieConsumptionPerDay ?? '',
+    isEatBreakfast: formdata?.isEatBreakfast ?? '',
+    isTakingSupplements: formdata?.isTakingSupplements ?? '',
+    isTakingSeveralCupsOfCoffee: formdata?.isTakingSeveralCupsOfCoffee ?? '',
+    isDigestiveProblems: formdata?.isDigestiveProblems ?? '',
+    isNutritionOrExerciseBenefits:
+      formdata?.isNutritionOrExerciseBenefits ?? '',
+    exerciseSince: formdata?.exerciseSince ?? '',
+    isMaintainGoals: formdata?.isMaintainGoals ?? '',
+    isOkYourLookAndHealth: formdata?.isOkYourLookAndHealth ?? '',
+    goalScale: formdata?.goalScale ?? '',
   };
 
   return (
@@ -184,10 +101,10 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                   <CustomRadioButton
                     disabled={disabled}
                     text={question7}
-                    value={values.answer7}
+                    value={values.isFeelWeakEver}
                     setFieldValue={setFieldValue}
-                    name="answer7"
-                    error={errors.answer7}
+                    name="isFeelWeakEver"
+                    error={errors.isDigestiveProblems}
                     isFormSubmitted={isFormSubmitted}
                   />
                   <View style={{alignItems: 'center'}}>
@@ -195,16 +112,16 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       editable={
                         typeof disabled === 'boolean' ? !disabled : disabled
                       }
-                      touched={touched.mealsEat}
+                      touched={touched.mealsPerDay}
                       label={questionMealsEat}
-                      error={errors.mealsEat}
+                      error={errors.mealsPerDay}
                       placeholder="3"
-                      value={values.mealsEat}
+                      value={values.mealsPerDay}
                       initialTouched={true}
                       keyboardType="numeric"
-                      handleChange={handleChange('mealsEat')}
+                      handleChange={handleChange('mealsPerDay')}
                       setFieldError={setFieldError}
-                      fieldName="mealsEat"
+                      fieldName="mealsPerDay"
                       labelStyles={styles.labelStyles}
                     />
                   </View>
@@ -228,16 +145,16 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       editable={
                         typeof disabled === 'boolean' ? !disabled : disabled
                       }
-                      touched={touched.durationExercise}
+                      touched={touched.exerciseSince}
                       label={questionDurationExercise}
-                      error={errors.durationExercise}
+                      error={errors.exerciseSince}
                       placeholder="1 month"
-                      value={values.durationExercise}
+                      value={values.exerciseSince}
                       initialTouched={true}
                       keyboardType="default"
-                      handleChange={handleChange('durationExercise')}
+                      handleChange={handleChange('exerciseSince')}
                       setFieldError={setFieldError}
-                      fieldName="durationExercise"
+                      fieldName="exerciseSince"
                       labelStyles={styles.labelStyles}
                     />
                   </View>
@@ -260,16 +177,16 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       editable={
                         typeof disabled === 'boolean' ? !disabled : disabled
                       }
-                      touched={touched.seriousness}
+                      touched={touched.goalScale}
                       label={questionSeriousness}
-                      error={errors.seriousness}
+                      error={errors.goalScale}
                       placeholder="9"
-                      value={values.seriousness}
+                      value={values.goalScale}
                       initialTouched={true}
                       keyboardType="numeric"
-                      handleChange={handleChange('seriousness')}
+                      handleChange={handleChange('goalScale')}
                       setFieldError={setFieldError}
-                      fieldName="seriousness"
+                      fieldName="goalScale"
                       labelStyles={styles.labelStyles}
                     />
                   </View>
