@@ -159,8 +159,7 @@ const HomeScreen = () => {
       <Animated.View
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile' as never)}>
+          <TouchableOpacity>
             <CustomProfileAvatar
               username={userData?.username as string}
               profileImage={userData?.profileImage as any}
