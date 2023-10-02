@@ -29,3 +29,17 @@ export const setSlots = async (reqData: any) => {
   const response = await api.post(`schedule/trainer/set-slots`, reqData);
   return response;
 };
+
+export const getTrainerSlots = async (date: string) => {
+  const response = await api.get(
+    `schedule/trainer/slots-by-date?scheduleDate=${date}`,
+  );
+  return response;
+};
+
+export const getTrainerSlotList = async () => {
+  const response = await api.get(
+    `schedule/trainer/monthly-count?month=10&year=2023`,
+  );
+  return response;
+};
