@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,8 @@ import {enUS} from 'date-fns/locale';
 // ----------------------------------------------------------------------//
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {getTrainerSlotList} from '../../api/dashboard-module';
+import {useFocusEffect} from '@react-navigation/native';
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
 export const Slot = ({navigation}: any) => {
@@ -40,13 +42,22 @@ export const Slot = ({navigation}: any) => {
 
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [trainerSchedules, setTrainerSchedules] = useState([]);
+  const today = new Date();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const renderCarouselItem = ({item}: any) => {
-    const inputDateString = item?.date;
-    const parsedDate = parse(inputDateString, 'MM/dd/yyyy', new Date());
+    const inputDateString = item?._id;
+    const parsedDate = parse(
+      inputDateString,
+      "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+      new Date(),
+    );
     const month = format(parsedDate, 'MMM', {locale: enUS});
     const date = format(parsedDate, 'dd', {locale: enUS});
     const day = format(parsedDate, 'EEE', {locale: enUS});
+    if (item?.count == 0) {
+      return;
+    }
 
     return (
       <TouchableOpacity
@@ -57,9 +68,7 @@ export const Slot = ({navigation}: any) => {
           <Text style={styles.carouselItemText}>{date} </Text>
           <Text style={styles.carouselItemText}>{month}</Text>
         </View>
-        <Text style={styles.carouselItemText1}>
-          {item?.timeSlots?.length} Slots
-        </Text>
+        <Text style={styles.carouselItemText1}>{item?.count} Slots</Text>
       </TouchableOpacity>
     );
   };
@@ -75,6 +84,31 @@ export const Slot = ({navigation}: any) => {
     );
     return () => backHandler.remove();
   }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchTrainerSlotsByMonth = async () => {
+        try {
+          const response = await getTrainerSlotList();
+          const slotsCount = response?.data?.data;
+          const filteredData = slotsCount?.filter(
+            (item: any) => new Date(item._id) >= today,
+          );
+          const sortedData = filteredData?.sort((a: any, b: any) => {
+            return new Date(a._id).getTime() - new Date(b._id).getTime();
+          });
+
+          setTrainerSchedules(sortedData);
+        } catch (error: any) {
+          console.log(
+            error?.response?.data,
+            'from fetching trainer slots by monnths!',
+          );
+        }
+      };
+      fetchTrainerSlotsByMonth();
+    }, []),
+  );
 
   return (
     <View style={styles.container}>

@@ -16,8 +16,15 @@ import {format, parse, parseISO, startOfDay} from 'date-fns';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {verticalScale} from '../../utils/metrics';
-import {generateSlots} from '../../api/dashboard-module';
+import {
+  generateSlots,
+  getTrainerSlots,
+  setSlots,
+} from '../../api/dashboard-module';
 import {generateTimeSlots} from '../../utils/helper';
+import {STYLES} from '../../styles/globalStyles';
+import Toast from 'react-native-toast-message';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -29,44 +36,36 @@ type ITimeSlot = {
   updatedAt: Date;
 };
 
-type ScheduleTimeSlot = {
-  slot: string;
-  booked: boolean;
-  _id: string;
-};
-
-type Schedule = {
-  _id: string;
-  user: string;
-  date: string;
-  timeSlots: ScheduleTimeSlot[];
-  __v: number;
-};
-
-const SetSchedule = ({route, navigation}: any) => {
-  // const currentDate = new Date();
-  // const currentMonth = currentDate.getMonth() + 1;
-  const [isDateFormatted, setIsDateFormatted] = useState(false);
-  // const [slotsDate, setSlotsDate] = useState<any>();
-  // const {selectedMonth} = route.params || {currentMonth};
+const SetSchedule = ({navigation, route}: any) => {
   const [timeSlots, setTimeSlots] = useState<ITimeSlot[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null | string>(null);
-  // const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  // const [selectedOptionsWDate, setSelectedOptionsWDate] = useState<TimeSlot[]>(
-  //   [],
-  // );
-  // const today = format(new Date(), 'u-MM-dd');
-  // const userData = useSelector((state: RootState) => state.auth.user);
   const [selectedSlotDates, setSelectedSlotDates] = useState<string[]>([]);
   const today = format(new Date(), 'yyyy-MM-dd');
   const [currentDate, setCurrentDate] = useState<Date | string>(today);
+  const [selectedDate, setSelectedDate] = useState<Date | string>(today);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isListLoading, setIsListLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const date = route?.params?.date;
+    if (date) {
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      setSelectedDate(formattedDate);
+    }
+  }, []);
 
   const handleDayPress = (day: DateData) => {
-    setIsDateFormatted(false);
     const selected = day.dateString;
+    if (moment(selected).isBefore(moment(today))) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please select future date!',
+      });
+      setSelectedDate('');
+      return;
+    }
 
     if (selected === selectedDate) {
-      setSelectedDate(null);
+      setSelectedDate('');
 
       return;
     }
@@ -81,102 +80,6 @@ const SetSchedule = ({route, navigation}: any) => {
     ? formatDate(selectedDate)
     : formatDate(new Date());
 
-  // const generateTimeSlots = (forNextDay = false) => {
-  //   const currentTime = moment();
-  //   if (forNextDay) {
-  //     const startTime = moment().add(1, 'day').startOf('day');
-  //     const endTime = moment(startTime).add(1, 'day');
-  //     const timeSlots = [];
-  //     while (startTime.isBefore(endTime)) {
-  //       const formattedSlot = `${startTime.format('h:mmA')} - ${startTime
-  //         .add(1, 'hour')
-  //         .format('h:mmA')}`;
-  //       timeSlots.push(formattedSlot);
-  //     }
-  //     return timeSlots;
-  //   } else {
-  //     const nextHourStart = moment().add(1, 'hour').startOf('hour');
-  //     const endTime = moment().set({
-  //       hour: 24,
-  //       minute: 0,
-  //       second: 0,
-  //       millisecond: 0,
-  //     });
-  //     const timeSlots = [];
-
-  //     while (nextHourStart.isBefore(endTime)) {
-  //       const startTime = nextHourStart.clone();
-  //       const endTime = nextHourStart.add(1, 'hour');
-  //       const formattedSlot = `${startTime.format('h:mmA')} - ${endTime.format(
-  //         'h:mmA',
-  //       )}`;
-  //       timeSlots.push(formattedSlot);
-  //     }
-
-  //     return timeSlots;
-  //   }
-  // };
-
-  // const options = generateTimeSlots();
-  // const nextDayOptions = generateTimeSlots(true);
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     navigation.goBack();
-  //     return true;
-  //   };
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction,
-  //   );
-  //   return () => backHandler.remove();
-  // }, [navigation]);
-
-  // const handleSelectOption = (option: string) => {
-  //   const selectedDateArr = isDateFormatted ? '' : selectedDate?.split('-');
-  //   const selectedSlotDate = new Date(route.params.date);
-
-  //   const formattedDate = isDateFormatted
-  //     ? format(selectedSlotDate, 'MM/dd/yyyy')
-  //     : '';
-  //   const date = isDateFormatted
-  //     ? formattedDate
-  //     : selectedDate
-  //     ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
-  //     : format(new Date(), 'MM/dd/u');
-  //   console.log(date);
-  //   if (selectedOptions.includes(option)) {
-  //     setSelectedOptions(selectedOptions.filter(item => item !== option));
-  //   } else {
-  //     setSelectedOptions([...selectedOptions, option]);
-  //   }
-
-  //   const availDateInd = selectedOptionsWDate?.findIndex(
-  //     el => el.date === date,
-  //   );
-
-  //   if (availDateInd >= 0) {
-  //     let temp = [...selectedOptionsWDate];
-  //     const savedOptions = [...temp[availDateInd].option];
-
-  //     if (savedOptions.find(i => i === option) === undefined) {
-  //       temp[availDateInd]['option'] = [...savedOptions, option];
-  //     } else {
-  //       temp[availDateIhand]['option'] = savedOptions.filter(op => op !== option);
-  //     }
-
-  //     setSelectedOptionsWDate(temp);
-
-  //     return;
-  //   }
-
-  //   const obj = {
-  //     date,
-  //     option: [option],
-  //   };
-
-  //   setSelectedOptionsWDate([...selectedOptionsWDate, obj]);
-  // };
-
   const handleSelectOption = (id: string) => {
     const isSelected = selectedSlotDates?.some((slot: any) => slot === id);
     if (isSelected) {
@@ -187,26 +90,79 @@ const SetSchedule = ({route, navigation}: any) => {
     }
   };
 
+  const fetchTimeSlots = async () => {
+    setIsListLoading(true);
+    try {
+      const response = await generateSlots();
+      const slots = response?.data?.data;
+      const filteredSlots = generateTimeSlots(currentDate !== selectedDate);
+      const extractedData = filteredSlots.map(timeSlot => {
+        const [start, end] = timeSlot.split(' - ');
+        const slot = slots.find((slot: ITimeSlot) => {
+          const slotStart = moment(slot.startTime, 'h:mm A');
+          const slotEnd = moment(slot.endTime, 'h:mm A');
+          return (
+            slotStart.format('h:mmA') === start &&
+            slotEnd.format('h:mmA') === end
+          );
+        });
+
+        return slot;
+      });
+      setTimeSlots(extractedData);
+      setIsListLoading(false);
+    } catch (error: any) {
+      console.log(error?.response, 'error from generate slots!');
+      setIsListLoading(false);
+    }
+  };
+
+  const fetchTrainerSlots = async () => {
+    try {
+      const response = await getTrainerSlots(selectedDate as string);
+      const bookedSlots = response?.data?.data?.slots;
+      const filterSlots = bookedSlots?.map((slot: ITimeSlot) => slot._id);
+      if (filterSlots) {
+        setSelectedSlotDates(filterSlots);
+      } else {
+        setSelectedSlotDates([]);
+      }
+    } catch (error: any) {
+      console.log(error?.response?.data, 'error from trainer booled slots!');
+    }
+  };
+
+  useEffect(() => {
+    fetchTimeSlots();
+    fetchTrainerSlots();
+  }, [selectedDate]);
+
+  const handleSetSchedule = async () => {
+    setIsLoading(true);
+    try {
+      const reqData = {
+        scheduleDate: selectedDate == null ? currentDate : selectedDate,
+        slots: selectedSlotDates,
+      };
+
+      const response = await setSlots(reqData);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+      navigation.navigate('Slot');
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log('error from setSchedule', error?.response);
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
+      setIsLoading(false);
+    }
+  };
+
   const renderOptionItem = ({item}: any) => {
-    // if (route.params.date && isDateFormatted) {
-    //   const parsedDate = new Date(route.params.date);
-    //   const formattedDate = format(parsedDate, 'MM/dd/yyyy');
-    //   setSlotsDate(formattedDate);
-    // } else {
-    //   const selectedDateArr = selectedDate?.split('-');
-    //   setSlotsDate(
-    //     selectedDate
-    //       ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
-    //       : format(new Date(), 'MM/dd/u'),
-    //   );
-    // }
-
-    // const selectedSlot = selectedOptionsWDate.find(
-    //   el => el.date === slotsDate,
-    // )?.option;
-
-    // const isSelected = selectedSlot?.includes(item);
-
     return (
       <TouchableOpacity
         style={[styles.optionItem]}
@@ -219,7 +175,7 @@ const SetSchedule = ({route, navigation}: any) => {
             style={[
               styles.optionCheckbox,
               {
-                backgroundColor: selectedSlotDates.includes(item._id)
+                backgroundColor: selectedSlotDates?.includes(item._id)
                   ? '#209BCC'
                   : 'transparent',
               },
@@ -228,64 +184,6 @@ const SetSchedule = ({route, navigation}: any) => {
         </View>
       </TouchableOpacity>
     );
-  };
-
-  // useEffect(() => {
-  //   if (route.params.date) {
-  //     setSelectedDate(route.params.date);
-  //     setIsDateFormatted(true);
-  //     const parsedDate = new Date(route.params.date);
-  //     const formattedDate = format(parsedDate, 'yyyy-MM-dd');
-  //     setSelectedSlotDate(formattedDate);
-  //   } else {
-  //     setIsDateFormatted(false);
-  //   }
-  // }, []);
-  // console.log(selectedSlotDate);
-  // const currentttDate = startOfDay(new Date());
-  // const formattedCurrentDate = route.params.date
-  //   ? format(route.params.date, 'yyyy-MM-dd')
-  //   : format(currentttDate, 'yyyy-MM-dd');
-
-  useEffect(() => {
-    if (currentDate === selectedDate) {
-      console.log('matched');
-    }
-    const fetchTimeSlots = async () => {
-      try {
-        console.log(currentDate, selectedDate, 'cur and sel');
-        const response = await generateSlots();
-        const slots = response?.data?.data;
-        const filteredSlots = generateTimeSlots(currentDate !== selectedDate);
-        console.log(filteredSlots, 'filtered');
-        const extractedData = filteredSlots.map(timeSlot => {
-          const [start, end] = timeSlot.split(' - ');
-          const slot = slots.find((slot: ITimeSlot) => {
-            const slotStart = moment(slot.startTime, 'h:mm A');
-            const slotEnd = moment(slot.endTime, 'h:mm A');
-            return (
-              slotStart.format('h:mmA') === start &&
-              slotEnd.format('h:mmA') === end
-            );
-          });
-
-          return slot;
-        });
-        setTimeSlots(extractedData);
-      } catch (error: any) {
-        console.log(error?.response, 'error from generate slots!');
-      }
-    };
-    fetchTimeSlots();
-  }, [selectedDate]);
-
-  const handleSetSchedule = () => {
-    try {
-      const reqData = {
-        scheduleDate: selectedDate == null ? currentDate : selectedDate,
-        slots: selectedSlotDates,
-      };
-    } catch (error) {}
   };
 
   return (
@@ -312,20 +210,18 @@ const SetSchedule = ({route, navigation}: any) => {
             }}
             markingType="custom"
             // markedDates={customDatesStyles}
-            // markedDates={{
-            //   [today]: {
-            //     selected: true,
-            //     selectedColor: '#209BCC',
-            //     selectedTextColor: '#FFF',
-            //   },
-            //   [selectedSlotDate && isDateFormatted
-            //     ? selectedSlotDate
-            //     : selectedDate]: {
-            //     selected: true,
-            //     selectedColor: '#209BCC',
-            //     selectedTextColor: '#FFF',
-            //   },
-            // }}
+            markedDates={{
+              [today]: {
+                selected: true,
+                selectedColor: '#209BCC',
+                selectedTextColor: '#FFF',
+              },
+              [selectedDate as any]: {
+                selected: true,
+                selectedColor: '#209BCC',
+                selectedTextColor: '#FFF',
+              },
+            }}
             onDayPress={handleDayPress}
             hideExtraDays={true}
             // current={formattedCurrentDate}
@@ -333,25 +229,44 @@ const SetSchedule = ({route, navigation}: any) => {
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.bottomContainer}>
-          <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
-          <FlatList
-            data={timeSlots}
-            keyExtractor={(item, index) => item._id + index.toString()}
-            renderItem={renderOptionItem}
-            contentContainerStyle={styles.optionsContainer}
-            showsVerticalScrollIndicator={false}
-          />
+        <View
+          style={[
+            styles.bottomContainer,
+            timeSlots.length == 0
+              ? {justifyContent: 'center', alignItems: 'center'}
+              : undefined,
+          ]}>
+          {isListLoading ? (
+            <CustomLoader extraStyles={{marginTop: 30}} />
+          ) : timeSlots.length == 0 ? (
+            <Text style={[STYLES.text16]}>No slots available for today!</Text>
+          ) : (
+            <>
+              <Text style={styles.selectedDateText}>
+                {formattedSelectedDate}
+              </Text>
+
+              <FlatList
+                data={timeSlots}
+                keyExtractor={(item, index) => item._id + index.toString()}
+                renderItem={renderOptionItem}
+                contentContainerStyle={styles.optionsContainer}
+                showsVerticalScrollIndicator={false}
+              />
+            </>
+          )}
         </View>
       </ScrollView>
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          // isDisabled={selectedOptions.length === 0}
-          extraStyles={{paddingHorizontal: 110}}
-          onPress={handleSetSchedule}>
-          Set Schedule
-        </CustomButton>
-      </View>
+      {timeSlots.length > 0 && (
+        <View style={styles.buttonContainer}>
+          <CustomButton
+            isDisabled={isLoading}
+            extraStyles={{paddingHorizontal: 110}}
+            onPress={handleSetSchedule}>
+            {isLoading ? <CustomLoader /> : 'Set Schedule'}
+          </CustomButton>
+        </View>
+      )}
     </View>
   );
 };
@@ -383,8 +298,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     backgroundColor: '#212223',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    borderRadius: 30,
     paddingHorizontal: 30,
     marginTop: 8,
     width: '100%',
