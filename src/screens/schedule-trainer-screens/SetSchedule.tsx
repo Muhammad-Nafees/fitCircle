@@ -12,16 +12,21 @@ import {
 import {Calendar, DateData} from 'react-native-calendars';
 import moment from 'moment';
 import CustomButton from '../../components/shared-components/CustomButton';
-import {format, startOfDay} from 'date-fns';
+import {format, parse, parseISO, startOfDay} from 'date-fns';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {verticalScale} from '../../utils/metrics';
+import {generateSlots} from '../../api/dashboard-module';
+import {generateTimeSlots} from '../../utils/helper';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
-type TimeSlot = {
-  date: string;
-  option: string[];
+type ITimeSlot = {
+  _id: string;
+  endTime: Date;
+  startTime: Date;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 type ScheduleTimeSlot = {
@@ -39,27 +44,30 @@ type Schedule = {
 };
 
 const SetSchedule = ({route, navigation}: any) => {
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1;
+  // const currentDate = new Date();
+  // const currentMonth = currentDate.getMonth() + 1;
   const [isDateFormatted, setIsDateFormatted] = useState(false);
-  const [slotsDate, setSlotsDate] = useState<any>();
-  const {selectedMonth} = route.params || {currentMonth};
-  const [selectedDate, setSelectedDate] = useState<any>(null);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [selectedOptionsWDate, setSelectedOptionsWDate] = useState<TimeSlot[]>(
-    [],
-  );
-  const today = format(new Date(), 'u-MM-dd');
-  const userData = useSelector((state: RootState) => state.auth.user);
-  const [selectedSlotDate, setSelectedSlotDate] = useState<any>();
+  // const [slotsDate, setSlotsDate] = useState<any>();
+  // const {selectedMonth} = route.params || {currentMonth};
+  const [timeSlots, setTimeSlots] = useState<ITimeSlot[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null | string>(null);
+  // const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  // const [selectedOptionsWDate, setSelectedOptionsWDate] = useState<TimeSlot[]>(
+  //   [],
+  // );
+  // const today = format(new Date(), 'u-MM-dd');
+  // const userData = useSelector((state: RootState) => state.auth.user);
+  const [selectedSlotDates, setSelectedSlotDates] = useState<string[]>([]);
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const [currentDate, setCurrentDate] = useState<Date | string>(today);
 
   const handleDayPress = (day: DateData) => {
     setIsDateFormatted(false);
     const selected = day.dateString;
-    console.log(selected, selectedDate, selectedSlotDate, 'daypress');
 
     if (selected === selectedDate) {
-      setSelectedDate(undefined);
+      setSelectedDate(null);
+
       return;
     }
     setSelectedDate(selected);
@@ -73,132 +81,147 @@ const SetSchedule = ({route, navigation}: any) => {
     ? formatDate(selectedDate)
     : formatDate(new Date());
 
-  const generateTimeSlots = (forNextDay = false) => {
-    const currentTime = moment();
-    if (forNextDay) {
-      const startTime = moment().add(1, 'day').startOf('day');
-      const endTime = moment(startTime).add(1, 'day');
-      const timeSlots = [];
-      while (startTime.isBefore(endTime)) {
-        const formattedSlot = `${startTime.format('h:mmA')} - ${startTime
-          .add(1, 'hour')
-          .format('h:mmA')}`;
-        timeSlots.push(formattedSlot);
-      }
-      return timeSlots;
+  // const generateTimeSlots = (forNextDay = false) => {
+  //   const currentTime = moment();
+  //   if (forNextDay) {
+  //     const startTime = moment().add(1, 'day').startOf('day');
+  //     const endTime = moment(startTime).add(1, 'day');
+  //     const timeSlots = [];
+  //     while (startTime.isBefore(endTime)) {
+  //       const formattedSlot = `${startTime.format('h:mmA')} - ${startTime
+  //         .add(1, 'hour')
+  //         .format('h:mmA')}`;
+  //       timeSlots.push(formattedSlot);
+  //     }
+  //     return timeSlots;
+  //   } else {
+  //     const nextHourStart = moment().add(1, 'hour').startOf('hour');
+  //     const endTime = moment().set({
+  //       hour: 24,
+  //       minute: 0,
+  //       second: 0,
+  //       millisecond: 0,
+  //     });
+  //     const timeSlots = [];
+
+  //     while (nextHourStart.isBefore(endTime)) {
+  //       const startTime = nextHourStart.clone();
+  //       const endTime = nextHourStart.add(1, 'hour');
+  //       const formattedSlot = `${startTime.format('h:mmA')} - ${endTime.format(
+  //         'h:mmA',
+  //       )}`;
+  //       timeSlots.push(formattedSlot);
+  //     }
+
+  //     return timeSlots;
+  //   }
+  // };
+
+  // const options = generateTimeSlots();
+  // const nextDayOptions = generateTimeSlots(true);
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     navigation.goBack();
+  //     return true;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, [navigation]);
+
+  // const handleSelectOption = (option: string) => {
+  //   const selectedDateArr = isDateFormatted ? '' : selectedDate?.split('-');
+  //   const selectedSlotDate = new Date(route.params.date);
+
+  //   const formattedDate = isDateFormatted
+  //     ? format(selectedSlotDate, 'MM/dd/yyyy')
+  //     : '';
+  //   const date = isDateFormatted
+  //     ? formattedDate
+  //     : selectedDate
+  //     ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
+  //     : format(new Date(), 'MM/dd/u');
+  //   console.log(date);
+  //   if (selectedOptions.includes(option)) {
+  //     setSelectedOptions(selectedOptions.filter(item => item !== option));
+  //   } else {
+  //     setSelectedOptions([...selectedOptions, option]);
+  //   }
+
+  //   const availDateInd = selectedOptionsWDate?.findIndex(
+  //     el => el.date === date,
+  //   );
+
+  //   if (availDateInd >= 0) {
+  //     let temp = [...selectedOptionsWDate];
+  //     const savedOptions = [...temp[availDateInd].option];
+
+  //     if (savedOptions.find(i => i === option) === undefined) {
+  //       temp[availDateInd]['option'] = [...savedOptions, option];
+  //     } else {
+  //       temp[availDateIhand]['option'] = savedOptions.filter(op => op !== option);
+  //     }
+
+  //     setSelectedOptionsWDate(temp);
+
+  //     return;
+  //   }
+
+  //   const obj = {
+  //     date,
+  //     option: [option],
+  //   };
+
+  //   setSelectedOptionsWDate([...selectedOptionsWDate, obj]);
+  // };
+
+  const handleSelectOption = (id: string) => {
+    const isSelected = selectedSlotDates?.some((slot: any) => slot === id);
+    if (isSelected) {
+      const updatedSlots = selectedSlotDates?.filter(slot => slot !== id);
+      setSelectedSlotDates(updatedSlots);
     } else {
-      const nextHourStart = moment().add(1, 'hour').startOf('hour');
-      const endTime = moment().set({
-        hour: 24,
-        minute: 0,
-        second: 0,
-        millisecond: 0,
-      });
-      const timeSlots = [];
-
-      while (nextHourStart.isBefore(endTime)) {
-        const startTime = nextHourStart.clone();
-        const endTime = nextHourStart.add(1, 'hour');
-        const formattedSlot = `${startTime.format('h:mmA')} - ${endTime.format(
-          'h:mmA',
-        )}`;
-        timeSlots.push(formattedSlot);
-      }
-
-      return timeSlots;
+      setSelectedSlotDates((prev: any) => [...prev, id]);
     }
   };
 
-  const options = generateTimeSlots();
-  const nextDayOptions = generateTimeSlots(true);
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
+  const renderOptionItem = ({item}: any) => {
+    // if (route.params.date && isDateFormatted) {
+    //   const parsedDate = new Date(route.params.date);
+    //   const formattedDate = format(parsedDate, 'MM/dd/yyyy');
+    //   setSlotsDate(formattedDate);
+    // } else {
+    //   const selectedDateArr = selectedDate?.split('-');
+    //   setSlotsDate(
+    //     selectedDate
+    //       ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
+    //       : format(new Date(), 'MM/dd/u'),
+    //   );
+    // }
 
-  const handleSelectOption = (option: string) => {
-    const selectedDateArr = isDateFormatted ? '' : selectedDate?.split('-');
-    const selectedSlotDate = new Date(route.params.date);
+    // const selectedSlot = selectedOptionsWDate.find(
+    //   el => el.date === slotsDate,
+    // )?.option;
 
-    const formattedDate = isDateFormatted
-      ? format(selectedSlotDate, 'MM/dd/yyyy')
-      : '';
-    const date = isDateFormatted
-      ? formattedDate
-      : selectedDate
-      ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
-      : format(new Date(), 'MM/dd/u');
-    console.log(date);
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter(item => item !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
+    // const isSelected = selectedSlot?.includes(item);
 
-    const availDateInd = selectedOptionsWDate?.findIndex(
-      el => el.date === date,
-    );
-
-    if (availDateInd >= 0) {
-      let temp = [...selectedOptionsWDate];
-      const savedOptions = [...temp[availDateInd].option];
-
-      if (savedOptions.find(i => i === option) === undefined) {
-        temp[availDateInd]['option'] = [...savedOptions, option];
-      } else {
-        temp[availDateInd]['option'] = savedOptions.filter(op => op !== option);
-      }
-
-      setSelectedOptionsWDate(temp);
-
-      return;
-    }
-
-    const obj = {
-      date,
-      option: [option],
-    };
-
-    setSelectedOptionsWDate([...selectedOptionsWDate, obj]);
-  };
-
-  const renderOptionItem = ({item}) => {
-    if (route.params.date && isDateFormatted) {
-      const parsedDate = new Date(route.params.date);
-      const formattedDate = format(parsedDate, 'MM/dd/yyyy');
-      setSlotsDate(formattedDate);
-    } else {
-      const selectedDateArr = selectedDate?.split('-');
-      setSlotsDate(
-        selectedDate
-          ? `${selectedDateArr[1]}/${selectedDateArr[2]}/${selectedDateArr[0]}`
-          : format(new Date(), 'MM/dd/u'),
-      );
-    }
-
-    const selectedSlot = selectedOptionsWDate.find(
-      el => el.date === slotsDate,
-    )?.option;
-
-    const isSelected = selectedSlot?.includes(item);
     return (
       <TouchableOpacity
         style={[styles.optionItem]}
-        onPress={() => handleSelectOption(item)}>
-        <Text style={styles.optionTime}>{item}</Text>
+        onPress={() => handleSelectOption(item._id)}>
+        <Text style={styles.optionTime}>
+          {item?.startTime} - {item?.endTime}
+        </Text>
         <View style={styles.optionCheckboxContainer}>
           <View
             style={[
               styles.optionCheckbox,
               {
-                backgroundColor: isSelected ? '#209BCC' : 'transparent',
+                backgroundColor: selectedSlotDates.includes(item._id)
+                  ? '#209BCC'
+                  : 'transparent',
               },
             ]}
           />
@@ -207,22 +230,63 @@ const SetSchedule = ({route, navigation}: any) => {
     );
   };
 
+  // useEffect(() => {
+  //   if (route.params.date) {
+  //     setSelectedDate(route.params.date);
+  //     setIsDateFormatted(true);
+  //     const parsedDate = new Date(route.params.date);
+  //     const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+  //     setSelectedSlotDate(formattedDate);
+  //   } else {
+  //     setIsDateFormatted(false);
+  //   }
+  // }, []);
+  // console.log(selectedSlotDate);
+  // const currentttDate = startOfDay(new Date());
+  // const formattedCurrentDate = route.params.date
+  //   ? format(route.params.date, 'yyyy-MM-dd')
+  //   : format(currentttDate, 'yyyy-MM-dd');
+
   useEffect(() => {
-    if (route.params.date) {
-      setSelectedDate(route.params.date);
-      setIsDateFormatted(true);
-      const parsedDate = new Date(route.params.date);
-      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
-      setSelectedSlotDate(formattedDate);
-    } else {
-      setIsDateFormatted(false);
+    if (currentDate === selectedDate) {
+      console.log('matched');
     }
-  }, []);
-  console.log(selectedSlotDate);
-  const currentttDate = startOfDay(new Date());
-  const formattedCurrentDate = route.params.date
-    ? format(route.params.date, 'yyyy-MM-dd')
-    : format(currentttDate, 'yyyy-MM-dd');
+    const fetchTimeSlots = async () => {
+      try {
+        console.log(currentDate, selectedDate, 'cur and sel');
+        const response = await generateSlots();
+        const slots = response?.data?.data;
+        const filteredSlots = generateTimeSlots(currentDate !== selectedDate);
+        console.log(filteredSlots, 'filtered');
+        const extractedData = filteredSlots.map(timeSlot => {
+          const [start, end] = timeSlot.split(' - ');
+          const slot = slots.find((slot: ITimeSlot) => {
+            const slotStart = moment(slot.startTime, 'h:mm A');
+            const slotEnd = moment(slot.endTime, 'h:mm A');
+            return (
+              slotStart.format('h:mmA') === start &&
+              slotEnd.format('h:mmA') === end
+            );
+          });
+
+          return slot;
+        });
+        setTimeSlots(extractedData);
+      } catch (error: any) {
+        console.log(error?.response, 'error from generate slots!');
+      }
+    };
+    fetchTimeSlots();
+  }, [selectedDate]);
+
+  const handleSetSchedule = () => {
+    try {
+      const reqData = {
+        scheduleDate: selectedDate == null ? currentDate : selectedDate,
+        slots: selectedSlotDates,
+      };
+    } catch (error) {}
+  };
 
   return (
     <View style={styles.container}>
@@ -248,23 +312,23 @@ const SetSchedule = ({route, navigation}: any) => {
             }}
             markingType="custom"
             // markedDates={customDatesStyles}
-            markedDates={{
-              [today]: {
-                selected: true,
-                selectedColor: '#209BCC',
-                selectedTextColor: '#FFF',
-              },
-              [selectedSlotDate && isDateFormatted
-                ? selectedSlotDate
-                : selectedDate]: {
-                selected: true,
-                selectedColor: '#209BCC',
-                selectedTextColor: '#FFF',
-              },
-            }}
+            // markedDates={{
+            //   [today]: {
+            //     selected: true,
+            //     selectedColor: '#209BCC',
+            //     selectedTextColor: '#FFF',
+            //   },
+            //   [selectedSlotDate && isDateFormatted
+            //     ? selectedSlotDate
+            //     : selectedDate]: {
+            //     selected: true,
+            //     selectedColor: '#209BCC',
+            //     selectedTextColor: '#FFF',
+            //   },
+            // }}
             onDayPress={handleDayPress}
             hideExtraDays={true}
-            current={formattedCurrentDate}
+            // current={formattedCurrentDate}
           />
         </View>
       </View>
@@ -272,12 +336,8 @@ const SetSchedule = ({route, navigation}: any) => {
         <View style={styles.bottomContainer}>
           <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
           <FlatList
-            data={
-              formattedSelectedDate === formatDate(new Date())
-                ? options
-                : nextDayOptions
-            }
-            keyExtractor={(item, index) => index.toString()}
+            data={timeSlots}
+            keyExtractor={(item, index) => item._id + index.toString()}
             renderItem={renderOptionItem}
             contentContainerStyle={styles.optionsContainer}
             showsVerticalScrollIndicator={false}
@@ -286,9 +346,9 @@ const SetSchedule = ({route, navigation}: any) => {
       </ScrollView>
       <View style={styles.buttonContainer}>
         <CustomButton
-          isDisabled={selectedOptions.length === 0}
+          // isDisabled={selectedOptions.length === 0}
           extraStyles={{paddingHorizontal: 110}}
-          onPress={() => console.log('Something')}>
+          onPress={handleSetSchedule}>
           Set Schedule
         </CustomButton>
       </View>

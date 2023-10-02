@@ -8,7 +8,8 @@ import VerificationFour from './VerificationFour';
 import VerificationFive from './VerificationFive';
 import VerificationSix from './VerificationSix';
 import CustomButton from '../../../components/shared-components/CustomButton';
-import { IPhysicalActivity } from '../../../interfaces/user.interface';
+import {IPhysicalActivity} from '../../../interfaces/user.interface';
+import {addPhysicalActivity} from '../../../api/dashboard-module';
 
 type Mcq = {
   question: string;
@@ -33,26 +34,28 @@ const VerificationSeven = ({navigation, route}: any) => {
     verificationTwo,
     verificationFour,
     verificationFive,
-    optionals,
+    verificationSix,
     initial,
   } = route?.params;
 
-
-
   const handleFormSave = async () => {
-    const data = {
+
+    const reqData = {
       ...verificationOne,
       ...verificationTwo,
       ...verificationFour,
-      ...VerificationFive,
-      optionals,
+      ...verificationFive,
+      ...verificationSix,
+      initial,
+    };
+    console.log(verificationSix,"verif")
+    console.log(reqData,"req")
+    try {
+      const response = await addPhysicalActivity(reqData);
+      console.log(response?.data);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'from add physical activity!');
     }
-    console.log(data,"daat")
-    // const reqData:IPhysicalActivity = {
-      
-
-    // }
-    // navigation.navigate('FormSaved');
   };
 
   return (
@@ -75,7 +78,7 @@ const VerificationSeven = ({navigation, route}: any) => {
           <VerificationTwo data={verificationTwo} disabled={true} />
           <VerificationFour data={verificationFour} disabled={true} />
           <VerificationFive data={verificationFive} disabled={true} />
-          <VerificationSix data={optionals} disabled={true} />
+          <VerificationSix data={verificationSix} disabled={true} />
         </View>
         <View style={styles.buttonContainer}>
           <CustomButton

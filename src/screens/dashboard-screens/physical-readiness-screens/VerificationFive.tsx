@@ -26,9 +26,15 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
   }, [navigation]);
   const formdata: null | any = data;
   const handleSubmit = (values: any) => {
+    const VALUES = {
+      ...values,
+      desiredBodyFat: `${values.desiredBodyFat}%`,
+      desiredWeight: `${values.desiredWeight} kg`,
+
+    };
     navigation.navigate('VerificationSix', {
       ...route.params,
-      verificationFive: values,
+      verificationFive: VALUES,
     });
   };
 
@@ -103,7 +109,6 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
                   placeholder="70-90%"
                   value={values.desiredLeanMuscle}
                   handleChange={handleChange('desiredLeanMuscle')}
-                  keyboardType="numeric"
                   error={errors.desiredLeanMuscle}
                   touched={touched.desiredLeanMuscle}
                   setFieldError={setFieldError}
