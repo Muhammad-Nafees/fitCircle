@@ -10,7 +10,7 @@ import PhoneInput from 'react-native-phone-number-input';
 import {useIsFocused} from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import React, {useRef, useState, useEffect} from 'react';
-import {format} from 'date-fns';
+import {format, parse} from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Formik} from 'formik';
 // --------------------------------------------------------------------------------------//
@@ -27,6 +27,8 @@ import DropdownTextInput from '../../../components/shared-components/CustomDropd
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 import {Unit} from '../../../components/auth-components/create-profile/GenderForm';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
 
 export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -59,12 +61,26 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
 
   const formdata: null | any = data;
 
-  const formSubmit = (values: any) => {
+  const formSubmit = async (values: any) => {
     if (isError) {
       return;
     }
-    console.log('Form values:', values);
-    navigation.navigate('VerificationTwo', {verificationOne: values});
+    const parsedDate = parse(values.date, 'dd/MM/yyyy', new Date());
+    const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+    const VALUES = {
+      ...values,
+      weight: {
+        value: values.weight,
+        unit: weightUnit,
+      },
+      height: {
+        value: values.height,
+        unit: heightUnit,
+      },
+      date: formattedDate,
+      cellPhone: `+${phoneCode}${values.cellPhone}`,
+    };
+    navigation.navigate('VerificationTwo', {verificationOne: VALUES});
   };
 
   // useEffect(() => {
@@ -143,7 +159,6 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       setFieldError={setFieldError}
                       fieldName="date"
                       editable={false}
-                      
                     />
                     <Icon
                       name="calendar-outline"

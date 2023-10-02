@@ -122,7 +122,7 @@ export const ReelsComponent = ({
     // if (isProfile === true) {
     //   handleFavoriteDialog();
     // } else {
-      navigation.navigate('FavoriteDialog' as never);
+    navigation.navigate('FavoriteDialog' as never);
     // }
   };
 
@@ -226,6 +226,12 @@ export const ReelsComponent = ({
           videoRef.current.seek(0);
         }}
         useTextureView={true}
+        bufferConfig={{
+          minBufferMs: 15000, // Minimum time (in milliseconds) to buffer before playback starts
+          maxBufferMs: 50000, // Maximum time (in milliseconds) to buffer ahead during playback
+          bufferForPlaybackMs: 2500, // Amount of time (in milliseconds) to buffer ahead during playback
+          bufferForPlaybackAfterRebufferMs: 5000, // Amount of time (in milliseconds) to buffer ahead after rebuffering
+        }}
       />
       <View style={styles.textContentContainer}>
         <Text style={styles.textContent}>{post?.text}</Text>

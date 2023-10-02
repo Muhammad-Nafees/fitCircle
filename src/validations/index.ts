@@ -224,7 +224,7 @@ export const PhysicalReadinessFourSchema = Yup.object().shape({
 export const PhysicalActivitySchema = Yup.object().shape({
   desiredBodyFat: Yup.number().required('This field is required'),
   desiredWeight: Yup.number().required('This field is required'),
-  desiredLeanMuscle: Yup.number().required('This field is required'),
+  desiredLeanMuscle: Yup.string().required('This field is required'),
   exercisesPerWeek: Yup.number().required('This field is required'),
 });
 
