@@ -35,3 +35,26 @@ export const generateTimeSlots = (forNextDay:boolean) => {
     return timeSlots;
   }
 };
+
+export const timeDifference = (createdAt: any) => {
+  const commentDate = new Date(createdAt);
+  const currentDate = new Date();
+  const differenceInSeconds = Math.floor(
+    (currentDate.getTime() - commentDate.getTime()) / 1000,
+  );
+
+  if (differenceInSeconds <= 0) {
+    return `Just now`;
+  } else if (differenceInSeconds < 60) {
+    return `${differenceInSeconds} seconds ago`;
+  } else if (differenceInSeconds < 3600) {
+    const minutes = Math.floor(differenceInSeconds / 60);
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  } else if (differenceInSeconds < 86400) {
+    const hours = Math.floor(differenceInSeconds / 3600);
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  } else {
+    const days = Math.floor(differenceInSeconds / 86400);
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  }
+};

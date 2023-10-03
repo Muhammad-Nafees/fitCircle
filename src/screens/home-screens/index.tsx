@@ -154,6 +154,7 @@ const HomeScreen = () => {
     }
     return;
   };
+  console.log(userData?.profileImage,"pi")
   return (
     <View style={styles.container}>
       <Animated.View

@@ -276,7 +276,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               setFieldError={setFieldError}
               fieldName="city"
             />
-            {userRole == 'admin' && (
+            {userRole !== 'user' && (
               <CustomSelect
                 label="Gender"
                 selectedValue={values.gender}
@@ -338,7 +338,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                 />
               </View>
             </TouchableWithoutFeedback>
-            {userRole == 'admin' && (
+            {userRole !== 'user' && (
               <CustomInput
                 label="Hourly Rate"
                 placeholder="$20.00"

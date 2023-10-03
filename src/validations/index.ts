@@ -69,7 +69,7 @@ export const createProfileSchema = (userRole: any) => {
       exclusive: true,
       message: 'Gender is required',
       test: value => {
-        if (userRole === 'trainer') {
+        if (userRole !== 'user') {
           return value !== undefined && value !== '';
         }
         return true;

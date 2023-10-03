@@ -277,7 +277,7 @@ export const VideoPreviewScreen = ({
           ...(costValue !== 0 && {cost: costValue}),
           ...(thumbnail !== null && {thumbnail: compressedThumbnail}),
         };
-        console.log(reqData,"req")
+        console.log(reqData, 'req');
         const response = await createPostWithVideo(reqData);
         console.log(response?.data, 'from video!');
         navigation.navigate('Home');
@@ -286,10 +286,9 @@ export const VideoPreviewScreen = ({
           text1: `${response?.data.message}`,
         });
       }
-
       setIsLoading(false);
     } catch (error: any) {
-      console.log(error?.response.data,"FROM VIDEO POST");
+      console.log(error?.response.data, 'FROM VIDEO POST');
       if (error?.response?.data?.message) {
         Toast.show({
           type: 'error',
@@ -308,7 +307,7 @@ export const VideoPreviewScreen = ({
     <>
       <View style={styles.container}>
         <View style={styles.topLeftContent}>
-          <CustomProfileAvatar username={'S'} />
+          <CustomProfileAvatar profileImage="" username={'S'} />
           <View style={styles.postTextContainer}>
             <Text style={styles.postName}>{username}</Text>
             <Text style={styles.postId}>{`@${username
@@ -421,13 +420,11 @@ export const VideoPreviewScreen = ({
               <TouchableOpacity onPress={handlePhotoButtonPress}>
                 <CreatePostSvgIcon />
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleCaptureButtonPress}>
-                <Cameraicon />
-              </TouchableOpacity>
             </View>
             <View>
               <CustomButton
                 extraStyles={{paddingHorizontal: 30}}
+                isDisabled={thumbnail == null}
                 onPress={handleThumbnailSelect}>
                 Select as thumbnail
               </CustomButton>

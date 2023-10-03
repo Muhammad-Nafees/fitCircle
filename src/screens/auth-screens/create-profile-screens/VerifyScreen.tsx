@@ -109,13 +109,12 @@ const VerifyScreen = ({navigation}: any) => {
         // dispatch(setAccessToken(data?.accessToken));
         // dispatch(setRefreshToken(data?.refreshToken));
         navigation.navigate('Home');
-
         Toast.show({
           type: 'success',
           text1: 'Profile Created Successfully!',
         });
       } catch (error: any) {
-        console.log(error.response.data, 'error');
+        console.log(error?.response?.data, 'error');
         Toast.show({
           type: 'error',
           text1: `${error?.response?.data.message}`,

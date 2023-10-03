@@ -1,32 +1,26 @@
+import {s3bucketReference} from '../../api';
 import {View, StyleSheet} from 'react-native';
 import {Avatar} from 'react-native-paper';
 
-interface ProfileAvatarProps {
+interface Props {
   profileImage: string;
   username?: string;
-  size?: number;
-  avatarTextStyles?: any;
 }
 
-const CustomProfileAvatar = ({
-  profileImage,
-  username,
-  size = 40,
-  avatarTextStyles,
-}: ProfileAvatarProps) => {
+const CustomProfileAvatar = ({profileImage, username}: Props) => {
   return (
     <View>
       {profileImage ? (
         <Avatar.Image
-          size={size}
-          source={{uri: profileImage}}
+          size={40}
+          source={{uri: `${s3bucketReference}/${profileImage}`}}
           style={styles.avatarImage}
         />
       ) : (
         <Avatar.Text
-          size={size}
-          label={username ? username[0].toUpperCase() : 'SA'}
-          style={[styles.avatarText, avatarTextStyles]}
+          size={40}
+          label={username ? username[0].toUpperCase() : 'U'}
+          style={styles.avatarText}
         />
       )}
     </View>
