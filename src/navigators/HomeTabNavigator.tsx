@@ -23,6 +23,7 @@ import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScree
 import SettingsStackNavigator from './SettingsStackNavigator';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
 import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
+import PackagesScreen from '../screens/buypackages-screens/Packages';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -288,6 +289,14 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="MealPlanScreen"
         component={MealPlanStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="PackagesScreen"
+        component={PackagesScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,

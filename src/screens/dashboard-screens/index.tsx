@@ -65,6 +65,8 @@ const DashboardScreen = ({navigation}: any) => {
               setSelectedOption(option);
               if (option === 'Meal Plan') {
                 navigation.navigate('MealPlanScreen');
+              } else if (option === 'Packages') {
+                navigation.navigate('PackagesScreen');
               }
             },
           },

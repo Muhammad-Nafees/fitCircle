@@ -16,6 +16,11 @@ import {format, startOfDay} from 'date-fns';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {verticalScale} from '../../utils/metrics';
+import Modal from 'react-native-modal';
+import {
+  CustomConfirmationModal,
+  CustomOutputModal,
+} from '../../components/shared-components/CustomModals';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -44,6 +49,8 @@ const SetSchedule = ({route, navigation}: any) => {
   const [isDateFormatted, setIsDateFormatted] = useState(false);
   const [slotsDate, setSlotsDate] = useState<any>();
   const {selectedMonth} = route.params || {currentMonth};
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [paymentModal, setPaymentModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<any>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [selectedOptionsWDate, setSelectedOptionsWDate] = useState<TimeSlot[]>(
@@ -207,6 +214,15 @@ const SetSchedule = ({route, navigation}: any) => {
     );
   };
 
+  const handleButtonPress = () => {
+    setIsModalVisible(true);
+  };
+
+  const handlePayment = () => {
+    setIsModalVisible(false);
+    setPaymentModal(true);
+  };
+
   useEffect(() => {
     if (route.params.date) {
       setSelectedDate(route.params.date);
@@ -288,10 +304,37 @@ const SetSchedule = ({route, navigation}: any) => {
         <CustomButton
           isDisabled={selectedOptions.length === 0}
           extraStyles={{paddingHorizontal: 110}}
-          onPress={() => console.log('Something')}>
-          Set Schedule
+          onPress={handleButtonPress}>
+          {route.params.hourlyRate ? 'Continue' : 'Set Schedule'}
         </CustomButton>
       </View>
+      <Modal
+        isVisible={isModalVisible}
+        onBackButtonPress={() => setIsModalVisible(false)}
+        onBackdropPress={() => setIsModalVisible(false)}
+        style={styles.modal}>
+        <CustomConfirmationModal
+          modalHeading="Please Confirm"
+          modalText={`Are you sure you want to schedule for ${route.params.price}?`}
+          onCancel={() => setIsModalVisible(false)}
+          onConfirm={handlePayment}
+          confirmText="Yes"
+          cancelText="No"
+          cancelColor={'rgba(220, 77, 77, 1)'}
+          confirmColor={'rgba(32, 128, 183, 1)'}
+        />
+      </Modal>
+      <Modal
+        isVisible={paymentModal}
+        onBackButtonPress={() => setPaymentModal(false)}
+        onBackdropPress={() => setPaymentModal(false)}
+        style={styles.modal}>
+        <CustomOutputModal
+          type="success"
+          onPress={() => setPaymentModal(false)}
+          modalText="Payment Successful"
+        />
+      </Modal>
     </View>
   );
 };
@@ -367,6 +410,12 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     zIndex: 999,
+  },
+  modal: {
+    backgroundColor: 'black',
+    width: '100%',
+    height: '100%',
+    margin: 0,
   },
 });
 

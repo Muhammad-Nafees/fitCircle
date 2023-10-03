@@ -14,10 +14,13 @@ import {enUS} from 'date-fns/locale';
 // ----------------------------------------------------------------------//
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import CustomHourlyRate from '../../components/buypackage-components/CustomHourlyRate';
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
 export const Slot = ({navigation}: any) => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const hourlyRate: boolean = true;
+  const price = '$20.00';
   const months = [
     'JAN',
     'FEB',
@@ -87,9 +90,12 @@ export const Slot = ({navigation}: any) => {
         </TouchableOpacity>
         <Text style={styles.heading}>Schedule</Text>
       </View>
+      {hourlyRate && <CustomHourlyRate />}
       <TouchableOpacity
         style={styles.calenderButton}
-        onPress={() => navigation.navigate('SetSchedule', {selectedMonth})}>
+        onPress={() =>
+          navigation.navigate('SetSchedule', {selectedMonth, hourlyRate, price})
+        }>
         <View style={styles.buttonContent}>
           <Text style={styles.buttonText}>{selectedMonth}</Text>
           <ArrowForward />

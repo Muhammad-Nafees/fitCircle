@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {MealPlanStarIcon} from '../../../assets/icons/MealPlanStar';
 import {useNavigation} from '@react-navigation/core';
@@ -6,12 +6,13 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 const PlayIcon = require('../../../assets/icons/playIcon.png');
-
 const ImagePreview = require('../../../assets/images/TestMealPlanImage.png');
 
 export const CustomTrainerPackage = ({
   hidePriceAndPackage,
   isTrainerView,
+  hidePackageButton = false,
+  videoEnabled,
 }: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const navigation = useNavigation();
@@ -21,6 +22,7 @@ export const CustomTrainerPackage = ({
       navigation.navigate('PackageDetail');
     }
   };
+
   return (
     <TouchableOpacity
       onPress={onPressHandler}
@@ -28,14 +30,21 @@ export const CustomTrainerPackage = ({
         styles.container,
         hidePriceAndPackage && {backgroundColor: 'transparent'},
       ]}>
-      <View style={styles.imageContainer}>
+      <TouchableOpacity style={styles.imageContainer} onPress={videoEnabled}>
         <Image source={ImagePreview} style={styles.image} />
         {hidePriceAndPackage && (
           <View style={styles.playIconContainer}>
-            <Image source={PlayIcon} style={styles.playIcon} />
+            <View
+              style={{
+                backgroundColor: 'rgba(141, 156, 152, 0.8)',
+                borderRadius: 30,
+                padding: 3,
+              }}>
+              <Image source={PlayIcon} style={styles.playIcon} />
+            </View>
           </View>
         )}
-      </View>
+      </TouchableOpacity>
       <View style={styles.packageInfo}>
         <View style={styles.topInfo}>
           <Text
@@ -68,10 +77,14 @@ export const CustomTrainerPackage = ({
         {!hidePriceAndPackage ? (
           <View style={styles.priceContainer}>
             <Text style={styles.price}>$100</Text>
-            {userData?.role === 'trainer' && !isTrainerView ? (
-              <Text style={styles.getPackage}>Edit this package</Text>
-            ) : (
-              <Text style={styles.getPackage}>Get this package</Text>
+            {!hidePackageButton && (
+              <View>
+                {userData?.role !== 'user' ? (
+                  <Text style={styles.getPackage}>Edit this package</Text>
+                ) : (
+                  <Text style={styles.getPackage}>Get this package</Text>
+                )}
+              </View>
             )}
           </View>
         ) : null}
@@ -145,11 +158,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   playIcon: {
-    width: horizontalScale(8.86),
-    height: verticalScale(10.85),
+    width: horizontalScale(12),
+    height: verticalScale(12),
     tintColor: '#fff',
-    backgroundColor: 'rgba(141, 156, 152, 0.8)',
-    borderRadius: 30,
-    padding: 7,
   },
 });
