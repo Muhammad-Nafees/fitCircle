@@ -18,9 +18,9 @@ export const CustomTrainerPackage = ({
   const navigation = useNavigation();
 
   const onPressHandler = () => {
-    if (userData?.role !== 'trainer' || isTrainerView) {
-      navigation.navigate('PackageDetail');
-    }
+    // if (userData?.role !== 'trainer' || isTrainerView) {
+    navigation.navigate('PackageDetail', {hidePackageButton});
+    // }
   };
 
   return (

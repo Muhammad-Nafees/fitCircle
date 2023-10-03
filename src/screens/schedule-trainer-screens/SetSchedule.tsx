@@ -52,6 +52,9 @@ const SetSchedule = ({route, navigation}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [paymentModal, setPaymentModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<any>(null);
+  const [paymentType, setPaymentType] = useState<'failed' | 'success'>(
+    'success',
+  );
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [selectedOptionsWDate, setSelectedOptionsWDate] = useState<TimeSlot[]>(
     [],
@@ -218,8 +221,9 @@ const SetSchedule = ({route, navigation}: any) => {
     setIsModalVisible(true);
   };
 
-  const handlePayment = () => {
+  const handlePayment = (type: string) => {
     setIsModalVisible(false);
+    setPaymentType(type);
     setPaymentModal(true);
   };
 
@@ -305,7 +309,11 @@ const SetSchedule = ({route, navigation}: any) => {
           isDisabled={selectedOptions.length === 0}
           extraStyles={{paddingHorizontal: 110}}
           onPress={handleButtonPress}>
-          {route.params.hourlyRate ? 'Continue' : 'Set Schedule'}
+          {route.params.hourlyRate
+            ? 'Continue'
+            : route.params.packageView
+            ? 'Pay Via Wallet Card'
+            : 'Set Schedule'}
         </CustomButton>
       </View>
       <Modal
@@ -315,9 +323,13 @@ const SetSchedule = ({route, navigation}: any) => {
         style={styles.modal}>
         <CustomConfirmationModal
           modalHeading="Please Confirm"
-          modalText={`Are you sure you want to schedule for ${route.params.price}?`}
-          onCancel={() => setIsModalVisible(false)}
-          onConfirm={handlePayment}
+          modalText={
+            route.params.packageView
+              ? `Are you sure you want to purchase this package for ${route.params.price} ?`
+              : `Are you sure you want to schedule for ${route.params.price} ?`
+          }
+          onCancel={() => handlePayment('failed')}
+          onConfirm={() => handlePayment('success')}
           confirmText="Yes"
           cancelText="No"
           cancelColor={'rgba(220, 77, 77, 1)'}
@@ -330,9 +342,13 @@ const SetSchedule = ({route, navigation}: any) => {
         onBackdropPress={() => setPaymentModal(false)}
         style={styles.modal}>
         <CustomOutputModal
-          type="success"
+          type={paymentType}
           onPress={() => setPaymentModal(false)}
-          modalText="Payment Successful"
+          modalText={
+            paymentType === 'success'
+              ? 'Payment Successful'
+              : 'Payment Unsuccessful'
+          }
         />
       </Modal>
     </View>

@@ -20,7 +20,7 @@ const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
 const reviewData = Array.from({length: 5});
 
-export const PackageDetailScreen = ({navigation}: any) => {
+export const PackageDetailScreen = ({navigation, route}: any) => {
   const [videoVisible, setVideoVisible] = useState(false);
   const renderCustomPackageReview = () => {
     return <CustomPackageReview />;
@@ -45,14 +45,36 @@ export const PackageDetailScreen = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={{paddingHorizontal: 16}}>
-        <TouchableOpacity
-          style={{paddingTop: 24, paddingBottom: 16}}
-          onPress={() => navigation.navigate('Profile')}>
-          <Image
-            source={ArrowBack}
-            style={{width: 24, height: 24, tintColor: 'white'}}
-          />
-        </TouchableOpacity>
+        <View
+          style={
+            route.params.hidePackageButton && {
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }
+          }>
+          <TouchableOpacity
+            style={{paddingTop: 24, paddingBottom: 16}}
+            onPress={() => navigation.navigate('Profile')}>
+            <Image
+              source={ArrowBack}
+              style={{width: 24, height: 24, tintColor: 'white'}}
+            />
+          </TouchableOpacity>
+          {route.params.hidePackageButton && (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ScheduleScreen')}>
+              <Text
+                style={{
+                  fontWeight: '500',
+                  fontSize: 10,
+                  color: 'rgba(32, 155, 204, 1)',
+                }}>
+                Get this package
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
         <Text style={styles.heading}>Details</Text>
         <View style={{marginHorizontal: -10}}>
           <CustomTrainerPackage
