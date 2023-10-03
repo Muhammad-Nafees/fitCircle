@@ -29,17 +29,6 @@ export const MacroCalculator = ({navigation, route}: any) => {
     fatRatio: 0,
     proteinRatio: 0,
   });
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
 
   const handleSubmit = () => {
     // if (chartData._id === '') {

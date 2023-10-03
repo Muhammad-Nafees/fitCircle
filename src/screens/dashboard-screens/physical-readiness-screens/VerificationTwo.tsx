@@ -27,19 +27,7 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
   const physicalData = useSelector(
     (state: RootState) => state.phyiscalReadiness.data,
   );
-  console.log(physicalData,"reduxddata")
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
+  console.log(physicalData, 'reduxddata');
 
   const initialValues = {
     isHighCholesterol: (formdata && formdata?.isHighCholesterol) ?? '',
@@ -47,7 +35,8 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
     isBoneTrouble: (formdata && formdata?.isBoneTrouble) ?? '',
     isHighBloodPressure: (formdata && formdata?.isHighBloodPressure) ?? '',
     isOverAge: (formdata && formdata?.isOverAge) ?? '',
-    isAnyReasonNotToParticipate: (formdata && formdata?.isAnyReasonNotToParticipate) ?? '',
+    isAnyReasonNotToParticipate:
+      (formdata && formdata?.isAnyReasonNotToParticipate) ?? '',
   };
 
   const handleSubmit = (answers: any) => {

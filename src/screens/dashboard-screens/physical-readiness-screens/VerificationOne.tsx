@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
-import {useIsFocused} from '@react-navigation/native';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import React, {useRef, useState, useEffect} from 'react';
 import {format, parse} from 'date-fns';
@@ -87,7 +87,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
   //   if (isFocused && route?.params?.clearValues) formikRef.current?.resetForm();
   // }, [isFocused]);
 
-  useEffect(() => {
+  useFocusEffect(() => {
     const backAction = () => {
       navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
       return true;
@@ -97,7 +97,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  });
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>

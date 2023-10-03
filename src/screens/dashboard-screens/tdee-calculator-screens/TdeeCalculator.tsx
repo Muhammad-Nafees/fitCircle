@@ -30,6 +30,7 @@ import {ITDEE} from '../../../interfaces/user.interface';
 import {calculateTdee} from '../../../api/dashboard-module';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+import {useFocusEffect} from '@react-navigation/native';
 
 export const TdeeCalculator = ({navigation, disabled}: any) => {
   const [weightUnit, setWeightUnit] = useState<Unit['kg']>('kg');
@@ -47,7 +48,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       setGoalWeightUnit(unit);
     }
   };
-  useEffect(() => {
+  useFocusEffect(() => {
     const backAction = () => {
       navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
       return true;
@@ -57,7 +58,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  });
 
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
