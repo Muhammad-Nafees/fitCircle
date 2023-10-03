@@ -106,6 +106,7 @@ export const updateProfile = async (userData: IUser) => {
       formData.append('communities[]', userData.communities[i]);
     }
   }
+  console.log(formData,"formData")
 
   const response = await api.put(`user/update-profile`, formData, {
     // console.log(formData,"formDara"),

@@ -74,8 +74,8 @@ export const SearchScreen = () => {
   const renderItem = ({item}: any) => {
     if (
       !selectedFilter ||
-      (selectedFilter === 'nutritionist' && item.role === 'admin') ||
-      (selectedFilter === 'admin' && item.role === 'admin') ||
+      (selectedFilter === 'nutritionist' && item.role !== 'user') ||
+      (selectedFilter === 'trainer' &&item.role !== 'user') ||
       (selectedFilter === 'other' && item.role === 'user')
     ) {
       return (

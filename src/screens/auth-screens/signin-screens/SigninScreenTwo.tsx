@@ -22,7 +22,7 @@ const SignInScreenTwo = ({navigation}: any) => {
       </CustomButton>
       <CustomButton
         extraStyles={{marginTop: verticalScale(18), height: verticalScale(48)}}
-        onPress={() => handleClick('admin')}>
+        onPress={() => handleClick('trainer')}>
         I AM A COACH / CREATOR
       </CustomButton>
     </SigninContent>

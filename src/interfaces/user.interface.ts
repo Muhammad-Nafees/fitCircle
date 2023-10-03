@@ -63,7 +63,7 @@ export interface IPost {
   mediaType: string;
   thumbnail: null;
   visibility: IPostVisibility;
-  hexCode: string | string[] | number;
+  hexCode: string | string[] | number | any;
   cost: number | null;
   paidBy: [];
   isBoosted: boolean;

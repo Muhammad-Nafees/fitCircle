@@ -8,6 +8,7 @@ import {
   TextInput,
   PanResponder,
   ScrollView,
+  Platform,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -16,6 +17,8 @@ import {
   launchCamera,
   ImagePickerResponse,
 } from 'react-native-image-picker';
+import {openCamera} from 'react-native-image-crop-picker';
+
 import {useSelector} from 'react-redux';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
@@ -78,7 +81,7 @@ export const AddPostScreen = ({route}: any) => {
   };
 
   const handleScheduleRoute = () => {
-    if (userData.role === 'admin') {
+    if (userData.role !== 'user') {
       navigation.navigate('MySche', {screen: 'Slot'});
     } else {
       navigation.navigate('MySche', {screen: 'SetSchedule'});
@@ -159,15 +162,27 @@ export const AddPostScreen = ({route}: any) => {
       maxHeight: 10000,
       maxWidth: 10000,
     };
-    await launchCamera(options, (response: any) => {
-      if (response.assets) {
-        setMediaUri({
-          uri: response.assets[0].uri,
-          name: response.assets[0].fileName,
-          type: response.assets[0].type,
-        });
-      }
-    });
+
+    await openCamera({
+      width: 10000,
+      height: 10000,
+      cropping: false,
+    })
+      .then((image: any) => {
+        if (image.path) {
+          console.log(image, 'image');
+          setMediaUri({
+            uri: image.path,
+            name: 'camera',
+            type: image.mime,
+          });
+        }
+      })
+      .catch((error: any) => {
+        if (error.code === 'E_PICKER_CANCELLED') {
+          return false;
+        }
+      });
   };
 
   const handleVideoButtonPress = async () => {
@@ -255,14 +270,15 @@ export const AddPostScreen = ({route}: any) => {
       } else {
         const reqData: Partial<IPost> = {
           text: textInputValue,
-          hexCode: [
+          hexCode:
             textInputBackgroundColor === 'transparent'
-              ? '#292A2C'
-              : textInputBackgroundColor.toString(),
-          ],
+              ? ['#292A2C']
+              : textInputBackgroundColor,
+
           visibility: visibility,
           ...(costValue !== 0 && {cost: costValue}),
         };
+        console.log(reqData, 'req');
         const response = await createPostWithContent(reqData);
         handleBackButtonPress();
         Toast.show({

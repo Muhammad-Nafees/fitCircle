@@ -68,7 +68,7 @@ const UploadCertificate = ({navigation}: any) => {
         await openCamera({
           width: 10000,
           height: 10000,
-          cropping: true,
+          cropping: false,
         })
           .then((image: any) => {
             if (image.path) {

@@ -60,7 +60,6 @@ const SetSchedule = ({navigation, route}: any) => {
         type: 'error',
         text1: 'Please select future date!',
       });
-      setSelectedDate('');
       return;
     }
 
