@@ -2,16 +2,11 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {View, Text, Image, Keyboard} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import HomeScreen from '../screens/home-screens';
-import {SearchScreen} from '../screens/home-screens/SearchScreen';
-import HomeStackNavigator from './HomeStackNavigator';
-import CommentsScreen from '../screens/home-screens/CommentScreen';
 import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
 import DashboardScreen from '../screens/dashboard-screens/index';
-import MessageStackNavigator from './MessageStackNavigator';
 import {ProfileScreen} from '../screens/profile-screens';
 import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 import UserSchedule from '../screens/schedule-trainer-screens/UserSchedule';
@@ -20,9 +15,7 @@ import MealPlanStackNavigator from './MealPlanStackNavigator';
 import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
 import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
-import SettingsStackNavigator from './SettingsStackNavigator';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
-import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
 import PackagesScreen from '../screens/buypackages-screens/Packages';
 
 const Post = require('../../assets/icons/post.png');
@@ -33,6 +26,11 @@ const Tab = createBottomTabNavigator();
 interface ScreenContentProps {
   title: string;
 }
+
+const MessageStackNavigator = () => <ScreenContent title="Message" />;
+const SearchScreen = () => <ScreenContent title="Search" />;
+const HomeScreen = () => <ScreenContent title="Home" />;
+const HomeStackNavigator = () => <ScreenContent title="Post" />;
 
 const ScreenContent = ({title}: ScreenContentProps) => (
   <View
@@ -215,23 +213,6 @@ const HomeTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="FavoriteDialog"
-        component={FavoriteDialogScreen}
-        options={{
-          tabBarStyle: {display: 'none'},
-          tabBarButton: () => null,
-        }}
-      />
-
-      <Tab.Screen
-        name="CommentsScreen"
-        component={CommentsScreen}
-        options={{
-          tabBarStyle: {display: 'none'},
-          tabBarButton: () => null,
-        }}
-      />
-      <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
@@ -249,14 +230,6 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="PackageDetail"
         component={PackageDetailScreen}
-        options={{
-          tabBarStyle: {display: 'none'},
-          tabBarButton: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="Settings"
-        component={SettingsStackNavigator}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
