@@ -16,7 +16,8 @@ import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
 import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
-import PackagesScreen from '../screens/buypackages-screens/Packages';
+import PackagesScreen from '../screens/packages-screens/Packages';
+import CreatePackage from '../screens/packages-screens/CreatePackage';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -230,6 +231,14 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="PackageDetail"
         component={PackageDetailScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="CreatePackageScreen"
+        component={CreatePackage}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
