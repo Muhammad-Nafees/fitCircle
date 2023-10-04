@@ -5,20 +5,21 @@ import {Avatar} from 'react-native-paper';
 interface Props {
   profileImage: string;
   username?: string;
+  size?: number;
 }
 
-const CustomProfileAvatar = ({profileImage, username}: Props) => {
+const CustomProfileAvatar = ({profileImage, username, size = 40}: Props) => {
   return (
     <View>
       {profileImage ? (
         <Avatar.Image
-          size={40}
+          size={size}
           source={{uri: `${s3bucketReference}/${profileImage}`}}
           style={styles.avatarImage}
         />
       ) : (
         <Avatar.Text
-          size={40}
+          size={size}
           label={username ? username[0].toUpperCase() : 'U'}
           style={styles.avatarText}
         />

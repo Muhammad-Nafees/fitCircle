@@ -239,7 +239,7 @@ const HomeScreen = () => {
               data={creatorData}
               userId={userId}
               tabBarHeight={tabBarHeight}
-              isProfile={true}
+              isProfile={false}
               handleRefresh={handleRefresh}
               onDeletePost={handleDeleteVideo}
             />
