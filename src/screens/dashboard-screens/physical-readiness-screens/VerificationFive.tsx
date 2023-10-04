@@ -12,13 +12,20 @@ import {
 } from '../../../utils/metrics';
 import {PhysicalActivitySchema} from '../../../validations';
 
-const VerificationFive = ({navigation, disabled, route, data}: any) => {
+const VerificationFive = ({
+  navigation,
+  disabled,
+  route,
+  data,
+  disabledStlyes,
+}: any) => {
   const formdata: null | any = data;
   const handleSubmit = (values: any) => {
     const VALUES = {
       ...values,
       desiredBodyFat: `${values.desiredBodyFat}%`,
       desiredWeight: `${values.desiredWeight} kg`,
+      desiredLeanMuscle: `${values.desiredLeanMuscle}%`,
     };
     navigation.navigate('VerificationSix', {
       ...route.params,
@@ -74,10 +81,11 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
                   value={values.desiredBodyFat}
                   handleChange={handleChange('desiredBodyFat')}
                   keyboardType="numeric"
-                  error={errors.desiredBodyFat}
-                  touched={touched.desiredBodyFat}
+                  error={errors.desiredBodyFat as string}
+                  touched={touched.desiredBodyFat as boolean}
                   setFieldError={setFieldError}
                   fieldName="desiredBodyFat"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   editable={!disabled}
@@ -86,10 +94,11 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
                   value={values.desiredWeight}
                   handleChange={handleChange('desiredWeight')}
                   keyboardType="numeric"
-                  error={errors.desiredWeight}
-                  touched={touched.desiredWeight}
+                  error={errors.desiredWeight as string}
+                  touched={touched.desiredWeight as boolean}
                   setFieldError={setFieldError}
                   fieldName="desiredWeight"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   label="Desired Lean Muscle"
@@ -97,10 +106,11 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
                   placeholder="70-90%"
                   value={values.desiredLeanMuscle}
                   handleChange={handleChange('desiredLeanMuscle')}
-                  error={errors.desiredLeanMuscle}
-                  touched={touched.desiredLeanMuscle}
+                  error={errors.desiredLeanMuscle as string}
+                  touched={touched.desiredLeanMuscle as boolean}
                   setFieldError={setFieldError}
                   fieldName="desiredLeanMuscle"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   label="I plan to exercise ______ times of the week."
@@ -109,10 +119,11 @@ const VerificationFive = ({navigation, disabled, route, data}: any) => {
                   value={values.exercisesPerWeek}
                   handleChange={handleChange('exercisesPerWeek')}
                   keyboardType="numeric"
-                  error={errors.exercisesPerWeek}
-                  touched={touched.exercisesPerWeek}
+                  error={errors.exercisesPerWeek as string}
+                  touched={touched.exercisesPerWeek as boolean}
                   setFieldError={setFieldError}
                   fieldName="exercisesPerWeek"
+                  extraStyles={disabledStlyes}
                 />
               </View>
               {disabled !== true && (

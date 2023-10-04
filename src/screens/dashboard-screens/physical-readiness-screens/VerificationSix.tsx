@@ -47,6 +47,7 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
     loseWeight: false,
   });
   const formdata: null | any = data;
+  console.log(data, 'data');
 
   const handleSelectOption = (option: any) => {
     setSelectedData((prev: any) => {
@@ -54,9 +55,8 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
     });
   };
 
-  console.log(formdata, 'form');
   useEffect(() => {
-    if (formdata) setSelectedOptions(formdata);
+    if (formdata) setSelectedData(formdata);
   }, [formdata]);
 
   const handleSubmit = () => {
@@ -99,6 +99,7 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
         <View style={styles.optionsContainer}>
           {options.map((option, index) => (
             <TouchableOpacity
+              disabled={disabled}
               key={index}
               style={styles.optionItem}
               onPress={() => !disabled && handleSelectOption(option)}>

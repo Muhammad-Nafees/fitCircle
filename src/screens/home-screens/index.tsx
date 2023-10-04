@@ -52,7 +52,7 @@ const HomeScreen = () => {
   const [creatorData, setCreatorData] = useState<any>();
   const [creatorPage, setCreatorPage] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10);
+  const [limit, setLimit] = useState<number>(40);
   const [hasMoreCirclePosts, setHasMoreCirclePosts] = useState<boolean>(false);
   const [hasMoreVideos, setHasMoreVideos] = useState<boolean>(false);
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);

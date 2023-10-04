@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View, Text, BackHandler} from 'react-native';
 // --------------------------------------------------------------------------//
 import {STYLES} from '../../../styles/globalStyles';
@@ -10,6 +10,8 @@ import VerificationSix from './VerificationSix';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {IPhysicalActivity} from '../../../interfaces/user.interface';
 import {addPhysicalActivity} from '../../../api/dashboard-module';
+import Toast from 'react-native-toast-message';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 type Mcq = {
   question: string;
@@ -18,6 +20,7 @@ type Mcq = {
 };
 
 const VerificationSeven = ({navigation, route}: any) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   useEffect(() => {
     const backAction = () => {
       navigation.goBack();
@@ -39,7 +42,6 @@ const VerificationSeven = ({navigation, route}: any) => {
   } = route?.params;
 
   const handleFormSave = async () => {
-
     const reqData = {
       ...verificationOne,
       ...verificationTwo,
@@ -48,14 +50,29 @@ const VerificationSeven = ({navigation, route}: any) => {
       ...verificationSix,
       initial,
     };
-    console.log(verificationSix,"verif")
-    console.log(reqData,"req")
+    console.log(verificationSix, 'verif');
+    console.log(reqData, 'req');
+    setIsLoading(true);
     try {
       const response = await addPhysicalActivity(reqData);
-      console.log(response?.data);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+      setIsLoading(false);
+      navigation.navigate('Dashboard');
     } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
       console.log(error?.response?.data, 'from add physical activity!');
     }
+  };
+
+  const disabledStlyes = {
+    backgroundColor: 'rgba(68, 68, 68, 0.5)',
+    color: 'rgba(255, 255, 255, 0.5)',
   };
 
   return (
@@ -74,11 +91,11 @@ const VerificationSeven = ({navigation, route}: any) => {
           Physical Activity Readiness
         </Text>
         <View style={styles.formContainer}>
-          <VerificationOne data={verificationOne} disabled={true} />
-          <VerificationTwo data={verificationTwo} disabled={true} />
-          <VerificationFour data={verificationFour} disabled={true} />
-          <VerificationFive data={verificationFive} disabled={true} />
-          <VerificationSix data={verificationSix} disabled={true} />
+          <VerificationOne data={verificationOne} disabled={true} disabledStlyes={disabledStlyes}/>
+          <VerificationTwo data={verificationTwo} disabled={true}  disabledStlyes={disabledStlyes}/>
+          <VerificationFour data={verificationFour} disabled={true} disabledStlyes={disabledStlyes} />
+          <VerificationFive data={verificationFive} disabled={true} disabledStlyes={disabledStlyes} />
+          <VerificationSix data={verificationSix} disabled={true}  disabledStlyes={disabledStlyes}/>
         </View>
         <View style={styles.buttonContainer}>
           <CustomButton
@@ -87,7 +104,9 @@ const VerificationSeven = ({navigation, route}: any) => {
             }>
             Retake
           </CustomButton>
-          <CustomButton onPress={handleFormSave}>Continue</CustomButton>
+          <CustomButton onPress={handleFormSave} isDisabled={isLoading}>
+            {isLoading ? <CustomLoader /> : 'Continue'}{' '}
+          </CustomButton>
         </View>
       </ScrollView>
     </View>

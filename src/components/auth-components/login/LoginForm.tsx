@@ -52,18 +52,18 @@ const LoginForm = () => {
       const data = response?.data.data;
       if (data?.user.isProfileCompleted) {
         dispatch(authenticate(true));
-        navigation.navigate('Home');
         Toast.show({
           type: 'success',
           text1: `${response?.data.message}`,
         });
+        navigation.navigate('Home');
       } else {
-        navigation.navigate('CreateProfile');
         Toast.show({
           type: 'success',
           text1: `Complete Your Profile To Continue!`,
           visibilityTime: 5000,
         });
+        navigation.navigate('CreateProfile');
       }
       dispatch(setuserRole(data?.user.role));
       dispatch(setUserData(data?.user));

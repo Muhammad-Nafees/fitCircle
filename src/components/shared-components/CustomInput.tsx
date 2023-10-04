@@ -20,8 +20,8 @@ interface Props {
   placeholder?: string;
   label?: string;
   value?: any;
-  error: string;
-  touched: boolean | undefined;
+  error?: string;
+  touched?: boolean | undefined;
   initialTouched?: boolean;
   keyboardType?: 'default' | 'numeric' | 'email-address';
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';

@@ -25,6 +25,7 @@ interface Props {
   countryCode?: any;
   placeholder?: string;
   disabled?: boolean;
+  extraStyles?: any;
 }
 
 const CustomPhoneInput = ({
@@ -42,6 +43,7 @@ const CustomPhoneInput = ({
   countryCode,
   placeholder,
   disabled = false,
+  extraStyles,
 }: Props) => {
   const handleCountryChange = () => {
     phoneInput.current?.setState({number: ''});
@@ -68,25 +70,34 @@ const CustomPhoneInput = ({
             placeholder={placeholder}
             disabled={disabled}
             defaultCode={countryCode === undefined ? 'US' : countryCode}
-            textInputStyle={{
-              height: 20,
-              width: 20,
-              padding: 0,
-              fontSize: 12,
-              color: '#000',
-            }}
+            textInputStyle={[
+              {
+                height: 40,
+                width: '40%',
+                padding: 0,
+                margin: 0,
+                fontSize: 12,
+                color: extraStyles ? 'rgba(255, 255, 255, 0.5)' : '#000',
+              },
+            ]}
             codeTextStyle={{
               fontSize: moderateScale(12),
               marginTop: -verticalScale(3),
               marginLeft: -horizontalScale(9),
               marginRight: -horizontalScale(-3),
-              color: '#000',
+              color: extraStyles ? 'rgba(255, 255, 255, 0.5)' : '#000',
             }}
-            containerStyle={{
-              height: verticalScale(45),
-              width: horizontalScale(320),
-              backgroundColor: 'white',
+            textContainerStyle={{
+              backgroundColor: extraStyles ? 'rgba(68, 68, 68, 0)' : undefined,
             }}
+            containerStyle={[
+              {
+                height: verticalScale(45),
+                width: horizontalScale(320),
+                backgroundColor: 'white',
+              },
+              extraStyles,
+            ]}
             flagButtonStyle={{
               width: horizontalScale(85),
             }}

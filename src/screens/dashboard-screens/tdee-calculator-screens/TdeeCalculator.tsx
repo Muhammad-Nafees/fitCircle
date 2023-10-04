@@ -172,7 +172,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   starlabel={true}
                   placeholder="Type here"
                   value={values.age}
-                  error={errors.age}
+                  error={errors.age as string}
                   touched={touched.age}
                   initialTouched={true}
                   keyboardType="numeric"
@@ -186,6 +186,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
                   </Text>
                   <DropdownTextInput
+                    editable={true}
                     value={values.height}
                     options={['ft', 'm']}
                     placeholder="Type here"
@@ -200,7 +201,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     onSelectUnit={handleSelectUnit}
                   />
                 </View>
-                <View style={{width: '85%'}}>
+                <View style={{width: '85%', marginTop: 2}}>
                   <Text style={styles.label}>
                     Weight
                     <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
@@ -245,7 +246,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                       label="Start Date (dd/mm/yyyy)"
                       placeholder="Type here"
                       value={values.startDate}
-                      error={errors.startDate}
+                      error={errors.startDate as string}
                       touched={touched.startDate}
                       initialTouched={true}
                       handleChange={handleChange('dob')}
@@ -380,5 +381,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(68, 68, 68, 1)',
     marginVertical: 0,
     borderRadius: 0,
+  },
+  inputContainer: {
+    flex: 1,
+    marginTop: 3,
   },
 });

@@ -21,13 +21,9 @@ interface FormValues {
   isAnyReasonNotToParticipate: string;
 }
 
-const VerificationTwo = ({disabled, navigation, route, data}: any) => {
+const VerificationTwo = ({disabled, navigation, route, data,disabledStlyes}: any) => {
   const formdata: null | any = data;
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
-  const physicalData = useSelector(
-    (state: RootState) => state.phyiscalReadiness.data,
-  );
-  console.log(physicalData, 'reduxddata');
 
   const initialValues = {
     isHighCholesterol: (formdata && formdata?.isHighCholesterol) ?? '',
