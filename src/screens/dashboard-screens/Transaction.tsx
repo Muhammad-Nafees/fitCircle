@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 // ---------------------------------------------------------------------------------------//
-import {CustomTransaction} from '../../components/dashboard-components/CustomTransaction';
+import {CustomTransaction} from '../../components/dashboard-components/CustomTransactionSchedule';
 import {RootState} from '../../redux/store';
 import {horizontalScale} from '../../utils/metrics';
 import CustomTransactionReceipt from '../../components/shared-components/CustomTransactionReceipt';
