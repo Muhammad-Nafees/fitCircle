@@ -48,18 +48,6 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
   });
   const formdata: null | any = data;
 
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
-
   const handleSelectOption = (option: any) => {
     setSelectedData((prev: any) => {
       return {...prev, [option.id]: !prev[option.id]};

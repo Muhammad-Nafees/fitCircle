@@ -13,24 +13,12 @@ import {
 import {PhysicalActivitySchema} from '../../../validations';
 
 const VerificationFive = ({navigation, disabled, route, data}: any) => {
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
   const formdata: null | any = data;
   const handleSubmit = (values: any) => {
     const VALUES = {
       ...values,
       desiredBodyFat: `${values.desiredBodyFat}%`,
       desiredWeight: `${values.desiredWeight} kg`,
-
     };
     navigation.navigate('VerificationSix', {
       ...route.params,

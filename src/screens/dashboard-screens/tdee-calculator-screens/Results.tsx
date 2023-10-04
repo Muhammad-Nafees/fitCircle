@@ -20,19 +20,7 @@ export const Results = ({navigation, route}: any) => {
       setTargetDate(formattedDate);
     }, []),
   );
-  console.log(targetDate,"target")
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
+  console.log(targetDate, 'target');
 
   const handleSubmit = () => {
     navigation.navigate('MacroCalculator', {data});

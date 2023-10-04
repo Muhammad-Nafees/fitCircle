@@ -36,18 +36,6 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
   const formdata: null | any = data;
 
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
-
   const handleSubmit = async (values: FormValues) => {
     console.log(values, 'vvvv');
     navigation.navigate('VerificationFive', {
