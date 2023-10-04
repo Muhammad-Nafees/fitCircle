@@ -99,15 +99,12 @@ const VerifyScreen = ({navigation}: any) => {
           coverImage: compressedCoverImage || userData?.coverImage,
           certificates: compressedCertificates || userData?.certificates,
         };
+        console.log(reqUserData,"req")
 
         const response = await updateProfile(reqUserData as IUser);
         const data = response?.data;
-        console.log(data, 'from create prof');
-        dispatch(setuserRole(data?.data?.role));
-        dispatch(authenticate(true));
         dispatch(setUserData(data?.data));
-        // dispatch(setAccessToken(data?.accessToken));
-        // dispatch(setRefreshToken(data?.refreshToken));
+        dispatch(authenticate(true));
         navigation.navigate('Home');
         Toast.show({
           type: 'success',
@@ -117,7 +114,7 @@ const VerifyScreen = ({navigation}: any) => {
         console.log(error?.response?.data, 'error');
         Toast.show({
           type: 'error',
-          text1: `${error?.response?.data.message}`,
+          text1: `${error?.response?.data?.message}`,
         });
       }
       setIsLoading(false);

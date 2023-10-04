@@ -28,10 +28,10 @@ export interface Unit {
 const GenderForm = () => {
   const navigation = useNavigation<InterestScreenNavigationProp>();
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-   console.log(previousUserData?.phone,"phone")
   const dispatch = useDispatch();
   const [weightUnit, setWeightUnit] = useState<Unit['kg']>('kg');
   const [heightUnit, setHeightUnit] = useState<Unit['ft']>('ft');
+  console.log(previousUserData,"from gender")
 
   const handleSelectUnit = (unit: keyof Unit, type: string) => {
     if (type == 'kg') {

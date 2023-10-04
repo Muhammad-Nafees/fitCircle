@@ -193,9 +193,7 @@ export const CustomPost = ({
         </View>
       ) : null}
       {post?.text &&
-        (post?.hexCode?.length == 1 ||
-        post?.hexCode == null ||
-        post?.hexcode == undefined ? (
+        (post?.hexCode?.length == 1 || post?.hexCode == null ? (
           <View
             style={[
               styles.content,
@@ -221,7 +219,7 @@ export const CustomPost = ({
           </View>
         ) : (
           <LinearGradient
-            colors={post?.hexCode}
+            colors={['#4A8D21', '#9CE271', '#BF3A3A']}
             style={[
               styles.content,
               {height: heightFull ? verticalScale(290) : undefined},

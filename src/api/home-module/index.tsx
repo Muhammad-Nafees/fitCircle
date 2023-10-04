@@ -99,6 +99,10 @@ export const getVideoPosts = async (page: number, limit: number) => {
   );
   return response;
 };
+export const deletePost = async (postId: string) => {
+  const response = await api.put(`post/remove/${postId}`);
+  return response;
+};
 
 export const getAllCommentsByPosts = async (
   postId: string,

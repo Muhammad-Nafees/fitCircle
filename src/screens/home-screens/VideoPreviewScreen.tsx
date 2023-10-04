@@ -86,7 +86,6 @@ export const VideoPreviewScreen = ({
   };
   const videoRef = React.useRef<any>(null);
   const userData = useSelector((state: RootState) => state.auth.user);
-  const [profileImageUrl, setProfileImageUrl] = useState();
   const isBoostAvailable = userData?.role !== 'user';
   const [selectedOption, setSelectedOption] = useState('Public');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -105,6 +104,21 @@ export const VideoPreviewScreen = ({
   const [showDialog, setShowDialog] = useState(false);
   const [thumbnail, setThumbnail] = useState<FileData | null>(null);
   const [thumbnailOpen, setThumbnailOpen] = useState(false);
+  const [isPlay, setIsPlay] = useState<boolean>(false);
+  const [showPlayIcon, setShowPlayIcon] = useState<boolean>(true);
+  const PlayIcon = require('../../../assets/icons/playIcon.png');
+  const PauseIcon = require('../../../assets/icons/pauseIcon.png');
+
+  useEffect(() => {
+    let hideButtonTimer: any;
+    hideButtonTimer = setTimeout(() => {
+      setShowPlayIcon(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(hideButtonTimer);
+    };
+  }, [isPlay]);
 
   const handleBoostOptionSelect = (optionLabel: any) => {
     setSelectedOptionInternal(optionLabel);
@@ -150,14 +164,6 @@ export const VideoPreviewScreen = ({
   };
 
   const handleBoostModal = () => {
-    if (payment) {
-      Toast.show({
-        type: 'error',
-        text1: `This post is already boosted for ${selectedOptionInternal.label}`,
-        visibilityTime: 2000,
-      });
-      return;
-    }
     setBoostModalVisible(!isBoostModalVisible);
   };
 
@@ -277,7 +283,7 @@ export const VideoPreviewScreen = ({
           ...(costValue !== 0 && {cost: costValue}),
           ...(thumbnail !== null && {thumbnail: compressedThumbnail}),
         };
-        console.log(reqData, 'req');
+        console.log(reqData,"video req data")
         const response = await createPostWithVideo(reqData);
         console.log(response?.data, 'from video!');
         navigation.navigate('Home');
@@ -307,7 +313,10 @@ export const VideoPreviewScreen = ({
     <>
       <View style={styles.container}>
         <View style={styles.topLeftContent}>
-          <CustomProfileAvatar profileImage="" username={'S'} />
+          <CustomProfileAvatar
+            profileImage={userData?.profileImage as any}
+            username={userData?.username}
+          />
           <View style={styles.postTextContainer}>
             <Text style={styles.postName}>{username}</Text>
             <Text style={styles.postId}>{`@${username
@@ -320,9 +329,28 @@ export const VideoPreviewScreen = ({
           onError={onError}
           repeat={true}
           resizeMode="cover"
+          paused={isPlay}
           source={{uri: videoUri.uri}}
+          onTouchStart={() => setShowPlayIcon(true)}
           style={styles.video}
         />
+        {showPlayIcon && (
+          <TouchableOpacity
+            style={[
+              styles.playIconBackground,
+              {
+                position: 'absolute',
+                top: 350,
+                left: '42%',
+              },
+            ]}
+            onPress={() => setIsPlay(!isPlay)}>
+            <Image
+              style={{tintColor: '#fff', width: 40, height: 30}}
+              source={isPlay ? PlayIcon : PauseIcon}
+            />
+          </TouchableOpacity>
+        )}
         <View style={styles.textContentContainer}>
           <Text style={styles.textContent}>{content}</Text>
         </View>
@@ -458,14 +486,14 @@ export const VideoPreviewScreen = ({
           </View>
         )}
       </View>
-      {showDialog && (
+      {/* {showDialog && (
         <>
           <BoostPriceDialog
             onYes={unsuccessfulCompletion}
             onNo={unsuccessfulCompletion}
           />
         </>
-      )}
+      )} */}
     </>
   );
 };
@@ -642,6 +670,14 @@ const styles = StyleSheet.create({
     zIndex: 99,
     bottom: 110,
     left: 32,
+  },
+  playIconBackground: {
+    backgroundColor: 'rgba(141, 156, 152, 0.8)',
+    width: horizontalScale(55),
+    height: verticalScale(55),
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

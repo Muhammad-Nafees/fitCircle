@@ -61,7 +61,7 @@ export interface IPost {
   title: string;
   media: FileData;
   mediaType: string;
-  thumbnail: null;
+  thumbnail: null | any;
   visibility: IPostVisibility;
   hexCode: string | string[] | number | any;
   cost: number | null;
