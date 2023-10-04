@@ -72,9 +72,10 @@ const CreateAccount = ({navigation, route}: any) => {
         role: userRole,
         fcmToken: 'abcabsdflskdjflskdj',
       });
-      const data = response?.data.data;
+      const data = response?.data?.data;
       console.log(data.user);
-      dispatch(setUserData(data.user));
+      console.log(data,"ddd")
+      dispatch(setUserData(data?.user));
       dispatch(setAccessToken(data?.accessToken));
       dispatch(setRefreshToken(data?.refreshToken));
       navigation.navigate('CreateProfile');

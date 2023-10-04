@@ -94,7 +94,6 @@ const CommunitiesScreen = ({navigation}: any) => {
   };
 
   const renderCommunity = ({item}: {item: any}) => {
-    console.log(item, 'item');
     return (
       <TouchableOpacity onPress={() => handleSelect(item.name, item._id)}>
         <View style={styles.contentContainer}>
@@ -144,7 +143,7 @@ const CommunitiesScreen = ({navigation}: any) => {
             <FlatList
               data={communities}
               renderItem={renderCommunity}
-              keyExtractor={(item, index) => item._id + index + 1}
+              keyExtractor={(item, index) => item._id + index + 1 + Math.random()}
             />
           </View>
         )}

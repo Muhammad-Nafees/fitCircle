@@ -9,6 +9,7 @@ interface CreatorPostsProps {
   tabBarHeight: any;
   isProfile: boolean;
   handleRefresh: () => void;
+  onDeletePost: (postId: string) => void;
 }
 
 const CreatorPosts = ({
@@ -17,6 +18,7 @@ const CreatorPosts = ({
   tabBarHeight,
   isProfile,
   handleRefresh,
+  onDeletePost,
 }: CreatorPostsProps) => {
   return (
     <View
@@ -39,6 +41,7 @@ const CreatorPosts = ({
             userId={userId}
             tabBarHeight={tabBarHeight}
             isProfile={isProfile}
+            onDeletePost={onDeletePost}
           />
         )}
       />

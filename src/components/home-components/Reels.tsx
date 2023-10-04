@@ -27,17 +27,6 @@ import {useFocusEffect} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
-  // post: {
-  //   _id: string;
-  //   media: string;
-  //   content?: string;
-  //   likes: any[];
-  //   cost: 0;
-  //   thumbnail?: string;
-  //   shares: any[];
-  //   favorites: any[];
-  //   createdAt: string;
-  // };
   post: any;
   userId: string | undefined;
   index: number;
@@ -45,6 +34,7 @@ interface ReelsProps {
   isProfile?: boolean;
   handleCancelPress?: any;
   handleFavoriteDialog?: any;
+  onDeletePost: (id: string) => void;
 }
 
 export const ReelsComponent = ({
@@ -52,6 +42,7 @@ export const ReelsComponent = ({
   tabBarHeight,
   isProfile = false,
   handleCancelPress,
+  onDeletePost,
   handleFavoriteDialog,
 }: ReelsProps) => {
   const videoRef = useRef<any>(null);
@@ -80,7 +71,6 @@ export const ReelsComponent = ({
       }
     }
   };
-  console.log(videoThumbnail, 'videothumbnail');
 
   useFocusEffect(
     useCallback(() => {
@@ -142,6 +132,10 @@ export const ReelsComponent = ({
     }
   };
 
+  const handleDeletePost = (id: string) => {
+    onDeletePost(id);
+  };
+
   return (
     <View
       style={[
@@ -163,7 +157,7 @@ export const ReelsComponent = ({
         </View>
         {isProfile && (
           <TouchableOpacity
-            onPress={handleCancelPress}
+            onPress={() => handleDeletePost(post._id)}
             style={{
               alignItems: 'flex-end',
               justifyContent: 'flex-end',

@@ -16,6 +16,7 @@ import ArrowForward from '../../../assets/icons/ArrowForward';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {getTrainerSlotList} from '../../api/dashboard-module';
 import {useFocusEffect} from '@react-navigation/native';
+import {STYLES} from '../../styles/globalStyles';
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
 export const Slot = ({navigation}: any) => {
@@ -91,10 +92,8 @@ export const Slot = ({navigation}: any) => {
         try {
           const response = await getTrainerSlotList();
           const slotsCount = response?.data?.data;
-          const filteredData = slotsCount?.filter(
-            (item: any) => new Date(item._id) >= today,
-          );
-          const sortedData = filteredData?.sort((a: any, b: any) => {
+
+          const sortedData = slotsCount?.sort((a: any, b: any) => {
             return new Date(a._id).getTime() - new Date(b._id).getTime();
           });
 
@@ -109,6 +108,7 @@ export const Slot = ({navigation}: any) => {
       fetchTrainerSlotsByMonth();
     }, []),
   );
+  console.log(trainerSchedules?.length, 'lkkk');
 
   return (
     <View style={styles.container}>
@@ -130,13 +130,20 @@ export const Slot = ({navigation}: any) => {
         </View>
       </TouchableOpacity>
       <ScrollView>
-        <FlatList
-          data={trainerSchedules}
-          renderItem={renderCarouselItem}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.carouselContainer}
-          numColumns={3}
-        />
+        {trainerSchedules?.length == 0 ||
+        trainerSchedules?.length == undefined ? (
+          <Text style={[STYLES.text16, {marginTop: 20}]}>
+            No schedules yet!
+          </Text>
+        ) : (
+          <FlatList
+            data={trainerSchedules}
+            renderItem={renderCarouselItem}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.carouselContainer}
+            numColumns={3}
+          />
+        )}
       </ScrollView>
     </View>
   );

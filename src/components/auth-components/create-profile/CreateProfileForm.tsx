@@ -44,6 +44,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [userPhone, setUserPhone] = useState<string>('');
   const [countryCode, setCountryCode] = useState();
   const [allData, setAllData] = useState<any | null>([]);
+  console.log(userData,"from createprofile")
 
   useEffect(() => {
     if (userData?.phone) {

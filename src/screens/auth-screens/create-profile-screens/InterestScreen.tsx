@@ -24,6 +24,7 @@ const InterestScreen = ({navigation}: any) => {
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  console.log(previousUserData,"from interest")
 
   useEffect(() => {
     const fetchInterest = async () => {
@@ -92,7 +93,7 @@ const InterestScreen = ({navigation}: any) => {
                 );
                 return (
                   <TouchableOpacity
-                    key={data._id+index+1}
+                    key={data._id+index+1+Math.random()}
                     style={[
                       styles.itemsInnerContainer,
                       {

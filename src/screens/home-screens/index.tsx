@@ -34,9 +34,10 @@ import {
 // import {PostsData} from '../dummyData';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import MyCirclePosts from '../../components/home-components/MyCirclePosts';
-import {getPosts, getVideoPosts} from '../../api/home-module';
+import {deletePost, getPosts, getVideoPosts} from '../../api/home-module';
 import CreatorPosts from '../../components/home-components/CreatorPosts';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import Toast from 'react-native-toast-message';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -46,8 +47,6 @@ const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const tabBarHeight = useBottomTabBarHeight();
-  const route = useRoute();
-
   const [myCircleData, setMycirleData] = useState<any>();
   const [creatorData, setCreatorData] = useState<any>();
   const [creatorPage, setCreatorPage] = useState<number>(1);
@@ -58,9 +57,7 @@ const HomeScreen = () => {
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isFocused = useIsFocused();
-  const selectedPosts = useSelector(
-    (state: RootState) => state.post.selectedPost,
-  );
+  console.log(userData,"uuuuu")
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -73,7 +70,6 @@ const HomeScreen = () => {
   };
 
   const handleCommentButtonPress = (selectedPost: any, id: string) => {
-    console.log(selectedPost, 'selectedpppp');
     dispatch(setSelectedPost(selectedPost));
     navigation.navigate('CommentsScreen', {id: id});
   };
@@ -112,7 +108,7 @@ const HomeScreen = () => {
         setIsLoading(false);
       };
       fetchMyCirclePosts();
-    }, [page, isRefreshing, isFocused]),
+    }, [page, isRefreshing, isFocused, creatorPage]),
   );
 
   const loadMoreItems = () => {
@@ -130,22 +126,18 @@ const HomeScreen = () => {
         try {
           const response = await getVideoPosts(creatorPage, limit);
           const data = response?.data?.data;
-          if (creatorData) {
-            setCreatorData((prevData: any) => {
-              return [...prevData, ...data?.posts];
-            });
-          } else {
-            setCreatorData(data?.posts);
-          }
+
+          setCreatorData(data?.posts);
+
           setHasMoreVideos(data?.pagination?.hasNextPage);
           // dispatch(setPagination(data?.pagination));
         } catch (error: any) {
-          console.log(error, 'Error fetching my circle posts!');
+          console.log(error, 'Error fetching my creator posts!');
         }
         setIsLoading(false);
       };
       fetchVideos();
-    }, [page]),
+    }, [creatorPage, page, selectedButton]),
   );
 
   const loadMoreVideos = () => {
@@ -154,7 +146,25 @@ const HomeScreen = () => {
     }
     return;
   };
-  console.log(userData?.profileImage,"pi")
+  const handleDeleteVideo = async (id: string) => {
+    try {
+      const response = await deletePost(id);
+      const responseData = response?.data;
+      setCreatorData(1);
+      setSelectedButton('My Circle');
+
+      Toast.show({
+        type: 'success',
+        text1: `${responseData?.message}`,
+      });
+    } catch (error: any) {
+      console.log(error?.response?.data?.message, 'From delete video');
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
+    }
+  };
   return (
     <View style={styles.container}>
       <Animated.View
@@ -231,6 +241,7 @@ const HomeScreen = () => {
               tabBarHeight={tabBarHeight}
               isProfile={true}
               handleRefresh={handleRefresh}
+              onDeletePost={handleDeleteVideo}
             />
           )
         }

@@ -59,8 +59,9 @@ export const createProfileSchema = (userRole: any) => {
       .max(10, 'Username must be at most 10 characters'),
     bio: Yup.string()
       .required('Bio is required')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+      .matches(/^[A-Za-z][A-Za-z.\s]*$/, 'Invalid input')
       .min(10, 'Bio must be at least 10 characters'),
+
     phone: Yup.string().required('Phone number is required'),
     country: Yup.string().required('Select country'),
     city: Yup.string().required('Select city'),
