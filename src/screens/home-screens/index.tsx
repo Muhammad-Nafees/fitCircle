@@ -154,7 +154,7 @@ const HomeScreen = () => {
     }
     return;
   };
-  console.log(userData?.profileImage,"pi")
+  console.log(userData?.profileImage, 'pi');
   return (
     <View style={styles.container}>
       <Animated.View
@@ -229,7 +229,7 @@ const HomeScreen = () => {
               data={creatorData}
               userId={userId}
               tabBarHeight={tabBarHeight}
-              isProfile={true}
+              isProfile={false}
               handleRefresh={handleRefresh}
             />
           )
