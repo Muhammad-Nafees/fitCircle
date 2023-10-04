@@ -16,11 +16,10 @@ export const Results = ({navigation, route}: any) => {
   useFocusEffect(
     useCallback(() => {
       const date = new Date(data?.targetDate);
-      const formattedDate = format(date, 'dd-MM-yyyy');
+      const formattedDate = format(date, 'dd/MM/yyyy');
       setTargetDate(formattedDate);
     }, []),
   );
-  console.log(targetDate, 'target');
 
   const handleSubmit = () => {
     navigation.navigate('MacroCalculator', {data});

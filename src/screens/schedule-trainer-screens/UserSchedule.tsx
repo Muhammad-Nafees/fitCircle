@@ -139,7 +139,9 @@ const SetSchedule = ({route, navigation}: any) => {
             exercise="None"
             username="Sam"
           />
-        ) : null}
+        ) : (
+          <Text style={{color: 'white'}}>Coming Soon!</Text>
+        )}
       </View>
     </View>
   );

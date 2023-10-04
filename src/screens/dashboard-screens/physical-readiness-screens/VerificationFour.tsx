@@ -32,7 +32,13 @@ interface FormValues {
   goalScale: string;
 }
 
-const VerificationFour = ({disabled, navigation, route, data}: any) => {
+const VerificationFour = ({
+  disabled,
+  navigation,
+  route,
+  data,
+  disabledStlyes,
+}: any) => {
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
   const formdata: null | any = data;
 
@@ -43,7 +49,6 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
       verificationFour: values,
     });
   };
-  console.log(formdata, 'ssssss');
 
   const initialValues: FormValues = {
     isFeelWeakEver: formdata?.isFeelWeakEver ?? '',
@@ -111,6 +116,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       setFieldError={setFieldError}
                       fieldName="mealsPerDay"
                       labelStyles={styles.labelStyles}
+                      extraStyles={disabledStlyes}
                     />
                   </View>
                   {questionTexts.map(question => (
@@ -144,6 +150,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       setFieldError={setFieldError}
                       fieldName="exerciseSince"
                       labelStyles={styles.labelStyles}
+                      extraStyles={disabledStlyes}
                     />
                   </View>
                   {questionTexts2.map(question => (
@@ -176,6 +183,7 @@ const VerificationFour = ({disabled, navigation, route, data}: any) => {
                       setFieldError={setFieldError}
                       fieldName="goalScale"
                       labelStyles={styles.labelStyles}
+                      extraStyles={disabledStlyes}
                     />
                   </View>
                 </View>
