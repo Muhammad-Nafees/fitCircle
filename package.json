@@ -62,7 +62,7 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-video": "^5.1.0-alpha2",
     "react-native-view-shot": "^3.7.0",
-    "react-native-vision-camera": "^3.0.0",
+    "react-native-vision-camera": "2.15.4",
     "react-redux": "^8.1.1",
     "redux-persist": "^6.0.0",
     "yup": "^1.2.0"

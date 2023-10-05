@@ -25,7 +25,7 @@ import {ProfileSuccessModal} from '../../components/profile-components/ProfileMo
 import {ProfileHeaderContainer} from '../../components/profile-components/HeaderContainer';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
 
-export const ProfileScreen = ({navigation, route}: any) => {
+const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
   const posts = useSelector((state: RootState) => state.post.posts);
@@ -307,3 +307,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
+
+export default ProfileScreen;

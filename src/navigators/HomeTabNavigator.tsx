@@ -18,9 +18,10 @@ import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
 import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
-import { ProfileScreen } from '../screens/profile-screens';
-import { PackageDetailScreen } from '../screens/profile-screens/PackageDetailScreen';
+import ProfileScreen from '../screens/profile-screens';
+import PackageDetailScreen from '../screens/profile-screens/PackageDetailScreen';
 import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
+import MessageStackNavigator from './MessageStackNavigator';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -30,8 +31,6 @@ const Tab = createBottomTabNavigator();
 interface ScreenContentProps {
   title: string;
 }
-
-const MessageStackNavigator = () => <ScreenContent title="Message" />;
 
 const ScreenContent = ({title}: ScreenContentProps) => (
   <View
@@ -199,7 +198,7 @@ const HomeTabNavigator = () => {
               <CustomTabBarIcon focused={focused} icon="Message" />
             </View>
           ),
-          // tabBarStyle: {display: 'none'},
+          tabBarStyle: {display: 'none'},
         }}
       />
       <Tab.Screen

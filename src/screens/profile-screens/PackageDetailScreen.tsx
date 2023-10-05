@@ -16,7 +16,7 @@ const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
 const reviewData = Array.from({length: 5});
 
-export const PackageDetailScreen = ({navigation}: any) => {
+const PackageDetailScreen = ({navigation}: any) => {
   const renderCustomPackageReview = () => {
     return <CustomPackageReview />;
   };
@@ -140,3 +140,5 @@ const styles = StyleSheet.create({
     paddingTop: verticalScale(14),
   },
 });
+
+export default PackageDetailScreen;
