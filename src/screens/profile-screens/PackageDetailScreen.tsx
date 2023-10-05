@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,17 +8,26 @@ import {
   FlatList,
   BackHandler,
 } from 'react-native';
+import Modal from 'react-native-modal';
+import Video from 'react-native-video';
 // ------------------------------------------------------------------------------------------------//
 import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
 import {CustomPackageReview} from '../../components/profile-components/CustomPackageReview';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+const TestVideo = require('../../../assets/test5mbvideo.mp4');
+const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
 const reviewData = Array.from({length: 5});
 
-const PackageDetailScreen = ({navigation}: any) => {
+export const PackageDetailScreen = ({navigation, route}: any) => {
+  const [videoVisible, setVideoVisible] = useState(false);
   const renderCustomPackageReview = () => {
     return <CustomPackageReview />;
+  };
+
+  const videoEnabled = () => {
+    setVideoVisible(!videoVisible);
   };
 
   useEffect(() => {
@@ -36,17 +45,42 @@ const PackageDetailScreen = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={{paddingHorizontal: 16}}>
-        <TouchableOpacity
-          style={{paddingTop: 24, paddingBottom: 16}}
-          onPress={() => navigation.navigate('Profile')}>
-          <Image
-            source={ArrowBack}
-            style={{width: 24, height: 24, tintColor: 'white'}}
-          />
-        </TouchableOpacity>
+        <View
+          style={
+            route.params.hidePackageButton && {
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }
+          }>
+          <TouchableOpacity
+            style={{paddingTop: 24, paddingBottom: 16}}
+            onPress={() => navigation.navigate('Profile')}>
+            <Image
+              source={ArrowBack}
+              style={{width: 24, height: 24, tintColor: 'white'}}
+            />
+          </TouchableOpacity>
+          {route.params.hidePackageButton && (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ScheduleScreen')}>
+              <Text
+                style={{
+                  fontWeight: '500',
+                  fontSize: 10,
+                  color: 'rgba(32, 155, 204, 1)',
+                }}>
+                Get this package
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
         <Text style={styles.heading}>Details</Text>
         <View style={{marginHorizontal: -10}}>
-          <CustomTrainerPackage hidePriceAndPackage={true} />
+          <CustomTrainerPackage
+            hidePriceAndPackage={true}
+            videoEnabled={videoEnabled}
+          />
         </View>
         <View style={[styles.horizontalLine, {marginTop: 0}]} />
         <View>
@@ -78,6 +112,30 @@ const PackageDetailScreen = ({navigation}: any) => {
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
         />
       </View>
+      <Modal
+        isVisible={videoVisible}
+        onBackButtonPress={() => setVideoVisible(false)}
+        style={{
+          backgroundColor: 'black',
+          width: '100%',
+          height: '100%',
+          margin: 0,
+        }}>
+        <View style={styles.videoContainer}>
+          <Video
+            source={TestVideo}
+            style={styles.video}
+            resizeMode="contain"
+            onEnd={() => setVideoVisible(false)}
+            controls={true}
+          />
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => setVideoVisible(false)}>
+            <Image source={CancelIcon} style={styles.cancelIcon} />
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -139,6 +197,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: verticalScale(14),
   },
+  videoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  video: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  cancelButton: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+  },
+  cancelIcon: {
+    width: 24,
+    height: 24,
+    tintColor: 'white',
+  },
 });
-
-export default PackageDetailScreen;
