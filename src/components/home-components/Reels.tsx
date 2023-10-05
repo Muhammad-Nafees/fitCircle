@@ -219,6 +219,8 @@ export const ReelsComponent = ({
         onLoad={() => {
           videoRef.current.seek(0);
         }}
+        playInBackground={false}
+        playWhenInactive={false}
         useTextureView={true}
         bufferConfig={{
           minBufferMs: 15000, // Minimum time (in milliseconds) to buffer before playback starts
