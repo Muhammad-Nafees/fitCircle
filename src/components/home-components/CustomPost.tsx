@@ -66,6 +66,7 @@ export const CustomPost = ({
   const [shareText, setShareText] = useState('');
   const [isLiked, setIsLiked] = useState(post?.likedByMe);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
+  const navigation = useNavigation();
 
   const isLocked = post?.cost && post?.cost > 0;
 
@@ -86,17 +87,19 @@ export const CustomPost = ({
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        setImageFullscreen(false);
-        return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-      return () =>
-        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [isImageFullscreen]),
-  );
+ 
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const onBackPress = () => {
+  //       setImageFullscreen(false);
+  //       return true;
+  //     };
+  //     BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  //     return () =>
+  //       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+  //   }, [isImageFullscreen,isCommentsScreenActive]),
+  // );
 
   const handleLikeButtonPress = async () => {
     setIsLiked(!isLiked);
@@ -142,6 +145,8 @@ export const CustomPost = ({
   const handleImageClose = () => {
     setImageFullscreen(false);
   };
+  const isLinearGradient =
+    post?.hexCode?.length > 1 || post?.hexCode === !undefined;
 
   return (
     <View>
@@ -192,41 +197,40 @@ export const CustomPost = ({
           </View>
         </View>
       ) : null}
-      {post?.text &&
-        (post?.hexCode?.length == 1 || post?.hexCode == null ? (
-          <View
-            style={[
-              styles.content,
-              {
-                backgroundColor: `${post?.hexCode}`,
-                height: heightFull
-                  ? verticalScale(290)
-                  : post.cost !== null
-                  ? verticalScale(100)
-                  : undefined,
-              },
-            ]}>
-            {post?.title && (
-              <Text
-                style={[
-                  styles.contentText,
-                  {fontWeight: '600', fontSize: 16, paddingBottom: 20},
-                ]}>
-                {post?.title}
-              </Text>
-            )}
-            <Text style={styles.contentText}>{post?.text}</Text>
-          </View>
-        ) : (
-          <LinearGradient
-            colors={['#4A8D21', '#9CE271', '#BF3A3A']}
-            style={[
-              styles.content,
-              {height: heightFull ? verticalScale(290) : undefined},
-            ]}>
-            <Text style={styles.contentText}>{post?.text}</Text>
-          </LinearGradient>
-        ))}
+      {post?.text && !isLinearGradient ? (
+        <View
+          style={[
+            styles.content,
+            {
+              backgroundColor: `${post?.hexCode}`,
+              height: heightFull
+                ? verticalScale(290)
+                : post.cost !== null
+                ? verticalScale(100)
+                : undefined,
+            },
+          ]}>
+          {post?.title && (
+            <Text
+              style={[
+                styles.contentText,
+                {fontWeight: '600', fontSize: 16, paddingBottom: 20},
+              ]}>
+              {post?.title}
+            </Text>
+          )}
+          <Text style={styles.contentText}>{post?.text}</Text>
+        </View>
+      ) : (
+        <LinearGradient
+          colors={post?.hexCode}
+          style={[
+            styles.content,
+            {height: heightFull ? verticalScale(290) : undefined},
+          ]}>
+          <Text style={styles.contentText}>{post?.text}</Text>
+        </LinearGradient>
+      )}
       {post?.media && (
         <TouchableOpacity onPress={handleImagePress}>
           <Image

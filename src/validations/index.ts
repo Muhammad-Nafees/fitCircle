@@ -180,10 +180,12 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
   email: email,
   firstName: Yup.string()
     .required('First Name is required')
-    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .min(3, 'First Name must be at least 3 characters long'),
   lastName: Yup.string()
     .required('Last Name is required')
-    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .min(3, 'Last Name must be at least 3 characters long'),
   address: Yup.string().required('Address is required'),
   city: Yup.string().required('City is required'),
   zip: Yup.string().required('ZIP code is required'),
