@@ -14,7 +14,7 @@ import {SettingsTransactionScreen} from '../screens/settings-screens/SettingsTra
 import {TransactionHistoryScreen} from '../screens/settings-screens/TransactionHistory';
 import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
 import SubscriptionScreen from '../screens/settings-screens/Subscription';
-// import PaymentStackNavigator from './PaymentStackNavigator';
+import PaymentStackNavigator from './PaymentStackNavigator';
 
 const Stack = createStackNavigator();
 const SettingsStackNavigator = () => {
@@ -43,11 +43,11 @@ const SettingsStackNavigator = () => {
       <Stack.Screen name="PrivacyPolicy" component={TermsPolicyScreen} />
       <Stack.Screen name="PrivacySettings" component={PrivacySettingsScreen} />
       <Stack.Screen name="Blocklist" component={BlocklistScreen} />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="Payment"
         component={PaymentStackNavigator}
         options={{headerShown: false}}
-      /> */}
+      />
       <Stack.Screen
         name="SettingsTransaction"
         component={SettingsTransactionScreen}
