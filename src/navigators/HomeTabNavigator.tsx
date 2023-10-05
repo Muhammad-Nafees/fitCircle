@@ -19,7 +19,7 @@ import ScheduleStackNavigator from './ScheduleStackNavigator';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
 import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
 import ProfileScreen from '../screens/profile-screens';
-import PackageDetailScreen from '../screens/profile-screens/PackageDetailScreen';
+import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
 import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 import MessageStackNavigator from './MessageStackNavigator';
 import SettingsStackNavigator from './SettingsStackNavigator';
