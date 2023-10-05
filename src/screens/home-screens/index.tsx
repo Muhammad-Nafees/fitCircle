@@ -57,7 +57,7 @@ const HomeScreen = () => {
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isFocused = useIsFocused();
-  console.log(userData,"uuuuu")
+  console.log(userData, 'uuuuu');
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -170,7 +170,8 @@ const HomeScreen = () => {
       <Animated.View
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile' as never)}>
             <CustomProfileAvatar
               username={userData?.username as string}
               profileImage={userData?.profileImage as any}
