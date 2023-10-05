@@ -14,10 +14,12 @@ export const CustomTrainerPackage = ({
   isTrainerView,
 }: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
   const navigation = useNavigation();
+  console.log(userRole, ' userRole');
 
   const onPressHandler = () => {
-    if (userData?.role !== 'trainer' || isTrainerView) {
+    if (userRole !== 'user' || isTrainerView) {
       navigation.navigate('PackageDetail');
     }
   };

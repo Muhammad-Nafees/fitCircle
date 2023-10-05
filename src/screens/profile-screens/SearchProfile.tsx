@@ -17,10 +17,12 @@ import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
   SearchCommunityItem,
-  SearchProfileItem,
+  SearchFollowersItem,
+  SearchFollowingItem,
 } from '../../components/profile-components/SearchProfleItem';
 import {SearchOptionContainer} from '../../components/profile-components/SearchOptionContainer';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
+import {useFocusEffect} from '@react-navigation/native';
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 const SearchIcon = require('../../../assets/icons/search.png');
 
@@ -43,9 +45,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   const [filteredCommunities, setFilteredCommunities] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [communityName, setCommunityName] = useState('');
-  const [removedFollowers, setRemovedFollowers] = useState<string[]>([]);
   const [modalOpenFor, setModalOpenFor] = useState<any>(null);
-  const [removedFollowing, setRemovedFollowing] = useState<string[]>([]);
   const [removedCommunities, setRemovedCommunities] = useState<string[]>([]);
 
   useEffect(() => {
@@ -127,17 +127,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     actionType: string,
   ) => {
     if (confirmed) {
-      if (actionType === 'followers') {
-        const updatedRemovedFollowers = removedFollowers.includes(itemId)
-          ? removedFollowers.filter(id => id !== itemId)
-          : [...removedFollowers, itemId];
-        setRemovedFollowers(updatedRemovedFollowers);
-      } else if (actionType === 'following') {
-        const updatedRemovedFollowing = removedFollowing.includes(itemId)
-          ? removedFollowing.filter(id => id !== itemId)
-          : [...removedFollowing, itemId];
-        setRemovedFollowing(updatedRemovedFollowing);
-      } else if (actionType === 'community') {
+      if (actionType === 'community') {
         const updatedRemovedCommunity = removedCommunities.includes(itemId)
           ? removedCommunities.filter(id => id !== itemId)
           : [...removedCommunities, itemId];
@@ -148,7 +138,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     setModalVisible(false);
   };
 
-  useEffect(() => {
+  useFocusEffect(() => {
     const backAction = () => {
       navigation.navigate('Profile');
       return true;
@@ -158,66 +148,40 @@ const SearchProfileScreen = ({route, navigation}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  });
 
   const onPressHandler = () => {
-    setModalVisible(!isModalVisible);
+    setModalVisible(false);
+    if (selectedOption === 'followers') {
+      const updatedFollowers = followers.filter(
+        item => item._id !== modalOpenFor,
+      );
+      setFollowers(updatedFollowers);
+    } else if (selectedOption === 'following') {
+      const updatedFollowing = following.filter(
+        item => item._id !== modalOpenFor,
+      );
+      setFollowing(updatedFollowing);
+    }
+    setModalOpenFor(null);
   };
 
-  const renderProfileItem = ({item}: any) => {
-    const isRemoved = removedFollowers.includes(item._id);
+  const renderFollowerItem = ({item}: any) => {
     const handleToggleRemove = (followerId: string) => {
-      if (!isRemoved) {
-        const updatedRemovedFollowers = [...removedFollowers, followerId];
-        setRemovedFollowers(updatedRemovedFollowers);
-      } else {
-        const updatedRemovedFollowers = isRemoved
-          ? removedFollowers.filter(id => id !== item._id)
-          : [...removedFollowers, item._id];
-        setModalName(`followed ${item.username}`);
-        setFollowModal(true);
-        setRemovedFollowers(updatedRemovedFollowers);
-      }
-      if (!isRemoved) {
-        setModalVisible(true);
-        setModalOpenFor(item._id);
-      }
+      setModalOpenFor(followerId);
+      setModalVisible(true);
     };
-    return (
-      <SearchProfileItem
-        isRemoved={isRemoved}
-        onToggle={handleToggleRemove}
-        item={item}
-      />
-    );
+
+    return <SearchFollowersItem onToggle={handleToggleRemove} item={item} />;
   };
 
   const renderFollowingItem = ({item}: any) => {
-    const isRemoved = removedFollowing.includes(item._id);
     const handleToggleRemove = (followingId: string) => {
-      if (!isRemoved) {
-        const updatedRemovedFollowing = [...removedFollowing, followingId];
-        setRemovedFollowing(updatedRemovedFollowing);
-      } else {
-        const updatedRemovedFollowing = isRemoved
-          ? removedFollowing.filter(id => id !== item._id)
-          : [...removedFollowing, item._id];
-        setModalName(`followed ${item.username}`);
-        setFollowModal(true);
-        setRemovedFollowing(updatedRemovedFollowing);
-      }
-      if (!isRemoved) {
-        setModalVisible(true);
-        setModalOpenFor(item._id);
-      }
+      setModalOpenFor(followingId);
+      setModalVisible(true);
     };
-    return (
-      <SearchProfileItem
-        isRemoved={isRemoved}
-        onToggle={handleToggleRemove}
-        item={item}
-      />
-    );
+
+    return <SearchFollowingItem onToggle={handleToggleRemove} item={item} />;
   };
 
   const renderCommunityItem = ({item}: any) => {
@@ -283,7 +247,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
           <FlatList
             data={filteredFollowers}
             keyExtractor={(item: any) => item._id}
-            renderItem={renderProfileItem}
+            renderItem={renderFollowerItem}
           />
         )}
         {selectedOption === 'following' && (

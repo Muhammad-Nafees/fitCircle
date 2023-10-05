@@ -2,7 +2,7 @@ import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 
-export const SearchProfileItem = ({item, onToggle, isRemoved}: any) => {
+export const SearchFollowersItem = ({item, onToggle}: any) => {
   return (
     <View style={styles.profileContainer}>
       <View style={styles.profileInfo}>
@@ -14,7 +14,25 @@ export const SearchProfileItem = ({item, onToggle, isRemoved}: any) => {
       <TouchableOpacity
         style={styles.removeButtonContainer}
         onPress={() => onToggle(item._id)}>
-        <Text style={styles.remove}>{!isRemoved ? 'Remove' : 'Add'}</Text>
+        <Text style={styles.remove}>Remove</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export const SearchFollowingItem = ({item, onToggle}: any) => {
+  return (
+    <View style={styles.profileContainer}>
+      <View style={styles.profileInfo}>
+        <CustomProfileAvatar size={40} username={item.username} />
+        <View style={styles.nameContainer}>
+          <Text style={styles.name}>{item.username}</Text>
+        </View>
+      </View>
+      <TouchableOpacity
+        style={styles.removeButtonContainer}
+        onPress={() => onToggle(item._id)}>
+        <Text style={styles.remove}>Unfollow</Text>
       </TouchableOpacity>
     </View>
   );
