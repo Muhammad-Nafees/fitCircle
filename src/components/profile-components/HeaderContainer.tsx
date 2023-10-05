@@ -47,13 +47,15 @@ export const ProfileHeaderContainer = ({
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
-          <TouchableOpacity>
-            {isTrainerView ? (
+          {isTrainerView ? (
+            <TouchableOpacity>
               <TrainerProfileScheduleIcon />
-            ) : (
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
               <ProfileSettingsIcon />
-            )}
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
           {isFollowed && (
             <TouchableOpacity>
               <TrainerProfileMsgIcon />

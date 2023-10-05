@@ -22,6 +22,7 @@ import ProfileScreen from '../screens/profile-screens';
 import PackageDetailScreen from '../screens/profile-screens/PackageDetailScreen';
 import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 import MessageStackNavigator from './MessageStackNavigator';
+import SettingsStackNavigator from './SettingsStackNavigator';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -255,6 +256,14 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="PhysicalReadiness"
         component={PhysicalReadinessStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsStackNavigator}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
