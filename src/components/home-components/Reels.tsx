@@ -230,6 +230,8 @@ export const ReelsComponent = ({
         }}
       />
       <View style={styles.textContentContainer}>
+        {post?.title !== "" && <Text style={[styles.textContent,{paddingBottom: 20,fontSize:16,fontWeight: '700'}]}>{post?.title}</Text>}
+
         <Text style={styles.textContent}>{post?.text}</Text>
       </View>
       <View style={styles.iconContainer}>

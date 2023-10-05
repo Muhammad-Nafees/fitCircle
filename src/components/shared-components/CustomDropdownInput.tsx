@@ -30,7 +30,7 @@ const DropdownTextInput = ({
   editable = true,
   onSelectUnit,
   extraStyles,
-  textInputStyle
+  textInputStyle,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
@@ -75,7 +75,7 @@ const DropdownTextInput = ({
           editable={editable}
           value={textInputValue}
           onChangeText={handleTextInputChange}
-          style={[styles.textInput,textInputStyle]}
+          style={[styles.textInput, textInputStyle]}
           onFocus={handleInputFocus}
           placeholder={placeholder}
           onBlur={handleInputBlur}
@@ -140,6 +140,7 @@ const DropdownTextInput = ({
               gap: 2,
               marginTop: verticalScale(7),
               marginBottom: verticalScale(4),
+              height: 27,
             },
             route.name === 'VerificationOne' && {width: horizontalScale(60)},
           ]}>
