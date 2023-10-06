@@ -9,12 +9,18 @@ import {
   Image,
   StyleSheet,
   ScrollView,
-  ImageBackground,
 } from 'react-native';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 import UploadIcon from '../../../assets/icons/UploadIcon';
-import {launchImageLibrary} from 'react-native-image-picker';
+const CancelIcon = require('../../../assets/icons/cancel.png');
+const PlayIcon = require('../../../assets/icons/playIcon.png');
+import Modal from 'react-native-modal';
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import {useState} from 'react';
+import Video from 'react-native-video';
 
 const initialValues = {
   packageTitle: '',
@@ -26,28 +32,38 @@ const initialValues = {
 };
 
 const CreatePackage = ({navigation}: any) => {
-  const [selectedImageUri, setSelectedImageUri] = useState<any>(null);
+  const [selectedVideoUri, setSelectedVideoUri] = useState<any>(null);
+  const [videoVisible, setVideoVisible] = useState(false);
+  const [playIconVisible, setPlayIconVisible] = useState(false);
 
   const handleSubmit = (values: any) => {
     console.log(values);
+    navigation.navigate('PackageDetail', {
+      packageData: {
+        ...values,
+        preview: selectedVideoUri,
+      },
+    });
   };
 
-  const handleImageUpload = () => {
-    const options = {
-      mediaType: 'photo',
-      maxWidth: 500,
-      maxHeight: 500,
-      quality: 1,
+  const handleVideoLibrary = async () => {
+    setSelectedVideoUri(null);
+    const options: ImageLibraryOptions = {
+      mediaType: 'video',
     };
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-      } else if (response.error) {
-        console.error('ImagePicker Error: ', response.error);
-      } else if (response.assets && response.assets.length > 0) {
-        const uri = response.assets[0].uri;
-        setSelectedImageUri(uri);
+    await launchImageLibrary(options, (response: any) => {
+      if (response.assets) {
+        setSelectedVideoUri({
+          uri: response.assets[0].uri,
+          name: response.assets[0].fileName,
+          type: response.assets[0].type,
+        });
       }
     });
+  };
+
+  const handlePlayIconPress = () => {
+    setVideoVisible(true);
   };
 
   return (
@@ -104,27 +120,31 @@ const CreatePackage = ({navigation}: any) => {
                 />
                 <View>
                   <Text style={styles.label}>Preview</Text>
-                  {selectedImageUri ? (
-                    <ImageBackground
-                      source={{uri: selectedImageUri}}
-                      style={styles.uploadContainer}>
-                      <TouchableOpacity
+                  {selectedVideoUri ? ( // Render the play icon if a video is selected
+                    <TouchableOpacity
+                      style={styles.uploadContainer}
+                      onPress={handlePlayIconPress}>
+                      <Image
+                        source={PlayIcon}
                         style={{
-                          position: 'absolute',
-                          bottom: 10,
-                          right: 10,
-                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                          padding: 10,
-                          borderRadius: 5,
+                          width: 24,
+                          height: 24,
+                          tintColor: 'rgba(0, 0, 0, 0.2)',
                         }}
-                        onPress={handleImageUpload}>
-                        <Text style={{color: 'white'}}>Change Image</Text>
-                      </TouchableOpacity>
-                    </ImageBackground>
+                      />
+                      <Text
+                        style={{
+                          fontWeight: '600',
+                          fontSize: 14,
+                          color: 'rgba(0, 0, 0, 0.2)',
+                        }}>
+                        Play Video
+                      </Text>
+                    </TouchableOpacity>
                   ) : (
                     <TouchableOpacity
                       style={styles.uploadContainer}
-                      onPress={handleImageUpload}>
+                      onPress={handleVideoLibrary}>
                       <UploadIcon />
                       <Text
                         style={{
@@ -161,7 +181,8 @@ const CreatePackage = ({navigation}: any) => {
                   extraStyles={styles.textInput}
                   setFieldError={setFieldError}
                   fieldName="hours"
-                  handleChange={handleChange('housr')}
+                  handleChange={handleChange('hours')}
+                  keyboardType="numeric"
                 />
                 <CustomInput
                   label="Username  (only the username listed will see this Meal plan)"
@@ -184,6 +205,30 @@ const CreatePackage = ({navigation}: any) => {
           )}
         </Formik>
       </ScrollView>
+      <Modal
+        isVisible={videoVisible}
+        onBackButtonPress={() => setVideoVisible(false)}
+        style={{
+          backgroundColor: 'black',
+          width: '100%',
+          height: '100%',
+          margin: 0,
+        }}>
+        <View style={styles.videoContainer}>
+          <Video
+            source={selectedVideoUri}
+            style={styles.video}
+            resizeMode="contain"
+            onEnd={() => setVideoVisible(false)}
+            controls={true}
+          />
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => setVideoVisible(false)}>
+            <Image source={CancelIcon} style={styles.cancelIcon} />
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -217,6 +262,27 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     gap: 10,
     backgroundColor: 'rgba(222, 222, 222, 1)',
+  },
+  videoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  video: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  cancelButton: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+  },
+  cancelIcon: {
+    width: 24,
+    height: 24,
+    tintColor: 'white',
   },
 });
 
