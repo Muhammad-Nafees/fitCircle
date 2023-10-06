@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -9,6 +9,7 @@ import {
   PanResponder,
   ScrollView,
   Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -68,6 +69,7 @@ export const AddPostScreen = ({route}: any) => {
   const [titleInput, setTitleInput] = useState('');
   const [costValue, setCostValue] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [permissionGranted, setPermissionGranted] = useState<any>();
 
   const onSelectCost = (value: number) => {
     setCostValue(value);
@@ -97,11 +99,18 @@ export const AddPostScreen = ({route}: any) => {
     setIsComponentMounted(false);
   };
 
+  useEffect(() => {
+    requestCameraPermission();
+  }, []);
+
   const handleColorSelected = (color: string | string[]) => {
     setTextInputBackgroundColor(color);
   };
 
   const handlePhotoButtonPress = async () => {
+    if (permissionGranted === false) {
+      return;
+    }
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
@@ -122,6 +131,22 @@ export const AddPostScreen = ({route}: any) => {
     });
   };
 
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Camera permission granted');
+        setPermissionGranted(true);
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   const panResponder = React.useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -134,6 +159,9 @@ export const AddPostScreen = ({route}: any) => {
   ).current;
 
   const handleVideoLibrary = async () => {
+    if (permissionGranted === false) {
+      return;
+    }
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
@@ -152,16 +180,12 @@ export const AddPostScreen = ({route}: any) => {
     });
   };
   const handleCaptureButtonPress = async () => {
+    if (permissionGranted === false) {
+      return;
+    }
     setVideoUri(null);
     setMediaUri(null);
     setTextInputBackgroundColor('transparent');
-    const options: ImageLibraryOptions = {
-      mediaType: 'photo',
-      includeBase64: false,
-      quality: 0.8,
-      maxHeight: 10000,
-      maxWidth: 10000,
-    };
 
     await openCamera({
       width: 10000,
@@ -186,6 +210,9 @@ export const AddPostScreen = ({route}: any) => {
   };
 
   const handleVideoButtonPress = async () => {
+    if (permissionGranted === false) {
+      return;
+    }
     setIsCreatePostIconModalVisible(false);
     setVideoUri(null);
     setMediaUri(null);
