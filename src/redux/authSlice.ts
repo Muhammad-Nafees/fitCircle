@@ -7,6 +7,7 @@ const initialState: IAuth = {
   accountType: null,
   userRole: undefined,
   user: null,
+  userProfile: null,
   accessToken: null,
   refreshToken: null,
 };
@@ -37,6 +38,9 @@ const authSlice = createSlice({
     setUserData: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
     },
+    setUserProfile: (state, action: PayloadAction<IUser>) => {
+      state.userProfile = action.payload;
+    },
   },
 });
 
@@ -47,6 +51,7 @@ export const {
   setAccessToken,
   setRefreshToken,
   authenticate,
+  setUserProfile,
   logout,
 } = authSlice.actions;
 

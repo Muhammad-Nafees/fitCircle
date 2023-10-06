@@ -45,7 +45,6 @@ interface CustomPostProps {
   handleCommentButtonPress?: (post: any, id: string) => void;
   handleBackPress: () => void;
   isLoading?: boolean;
-  // userId: string;
   post: any;
   heightFull?: boolean;
   commentCount?: any;
@@ -86,20 +85,6 @@ export const CustomPost = ({
       handleCommentButtonPress(postData, id);
     }
   };
-
- 
-
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     const onBackPress = () => {
-  //       setImageFullscreen(false);
-  //       return true;
-  //     };
-  //     BackHandler.addEventListener('hardwareBackPress', onBackPress);
-  //     return () =>
-  //       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-  //   }, [isImageFullscreen,isCommentsScreenActive]),
-  // );
 
   const handleLikeButtonPress = async () => {
     setIsLiked(!isLiked);
@@ -197,7 +182,7 @@ export const CustomPost = ({
           </View>
         </View>
       ) : null}
-      {post?.text && !isLinearGradient ? (
+      {post?.text ? (
         <View
           style={[
             styles.content,

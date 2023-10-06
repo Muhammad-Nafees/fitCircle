@@ -128,9 +128,7 @@ const HomeScreen = () => {
           const data = response?.data?.data;
 
           setCreatorData(data?.posts);
-
           setHasMoreVideos(data?.pagination?.hasNextPage);
-          // dispatch(setPagination(data?.pagination));
         } catch (error: any) {
           console.log(error, 'Error fetching my creator posts!');
         }
@@ -152,7 +150,6 @@ const HomeScreen = () => {
       const responseData = response?.data;
       setCreatorData(1);
       setSelectedButton('My Circle');
-
       Toast.show({
         type: 'success',
         text1: `${responseData?.message}`,
@@ -165,6 +162,8 @@ const HomeScreen = () => {
       });
     }
   };
+
+
   return (
     <View style={styles.container}>
       <Animated.View

@@ -6,10 +6,9 @@ import {View} from 'react-native';
 
 interface MyCirclePostsProps {
   data: any;
-  // userId: string;
   isLoading: boolean;
-  isRefreshing: any;
-  handleRefresh: () => void;
+  isRefreshing?: any;
+  handleRefresh?: () => void;
   handleCommentButtonPress: any;
   loadMoreItems: () => void;
 }

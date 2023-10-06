@@ -12,7 +12,6 @@ import Modal from 'react-native-modal';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 // ----------------------------------------------------------------------------------------------//
 import {RootState} from '../../redux/store';
-import {CustomPost} from '../../components/home-components/CustomPost';
 import {Favorites} from '../../components/profile-components/Favourites';
 import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
 import {setSelectedPost} from '../../redux/postSlice';
@@ -24,23 +23,48 @@ import {ProfileBio} from '../../components/profile-components/ProfileBio';
 import {ProfileSuccessModal} from '../../components/profile-components/ProfileModals';
 import {ProfileHeaderContainer} from '../../components/profile-components/HeaderContainer';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
+import {getUserPosts, getUserVideos} from '../../api/profile-module';
+import MyCirclePosts from '../../components/home-components/MyCirclePosts';
 
 const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
-  const posts = useSelector((state: RootState) => state.post.posts);
   const username = userData?.username;
   const [userId, setUserId] = useState<string | undefined>(undefined);
   const [communities, setCommunities] = useState(communitiesData);
   const tabBarHeight = useBottomTabBarHeight();
   let isTrainerView = route.params?.isTrainerView || false;
-  const [following, setFollowing] = useState(followingData);
   const [followers, setFollowers] = useState(followersData);
   const [selectedOption, setSelectedOption] = useState<string>('Feed');
   const [reelsModal, setReelsModal] = useState(false);
-  const [firstVideoPost, setFirstVideoPost] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [removeModal, setRemoveModal] = useState(false);
+
+  const [page, setPage] = useState<number>(1);
+  const [videoPage, setVideoPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(40);
+  const [myPosts, setMyPosts] = useState<any>();
+  const [myVideos, setMyVideos] = useState<any>();
+  const [hasMoreVideos, setHasMoreVideos] = useState<boolean>(false);
+  const [hasMorePost, setHasMorePosts] = useState<boolean>(false);
+  const [isLoadMorePost, setIsLoadMorePost] = useState<boolean>(false);
+  const [isLoadMoreVideos, setIsLoadMoreVideos] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedVideo, setSelectedVideo] = useState<any>();
+
+  const searchUserProfile = useSelector(
+    (state: RootState) => state.auth.userProfile,
+  );
+
+  const [userSearchId, setUserSearchId] = useState<string>('');
+
+  useEffect(() => {
+    if (searchUserProfile) {
+      setUserSearchId(searchUserProfile?._id);
+    } else {
+      setUserSearchId(userData?._id as string);
+    }
+  }, [searchUserProfile, userData]);
 
   useEffect(() => {
     const backAction = () => {
@@ -79,32 +103,82 @@ const ProfileScreen = ({navigation, route}: any) => {
     setRemoveModal(!removeModal);
   };
 
-  const filteredPostsWithoutVideo = posts?.filter(
-    post => post.user?._id === userData?._id && !post.media?.endsWith('.mp4'),
-  );
-
   const handleCommentButtonPress = (selectedPost: any, userId: any) => {
     dispatch(setSelectedPost(selectedPost));
     navigation.navigate('CommentsScreen', {userId, profileScreen: true});
   };
-
-  const renderPostItem = ({item}: any) => (
-    <CustomPost
-      key={item._id}
-      userId={userId}
-      post={item}
-      handleCommentButtonPress={handleCommentButtonPress}
-      countComment={item.comments.length}
-    />
-  );
-
-  const handleVideoPress = () => {
+  const handleVideoPress = (video: any) => {
+    setSelectedVideo(video);
     setReelsModal(!reelsModal);
   };
 
   const handleFavoriteDialog = () => {
     setRemoveModal(!removeModal);
   };
+  console.log(userData?._id, 'user');
+  console.log(searchUserProfile?._id, 'prof');
+
+  const fetchUserPosts = async () => {
+    console.log(userSearchId,"fetchuserpostId")
+    try {
+      const response = await getUserPosts(userSearchId as string, page, limit);
+      const data = response?.data?.data;
+      if (myPosts && isLoadMorePost) {
+        setMyPosts((prevData: any) => {
+          return [...prevData, ...data?.posts];
+        });
+      } else {
+        setMyPosts(data?.posts);
+      }
+      setHasMorePosts(data?.pagination?.hasNextPage);
+      setIsLoadMorePost(false);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From fetching user posts!');
+    }
+  };
+
+  const loadMoreItems = () => {
+    if (hasMorePost) {
+      setIsLoadMorePost(true);
+      setPage((prevPage: number) => prevPage + 1);
+    }
+    return;
+  };
+
+  const fetchUserVideos = async () => {
+    try {
+      const response = await getUserVideos(
+        userSearchId as string,
+        videoPage,
+        limit,
+      );
+      const data = response?.data?.data;
+      if (myVideos && isLoadMoreVideos) {
+        setMyVideos((prevData: any) => {
+          return [...prevData, ...data?.posts];
+        });
+      } else {
+        setMyVideos(data?.posts);
+      }
+      setHasMoreVideos(data?.pagination?.hasNextPage);
+      setIsLoadMoreVideos(false);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From fetching user posts!');
+    }
+  };
+
+  const loadMoreVideos = () => {
+    if (hasMoreVideos) {
+      setIsLoadMoreVideos(true);
+      setVideoPage((prevPage: number) => prevPage + 1);
+    }
+    return;
+  };
+
+  useEffect(() => {
+    fetchUserPosts();
+    fetchUserVideos();
+  }, []);
 
   return (
     <View style={[styles.container]}>
@@ -113,8 +187,6 @@ const ProfileScreen = ({navigation, route}: any) => {
         username={username}
         userData={userData}
         followers={followers}
-        following={following}
-        communities={communities}
       />
       <View style={styles.selectionContainerParent}>
         <View style={styles.selectionContainer}>
@@ -134,7 +206,7 @@ const ProfileScreen = ({navigation, route}: any) => {
             onPress={() => setSelectedOption('Videos')}>
             <Text style={[styles.optionText]}>Videos</Text>
           </TouchableOpacity>
-          {isTrainerView || userData.role === 'trainer' ? (
+          {isTrainerView || userData?.role !== 'user' ? (
             <TouchableOpacity
               style={[
                 styles.optionButton,
@@ -171,13 +243,20 @@ const ProfileScreen = ({navigation, route}: any) => {
           styles.bottomContainer,
           {paddingBottom: tabBarHeight + verticalScale(45)},
         ]}>
-        {selectedOption === 'Feed' && (
-          <FlatList
-            data={filteredPostsWithoutVideo}
-            keyExtractor={item => item._id}
-            renderItem={renderPostItem}
-          />
-        )}
+        {selectedOption === 'Feed' &&
+          (myPosts === undefined ? (
+            <Text style={{fontSize: 16, color: 'white', padding: 20}}>
+              No Posts yet!
+            </Text>
+          ) : (
+            <MyCirclePosts
+              data={myPosts}
+              isLoading={isLoading}
+              loadMoreItems={loadMoreItems}
+              handleCommentButtonPress={handleCommentButtonPress}
+            />
+          ))}
+
         {selectedOption === 'Favorites' && (
           <>
             <Favorites />
@@ -189,27 +268,33 @@ const ProfileScreen = ({navigation, route}: any) => {
             <CustomTrainerPackage isTrainerView={isTrainerView} />
           </View>
         )}
-        {selectedOption === 'Bio' && <ProfileBio isTrainerView />}
+        {selectedOption === 'Bio' && (
+          <ProfileBio userData={userData} isTrainerView />
+        )}
         {selectedOption === 'Videos' && (
           <View style={{width: '100%'}}>
-            <FlatList
-              data={firstVideoPost}
-              keyExtractor={item => item._id}
-              renderItem={({item, index}) => (
-                <View>
+            {myVideos === undefined ? (
+              <Text style={{fontSize: 16, color: 'white', padding: 20}}>
+                No videos posted yet!
+              </Text>
+            ) : (
+              <FlatList
+                data={myVideos}
+                keyExtractor={item => item._id}
+                renderItem={({item, index}) => (
                   <CustomVideo
                     key={item._id}
                     userId={userId}
                     video={item}
                     isTrainerView={isTrainerView}
                     handleCancelButtonPress={handleCancelButton}
-                    handleVideoPress={handleVideoPress}
+                    onPressVideo={handleVideoPress}
                     style={{marginRight: index % 2 === 0 ? 8 : 0}}
                   />
-                </View>
-              )}
-              numColumns={2}
-            />
+                )}
+                numColumns={2}
+              />
+            )}
           </View>
         )}
       </View>
@@ -219,6 +304,7 @@ const ProfileScreen = ({navigation, route}: any) => {
         style={styles.fullscreenContainer}>
         <View style={{height: '100%', width: '100%'}}>
           <ReelsComponent
+            post={selectedVideo}
             isProfile={true}
             handleCancelPress={handleVideoPress}
             handleFavoriteDialog={handleFavoriteDialog}

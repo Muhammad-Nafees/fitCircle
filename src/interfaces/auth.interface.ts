@@ -10,4 +10,5 @@ export interface IAuth {
   user: IUser | null;
   refreshToken: string | null;
   accessToken: string | null;
+  userProfile: IUser | null;
 }

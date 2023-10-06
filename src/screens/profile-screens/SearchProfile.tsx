@@ -17,12 +17,25 @@ import {STYLES} from '../../styles/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
   SearchCommunityItem,
-  SearchFollowersItem,
+  SearchProfleItem,
   SearchFollowingItem,
 } from '../../components/profile-components/SearchProfleItem';
 import {SearchOptionContainer} from '../../components/profile-components/SearchOptionContainer';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
 import {useFocusEffect} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import {
+  followToggle,
+  getCommunity,
+  getFollowersList,
+  getFollowingList,
+  getSubscribedCommunities,
+  removeFollower,
+  unFollow,
+  unSubscribeCommunity,
+} from '../../api/profile-module';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 const SearchIcon = require('../../../assets/icons/search.png');
 
@@ -48,24 +61,98 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   const [modalOpenFor, setModalOpenFor] = useState<any>(null);
   const [removedCommunities, setRemovedCommunities] = useState<string[]>([]);
 
-  useEffect(() => {
-    setSelectedOption(route.params.default);
-  }, [route]);
+  const [data, setData] = useState<any>();
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+  const setFollowingsLengthFunc = route?.params?.setFollowingsLength;
 
   useEffect(() => {
-    if (route.params?.followers) {
-      setFollowers(route.params?.followers);
-      setFilteredFollowers(route.params?.followers);
+    setSelectedOption(route.params.default);
+    console.log(route.params.default);
+  }, [route]);
+
+  const fetchFollowersList = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getFollowersList();
+      const followers = response?.data?.data?.users;
+      setData(followers);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From followersList!');
     }
-    if (route.params?.following) {
-      setFollowing(route.params?.following);
-      setFilteredFollowing(route.params?.following);
+    setIsLoading(false);
+  };
+  const fetchFollowingList = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getFollowingList();
+      const followings = response?.data?.data?.users;
+      setData(followings);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From followings List!');
     }
-    if (route.params?.communities) {
-      setFilteredCommunities(route.params?.communities);
-      setCommunity(route.params?.communities);
+    setIsLoading(false);
+  };
+  const fetchCommunityList = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getSubscribedCommunities();
+      const communities = response?.data?.data?.communities;
+      setData(communities);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From communities List!');
     }
-  }, []);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (selectedOption == 'followers') {
+      fetchFollowersList();
+    } else if (selectedOption == 'following') {
+      fetchFollowingList();
+    } else {
+      fetchCommunityList();
+    }
+  }, [selectedOption, isDeleted]);
+
+  const handleUnSubscribeCommunity = async () => {
+    try {
+      const response = await unSubscribeCommunity(modalOpenFor);
+      setIsDeleted(true);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From unsubscribe community!');
+    }
+  };
+
+  const handleUnFollow = async () => {
+    try {
+      const response = await unFollow(modalOpenFor);
+      setIsDeleted(true);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From unsubscribe community!');
+    }
+  };
+
+  const handleRemoveFollower = async () => {
+    try {
+      const response = await removeFollower(modalOpenFor);
+      setIsDeleted(true);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From unsubscribe community!');
+    }
+  };
+
+  const onRemove = () => {
+    setModalVisible(false);
+    if (selectedOption == 'community') {
+      handleUnSubscribeCommunity();
+    } else if (selectedOption == 'following') {
+      handleUnFollow();
+    } else {
+      handleRemoveFollower();
+    }
+  };
 
   const toggleModal = () => {
     if (selectedOption === 'following') {
@@ -80,35 +167,6 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   const handleSearch = (searchText: string) => {
     setSearchInput(searchText);
   };
-
-  useEffect(() => {
-    if (searchInput === '') {
-      if (selectedOption === 'followers') {
-        setFilteredFollowers(followers);
-      } else if (selectedOption === 'following') {
-        setFilteredFollowing(following);
-      } else if (selectedOption === 'community') {
-        setFilteredCommunities(community);
-      }
-    } else {
-      if (selectedOption === 'followers') {
-        const filteredFollowersList = followers.filter((item: any) =>
-          item.username.toLowerCase().includes(searchInput.toLowerCase()),
-        );
-        setFilteredFollowers(filteredFollowersList);
-      } else if (selectedOption === 'following') {
-        const filteredFollowingList = following.filter((item: any) =>
-          item.username.toLowerCase().includes(searchInput.toLowerCase()),
-        );
-        setFilteredFollowing(filteredFollowingList);
-      } else if (selectedOption === 'community') {
-        const filteredCommunitiesList = community.filter((item: any) =>
-          item.name.toLowerCase().includes(searchInput.toLowerCase()),
-        );
-        setFilteredCommunities(filteredCommunitiesList);
-      }
-    }
-  }, [searchInput, selectedOption, followers, following, community]);
 
   const clearSearch = () => {
     setSearchInput('');
@@ -150,65 +208,17 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     return () => backHandler.remove();
   });
 
-  const onPressHandler = () => {
-    setModalVisible(false);
-    if (selectedOption === 'followers') {
-      const updatedFollowers = followers.filter(
-        item => item._id !== modalOpenFor,
-      );
-      setFollowers(updatedFollowers);
-    } else if (selectedOption === 'following') {
-      const updatedFollowing = following.filter(
-        item => item._id !== modalOpenFor,
-      );
-      setFollowing(updatedFollowing);
-    }
-    setModalOpenFor(null);
-  };
-
-  const renderFollowerItem = ({item}: any) => {
-    const handleToggleRemove = (followerId: string) => {
-      setModalOpenFor(followerId);
+  const renderItem = ({item}: any) => {
+    const handleToggleRemove = (id: string) => {
+      console.log(id, 'idd');
+      setModalOpenFor(id);
       setModalVisible(true);
-    };
-
-    return <SearchFollowersItem onToggle={handleToggleRemove} item={item} />;
-  };
-
-  const renderFollowingItem = ({item}: any) => {
-    const handleToggleRemove = (followingId: string) => {
-      setModalOpenFor(followingId);
-      setModalVisible(true);
-    };
-
-    return <SearchFollowingItem onToggle={handleToggleRemove} item={item} />;
-  };
-
-  const renderCommunityItem = ({item}: any) => {
-    const isUnsubscribed = removedCommunities.includes(item._id);
-    const handleToggleRemove = (followerId: string, name: string) => {
-      setCommunityName(name);
-      if (!isUnsubscribed) {
-        const updatedRemovedCommunity = [...removedCommunities, followerId];
-        setRemovedCommunities(updatedRemovedCommunity);
-      } else {
-        const updatedRemovedCommunity = isUnsubscribed
-          ? removedCommunities.filter(id => id !== item._id)
-          : [...removedCommunities, item._id];
-        setModalName(`followed ${item.name}`);
-        setFollowModal(true);
-        setRemovedCommunities(updatedRemovedCommunity);
-      }
-      if (!isUnsubscribed) {
-        setModalVisible(true);
-        setModalOpenFor(item._id);
-      }
     };
     return (
-      <SearchCommunityItem
-        item={item}
-        isUnsubscribed={isUnsubscribed}
+      <SearchProfleItem
         onToggle={handleToggleRemove}
+        item={item}
+        selectedOption={selectedOption}
       />
     );
   };
@@ -243,25 +253,18 @@ const SearchProfileScreen = ({route, navigation}: any) => {
             All {capitalizeFirstLetter(selectedOption)}
           </Text>
         </View>
-        {selectedOption === 'followers' && (
+        {isLoading ? (
+          <CustomLoader />
+        ) : data == undefined ? (
+          <Text style={{color: 'white', fontSize: 13}}>
+            {' '}
+            No {selectedOption} yet!
+          </Text>
+        ) : (
           <FlatList
-            data={filteredFollowers}
+            data={data}
             keyExtractor={(item: any) => item._id}
-            renderItem={renderFollowerItem}
-          />
-        )}
-        {selectedOption === 'following' && (
-          <FlatList
-            data={filteredFollowing}
-            keyExtractor={(item: any) => item._id}
-            renderItem={renderFollowingItem}
-          />
-        )}
-        {selectedOption === 'community' && (
-          <FlatList
-            data={filteredCommunities}
-            keyExtractor={(item: any) => item._id}
-            renderItem={renderCommunityItem}
+            renderItem={renderItem}
           />
         )}
       </View>
@@ -271,7 +274,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
         onBackButtonPress={toggleModal}>
         <CustomConfirmationModal
           onCancel={toggleModal}
-          onConfirm={onPressHandler}
+          onConfirm={onRemove}
           modalText={`Are you sure you want to ${
             selectedOption === 'followers'
               ? 'remove this person'

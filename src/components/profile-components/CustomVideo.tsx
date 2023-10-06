@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   ImageBackground,
@@ -14,17 +14,47 @@ const CancelIcon = require('../../../assets/icons/cancel.png');
 const PlayIcon = require('../../../assets/icons/playIcon.png');
 import ProfileVideoLockIcon from '../../../assets/icons/ProfileVideoLock';
 import {createThumbnail} from 'react-native-create-thumbnail';
+import {s3bucketReference} from '../../api';
+import {useFocusEffect} from '@react-navigation/native';
 
 const CustomVideo = ({
-  handleVideoPress,
+  onPressVideo,
   handleCancelButtonPress,
   video,
   isTrainerView,
 }: any) => {
+  const [videoThumbnail, setVideoThumbnail] = useState<any>(null);
+  const fetchThumbnail = async () => {
+    if (video?.thumbnail) {
+      let uri = `${s3bucketReference}/${video.thumbnail}`;
+      setVideoThumbnail(uri);
+    } else {
+      try {
+        const response = await createThumbnail({
+          url: `${s3bucketReference}/${video.media}`,
+          timeStamp: 1000,
+          format: 'jpeg',
+        });
+        setVideoThumbnail(response.path);
+      } catch (err) {
+        console.log('err', err);
+      }
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchThumbnail();
+    }, [video]),
+  );
+
+  const handleVideoPress = (video: any) => {
+    onPressVideo(video);
+  };
   return (
-    <TouchableOpacity onPress={handleVideoPress}>
+    <TouchableOpacity onPress={() => handleVideoPress(video)}>
       <ImageBackground
-        source={{uri: video.thumbnail}}
+        source={{uri: videoThumbnail}}
         style={styles.container}
         imageStyle={{borderRadius: 10}}
         resizeMode="cover">
@@ -49,7 +79,8 @@ const CustomVideo = ({
               {/* )} */}
             </View>
           </View>
-          <Text style={styles.text}>{video.content}</Text>
+          <Text style={styles.text}>{video?.title}</Text>
+          <Text style={styles.text}>{video?.text}</Text>
         </View>
       </ImageBackground>
     </TouchableOpacity>

@@ -14,6 +14,8 @@ import {TrainerProfileScheduleIcon} from '../../../assets/icons/trainerProfileSc
 import {useState} from 'react';
 import {verticalScale, horizontalScale} from '../../utils/metrics';
 import {useNavigation} from '@react-navigation/native';
+import {s3bucketReference} from '../../api';
+import {SearchProfileNavigationProp} from '../../interfaces/navigation.type';
 const Image1 = require('../../../assets/images/backgroundImage.jpg');
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -22,8 +24,6 @@ export const ProfileHeaderContainer = ({
   username,
   userData,
   followers,
-  following,
-  communities,
 }: any) => {
   const [followButtonStyle, setFollowButtonStyle] = useState(
     styles.profileButton,
@@ -33,16 +33,25 @@ export const ProfileHeaderContainer = ({
   );
   const [isFollowed, setIsFollowed] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<SearchProfileNavigationProp>();
+  const [followersLength, setFollowersLength] = useState<number | null>(null);
+  const [followingsLength, setFollowingsLength] = useState<number | null>(null);
+  const [communitiesLength, setCommunitesLength] = useState<number | null>(
+    null,
+  );
+  console.log(followingsLength, 'sss');
+
   return (
     <ImageBackground
       style={styles.topContainer}
-      source={Image1}
+      source={{uri: `${s3bucketReference}/${userData?.coverImage}`} || Image1}
       resizeMode="cover">
       <View style={styles.topContentContainer}>
         <TouchableOpacity
           onPress={() => {
-            isTrainerView ? navigation.navigate('Search') : navigation.goBack();
+            isTrainerView
+              ? navigation.navigate('Search' as never)
+              : navigation.goBack();
           }}>
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
@@ -52,7 +61,8 @@ export const ProfileHeaderContainer = ({
               <TrainerProfileScheduleIcon />
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Settings' as never)}>
               <ProfileSettingsIcon />
             </TouchableOpacity>
           )}
@@ -67,11 +77,9 @@ export const ProfileHeaderContainer = ({
         <CustomProfileAvatar
           username={username}
           size={90}
-          avatarTextStyles={styles.avatarText}
+          profileImage={userData?.profileImage as any}
         />
-        {userData?.firstName && userData?.lastName && (
-          <Text style={styles.name}>{username}</Text>
-        )}
+        <Text style={styles.name}>{username}</Text>
         {isTrainerView && (
           <View style={styles.profileButtonsContainer}>
             <TouchableHighlight
@@ -112,18 +120,16 @@ export const ProfileHeaderContainer = ({
         {!isTrainerView && <Text style={styles.email}>@{username}</Text>}
       </View>
       <View style={styles.rowContainer}>
-        {isTrainerView || userData?.role === 'trainer' ? (
+        {isTrainerView || userData?.role !== 'user' ? (
           <TouchableOpacity
             style={styles.column}
             onPress={() =>
               navigation.navigate('SearchProfile', {
                 default: 'community',
-                followers: followers,
-                following: following,
-                communities: communities,
+                setCommunitesLength: setCommunitesLength,
               })
             }>
-            <Text style={styles.columnText}>{communities.length}</Text>
+            <Text style={styles.columnText}>{userData?.noOfFollowings}</Text>
             <Text style={[styles.columnLabel, {textDecorationLine: 'none'}]}>
               Subs
             </Text>
@@ -134,12 +140,14 @@ export const ProfileHeaderContainer = ({
           onPress={() =>
             navigation.navigate('SearchProfile', {
               default: 'community',
-              followers: followers,
-              following: following,
-              communities: communities,
+              setCommunitesLength: setCommunitesLength,
             })
           }>
-          <Text style={styles.columnText}>{communities.length}</Text>
+          <Text style={styles.columnText}>
+            {communitiesLength !== null
+              ? communitiesLength
+              : userData?.noOfCommunities}
+          </Text>
           <Text
             style={[
               styles.columnLabel,
@@ -153,12 +161,14 @@ export const ProfileHeaderContainer = ({
           onPress={() =>
             navigation.navigate('SearchProfile', {
               default: 'following',
-              followers: followers,
-              following: following,
-              communities: communities,
+              setFollowingsLength: setFollowingsLength,
             })
           }>
-          <Text style={styles.columnText}>{following.length}</Text>
+          <Text style={styles.columnText}>
+            {followersLength !== null
+              ? followingsLength
+              : userData?.noOfFollowings}
+          </Text>
           <Text
             style={[
               styles.columnLabel,
@@ -172,12 +182,14 @@ export const ProfileHeaderContainer = ({
           onPress={() =>
             navigation.navigate('SearchProfile', {
               default: 'followers',
-              followers: followers,
-              following: following,
-              communities: communities,
+              setFollowersLength: setFollowersLength,
             })
           }>
-          <Text style={styles.columnText}>{followers.length}</Text>
+          <Text style={styles.columnText}>
+            {followersLength !== null
+              ? followersLength
+              : userData?.noOfFollowers}
+          </Text>
           <Text
             style={[
               styles.columnLabel,

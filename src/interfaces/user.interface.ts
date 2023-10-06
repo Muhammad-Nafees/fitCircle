@@ -51,6 +51,9 @@ export interface IUser {
   updatedAt: Date;
   height: IUnit;
   weight: IUnit;
+  noOfFollowers: 0;
+  noOfFollowings: 0;
+  noOfCommunities: 0;
 }
 
 export type IPostVisibility = 'Public' | 'Followers' | 'Subscribers';
