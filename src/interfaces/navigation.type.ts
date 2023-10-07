@@ -13,6 +13,7 @@ export type AuthStackParamList = {
   CommentsScreen: any;
   Profile: any;
   commentsScreen: any;
+  SearchProfile: any;
 
   // Add other routes here...
 };
@@ -25,4 +26,9 @@ export type InterestScreenNavigationProp = NativeStackNavigationProp<
 export type CommunitiesScreenNavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
   'CommunitiesScreen'
+>;
+
+export type SearchProfileNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'SearchProfile'
 >;

@@ -92,6 +92,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
             .value,
       };
       setIsLoading(true);
+      console.log(reqData,"reqData from tdee!")
       const response = await calculateTdee(reqData);
       const data = response?.data?.data;
       navigation.navigate('Results', {

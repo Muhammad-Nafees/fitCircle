@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, View, Image, StyleSheet, Text} from 'react-native';
+import {TouchableOpacity, View, StyleSheet, Text} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
 import VideoSvgIcon from '../../../assets/icons/VideoIcon';
@@ -9,13 +9,27 @@ import ScheduleSvgIcon from '../../../assets/icons/ScheduleIcon';
 import CalculatorSvgIcon from '../../../assets/icons/CalculatorIcon';
 import PhysicalSvgIcon from '../../../assets/icons/PhysicalIcon';
 import WalletSvgIcon from '../../../assets/icons/WalletIcon';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import PackageIcon from '../../../assets/icons/PackageIcon';
 
 export const PostOptionsIcon = ({
   handleCreatePostIconPress,
   handlePostOptionsIconModalClose,
   handleVideoButtonPress,
-  handleScheduleRoute,
 }: any) => {
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
+  const navigation = useNavigation();
+
+  const handleScheduleRoute = () => {
+    if (userRole !== 'user') {
+      navigation.navigate('Schedule');
+    } else {
+      navigation.navigate('Schedule', {screen: 'SetSchedule'});
+    }
+  };
+
   return (
     <View style={styles.bottomOptions}>
       <TouchableOpacity
@@ -33,32 +47,47 @@ export const PostOptionsIcon = ({
         <VideoSvgIcon />
         <Text style={styles.options}>Take a video</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={() => navigation.navigate('HomeTab', {screen: 'Profile'})}>
         <ProfileSvgIcon />
-        <Text style={styles.options}>My profile</Text>
+        <Text style={styles.options}>My Profile</Text>
       </TouchableOpacity>
+      {userRole !== 'user' && (
+        <TouchableOpacity style={styles.bottomContainerButtons}>
+          <PackageIcon />
+          <Text style={styles.options}>My Package</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity style={styles.bottomContainerButtons}>
         <MealPlanSvgIcon />
         <Text style={styles.options}>My Meal Plan</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.bottomContainerButtons}
-        onPress={() => {
-          handlePostOptionsIconModalClose();
-          handleScheduleRoute();
-        }}>
+        onPress={handleScheduleRoute}>
         <ScheduleSvgIcon />
         <Text style={styles.options}>My Schedule</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
-        <CalculatorSvgIcon />
-        <Text style={styles.options}>My TDEE Calculator</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
-        <PhysicalSvgIcon />
-        <Text style={styles.options}>My Physical Readiness Test</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      {userRole === 'user' && (
+        <View>
+          <TouchableOpacity
+            style={styles.bottomContainerButtons}
+            onPress={() => navigation.navigate('Tdee')}>
+            <CalculatorSvgIcon />
+            <Text style={styles.options}>My TDEE Calculator</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.bottomContainerButtons}
+            onPress={() => navigation.navigate('Physical')}>
+            <PhysicalSvgIcon />
+            <Text style={styles.options}>My Physical Readiness Test</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={() => navigation.navigate('Payment')}>
         <WalletSvgIcon />
         <Text style={styles.options}>My Wallet</Text>
       </TouchableOpacity>

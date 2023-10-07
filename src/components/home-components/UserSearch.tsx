@@ -3,14 +3,19 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {Avatar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import {s3bucketReference} from '../../api';
+import {useDispatch} from 'react-redux';
+import {setUserProfile} from '../../redux/authSlice';
 
 export const UserSearch = ({
+  userData,
   username,
-  profileImageUrl,
+  profileImage,
   handleFollowButton,
 }: any) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handlePress = () => {
     if (isFollowing === false) {
@@ -20,15 +25,22 @@ export const UserSearch = ({
       setIsFollowing(false);
     }
   };
+  const handleSeeUserProfile = () => {
+    dispatch(setUserProfile(userData));
+    navigation.navigate('Profile', {isTrainerView: true});
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.rowContainer}
-        onPress={() => navigation.navigate('Profile', {isTrainerView: true})}>
+        onPress={handleSeeUserProfile}>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-          {profileImageUrl ? (
-            <Avatar.Image size={40} source={{uri: profileImageUrl}} />
+          {profileImage ? (
+            <Avatar.Image
+              size={40}
+              source={{uri: `${s3bucketReference}/${profileImage}`}}
+            />
           ) : (
             <Avatar.Text
               size={40}

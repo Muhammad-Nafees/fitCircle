@@ -57,7 +57,7 @@ const HomeScreen = () => {
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isFocused = useIsFocused();
-  console.log(userData,"uuuuu")
+  console.log(userData, 'uuuuu');
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -128,9 +128,7 @@ const HomeScreen = () => {
           const data = response?.data?.data;
 
           setCreatorData(data?.posts);
-
           setHasMoreVideos(data?.pagination?.hasNextPage);
-          // dispatch(setPagination(data?.pagination));
         } catch (error: any) {
           console.log(error, 'Error fetching my creator posts!');
         }
@@ -152,7 +150,6 @@ const HomeScreen = () => {
       const responseData = response?.data;
       setCreatorData(1);
       setSelectedButton('My Circle');
-
       Toast.show({
         type: 'success',
         text1: `${responseData?.message}`,
@@ -165,12 +162,15 @@ const HomeScreen = () => {
       });
     }
   };
+
+
   return (
     <View style={styles.container}>
       <Animated.View
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile' as never)}>
             <CustomProfileAvatar
               username={userData?.username as string}
               profileImage={userData?.profileImage as any}

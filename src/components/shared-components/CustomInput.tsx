@@ -120,7 +120,8 @@ const CustomInput = ({...props}: Props) => {
             props.label === 'Age' &&
               route.name === 'VerificationOne' && {
                 width: horizontalScale(75),
-                marginBottom: -verticalScale(0),
+                marginBottom: verticalScale(0),
+                height: 27
               },
           ]}>
           <Icon name="alert-circle" size={22} color="red" />

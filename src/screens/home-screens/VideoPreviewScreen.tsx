@@ -277,13 +277,14 @@ export const VideoPreviewScreen = ({
         }
         const reqData: Partial<IPost> = {
           text: content,
-          media: compressedVideo,
+          media: videoUri,
           mediaType: 'video',
+          title: titleInputValue,
           visibility: visibility,
           ...(costValue !== 0 && {cost: costValue}),
           ...(thumbnail !== null && {thumbnail: compressedThumbnail}),
         };
-        console.log(reqData,"video req data")
+        console.log(reqData, 'video req data');
         const response = await createPostWithVideo(reqData);
         console.log(response?.data, 'from video!');
         navigation.navigate('Home');

@@ -1,7 +1,14 @@
-import {api} from 'api/utils/interceptor';
+import {api} from '../../api/utils/interceptor';
 
 export const searchProfile = async (search: string) => {
   const response = await api.get(`user/search-all?search=${search}`);
+  return response;
+};
+
+export const searchTrainerProfile = async (search: string) => {
+  const response = await api.get(
+    `user/search-by-role?role=trainer&search=${search}`,
+  );
   return response;
 };
 
@@ -10,13 +17,25 @@ export const getUserProfile = async (userId: string) => {
   return response;
 };
 
-export const getUserPosts = async (userId: string) => {
-  const response = await api.get(`post/feed?userId=${userId}`);
+export const getUserPosts = async (
+  userId: string,
+  page: number,
+  limit: number,
+) => {
+  const response = await api.get(
+    `post/feed?page=${page}&limit=${limit}&userId=${userId}`,
+  );
   return response;
 };
 
-export const getUserVideos = async (userId: string) => {
-  const response = await api.get(`post/videos?userId=${userId}`);
+export const getUserVideos = async (
+  userId: string,
+  page: number,
+  limit: number,
+) => {
+  const response = await api.get(
+    `post/videos?page=${page}&limit=${limit}&userId=${userId}`,
+  );
   return response;
 };
 
@@ -30,7 +49,7 @@ export const getFollowingList = async () => {
   return response;
 };
 
-export const followToggle = async (followingId: string) => {
+export const unFollow = async (followingId: string) => {
   const response = await api.post('user/follow-toggle', {
     following: followingId,
   });
@@ -58,7 +77,7 @@ export const getSubscribedCommunities = async () => {
   return response;
 };
 
-export const communityToggle = async (communityId: string) => {
+export const unSubscribeCommunity = async (communityId: string) => {
   const response = await api.put('community/subscription-toggle', {
     community: communityId,
   });

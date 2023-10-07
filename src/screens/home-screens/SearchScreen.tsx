@@ -20,6 +20,9 @@ import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/shared-components/CustomButton';
 import {STYLES} from '../../styles/globalStyles';
+import {searchProfile, searchTrainerProfile} from '../../api/profile-module';
+import {useDispatch} from 'react-redux';
+import {setUserProfile} from '../../redux/authSlice';
 
 const SearchIcon = require('../../../assets/icons/search.png');
 const FilterIcon = require('../../../assets/icons/filter.png');
@@ -33,14 +36,8 @@ export const SearchScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [followModal, setFollowModal] = useState(false);
   const [modalName, setModalName] = useState('');
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsLoading(false);
-      setSearchData([]);
-    }, []),
-  );
 
   const handleSearchBarBlur = () => {
     setIsSearchActive(false);
@@ -75,21 +72,36 @@ export const SearchScreen = () => {
     if (
       !selectedFilter ||
       (selectedFilter === 'nutritionist' && item.role !== 'user') ||
-      (selectedFilter === 'trainer' &&item.role !== 'user') ||
+      (selectedFilter === 'trainer' && item.role !== 'user') ||
       (selectedFilter === 'other' && item.role === 'user')
     ) {
       return (
-        <View>
-          <UserSearch
-            username={item.username}
-            email={item.email}
-            profileImageUrl={item.profileImageUrl}
-            handleFollowButton={handleFollowButton}
-          />
-        </View>
+        <UserSearch
+          userData={item}
+          username={item.username}
+          email={item.email}
+          profileImage={item.profileImage}
+          handleFollowButton={handleFollowButton}
+        />
       );
     }
     return null;
+  };
+
+  const handleSearchProfile = async () => {
+    try {
+      if (selectedFilter == 'other' || selectedFilter == null) {
+        const response = await searchProfile(searchQuery);
+        const users = response?.data?.data?.users;
+        setSearchData(users);
+      } else {
+        const response = await searchTrainerProfile(searchQuery);
+        const users = response?.data?.data?.users;
+        setSearchData(users);
+      }
+    } catch (error: any) {
+      console.log(error?.response?.data, 'from search profile!');
+    }
   };
 
   return (
@@ -139,15 +151,15 @@ export const SearchScreen = () => {
             </View>
           ) : null}
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleSearchProfile}>
           <Text style={styles.submitButton}>Search</Text>
         </TouchableOpacity>
       </View>
-      {searchData.length > 0 && (
+      {searchData?.length > 0 && (
         <FlatList
           data={searchData}
           renderItem={renderItem}
-          keyExtractor={item => item._id}
+          keyExtractor={(item: any) => item._id}
           keyboardShouldPersistTaps="handled"
         />
       )}

@@ -392,6 +392,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: moderateScale(15),
     marginHorizontal: horizontalScale(30),
+    paddingBottom: 20
   },
   inputContainer: {
     flex: 1,
