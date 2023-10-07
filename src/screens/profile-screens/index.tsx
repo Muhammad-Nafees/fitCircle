@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback, useRef} from 'react';
 import {
   View,
   Text,
@@ -20,18 +20,30 @@ import {ReelsComponent} from '../../components/home-components/Reels';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {communitiesData, followersData, followingData} from '../dummyData';
 import {ProfileBio} from '../../components/profile-components/ProfileBio';
-import {ProfileSuccessModal} from '../../components/profile-components/ProfileModals';
 import {ProfileHeaderContainer} from '../../components/profile-components/HeaderContainer';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
-import {getUserPosts, getUserVideos} from '../../api/profile-module';
+import {
+  getFollowersList,
+  getFollowingList,
+  getSubscribedCommunities,
+  getUserPosts,
+  getUserVideos,
+} from '../../api/profile-module';
 import MyCirclePosts from '../../components/home-components/MyCirclePosts';
+import {setUserProfile} from '../../redux/authSlice';
+import {IUser} from '../../interfaces/user.interface';
+import {ProfileSuccessModal} from '../../components/profile-components/ProfileModals';
+import {
+  setCommunitiesList,
+  setFollowersList,
+  setFollowingsList,
+} from '../../redux/profileSlice';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
-  const username = userData?.username;
   const [userId, setUserId] = useState<string | undefined>(undefined);
-  const [communities, setCommunities] = useState(communitiesData);
   const tabBarHeight = useBottomTabBarHeight();
   let isTrainerView = route.params?.isTrainerView || false;
   const [followers, setFollowers] = useState(followersData);
@@ -51,20 +63,34 @@ const ProfileScreen = ({navigation, route}: any) => {
   const [isLoadMoreVideos, setIsLoadMoreVideos] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedVideo, setSelectedVideo] = useState<any>();
-
+  const [shouldFetchPostsInitially, setShouldFetchPostsInitially] = useState<
+    boolean | null
+  >(null);
+  const [profileData, setProfileData] = useState<IUser | null>(userData);
   const searchUserProfile = useSelector(
     (state: RootState) => state.auth.userProfile,
   );
-
-  const [userSearchId, setUserSearchId] = useState<string>('');
+  const [userSearchId, setUserSearchId] = useState<string | undefined>(
+    userData?._id,
+  );
+  const profilePersonalData = useSelector((state: RootState) => state.profile);
 
   useEffect(() => {
-    if (searchUserProfile) {
-      setUserSearchId(searchUserProfile?._id);
+    if (searchUserProfile && searchUserProfile._id) {
+      setUserSearchId(searchUserProfile._id);
+      setProfileData(searchUserProfile);
+      setShouldFetchPostsInitially(true);
     } else {
       setUserSearchId(userData?._id as string);
+      setProfileData(userData);
+      setShouldFetchPostsInitially(true);
     }
-  }, [searchUserProfile, userData]);
+
+    return () => {
+      dispatch(setUserProfile(null as any));
+      setShouldFetchPostsInitially(false);
+    };
+  }, [searchUserProfile, userData, dispatch]);
 
   useEffect(() => {
     const backAction = () => {
@@ -119,7 +145,8 @@ const ProfileScreen = ({navigation, route}: any) => {
   console.log(searchUserProfile?._id, 'prof');
 
   const fetchUserPosts = async () => {
-    console.log(userSearchId,"fetchuserpostId")
+    console.log(userSearchId, 'fetchuserpostId');
+    setIsLoading(true);
     try {
       const response = await getUserPosts(userSearchId as string, page, limit);
       const data = response?.data?.data;
@@ -127,13 +154,20 @@ const ProfileScreen = ({navigation, route}: any) => {
         setMyPosts((prevData: any) => {
           return [...prevData, ...data?.posts];
         });
+        setIsLoading(false);
       } else {
-        setMyPosts(data?.posts);
+        if (data?.posts == undefined) {
+          setMyPosts([]);
+        } else {
+          setMyPosts(data?.posts);
+        }
+        setIsLoading(false);
       }
       setHasMorePosts(data?.pagination?.hasNextPage);
       setIsLoadMorePost(false);
     } catch (error: any) {
       console.log(error?.response?.data, 'From fetching user posts!');
+      setIsLoading(false);
     }
   };
 
@@ -175,17 +209,58 @@ const ProfileScreen = ({navigation, route}: any) => {
     return;
   };
 
+  const fetchFollowersList = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getFollowersList();
+      const followers = response?.data?.data?.users;
+      dispatch(setFollowersList(followers));
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From followersList!');
+    }
+    setIsLoading(false);
+  };
+  const fetchFollowingList = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getFollowingList();
+      const followings = response?.data?.data?.users;
+      console.log(followings);
+      dispatch(setFollowingsList(followings));
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From followings List!');
+    }
+    setIsLoading(false);
+  };
+  const fetchCommunityList = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getSubscribedCommunities();
+      const communities = response?.data?.data?.communities;
+      dispatch(setCommunitiesList(communities));
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From communities List!');
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    fetchUserPosts();
-    fetchUserVideos();
-  }, []);
+    if (shouldFetchPostsInitially) {
+      fetchUserPosts();
+      fetchUserVideos();
+      fetchFollowersList();
+      fetchFollowingList();
+      fetchCommunityList();
+    }
+  }, [shouldFetchPostsInitially]);
 
   return (
     <View style={[styles.container]}>
       <ProfileHeaderContainer
+        profilePersonalData={profilePersonalData}
+        isFollowing={route?.params?.isFollowing}
         isTrainerView={isTrainerView}
-        username={username}
-        userData={userData}
+        userData={profileData}
         followers={followers}
       />
       <View style={styles.selectionContainerParent}>
@@ -206,7 +281,7 @@ const ProfileScreen = ({navigation, route}: any) => {
             onPress={() => setSelectedOption('Videos')}>
             <Text style={[styles.optionText]}>Videos</Text>
           </TouchableOpacity>
-          {isTrainerView || userData?.role !== 'user' ? (
+          {profileData?.role !== 'user' ? (
             <TouchableOpacity
               style={[
                 styles.optionButton,
@@ -243,19 +318,31 @@ const ProfileScreen = ({navigation, route}: any) => {
           styles.bottomContainer,
           {paddingBottom: tabBarHeight + verticalScale(45)},
         ]}>
-        {selectedOption === 'Feed' &&
-          (myPosts === undefined ? (
-            <Text style={{fontSize: 16, color: 'white', padding: 20}}>
+        <View>
+          {selectedOption === 'Feed' && isLoading ? (
+            <CustomLoader />
+          ) : (
+            selectedOption === 'Feed' && (
+              <MyCirclePosts
+                data={myPosts}
+                isLoading={isLoading}
+                loadMoreItems={loadMoreItems}
+                handleCommentButtonPress={handleCommentButtonPress}
+              />
+            )
+          )}
+          {myPosts && myPosts.length === 0 && !isLoading && (
+            <Text
+              style={{
+                fontSize: 16,
+                color: 'white',
+                padding: 20,
+                position: 'absolute',
+              }}>
               No Posts yet!
             </Text>
-          ) : (
-            <MyCirclePosts
-              data={myPosts}
-              isLoading={isLoading}
-              loadMoreItems={loadMoreItems}
-              handleCommentButtonPress={handleCommentButtonPress}
-            />
-          ))}
+          )}
+        </View>
 
         {selectedOption === 'Favorites' && (
           <>
@@ -308,6 +395,7 @@ const ProfileScreen = ({navigation, route}: any) => {
             isProfile={true}
             handleCancelPress={handleVideoPress}
             handleFavoriteDialog={handleFavoriteDialog}
+            onDeletePost={() => {}}
           />
         </View>
       </Modal>

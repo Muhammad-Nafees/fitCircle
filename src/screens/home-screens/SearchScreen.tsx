@@ -23,6 +23,7 @@ import {STYLES} from '../../styles/globalStyles';
 import {searchProfile, searchTrainerProfile} from '../../api/profile-module';
 import {useDispatch} from 'react-redux';
 import {setUserProfile} from '../../redux/authSlice';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 const SearchIcon = require('../../../assets/icons/search.png');
 const FilterIcon = require('../../../assets/icons/filter.png');
@@ -38,6 +39,7 @@ export const SearchScreen = () => {
   const [modalName, setModalName] = useState('');
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [message, setMessage] = useState<string>('');
 
   const handleSearchBarBlur = () => {
     setIsSearchActive(false);
@@ -69,40 +71,41 @@ export const SearchScreen = () => {
     : 'Search';
 
   const renderItem = ({item}: any) => {
-    if (
-      !selectedFilter ||
-      (selectedFilter === 'nutritionist' && item.role !== 'user') ||
-      (selectedFilter === 'trainer' && item.role !== 'user') ||
-      (selectedFilter === 'other' && item.role === 'user')
-    ) {
-      return (
-        <UserSearch
-          userData={item}
-          username={item.username}
-          email={item.email}
-          profileImage={item.profileImage}
-          handleFollowButton={handleFollowButton}
-        />
-      );
-    }
-    return null;
+    return (
+      <UserSearch
+        searchProfileData={item}
+        username={item.username}
+        email={item.email}
+        profileImage={item.profileImage}
+        handleFollowButton={handleFollowButton}
+      />
+    );
   };
 
   const handleSearchProfile = async () => {
+    setIsLoading(true);
+    console.log(selectedFilter, 'SelectedFilter');
     try {
       if (selectedFilter == 'other' || selectedFilter == null) {
         const response = await searchProfile(searchQuery);
+        console.log('from user   search');
         const users = response?.data?.data?.users;
+        console.log(users,"mlalallalal")
         setSearchData(users);
+        setMessage('No users Found!');
       } else {
         const response = await searchTrainerProfile(searchQuery);
         const users = response?.data?.data?.users;
         setSearchData(users);
+        setMessage('No trainers Found!');
       }
+      setIsLoading(false);
     } catch (error: any) {
       console.log(error?.response?.data, 'from search profile!');
+      setIsLoading(false);
     }
   };
+  console.log(searchData?.length, 'searchData');
 
   return (
     <View style={styles.container}>
@@ -152,22 +155,25 @@ export const SearchScreen = () => {
           ) : null}
         </View>
         <TouchableOpacity onPress={handleSearchProfile}>
-          <Text style={styles.submitButton}>Search</Text>
+          <Text style={styles.submitButton}>
+            {isLoading ? <CustomLoader /> : 'Search'}{' '}
+          </Text>
         </TouchableOpacity>
       </View>
-      {searchData?.length > 0 && (
+
+      {searchData?.length > 0 ? (
         <FlatList
           data={searchData}
           renderItem={renderItem}
           keyExtractor={(item: any) => item._id}
           keyboardShouldPersistTaps="handled"
         />
-      )}
-      {isLoading && (
-        <View style={styles.activityIndicate}>
-          <ActivityIndicator size="large" />
-        </View>
-      )}
+      ) : message !== '' ? (
+        <Text style={{fontSize: 14, color: 'white', padding: 10}}>
+          {message}
+        </Text>
+      ) : null}
+
       <Modal
         isVisible={followModal}
         style={styles.modal}

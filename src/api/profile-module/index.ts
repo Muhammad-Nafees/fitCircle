@@ -49,7 +49,7 @@ export const getFollowingList = async () => {
   return response;
 };
 
-export const unFollow = async (followingId: string) => {
+export const followToggle = async (followingId: string) => {
   const response = await api.post('user/follow-toggle', {
     following: followingId,
   });
@@ -77,7 +77,7 @@ export const getSubscribedCommunities = async () => {
   return response;
 };
 
-export const unSubscribeCommunity = async (communityId: string) => {
+export const communitiesToggle = async (communityId: string) => {
   const response = await api.put('community/subscription-toggle', {
     community: communityId,
   });

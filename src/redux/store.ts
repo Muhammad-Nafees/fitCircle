@@ -13,6 +13,7 @@ import authSlice from './authSlice';
 import postSlice from './postSlice';
 import readinessTestSlice from './readinessTestSlice';
 import physicalReadinessSlice from './physicalReadinessSlice';
+import profileSlice from './profileSlice';
 
 const persistConfig = {
   key: 'root',
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   post: postSlice,
   phyiscalReadiness: physicalReadinessSlice,
   profileReadinessTest: readinessTestSlice,
+  profile: profileSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -23,19 +23,18 @@ import {
 import {SearchOptionContainer} from '../../components/profile-components/SearchOptionContainer';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
 import {useFocusEffect} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {
-  followToggle,
-  getCommunity,
   getFollowersList,
   getFollowingList,
   getSubscribedCommunities,
   removeFollower,
-  unFollow,
-  unSubscribeCommunity,
+  followToggle as unFollow,
+  communitiesToggle as unSubscribeCommunity,
 } from '../../api/profile-module';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import {unFollowUser} from '../../redux/profileSlice';
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 const SearchIcon = require('../../../assets/icons/search.png');
 
@@ -65,7 +64,16 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
-  const setFollowingsLengthFunc = route?.params?.setFollowingsLength;
+  const followersList = useSelector(
+    (state: RootState) => state.profile.followersList,
+  );
+  const followingsList = useSelector(
+    (state: RootState) => state.profile.followingsList,
+  );
+  const communitesList = useSelector(
+    (state: RootState) => state.profile.communitiesList,
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setSelectedOption(route.params.default);
@@ -73,40 +81,17 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   }, [route]);
 
   const fetchFollowersList = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getFollowersList();
-      const followers = response?.data?.data?.users;
-      setData(followers);
-    } catch (error: any) {
-      console.log(error?.response?.data, 'From followersList!');
-    }
-    setIsLoading(false);
+    setData(followersList);
   };
   const fetchFollowingList = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getFollowingList();
-      const followings = response?.data?.data?.users;
-      setData(followings);
-    } catch (error: any) {
-      console.log(error?.response?.data, 'From followings List!');
-    }
-    setIsLoading(false);
+    setData(followingsList);
   };
   const fetchCommunityList = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getSubscribedCommunities();
-      const communities = response?.data?.data?.communities;
-      setData(communities);
-    } catch (error: any) {
-      console.log(error?.response?.data, 'From communities List!');
-    }
-    setIsLoading(false);
+    setData(communitesList);
   };
 
   useEffect(() => {
+    console.log('iam running!!!!!');
     if (selectedOption == 'followers') {
       fetchFollowersList();
     } else if (selectedOption == 'following') {
@@ -114,7 +99,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     } else {
       fetchCommunityList();
     }
-  }, [selectedOption, isDeleted]);
+  }, [selectedOption, followersList, followingsList, communitesList]);
 
   const handleUnSubscribeCommunity = async () => {
     try {
@@ -128,6 +113,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   const handleUnFollow = async () => {
     try {
       const response = await unFollow(modalOpenFor);
+      dispatch(unFollowUser(modalOpenFor));
       setIsDeleted(true);
     } catch (error: any) {
       console.log(error?.response?.data, 'From unsubscribe community!');
@@ -222,6 +208,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
       />
     );
   };
+  console.log(data, 'ff');
 
   return (
     <View style={styles.container}>
@@ -255,7 +242,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
         </View>
         {isLoading ? (
           <CustomLoader />
-        ) : data == undefined ? (
+        ) : data == undefined || data.length == 0 ? (
           <Text style={{color: 'white', fontSize: 13}}>
             {' '}
             No {selectedOption} yet!
