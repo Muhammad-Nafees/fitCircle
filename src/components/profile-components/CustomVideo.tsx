@@ -25,22 +25,25 @@ const CustomVideo = ({
 }: any) => {
   const [videoThumbnail, setVideoThumbnail] = useState<any>(null);
   const fetchThumbnail = async () => {
-    if (video?.thumbnail) {
+    if (video?.thumbnail !== null) {
       let uri = `${s3bucketReference}/${video.thumbnail}`;
       setVideoThumbnail(uri);
     } else {
       try {
+        console.log("from try")
         const response = await createThumbnail({
           url: `${s3bucketReference}/${video.media}`,
           timeStamp: 1000,
           format: 'jpeg',
         });
+        console.log(response, 'response from thumb');
         setVideoThumbnail(response.path);
       } catch (err) {
-        console.log('err', err);
+        console.log('errorrr', err);
       }
     }
   };
+  console.log(videoThumbnail, 'videoTHumb');
 
   useFocusEffect(
     useCallback(() => {

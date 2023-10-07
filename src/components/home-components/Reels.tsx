@@ -28,9 +28,9 @@ import {useFocusEffect} from '@react-navigation/native';
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
   post: any;
-  userId: string | undefined;
-  index: number;
-  tabBarHeight: any;
+  userId?: string | undefined;
+  index?: number;
+  tabBarHeight?: any;
   isProfile?: boolean;
   handleCancelPress?: any;
   handleFavoriteDialog?: any;
@@ -230,7 +230,15 @@ export const ReelsComponent = ({
         }}
       />
       <View style={styles.textContentContainer}>
-        {post?.title !== "" && <Text style={[styles.textContent,{paddingBottom: 20,fontSize:16,fontWeight: '700'}]}>{post?.title}</Text>}
+        {post?.title !== '' && (
+          <Text
+            style={[
+              styles.textContent,
+              {paddingBottom: 20, fontSize: 16, fontWeight: '700'},
+            ]}>
+            {post?.title}
+          </Text>
+        )}
 
         <Text style={styles.textContent}>{post?.text}</Text>
       </View>

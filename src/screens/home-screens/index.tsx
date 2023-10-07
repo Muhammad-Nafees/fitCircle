@@ -38,6 +38,8 @@ import {deletePost, getPosts, getVideoPosts} from '../../api/home-module';
 import CreatorPosts from '../../components/home-components/CreatorPosts';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
+import {getUserProfile, searchProfile} from '../../api/profile-module';
+import {setUserData} from '../../redux/authSlice';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -57,7 +59,6 @@ const HomeScreen = () => {
   const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isFocused = useIsFocused();
-  console.log(userData, 'uuuuu');
 
   const scrollY = new Animated.Value(0);
   const translateY = scrollY.interpolate({
@@ -82,6 +83,22 @@ const HomeScreen = () => {
   const handleButtonPress = (button: string) => {
     setSelectedButton(button);
   };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const fetchUserProfile = async () => {
+  //       try {
+  //         const response = await searchProfile(userData?.username as string);
+  //         console.log(response?.data,"search")
+  //         const profileData = response?.data?.data;
+  //         dispatch(setUserData(profileData));
+  //       } catch (error: any) {
+  //         console.log(error?.response?.data);
+  //       }
+  //     };
+  //     fetchUserProfile();
+  //   }, [isFocused]),
+  // );
 
   useFocusEffect(
     useCallback(() => {
@@ -163,14 +180,15 @@ const HomeScreen = () => {
     }
   };
 
-
   return (
     <View style={styles.container}>
       <Animated.View
         style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
         <View style={styles.headerContainer}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Profile' as never)}>
+            onPress={() =>
+              navigation.navigate('Profile', {isFollowing: false})
+            }>
             <CustomProfileAvatar
               username={userData?.username as string}
               profileImage={userData?.profileImage as any}

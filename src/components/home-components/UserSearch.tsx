@@ -1,14 +1,20 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {Avatar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {s3bucketReference} from '../../api';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {setUserProfile} from '../../redux/authSlice';
+import {
+  followToggle,
+  getFollowersList,
+  getFollowingList,
+} from '../../api/profile-module';
+import {RootState} from '../../redux/store';
 
 export const UserSearch = ({
-  userData,
+  searchProfileData,
   username,
   profileImage,
   handleFollowButton,
@@ -16,8 +22,36 @@ export const UserSearch = ({
   const [isFollowing, setIsFollowing] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const myData = useSelector((state: RootState) => state.auth.user);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const handlePress = () => {
+  const fetchFollowingList = async () => {
+    try {
+      const response = await getFollowingList();
+      const followings = response?.data?.data?.users;
+      const isFollowingFound = followings?.filter(
+        (list: any) => list._id == searchProfileData._id,
+      );
+      if (isFollowingFound.length > 0) {
+        setIsFollowing(true);
+      }
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From followings List!');
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFollowingList();
+  }, [isFollowing]);
+
+  const handleFollowToggle = async () => {
+    try {
+      const response = await followToggle(searchProfileData?._id);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'from follow toggle on search!');
+    }
     if (isFollowing === false) {
       setIsFollowing(true);
       handleFollowButton(username);
@@ -26,8 +60,11 @@ export const UserSearch = ({
     }
   };
   const handleSeeUserProfile = () => {
-    dispatch(setUserProfile(userData));
-    navigation.navigate('Profile', {isTrainerView: true});
+    dispatch(setUserProfile(searchProfileData));
+    navigation.navigate('Profile', {
+      isTrainerView: true,
+      isFollowing: isFollowing,
+    });
   };
 
   return (
@@ -50,11 +87,13 @@ export const UserSearch = ({
           )}
           <Text style={styles.username}>{username}</Text>
         </View>
-        <TouchableOpacity onPress={handlePress}>
-          <Text style={styles.followButtonText}>
-            {isFollowing ? 'Following' : 'Follow'}
-          </Text>
-        </TouchableOpacity>
+        {!isLoading && (
+          <TouchableOpacity onPress={handleFollowToggle}>
+            <Text style={styles.followButtonText}>
+              {isFollowing ? 'Following' : 'Follow'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </TouchableOpacity>
     </View>
   );
