@@ -1,9 +1,79 @@
+import {useRef, useState} from 'react';
 import {Image, Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Feather';
 // -------------------------------------------------------------------------//
 import MealPlanPdf from '../../../assets/icons/MealPlanPdf';
 import MessageSvgIcon from '../../../assets/icons/MessageSvgIcon';
+import DeleteMessageIcon from '../../../assets/icons/DeleteMessage';
+import {Swipeable} from 'react-native-gesture-handler';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 const ImageSomething = require('../../../assets/images/backgroundImage.jpg');
+
+export const CustomPlanDescription = ({
+  plan,
+  extraStyles,
+  handleDeleteButton,
+}: any) => {
+  const [isSwiped, setIsSwiped] = useState(false);
+  const swipeableRef: any = useRef(null);
+
+  const renderRightActions = () => {
+    return (
+      <View style={[styles.rightActionsContainer]}>
+        <TouchableOpacity
+          style={[
+            styles.rightAction,
+            {backgroundColor: 'rgba(222, 49, 49, 1)'},
+          ]}
+          onPress={() => {
+            swipeableRef.current.close();
+            handleDeleteButton();
+          }}>
+          <DeleteMessageIcon />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.rightAction,
+            {backgroundColor: 'rgba(32, 155, 204, 1)'},
+          ]}
+          onPress={() => console.log('Edit Button')}>
+          <Icon name="edit-3" color={'white'} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  return (
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      overshootRight={false}
+      friction={2.8}
+      onSwipeableWillOpen={() => setIsSwiped(true)}
+      onSwipeableWillClose={() => setIsSwiped(false)}>
+      <View
+        style={[
+          styles.mappingContainer,
+          extraStyles,
+          isSwiped && {borderRadius: 0},
+        ]}>
+        <View style={{flexDirection: 'row'}}>
+          <MealPlanPdf width={27} height={36} />
+          <View style={{marginHorizontal: 10}}>
+            <Text style={{fontSize: 12, fontWeight: '500', color: 'white'}}>
+              {plan.planName}
+            </Text>
+            <Text style={styles.price}>{plan.price}</Text>
+          </View>
+        </View>
+        <View style={{flex: 1, marginLeft: 13, marginRight: 5}}>
+          <Text style={styles.description}>{plan.description}</Text>
+        </View>
+      </View>
+    </Swipeable>
+  );
+};
 
 export const CustomNutritionistPlan = ({
   name,
@@ -31,20 +101,8 @@ export const CustomNutritionistPlan = ({
       </View>
       {plans.map((plan: any, index: any) => (
         <TouchableOpacity
-          onPress={() => handleModalOpen(plan.planName, plan.price)}
-          style={styles.mappingContainer}>
-          <View style={{flexDirection: 'row'}}>
-            <MealPlanPdf width={27} height={36} />
-            <View style={{marginHorizontal: 10}}>
-              <Text style={{fontSize: 12, fontWeight: '500', color: 'white'}}>
-                {plan.planName}
-              </Text>
-              <Text style={styles.price}>{plan.price}</Text>
-            </View>
-          </View>
-          <View style={{flex: 1, marginLeft: 13, marginRight: 5}}>
-            <Text style={styles.description}>{plan.description}</Text>
-          </View>
+          onPress={() => handleModalOpen(plan.planName, plan.price)}>
+          <CustomPlanDescription plan={plan} />
         </TouchableOpacity>
       ))}
       <TouchableOpacity
@@ -74,7 +132,6 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 20,
     borderRadius: 19,
-    marginVertical: 8,
   },
   button: {
     textAlign: 'right',
@@ -93,6 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: 'rgba(68, 68, 68, 0.5)',
     paddingHorizontal: 10,
+    height: verticalScale(52),
     paddingVertical: 10,
     marginTop: 10,
     alignItems: 'center',
@@ -120,5 +178,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: 'rgba(48, 210, 152, 1)',
+  },
+  rightActionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    paddingVertical: 10,
+  },
+  rightAction: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: horizontalScale(43),
+    height: verticalScale(52),
+  },
+  rightActionText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });

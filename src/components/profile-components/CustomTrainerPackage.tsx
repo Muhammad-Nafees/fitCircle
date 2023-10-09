@@ -55,7 +55,7 @@ export const CustomTrainerPackage = ({
             {backgroundColor: 'rgba(32, 155, 204, 1)'},
           ]}
           onPress={() => console.log('Edit Button')}>
-          <Icon name="edit-3" />
+          <Icon name="edit-3" color={'white'} />
         </TouchableOpacity>
       </View>
     );

@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 12,
     color: 'white',
-    marginBottom: 10,
+    marginBottom: 7,
   },
   uploadContainer: {
     alignItems: 'center',
