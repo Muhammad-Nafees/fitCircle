@@ -25,7 +25,7 @@ import CustomHeader from '../../../components/shared-components/CustomHeader';
 import {Unit} from '../../../components/auth-components/create-profile/GenderForm';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {format, parse} from 'date-fns';
+import {format, parse, parseISO} from 'date-fns';
 import {ITDEE} from '../../../interfaces/user.interface';
 import {calculateTdee} from '../../../api/dashboard-module';
 import Toast from 'react-native-toast-message';
@@ -62,14 +62,15 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
 
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
+    const parsedDate = parse(values.startDate, 'dd/MM/yyyy', new Date());
+    const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+
     try {
-      const parsedDate = parse(values.startDate, 'dd/MM/yyyy', new Date());
-      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
       const reqData: ITDEE = {
         age: values.age,
         gender: values.gender.toLowerCase(),
         goal: values.goal,
-        startDate: formattedDate,
+        startDate: new Date(formattedDate),
         height: {
           value: values.height,
           unit: heightUnit,
@@ -92,7 +93,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
             .value,
       };
       setIsLoading(true);
-      console.log(reqData,"reqData from tdee!")
+      console.log(reqData, 'reqData from tdee!');
       const response = await calculateTdee(reqData);
       const data = response?.data?.data;
       navigation.navigate('Results', {
@@ -100,7 +101,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       });
       setIsLoading(false);
     } catch (error: any) {
-      console.log(error?.response?.data, 'from calculate tdee');
+      console.log(error?.response, 'from calculate tdee');
       Toast.show({
         type: 'error',
         text1: `${error?.response?.data?.message}`,

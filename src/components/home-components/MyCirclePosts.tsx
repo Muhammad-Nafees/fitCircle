@@ -11,6 +11,8 @@ interface MyCirclePostsProps {
   handleRefresh?: () => void;
   handleCommentButtonPress: any;
   loadMoreItems: () => void;
+  isPersonalProfile?: boolean;
+  onEditDeletePost?: any;
 }
 
 const MyCirclePosts = ({
@@ -18,9 +20,11 @@ const MyCirclePosts = ({
   // userId,
   isLoading,
   isRefreshing,
+  isPersonalProfile,
   handleRefresh,
   loadMoreItems,
   handleCommentButtonPress,
+  onEditDeletePost,
 }: MyCirclePostsProps) => {
   const renderCustomPost = ({item, index}: any) => {
     return (
@@ -28,6 +32,8 @@ const MyCirclePosts = ({
         key={item._id + index}
         post={item}
         handleCommentButtonPress={handleCommentButtonPress}
+        isPersonalProfile={isPersonalProfile}
+        onEditDeletePost={onEditDeletePost}
       />
     );
   };

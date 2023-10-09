@@ -42,7 +42,7 @@ const profileSlice = createSlice({
         );
       }
     },
-    unSubscribeCommunity: (state, action: PayloadAction<string>) => {
+    deleteCommunity: (state, action: PayloadAction<string>) => {
       const communityIdToDelete = action.payload;
       if (state.communitiesList) {
         state.communitiesList = state.communitiesList.filter(
@@ -59,7 +59,7 @@ export const {
   setCommunitiesList,
   removeFollower,
   unFollowUser,
-  unSubscribeCommunity,
+  deleteCommunity,
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

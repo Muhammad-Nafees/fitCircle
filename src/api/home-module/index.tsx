@@ -29,8 +29,9 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
   formData.append('text', reqData?.text);
   formData.append('media', reqData?.media);
   formData.append('mediaType', reqData?.mediaType);
-  formData.append('title', reqData.title);
-
+  if (reqData?.title) {
+    formData.append('title', reqData.title);
+  }
   if (reqData?.thumbnail) {
     formData.append('thumbnail', reqData.thumbnail);
   }

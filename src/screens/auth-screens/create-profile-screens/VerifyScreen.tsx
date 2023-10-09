@@ -91,6 +91,10 @@ const VerifyScreen = ({navigation}: any) => {
         const formattedDate = format(parsedDate, 'yyyy-MM-d');
         const convertedAge = Number(userData?.age);
 
+        const filteredLinks = userData?.socialMediaLinks.filter(
+          linkData => linkData.link,
+        );
+
         const reqUserData: Partial<IUser> = {
           ...userData,
           dob: formattedDate,
@@ -98,8 +102,9 @@ const VerifyScreen = ({navigation}: any) => {
           profileImage: compressedProfileImage || userData?.profileImage,
           coverImage: compressedCoverImage || userData?.coverImage,
           certificates: compressedCertificates || userData?.certificates,
+          socialMediaLinks: filteredLinks,
         };
-        console.log(reqUserData,"req")
+        console.log(reqUserData, 'req');
 
         const response = await updateProfile(reqUserData as IUser);
         const data = response?.data;
@@ -111,7 +116,7 @@ const VerifyScreen = ({navigation}: any) => {
           text1: 'Profile Created Successfully!',
         });
       } catch (error: any) {
-        console.log(error?.response?.data, 'error');
+        console.log(error?.response, 'error');
         Toast.show({
           type: 'error',
           text1: `${error?.response?.data?.message}`,

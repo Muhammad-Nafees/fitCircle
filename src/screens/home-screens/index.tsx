@@ -84,25 +84,8 @@ const HomeScreen = () => {
     setSelectedButton(button);
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const fetchUserProfile = async () => {
-  //       try {
-  //         const response = await searchProfile(userData?.username as string);
-  //         console.log(response?.data,"search")
-  //         const profileData = response?.data?.data;
-  //         dispatch(setUserData(profileData));
-  //       } catch (error: any) {
-  //         console.log(error?.response?.data);
-  //       }
-  //     };
-  //     fetchUserProfile();
-  //   }, [isFocused]),
-  // );
-
   useFocusEffect(
     useCallback(() => {
-      console.log('useEffect running');
       const fetchMyCirclePosts = async () => {
         setIsLoading(true);
         try {
@@ -116,7 +99,6 @@ const HomeScreen = () => {
             setMycirleData(data?.posts);
           }
           setHasMoreCirclePosts(data?.pagination?.hasNextPage);
-          // dispatch(setPagination(data?.pagination));
           setIsLoadMore(false);
           setIsRefreshing(false);
         } catch (error: any) {

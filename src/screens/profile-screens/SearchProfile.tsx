@@ -34,7 +34,11 @@ import {
   communitiesToggle as unSubscribeCommunity,
 } from '../../api/profile-module';
 import CustomLoader from '../../components/shared-components/CustomLoader';
-import {unFollowUser} from '../../redux/profileSlice';
+import {
+  deleteCommunity,
+  unFollowUser,
+  removeFollower as remove,
+} from '../../redux/profileSlice';
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 const SearchIcon = require('../../../assets/icons/search.png');
 
@@ -104,6 +108,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   const handleUnSubscribeCommunity = async () => {
     try {
       const response = await unSubscribeCommunity(modalOpenFor);
+      dispatch(deleteCommunity(modalOpenFor));
       setIsDeleted(true);
     } catch (error: any) {
       console.log(error?.response?.data, 'From unsubscribe community!');
@@ -123,6 +128,8 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   const handleRemoveFollower = async () => {
     try {
       const response = await removeFollower(modalOpenFor);
+      dispatch(remove(modalOpenFor));
+
       setIsDeleted(true);
     } catch (error: any) {
       console.log(error?.response?.data, 'From unsubscribe community!');

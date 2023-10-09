@@ -35,6 +35,11 @@ export const MacroCalculator = ({navigation, route}: any) => {
     fatRatio: 0,
     proteinRatio: 0,
   });
+  const [percentageData, setPercentageData] = useState({
+    carbsPercentage: 0,
+    proteinPercentage: 0,
+    fatsPercentage: 0,
+  });
 
   const handleSubmit = () => {
     navigation.navigate('Chart', {
@@ -52,6 +57,26 @@ export const MacroCalculator = ({navigation, route}: any) => {
       };
       const response = await calculateMacro(reqObj);
       const responseData = response?.data?.data;
+      if (reqObj.goal === 'HIGH_CARB') {
+        setPercentageData({
+          carbsPercentage: 50,
+          proteinPercentage: 30,
+          fatsPercentage: 20,
+        });
+      } else if (reqObj.goal === 'HIGH_PROTEIN') {
+        setPercentageData({
+          carbsPercentage: 40,
+          proteinPercentage: 40,
+          fatsPercentage: 20,
+        });
+      } else {
+        setPercentageData({
+          carbsPercentage: 40,
+          proteinPercentage: 30,
+          fatsPercentage: 30,
+        });
+      }
+      console.log(presets[preset as keyof typeof presets].value);
       setChartData(responseData);
     } catch (error: any) {
       console.log('error from calculate macros:', error?.response?.data);
@@ -109,13 +134,13 @@ export const MacroCalculator = ({navigation, route}: any) => {
             <Text style={styles.heading}>Carbohydrates</Text>
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.data}>{(40).toFixed(0)}%</Text>
+            <Text style={styles.data}>{percentageData.carbsPercentage}%</Text>
             <Text style={styles.data}>
               {chartData?.carbohydrates.toFixed(0)} grams
             </Text>
           </View>
           <Slider
-            value={40}
+            value={percentageData.carbsPercentage}
             maximumValue={100}
             onValueChange={() => null}
             style={{width: '85%'}}
@@ -128,13 +153,13 @@ export const MacroCalculator = ({navigation, route}: any) => {
             <Text style={styles.heading}>Protein</Text>
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.data}>{(30).toFixed(0)}%</Text>
+            <Text style={styles.data}>{percentageData.proteinPercentage}%</Text>
             <Text style={styles.data}>
               {chartData?.proteins.toFixed(0)} grams
             </Text>
           </View>
           <Slider
-            value={30}
+            value={percentageData.proteinPercentage}
             maximumValue={100}
             onValueChange={() => null}
             style={{width: '85%'}}
@@ -147,11 +172,11 @@ export const MacroCalculator = ({navigation, route}: any) => {
             <Text style={styles.heading}>Fat</Text>
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.data}> {(30).toFixed(0)}%</Text>
+            <Text style={styles.data}> {percentageData.fatsPercentage}%</Text>
             <Text style={styles.data}>{chartData?.fats.toFixed(0)} grams</Text>
           </View>
           <Slider
-            value={30}
+            value={percentageData.fatsPercentage}
             maximumValue={100}
             onValueChange={() => null}
             style={{width: '85%'}}
