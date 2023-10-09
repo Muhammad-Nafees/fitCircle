@@ -77,6 +77,7 @@ export const ReelsComponent = ({
       fetchThumbnail();
     }, [post]),
   );
+  console.log(videoThumbnail,"thum")
 
   // useEffect(() => {
   //   const isCurrentUserFavorited = favorites.some(

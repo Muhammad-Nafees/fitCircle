@@ -39,6 +39,9 @@ import {
   setFollowingsList,
 } from '../../redux/profileSlice';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import {deletePost} from '../../api/home-module';
+import {useFocusEffect} from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
@@ -66,6 +69,9 @@ const ProfileScreen = ({navigation, route}: any) => {
   const [shouldFetchPostsInitially, setShouldFetchPostsInitially] = useState<
     boolean | null
   >(null);
+  const [isEditDeletePost, setIsEditDeletePost] = useState<boolean>(false);
+  const [isDeleteVideo, setIsDeleteVideo] = useState<boolean>(false);
+
   const [profileData, setProfileData] = useState<IUser | null>(userData);
   const searchUserProfile = useSelector(
     (state: RootState) => state.auth.userProfile,
@@ -145,7 +151,6 @@ const ProfileScreen = ({navigation, route}: any) => {
   console.log(searchUserProfile?._id, 'prof');
 
   const fetchUserPosts = async () => {
-    console.log(userSearchId, 'fetchuserpostId');
     setIsLoading(true);
     try {
       const response = await getUserPosts(userSearchId as string, page, limit);
@@ -254,6 +259,51 @@ const ProfileScreen = ({navigation, route}: any) => {
     }
   }, [shouldFetchPostsInitially]);
 
+  useEffect(() => {
+    if (isEditDeletePost) {
+      fetchUserPosts();
+    }
+    return () => {
+      setIsEditDeletePost(false);
+    };
+  }, [isEditDeletePost]);
+
+  useEffect(() => {
+    if (isDeleteVideo) {
+      fetchUserVideos();
+    }
+    return () => {
+      setIsDeleteVideo(false);
+    };
+  }, [isDeleteVideo]);
+
+  const handleEditDeletePost = async (type: string, postId: string) => {
+    if (type == 'Delete' || type == 'DeleteVideo') {
+      try {
+        const response = await deletePost(postId);
+        if (type == 'Delete') {
+          setIsEditDeletePost(true);
+        } else if (type == 'DeleteVideo') {
+          setIsDeleteVideo(true);
+        }
+        console.log(response?.data, 'sss');
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data?.message}`,
+        });
+      } catch (error: any) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data?.message}`,
+        });
+        console.log(error?.response?.data, 'from from delete post!');
+      }
+    }
+  };
+  const handleDeleteVideo = (id: string) => {
+    handleEditDeletePost('DeleteVideo', id);
+  };
+
   return (
     <View style={[styles.container]}>
       <ProfileHeaderContainer
@@ -326,22 +376,27 @@ const ProfileScreen = ({navigation, route}: any) => {
               <MyCirclePosts
                 data={myPosts}
                 isLoading={isLoading}
+                isPersonalProfile={true}
                 loadMoreItems={loadMoreItems}
+                onEditDeletePost={handleEditDeletePost}
                 handleCommentButtonPress={handleCommentButtonPress}
               />
             )
           )}
-          {myPosts && myPosts.length === 0 && !isLoading && (
-            <Text
-              style={{
-                fontSize: 16,
-                color: 'white',
-                padding: 20,
-                position: 'absolute',
-              }}>
-              No Posts yet!
-            </Text>
-          )}
+          {myPosts &&
+            myPosts.length === 0 &&
+            selectedOption === 'Feed' &&
+            !isLoading && (
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: 'white',
+                  padding: 20,
+                  position: 'absolute',
+                }}>
+                No Posts yet!
+              </Text>
+            )}
         </View>
 
         {selectedOption === 'Favorites' && (
@@ -356,7 +411,7 @@ const ProfileScreen = ({navigation, route}: any) => {
           </View>
         )}
         {selectedOption === 'Bio' && (
-          <ProfileBio userData={userData} isTrainerView />
+          <ProfileBio userData={profileData} isTrainerView />
         )}
         {selectedOption === 'Videos' && (
           <View style={{width: '100%'}}>
@@ -373,6 +428,7 @@ const ProfileScreen = ({navigation, route}: any) => {
                     key={item._id}
                     userId={userId}
                     video={item}
+                    onDeleteVideo={handleDeleteVideo}
                     isTrainerView={isTrainerView}
                     handleCancelButtonPress={handleCancelButton}
                     onPressVideo={handleVideoPress}
