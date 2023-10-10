@@ -1,7 +1,7 @@
-import {useEffect} from 'react';
 import CustomButton from '../../components/shared-components/CustomButton';
 import CustomHeader from '../../components/shared-components/CustomHeader';
 import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const TestDetailScreen = ({navigation, route}: any) => {
   const isTestDetails2 = route.name === 'TestDetails2';
@@ -142,7 +142,7 @@ const TestDetailScreen = ({navigation, route}: any) => {
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(() => {
     const backAction = () => {
       handleBackNavigation();
       return true;
@@ -152,7 +152,7 @@ const TestDetailScreen = ({navigation, route}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  });
 
   const handleBackNavigation = () => {
     if (isTestDetails2) {
