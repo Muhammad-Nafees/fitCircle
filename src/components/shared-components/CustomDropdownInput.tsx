@@ -29,6 +29,8 @@ const DropdownTextInput = ({
   tdee,
   editable = true,
   onSelectUnit,
+  extraStyles,
+  textInputStyle,
 }: any) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState(defaultOption);
@@ -39,7 +41,7 @@ const DropdownTextInput = ({
   const handleDropdownSelection = (option: any) => {
     setShowDropdown(false);
     setSelectedOption(option);
-    onSelectUnit(option,defaultOption);
+    onSelectUnit(option, defaultOption);
   };
 
   const handleInputFocus = () => {
@@ -68,12 +70,12 @@ const DropdownTextInput = ({
 
   return (
     <View>
-      <View style={styles.container}>
+      <View style={[styles.container, extraStyles]}>
         <TextInput
           editable={editable}
           value={textInputValue}
           onChangeText={handleTextInputChange}
-          style={styles.textInput}
+          style={[styles.textInput, textInputStyle]}
           onFocus={handleInputFocus}
           placeholder={placeholder}
           onBlur={handleInputBlur}
@@ -114,6 +116,7 @@ const DropdownTextInput = ({
                   style={[
                     styles.dropdownOption,
                     selectedOption === option && styles.selectedOption,
+                    {zIndex: 10, position: 'relative'},
                   ]}>
                   <Text
                     style={{
@@ -137,6 +140,7 @@ const DropdownTextInput = ({
               gap: 2,
               marginTop: verticalScale(7),
               marginBottom: verticalScale(4),
+              height: 27,
             },
             route.name === 'VerificationOne' && {width: horizontalScale(60)},
           ]}>
@@ -161,7 +165,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     width: '100%',
-    marginTop: verticalScale(10),
+    marginTop: verticalScale(8),
     zIndex: 1000,
     height: verticalScale(47),
   },

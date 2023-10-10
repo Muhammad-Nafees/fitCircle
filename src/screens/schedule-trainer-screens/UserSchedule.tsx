@@ -45,15 +45,9 @@ const SetSchedule = ({route, navigation}: any) => {
     },
   });
   const userData = useSelector((state: RootState) => state.auth.user);
-  const [userId, setUserId] = useState(userData?._id);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [slot, setSlot] = useState<ScheduleItem | undefined>();
 
-  useEffect(() => {
-    setUserId(userData?._id);
-    const imageUri = userData?.profileImage?.uri || userData?.profileImageUrl;
-    setProfileImageUrl(imageUri);
-  }, [userData]);
 
   const handleDayPress = (day: DateData) => {
     const selected = day.dateString;
@@ -71,7 +65,7 @@ const SetSchedule = ({route, navigation}: any) => {
     setSelectedDate(selected);
   };
 
-  const formatDate = date => {
+  const formatDate = (date: any) => {
     return moment(date).format('ddd, D MMM');
   };
 
@@ -139,7 +133,9 @@ const SetSchedule = ({route, navigation}: any) => {
             exercise="None"
             username="Sam"
           />
-        ) : null}
+        ) : (
+          <Text style={{color: 'white'}}>Coming Soon!</Text>
+        )}
       </View>
     </View>
   );

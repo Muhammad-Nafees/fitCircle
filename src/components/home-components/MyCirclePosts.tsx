@@ -6,12 +6,13 @@ import {View} from 'react-native';
 
 interface MyCirclePostsProps {
   data: any;
-  // userId: string;
   isLoading: boolean;
-  isRefreshing: any;
-  handleRefresh: () => void;
+  isRefreshing?: any;
+  handleRefresh?: () => void;
   handleCommentButtonPress: any;
   loadMoreItems: () => void;
+  isPersonalProfile?: boolean;
+  onEditDeletePost?: any;
 }
 
 const MyCirclePosts = ({
@@ -19,9 +20,11 @@ const MyCirclePosts = ({
   // userId,
   isLoading,
   isRefreshing,
+  isPersonalProfile,
   handleRefresh,
   loadMoreItems,
   handleCommentButtonPress,
+  onEditDeletePost,
 }: MyCirclePostsProps) => {
   const renderCustomPost = ({item, index}: any) => {
     return (
@@ -29,6 +32,8 @@ const MyCirclePosts = ({
         key={item._id + index}
         post={item}
         handleCommentButtonPress={handleCommentButtonPress}
+        isPersonalProfile={isPersonalProfile}
+        onEditDeletePost={onEditDeletePost}
       />
     );
   };

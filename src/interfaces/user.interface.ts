@@ -51,6 +51,9 @@ export interface IUser {
   updatedAt: Date;
   height: IUnit;
   weight: IUnit;
+  noOfFollowers: 0;
+  noOfFollowings: 0;
+  noOfCommunities: 0;
 }
 
 export type IPostVisibility = 'Public' | 'Followers' | 'Subscribers';
@@ -61,9 +64,9 @@ export interface IPost {
   title: string;
   media: FileData;
   mediaType: string;
-  thumbnail: null;
+  thumbnail: null | any;
   visibility: IPostVisibility;
-  hexCode: string | string[] | number;
+  hexCode: string | string[] | number | any;
   cost: number | null;
   paidBy: [];
   isBoosted: boolean;

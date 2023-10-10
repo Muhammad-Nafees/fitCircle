@@ -7,10 +7,10 @@ import {
   View,
 } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
-import {useIsFocused} from '@react-navigation/native';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import React, {useRef, useState, useEffect} from 'react';
-import {format} from 'date-fns';
+import {format, parse} from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Formik} from 'formik';
 // --------------------------------------------------------------------------------------//
@@ -27,8 +27,16 @@ import DropdownTextInput from '../../../components/shared-components/CustomDropd
 import CustomPhoneInput from '../../../components/shared-components/CustomPhoneInput';
 import CustomHeader from '../../../components/shared-components/CustomHeader';
 import {Unit} from '../../../components/auth-components/create-profile/GenderForm';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
 
-export const VerificationOne = ({navigation, disabled, data, route}: any) => {
+export const VerificationOne = ({
+  navigation,
+  disabled,
+  data,
+  route,
+  disabledStlyes,
+}: any) => {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const phoneInput = useRef<PhoneInput>(null);
   const [isError, setIsError] = useState('');
@@ -53,25 +61,31 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
     }
   };
   const editable = typeof disabled === 'boolean' ? !disabled : true;
-
-  const isFocused = useIsFocused();
-  const formikRef = useRef();
-
   const formdata: null | any = data;
 
-  const formSubmit = (values: any) => {
+  const formSubmit = async (values: any) => {
     if (isError) {
       return;
     }
-    console.log('Form values:', values);
-    navigation.navigate('VerificationTwo', {verificationOne: values});
+    const parsedDate = parse(values.date, 'dd/MM/yyyy', new Date());
+    const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+    const VALUES = {
+      ...values,
+      weight: {
+        value: values.weight,
+        unit: weightUnit,
+      },
+      height: {
+        value: values.height,
+        unit: heightUnit,
+      },
+      date: formattedDate,
+      cellPhone: `+${phoneCode}${values.cellPhone}`,
+    };
+    navigation.navigate('VerificationTwo', {verificationOne: VALUES});
   };
 
-  // useEffect(() => {
-  //   if (isFocused && route?.params?.clearValues) formikRef.current?.resetForm();
-  // }, [isFocused]);
-
-  useEffect(() => {
+  useFocusEffect(() => {
     const backAction = () => {
       navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
       return true;
@@ -81,8 +95,8 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
-
+  });
+  console.log(formdata, 'FORM');
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <View style={{paddingBottom: 10}}>
@@ -108,8 +122,8 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
             homePhone: formdata?.homePhone ?? '',
             cellPhone: formdata?.cellPhone ?? '',
             age: formdata?.age ?? '',
-            height: formdata?.height ?? '',
-            weight: formdata?.weight ?? '',
+            height: formdata?.height.value ?? '',
+            weight: formdata?.weight.value ?? '',
           }}
           onSubmit={formSubmit}
           validateOnChange={false}
@@ -137,13 +151,13 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       label="Date"
                       placeholder="02/28/2023"
                       value={values.date}
-                      error={errors.date}
-                      touched={touched.date}
+                      error={errors.date as string}
+                      touched={touched.date as boolean}
                       handleChange={handleChange('date')}
                       setFieldError={setFieldError}
                       fieldName="date"
                       editable={false}
-                      
+                      extraStyles={disabledStlyes}
                     />
                     <Icon
                       name="calendar-outline"
@@ -170,88 +184,97 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                   label="Email"
                   placeholder="lincolnsmith@gmail.com"
                   value={values.email}
-                  error={errors.email}
-                  touched={touched.email}
+                  autoCapitalize="none"
+                  error={errors.email as string}
+                  touched={touched.email as boolean}
                   handleChange={handleChange('email')}
                   setFieldError={setFieldError}
                   fieldName="email"
                   keyboardType="email-address"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   editable={editable}
                   label="First Name"
                   placeholder="Lincoln"
                   value={values.firstName}
-                  error={errors.firstName}
-                  touched={touched.firstName}
+                  error={errors.firstName as string}
+                  touched={touched.firstName as boolean}
                   handleChange={handleChange('firstName')}
                   setFieldError={setFieldError}
                   fieldName="firstName"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   editable={editable}
                   label="Last Name"
                   placeholder="Smith"
                   value={values.lastName}
-                  error={errors.lastName}
-                  touched={touched.lastName}
+                  error={errors.lastName as string}
+                  touched={touched.lastName as boolean}
                   handleChange={handleChange('lastName')}
                   setFieldError={setFieldError}
                   fieldName="lastName"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   editable={editable}
                   label="Address"
                   placeholder="New York, United States"
                   value={values.address}
-                  error={errors.address}
-                  touched={touched.address}
+                  error={errors.address as string}
+                  touched={touched.address as boolean}
                   handleChange={handleChange('address')}
                   setFieldError={setFieldError}
                   fieldName="address"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   editable={editable}
                   label="City"
                   placeholder="New York"
                   value={values.city}
-                  error={errors.city}
-                  touched={touched.city}
+                  error={errors.city as string}
+                  touched={touched.city as boolean}
                   handleChange={handleChange('city')}
                   setFieldError={setFieldError}
                   fieldName="city"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   editable={editable}
                   label="Zip"
                   placeholder="10001"
                   value={values.zip}
-                  error={errors.zip}
-                  touched={touched.zip}
+                  error={errors.zip as string}
+                  touched={touched.zip as boolean}
                   initialTouched={true}
                   keyboardType="numeric"
                   handleChange={handleChange('zip')}
                   setFieldError={setFieldError}
                   fieldName="zip"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomInput
                   editable={editable}
                   label="Home Phone"
                   placeholder="(555) 555-1234"
                   value={values.homePhone}
-                  error={errors.homePhone}
-                  touched={touched.homePhone}
+                  error={errors.homePhone as string}
+                  touched={touched.homePhone as boolean}
                   initialTouched={true}
                   keyboardType="numeric"
                   handleChange={handleChange('homePhone')}
                   setFieldError={setFieldError}
                   fieldName="homePhone"
+                  extraStyles={disabledStlyes}
                 />
                 <CustomPhoneInput
                   label="Cell Phone"
+                  disabled={disabledStlyes ? true : false}
                   value={values.cellPhone}
-                  error={errors.cellPhone}
-                  touched={touched.cellPhone}
+                  error={errors.cellPhone as string}
+                  touched={touched.cellPhone as boolean}
                   handleChange={handleChange('cellPhone')}
                   setFieldValue={setFieldValue}
                   phoneInput={phoneInput}
@@ -260,6 +283,7 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                   isError={isError}
                   setPhoneCode={setPhoneCode}
                   placeholder="123-1234"
+                  extraStyles={disabledStlyes}
                 />
                 <View style={styles.inputRow}>
                   <CustomInput
@@ -267,17 +291,23 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                     label="Age"
                     placeholder=""
                     value={values.age}
-                    error={errors.age}
-                    touched={touched.age}
+                    error={errors.age as string}
+                    touched={touched.age as boolean}
                     initialTouched={true}
                     keyboardType="numeric"
                     handleChange={handleChange('age')}
                     setFieldError={setFieldError}
-                    extraStyles={styles.ageInput}
+                    extraStyles={[styles.ageInput, disabledStlyes]}
                     fieldName="age"
                   />
                   <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Height</Text>
+                    <Text
+                      style={[
+                        styles.label,
+                        {marginBottom: disabledStlyes ? -2 : 2},
+                      ]}>
+                      Height
+                    </Text>
                     <DropdownTextInput
                       editable={editable}
                       value={values.height}
@@ -290,10 +320,26 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       setFieldError={setFieldError}
                       fieldName="height"
                       onSelectUnit={handleSelectUnit}
+                      extraStyles={
+                        disabledStlyes && {
+                          backgroundColor: 'rgba(68, 68, 68, 0.5)',
+                        }
+                      }
+                      textInputStyle={
+                        disabledStlyes && {
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        }
+                      }
                     />
                   </View>
                   <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Weight</Text>
+                    <Text
+                      style={[
+                        styles.label,
+                        {marginBottom: disabledStlyes ? -2 : 2},
+                      ]}>
+                      Weight
+                    </Text>
                     <DropdownTextInput
                       editable={editable}
                       value={values.weight}
@@ -306,6 +352,16 @@ export const VerificationOne = ({navigation, disabled, data, route}: any) => {
                       setFieldError={setFieldError}
                       fieldName="weight"
                       onSelectUnit={handleSelectUnit}
+                      extraStyles={
+                        disabledStlyes && {
+                          backgroundColor: 'rgba(68, 68, 68, 0.5)',
+                        }
+                      }
+                      textInputStyle={
+                        disabledStlyes && {
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        }
+                      }
                     />
                   </View>
                 </View>
@@ -336,10 +392,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: moderateScale(15),
     marginHorizontal: horizontalScale(30),
-    zIndex: 1000,
+    paddingBottom: 20
   },
   inputContainer: {
     flex: 1,
+    marginTop: 3,
   },
   label: {
     fontSize: moderateScale(12),

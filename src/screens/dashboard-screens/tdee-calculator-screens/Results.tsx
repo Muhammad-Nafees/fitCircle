@@ -16,23 +16,10 @@ export const Results = ({navigation, route}: any) => {
   useFocusEffect(
     useCallback(() => {
       const date = new Date(data?.targetDate);
-      const formattedDate = format(date, 'dd-MM-yyyy');
+      const formattedDate = format(date, 'dd/MM/yyyy');
       setTargetDate(formattedDate);
     }, []),
   );
-  console.log(targetDate,"target")
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
 
   const handleSubmit = () => {
     navigation.navigate('MacroCalculator', {data});

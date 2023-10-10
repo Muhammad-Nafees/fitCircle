@@ -79,10 +79,9 @@ export const updateProfile = async (userData: IUser) => {
   formData.append('physicalInformation', userData?.physicalInformation);
   formData.append('dob', userData.dob);
   formData.append('age', userData.age);
-  formData.append('phone',userData.phone);
-  formData.append('phoneCode',userData.phoneCode)
-  formData.append('countryCode',userData.countryCode)
-
+  formData.append('phone', userData.phone);
+  formData.append('phoneCode', userData.phoneCode);
+  formData.append('countryCode', userData.countryCode);
 
   if (userData?.hourlyRate) {
     formData.append('hourlyRate', userData?.hourlyRate);
@@ -105,6 +104,12 @@ export const updateProfile = async (userData: IUser) => {
     for (let i = 0; i < userData.communities.length; i++) {
       formData.append('communities[]', userData.communities[i]);
     }
+  }
+  if (userData?.socialMediaLinks) {
+    userData?.socialMediaLinks.forEach((linkData, index) => {
+      formData.append(`socialMediaLinks[${index}][name]`, linkData.name);
+      formData.append(`socialMediaLinks[${index}][link]`, linkData.link);
+    });
   }
 
   const response = await api.put(`user/update-profile`, formData, {

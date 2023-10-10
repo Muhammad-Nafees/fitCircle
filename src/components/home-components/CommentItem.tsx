@@ -1,9 +1,18 @@
 import {IComment} from '../../interfaces/user.interface';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
-import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Dimensions,
+} from 'react-native';
 import {verticalScale} from '../../utils/metrics';
 import {s3bucketReference} from '../../api';
+import ImagePreview from './ImagePreview';
+import {timeDifference} from '../../utils/helper';
 
 interface Props {
   comment: IComment;
@@ -13,27 +22,12 @@ interface Props {
 }
 
 const CommentItem = ({comment, onReply, isNested}: Props) => {
-  const timeDifference = (createdAt: string) => {
-    const commentDate = new Date(createdAt);
-    const currentDate = new Date();
-    const differenceInSeconds = Math.floor(
-      (currentDate.getTime() - commentDate.getTime()) / 1000,
-    );
+  const width = Dimensions.get('window').width;
 
-    if (differenceInSeconds <= 0) {
-      return `Just now`;
-    } else if (differenceInSeconds < 60) {
-      return `${differenceInSeconds} seconds ago`;
-    } else if (differenceInSeconds < 3600) {
-      const minutes = Math.floor(differenceInSeconds / 60);
-      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
-    } else if (differenceInSeconds < 86400) {
-      const hours = Math.floor(differenceInSeconds / 3600);
-      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
-    } else {
-      const days = Math.floor(differenceInSeconds / 86400);
-      return `${days} ${days === 1 ? 'day' : 'days'} ago`;
-    }
+  const [isImageFullscreen, setImageFullscreen] = useState<boolean>(false);
+
+  const handleImageClose = () => {
+    setImageFullscreen(false);
   };
 
   return (
@@ -61,7 +55,7 @@ const CommentItem = ({comment, onReply, isNested}: Props) => {
           </Text>
           <Text style={{color: 'rgba(68, 68, 68, 1)'}}>{comment?.text}</Text>
           {comment?.media?.length > 0 && (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setImageFullscreen(true)}>
               <Image
                 source={{uri: `${s3bucketReference}/${comment.media}`}}
                 style={styles.commentMediaImage}
@@ -79,6 +73,13 @@ const CommentItem = ({comment, onReply, isNested}: Props) => {
           </TouchableOpacity>
         </View>
       </View>
+      <ImagePreview
+        handleImageClose={handleImageClose}
+        media={comment?.media}
+        isImageFullscreen={isImageFullscreen}
+        width={width}
+        setImageFullscreen={setImageFullscreen}
+      />
     </View>
   );
 };

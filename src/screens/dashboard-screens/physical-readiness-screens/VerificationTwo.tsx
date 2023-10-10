@@ -21,25 +21,9 @@ interface FormValues {
   isAnyReasonNotToParticipate: string;
 }
 
-const VerificationTwo = ({disabled, navigation, route, data}: any) => {
+const VerificationTwo = ({disabled, navigation, route, data,disabledStlyes}: any) => {
   const formdata: null | any = data;
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
-  const physicalData = useSelector(
-    (state: RootState) => state.phyiscalReadiness.data,
-  );
-  console.log(physicalData,"reduxddata")
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
 
   const initialValues = {
     isHighCholesterol: (formdata && formdata?.isHighCholesterol) ?? '',
@@ -47,7 +31,8 @@ const VerificationTwo = ({disabled, navigation, route, data}: any) => {
     isBoneTrouble: (formdata && formdata?.isBoneTrouble) ?? '',
     isHighBloodPressure: (formdata && formdata?.isHighBloodPressure) ?? '',
     isOverAge: (formdata && formdata?.isOverAge) ?? '',
-    isAnyReasonNotToParticipate: (formdata && formdata?.isAnyReasonNotToParticipate) ?? '',
+    isAnyReasonNotToParticipate:
+      (formdata && formdata?.isAnyReasonNotToParticipate) ?? '',
   };
 
   const handleSubmit = (answers: any) => {

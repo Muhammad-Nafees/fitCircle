@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   ImageBackground,
@@ -12,33 +12,74 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 const Image1 = require('../../../assets/images/backgroundImage.jpg');
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const PlayIcon = require('../../../assets/icons/playIcon.png');
-import ProfileVideoLockIcon from '../../../assets/icons/ProfileVideoLock';
 import {createThumbnail} from 'react-native-create-thumbnail';
+import {s3bucketReference} from '../../api';
+import {useFocusEffect} from '@react-navigation/native';
 
 const CustomVideo = ({
-  handleVideoPress,
-  handleCancelButtonPress,
+  onPressVideo,
+  onDeleteVideo,
   video,
   isTrainerView,
 }: any) => {
+  const [videoThumbnail, setVideoThumbnail] = useState<any>(null);
+  const fetchThumbnail = async () => {
+    if (video?.thumbnail !== null) {
+      let uri = `${s3bucketReference}/${video.thumbnail}`;
+      setVideoThumbnail(uri);
+    } else {
+      try {
+        console.log('from try');
+        const response = await createThumbnail({
+          url: `${s3bucketReference}/${video.media}`,
+          timeStamp: 1000,
+          format: 'jpeg',
+        });
+        setVideoThumbnail(response.path);
+      } catch (err) {
+        console.log('errorrr', err);
+      }
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchThumbnail();
+    }, [video]),
+  );
+
+  const handleVideoPress = (video: any) => {
+    onPressVideo(video);
+  };
+  const handleDeleteVideo = (id: string) => {
+    onDeleteVideo(id);
+  };
+
   return (
-    <TouchableOpacity onPress={handleVideoPress}>
-      <ImageBackground
-        source={{uri: video.thumbnail}}
-        style={styles.container}
-        imageStyle={{borderRadius: 10}}
-        resizeMode="cover">
+    <TouchableOpacity onPress={() => handleVideoPress(video)}>
+      <View style={styles.container}>
+        <Image
+          source={{uri: videoThumbnail}}
+          style={[
+            styles.thumbnail,
+            {borderColor: videoThumbnail == null ? 'white' : undefined},
+          ]}
+          resizeMode="cover"
+        />
         <View
           style={[
-            {flex: 1, borderRadius: 10},
-            video.thumbnail === null && {backgroundColor: 'black'},
+            {
+              width: '100%',
+              height: '100%',
+              borderRadius: 10,
+              position: 'absolute',
+              zIndex: 13,
+            },
           ]}>
           <TouchableOpacity
             style={styles.cancelIconContainer}
-            onPress={() => handleCancelButtonPress()}>
-            {isTrainerView !== true && (
-              <Image source={CancelIcon} style={styles.cancelIcon} />
-            )}
+            onPress={() => handleDeleteVideo(video._id)}>
+            <Image source={CancelIcon} style={styles.cancelIcon} />
           </TouchableOpacity>
           <View style={{flex: 1}}>
             <View style={styles.playIconBackground}>
@@ -49,9 +90,10 @@ const CustomVideo = ({
               {/* )} */}
             </View>
           </View>
-          <Text style={styles.text}>{video.content}</Text>
+          <Text style={styles.text}>{video?.title}</Text>
+          <Text style={styles.text}>{video?.text}</Text>
         </View>
-      </ImageBackground>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -64,6 +106,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     marginHorizontal: 6,
     flex: 1,
+    position: 'relative',
   },
   cancelIconContainer: {
     alignItems: 'flex-end',
@@ -74,7 +117,9 @@ const styles = StyleSheet.create({
   cancelIcon: {
     width: 20,
     height: 20,
-    tintColor: 'white',
+    position: 'relative',
+    // zIndex: 999,
+    tintColor: '#fff',
   },
   text: {
     color: 'white',
@@ -96,6 +141,14 @@ const styles = StyleSheet.create({
     width: horizontalScale(8.86),
     height: verticalScale(10.85),
     tintColor: '#fff',
+  },
+  thumbnail: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+    position: 'absolute',
+    zIndex: 12,
+    borderWidth: 1,
   },
 });
 

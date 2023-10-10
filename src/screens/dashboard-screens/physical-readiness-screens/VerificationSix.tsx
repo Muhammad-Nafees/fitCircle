@@ -11,69 +11,59 @@ import {STYLES} from '../../../styles/globalStyles';
 import CustomButton from '../../../components/shared-components/CustomButton';
 const options = [
   {
-    increaseLeanMuscle: false,
+    id: 'increaseLeanMuscle',
     name: 'Increase Lean Muscle',
   },
   {
-    loseBodyFat: false,
+    id: 'loseBodyFat',
     name: 'Lose Body Fat',
   },
   {
-    increaseStamina: false,
+    id: 'increaseStamina',
     name: 'Increase Stamina',
   },
   {
-    increaseStrength: false,
+    id: 'increaseStrength',
     name: 'Increase Strength',
   },
   {
-    improveHealth: false,
+    id: 'improveHealth',
     name: 'Improve Overall Health',
   },
   {
-    loseWeight: false,
+    id: 'loseWeight',
     name: 'Lose Weight',
   },
 ];
 
 const VerificationSix = ({navigation, disabled, route, data}: any) => {
   const [selectedOptions, setSelectedOptions] = useState<any[]>(options);
+  const [selectedData, setSelectedData] = useState({
+    increaseLeanMuscle: false,
+    loseBodyFat: false,
+    increaseStamina: false,
+    increaseStrength: false,
+    improveHealth: false,
+    loseWeight: false,
+  });
   const formdata: null | any = data;
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
+  console.log(data, 'data');
 
   const handleSelectOption = (option: any) => {
-    console.log(option,"opt")
-    const isSelected = selectedOptions.includes(option);
-
-    if (isSelected) {
-      setSelectedOptions(prevOptions =>
-        prevOptions.filter(item => item !== option),
-      );
-    } else {
-      setSelectedOptions(prevOptions => [...prevOptions, option]);
-    }
+    setSelectedData((prev: any) => {
+      return {...prev, [option.id]: !prev[option.id]};
+    });
   };
 
   useEffect(() => {
-    if (formdata) setSelectedOptions(formdata);
+    if (formdata) setSelectedData(formdata);
   }, [formdata]);
 
   const handleSubmit = () => {
     console.log(selectedOptions, 'selected');
     navigation.navigate('VerificationSeven', {
       ...route.params,
-      optionals: selectedOptions,
+      verificationSix: selectedData,
     });
   };
 
@@ -109,6 +99,7 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
         <View style={styles.optionsContainer}>
           {options.map((option, index) => (
             <TouchableOpacity
+              disabled={disabled}
               key={index}
               style={styles.optionItem}
               onPress={() => !disabled && handleSelectOption(option)}>
@@ -117,7 +108,9 @@ const VerificationSix = ({navigation, disabled, route, data}: any) => {
                 style={[
                   styles.optionCheckbox,
                   {
-                    backgroundColor: selectedOptions.includes(option.name)
+                    backgroundColor: selectedData[
+                      option.id as keyof typeof selectedData
+                    ]
                       ? '#209BCC'
                       : 'transparent',
                   },

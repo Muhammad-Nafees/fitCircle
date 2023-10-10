@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,7 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import {Avatar} from 'react-native-paper';
 import Modal from 'react-native-modal';
-import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
 const Heart = require('../../../assets/icons/heart.png');
 import LikeIcon from '../../../assets/icons/like';
 const LikeFilled = require('../../../assets/icons/likeFilled.png');
@@ -19,67 +17,53 @@ const Share = require('../../../assets/icons/share.png');
 const CommentIcon = require('../../../assets/icons/comment.png');
 const OptionIcon = require('../../../assets/icons/customPostOption.png');
 const LockOpenIcon = require('../../../assets/icons/lock-open.png');
-import {BackHandler} from 'react-native';
 import CustomButton from '../shared-components/CustomButton';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import Toast from 'react-native-toast-message';
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {s3bucketReference} from '../../api';
 import {likePost, sharePost} from '../../api/home-module';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../redux/store';
-import {cleanSingle} from 'react-native-image-crop-picker';
 import {setSelectedPost} from '../../redux/postSlice';
+import ImagePreview from './ImagePreview';
+import {timeDifference} from '../../utils/helper';
 
 const Dot = require('../../../assets/icons/dot.png');
 
 const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 interface CustomPostProps {
   isCommentsScreenActive?: boolean;
   handleCommentButtonPress?: (post: any, id: string) => void;
-  handleBackPress?: () => void;
-  isLoading?: boolean;
-  // userId: string;
+  handleBackPress: () => void;
+  isPersonalProfile?: boolean;
   post: any;
   heightFull?: boolean;
   commentCount?: any;
+  onEditDeletePost?: (type: string, postId: string) => void;
 }
 
 export const CustomPost = ({
   post,
-  isLoading,
+  isPersonalProfile,
   heightFull,
   isCommentsScreenActive,
   handleBackPress,
   handleCommentButtonPress,
   commentCount,
+  onEditDeletePost,
 }: CustomPostProps) => {
-  // const { likes, createdAt, user, hexCode, cost} = post;
-  let isGradient = post?.hexCode && post?.hexCode.includes(',');
-
+  console.log(post.hexCode, 'myPost');
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [likesCount, setLikesCount] = useState(post?.likes?.length);
-  const [likes,setLikes] = useState<number | null>(null);
   const [commentsCount, setCommentsCount] = useState<number | null>(0);
   const [shareText, setShareText] = useState('');
   const [isLiked, setIsLiked] = useState(post?.likedByMe);
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
-  const dropdownOptions =
-    post?.user?._id === post?.user?._id ? ['Edit', 'Delete'] : ['Flag'];
-  const isLocked = post?.cost && post?.cost > 0;
-  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   const isCurrentUserLiked = likes.some(like => like.user._id === userId);
-  //   setIsLiked(isCurrentUserLiked);
-  // }, [likes, userId]);
+  const isLocked = post?.cost && post?.cost > 0;
 
   useFocusEffect(
     useCallback(() => {
@@ -97,57 +81,6 @@ export const CustomPost = ({
       handleCommentButtonPress(postData, id);
     }
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        setImageFullscreen(false);
-        return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-      return () =>
-        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [isImageFullscreen]),
-  );
-
-  const getTimeDifference = () => {
-    const postTime = new Date(post?.createdAt).getTime();
-    const currentTime = new Date().getTime();
-    const timeDifference = currentTime - postTime;
-    const seconds = Math.floor(timeDifference / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const weeks = Math.floor(days / 7);
-    const months = Math.floor(days / 30);
-    if (months > 0) {
-      return `${months} ${months === 1 ? 'month' : 'months'} ago`;
-    } else if (weeks > 0) {
-      return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
-    } else if (days > 0) {
-      return `${days} ${days === 1 ? 'day' : 'days'} ago`;
-    } else if (hours > 0) {
-      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
-    } else if (minutes > 0) {
-      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
-    } else {
-      return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
-    }
-  };
-
-  const handleOptionSelect = (option: string) => {
-    setDropdownVisible(false);
-    if (user === post.user._id) {
-      if (option === 'Edit') {
-      } else if (option === 'Delete') {
-      }
-    } else if (option === 'Flag') {
-    }
-  };
-
-  // useFocusEffect(useCallback(() => {
-  //   console.log(selectedP)
-  // }, [isLiked]));
 
   const handleLikeButtonPress = async () => {
     setIsLiked(!isLiked);
@@ -193,10 +126,24 @@ export const CustomPost = ({
   const handleImageClose = () => {
     setImageFullscreen(false);
   };
+  let isGradient =
+    (post?.hexCode && post.hexCode?.length === 2) || post.hexCode?.length === 3;
+  console.log(isGradient, 'isGra');
+
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const dropdownOptions = ['Edit', 'Delete'];
+  const [isSeeMore, setIsSeeMore] = useState<boolean>(false);
+
+  const handleOptionSelect = (option: string, id: string) => {
+    setDropdownVisible(false);
+    if (onEditDeletePost) {
+      onEditDeletePost(option, id);
+    }
+  };
 
   return (
     <View>
-      <View style={[styles.postContainer, isLocked ? {zIndex: 1000} : null]}>
+      <View style={[styles.postContainer]}>
         <CustomProfileAvatar
           profileImage={post?.user?.profileImage as any}
           username={post?.user?.username}
@@ -217,48 +164,60 @@ export const CustomPost = ({
                   marginLeft: -10,
                 }}
               />
-              <Text style={styles.postTime}>{getTimeDifference()}</Text>
+              <Text style={styles.postTime}>
+                {timeDifference(post?.createdAt)}
+              </Text>
             </View>
           </View>
+        </View>
+        {isPersonalProfile && (
           <TouchableOpacity
             onPress={() => setDropdownVisible(!isDropdownVisible)}>
             <Image
               source={OptionIcon}
-              style={{width: 24, height: 35, tintColor: '#fff'}}
+              style={{
+                width: 24,
+                height: 30,
+                tintColor: '#fff',
+                position: 'absolute',
+                right: 5,
+                top: -20,
+                zIndex: 999,
+              }}
             />
           </TouchableOpacity>
-          {isDropdownVisible && (
-            <TouchableOpacity
-              style={styles.dropdown}
-              onPress={() => setDropdownVisible(false)}>
-              {dropdownOptions.map((option, index) => (
-                <React.Fragment key={option}>
-                  <View
-                    style={styles.dropdownOption}
-                    onPress={() => handleOptionSelect(option)}>
-                    <Text
-                      style={{
-                        color: '#fff',
-                        textAlign: 'center',
-                        fontSize: 10,
-                        paddingVertical: 2,
-                        zIndex: 66666,
-                      }}>
-                      {option}
-                    </Text>
-                  </View>
-                  {index === 0 && dropdownOptions[index + 1] === 'Delete' && (
-                    <View style={styles.horizontalLine} />
-                  )}
-                </React.Fragment>
-              ))}
-            </TouchableOpacity>
-          )}
-        </View>
+        )}
+        {isDropdownVisible && (
+          <TouchableOpacity
+            style={styles.dropdown}
+            onPress={() => setDropdownVisible(false)}>
+            {dropdownOptions.map((option, index) => (
+              <React.Fragment key={index}>
+                <TouchableOpacity
+                  onPress={() => handleOptionSelect(option, post?._id)}>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      textAlign: 'center',
+                      fontSize: 10,
+                      paddingVertical: 2,
+                      position: 'relative',
+                      zIndex: 999,
+                    }}>
+                    {option}
+                  </Text>
+                </TouchableOpacity>
+                {index === 0 && dropdownOptions[index + 1] === 'Delete' && (
+                  <View style={styles.horizontalLine} />
+                )}
+              </React.Fragment>
+            ))}
+          </TouchableOpacity>
+        )}
       </View>
       {isLocked ? (
-        <View style={styles.lockedOverlay}>
-          <View style={styles.lockedContainer}>
+        <View style={[styles.lockedOverlay]}>
+          <View style={[styles.lockedContainer]}>
             <Text style={styles.lockedText}>{post?.text}</Text>
             <TouchableOpacity style={styles.lockedButtonContainer}>
               <Text style={{color: '#fff'}}>
@@ -275,16 +234,38 @@ export const CustomPost = ({
           </View>
         </View>
       ) : null}
-      {post?.text &&
-        (!isGradient ? (
-          <View
-            style={[
-              styles.content,
-              {
-                backgroundColor: `${post?.hexCode}`,
-                height: heightFull ? verticalScale(290) : undefined,
-              },
-            ]}>
+      {isGradient ? (
+        <LinearGradient
+          colors={post?.hexCode}
+          style={[
+            styles.content,
+            {height: heightFull ? verticalScale(290) : undefined},
+          ]}>
+          <Text style={styles.contentText}>{post?.text}</Text>
+        </LinearGradient>
+      ) : post?.text ? (
+        <ScrollView
+          scrollEnabled={true}
+          style={[
+            {
+              position: 'relative',
+              zIndex: -1,
+              borderRadius: 10,
+              marginBottom: 10,
+              backgroundColor:
+                post?.hexCode !== undefined ||
+                post?.hexCode !== null ||
+                post?.hexCode?.length === 1
+                  ? `${post?.hexCode}`
+                  : undefined,
+              height: heightFull
+                ? verticalScale(290)
+                : post.cost !== null
+                ? verticalScale(100)
+                : undefined,
+            },
+          ]}>
+          <View style={styles.content}>
             {post?.title && (
               <Text
                 style={[
@@ -296,20 +277,16 @@ export const CustomPost = ({
             )}
             <Text style={styles.contentText}>{post?.text}</Text>
           </View>
-        ) : (
-          <LinearGradient
-            colors={post?.hexCode.split(',')}
-            style={styles.content}>
-            <Text style={styles.contentText}>{post?.text}</Text>
-          </LinearGradient>
-        ))}
-      {post?.media && (
-        <TouchableOpacity onPress={handleImagePress}>
-          <Image
-            style={styles.image}
-            source={{uri: `${s3bucketReference}/${post.media}`}}
-          />
-        </TouchableOpacity>
+        </ScrollView>
+      ) : (
+        post?.media && (
+          <TouchableOpacity onPress={handleImagePress}>
+            <Image
+              style={styles.image}
+              source={{uri: `${s3bucketReference}/${post.media}`}}
+            />
+          </TouchableOpacity>
+        )
       )}
       <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
         <View style={styles.postButtonsContainer}>
@@ -394,33 +371,23 @@ export const CustomPost = ({
                 </CustomButton>
               </View>
             </View>
-            {/* <TouchableOpacity>
+            <TouchableOpacity>
               <Image
                 source={OptionIcon}
                 style={{width: 24, height: 35, tintColor: '#fff'}}
               />
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </ScrollView>
         </Modal>
       )}
-      <Modal
-        onBackButtonPress={() => setImageFullscreen(false)}
-        isVisible={isImageFullscreen}
-        backdropOpacity={1}
-        onBackdropPress={() => setImageFullscreen(false)}
-        style={styles.fullscreenContainer}>
-        <TouchableOpacity
-          onPress={handleImageClose}
-          style={styles.fullscreenContainer}>
-          <ImageZoom
-            uri={`${s3bucketReference}/${post?.media}`}
-            minScale={1}
-            maxScale={10}
-            style={styles.imageZoom}
-            isPinchEnabled={true}
-          />
-        </TouchableOpacity>
-      </Modal>
+
+      <ImagePreview
+        handleImageClose={handleImageClose}
+        media={post?.media}
+        isImageFullscreen={isImageFullscreen}
+        width={width}
+        setImageFullscreen={setImageFullscreen}
+      />
     </View>
   );
 };
@@ -436,6 +403,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 15,
     marginHorizontal: 16,
+    position: 'relative',
   },
   postTextContainer: {
     marginLeft: horizontalScale(10),
@@ -521,9 +489,10 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: horizontalScale(16),
     paddingVertical: verticalScale(10),
-    borderRadius: 10,
-    zIndex: -1,
+    zIndex: -2,
+    position: 'relative',
     marginBottom: 10,
+    overflow: 'scroll',
   },
   contentText: {
     color: '#fff',
@@ -560,7 +529,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 999,
+    // zIndex: 999,
   },
   lockedText: {
     color: '#fff',
@@ -614,6 +583,7 @@ const styles = StyleSheet.create({
   dropdown: {
     backgroundColor: '#444545',
     position: 'absolute',
+    zIndex: 999,
     justifyContent: 'center',
     right: 10,
     width: width / 3.4,
@@ -625,26 +595,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
     top: 30,
   },
-  dropdownOption: {
-    color: '#fff',
-  },
   horizontalLine: {
     borderBottomColor: '#fff',
     borderBottomWidth: 0.5,
     paddingTop: verticalScale(5),
     marginBottom: verticalScale(5),
-  },
-  fullscreenContainer: {
-    justifyContent: 'center',
-    width: width,
-    height: 400,
-    alignItems: 'center',
-    backgroundColor: 'black',
-    margin: 0,
-    padding: 0,
-  },
-  imageZoom: {
-    width: width,
-    height: 300,
+    position: 'relative',
+    zIndex: 999,
   },
 });

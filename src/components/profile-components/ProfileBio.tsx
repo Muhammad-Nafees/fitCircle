@@ -5,16 +5,55 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Linking,
 } from 'react-native';
+import {useState, useEffect} from 'react';
 import {Twitter} from '../../../assets/icons/Twitter';
 import {Facebook} from '../../../assets/icons/Facebook';
 import {Tiktok} from '../../../assets/icons/Tiktok';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import Toast from 'react-native-toast-message';
 const Instagram = require('../../../assets/icons/Instagram.png');
 
+<<<<<<< HEAD
 export const ProfileBio = ({isTrainerView, handleBioModal}: any) => {
   const userData: any = useSelector((state: RootState) => state.auth.user);
+=======
+export const ProfileBio = ({userData, isTrainerView}: any) => {
+  const {socialMediaLinks} = userData;
+  const [twitterLink, setTwitterLink] = useState<string>('');
+  const [facebookLink, setFacebookLink] = useState<string>('');
+  const [tiktokLink, setTiktokLink] = useState<string>('');
+  const [instagramLink, setInstagramLink] = useState<string>('');
+
+  useEffect(() => {
+    const links = socialMediaLinks.map((link: any) => {
+      if (link.name == 'twitter') {
+        setTwitterLink(link.link);
+      } else if (link.name == 'instagram') {
+        setInstagramLink(link.link);
+      } else if (link.name == 'facebook') {
+        setFacebookLink(link.link);
+      } else if (link.name == 'tiktok') {
+        setTiktokLink(link.link);
+      }
+    });
+  }, []);
+
+  const handleOpenLink = (link: string) => {
+    console.log(link, 'Ss');
+    if (link == '') {
+      Toast.show({
+        type: 'error',
+        text1: 'User has not provided the link!',
+      });
+      return;
+    }
+    Linking.openURL(`http://${link}`);
+  };
+
+>>>>>>> dev
   return (
     <View style={{paddingHorizontal: 16}}>
       <ScrollView>
@@ -41,61 +80,31 @@ export const ProfileBio = ({isTrainerView, handleBioModal}: any) => {
           }
         </View>
         <View style={{flexDirection: 'row', gap: 6, paddingBottom: 18}}>
-          <Twitter />
-          <Facebook />
-          <Image source={Instagram} style={{width: 29, height: 29}} />
-          <View style={{backgroundColor: 'white', borderRadius: 40}}>
-            <Tiktok />
-          </View>
+          <TouchableOpacity
+            onPress={() => handleOpenLink(twitterLink as string)}>
+            <Twitter />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleOpenLink(facebookLink as string)}>
+            <Facebook />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleOpenLink(instagramLink as string)}>
+            <Image source={Instagram} style={{width: 29, height: 29}} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleOpenLink(tiktokLink as string)}>
+            <View style={{backgroundColor: 'white', borderRadius: 40}}>
+              <Tiktok />
+            </View>
+          </TouchableOpacity>
         </View>
         <View>
           <Text style={styles.heading}>Bio</Text>
-          {isTrainerView || userData.role === 'trainer' ? (
-            <View>
-              <Text style={styles.bioText}>
-                Starting a fitness journey can be a big commitment, but it can
-                also be a rewarding and life-changing experience. Here are some
-                steps that you can follow to start your fitness journey:
-              </Text>
-              <Text></Text>
-              <View>
-                <View style={{flexDirection: 'row'}}>
-                  <Text style={styles.bioText}>{'\t\u2022\t'}</Text>
-                  <Text style={styles.bioText}>
-                    Set realistic and achievable goals: Start by setting
-                    specific, measurable, and attainable goals, such as losing
-                    weight, improving your cardiovascular health, or building
-                    strength.
-                  </Text>
-                </View>
-                <View>
-                  <View style={{flexDirection: 'row'}}>
-                    <Text style={styles.bioText}>{'\t\u2022\t'}</Text>
-                    <Text style={styles.bioText}>
-                      Assess your starting point: Before you start, it's
-                      important to assess your current fitness level, including
-                      your physical strengths and weaknesses, so you can create
-                      a plan that is tailored to your needs.
-                    </Text>
-                  </View>
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                  <Text style={styles.bioText}>{'\t\u2022\t'}</Text>
-                  <Text style={styles.bioText}>
-                    Create an exercise plan: Choose an exercise routine that you
-                    enjoy and that fits your
-                  </Text>
-                </View>
-              </View>
-            </View>
-          ) : (
-            <Text style={styles.bioText}>
-              There comes a particular point in life once you need to stop
-              blaming people for a way you are feeling or the misfortunes in
-              your life. You can’t undergo life obsessing about what may need
-              been.
-            </Text>
-          )}
+
+          <View>
+            <Text style={styles.bioText}>{userData?.bio}</Text>
+          </View>
         </View>
       </ScrollView>
     </View>

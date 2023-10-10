@@ -27,24 +27,14 @@ import {useFocusEffect} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 interface ReelsProps {
-  // post: {
-  //   _id: string;
-  //   media: string;
-  //   content?: string;
-  //   likes: any[];
-  //   cost: 0;
-  //   thumbnail?: string;
-  //   shares: any[];
-  //   favorites: any[];
-  //   createdAt: string;
-  // };
   post: any;
-  userId: string | undefined;
-  index: number;
-  tabBarHeight: any;
+  userId?: string | undefined;
+  index?: number;
+  tabBarHeight?: any;
   isProfile?: boolean;
   handleCancelPress?: any;
   handleFavoriteDialog?: any;
+  onDeletePost: (id: string) => void;
 }
 
 export const ReelsComponent = ({
@@ -52,6 +42,7 @@ export const ReelsComponent = ({
   tabBarHeight,
   isProfile = false,
   handleCancelPress,
+  onDeletePost,
   handleFavoriteDialog,
 }: ReelsProps) => {
   const videoRef = useRef<any>(null);
@@ -80,13 +71,13 @@ export const ReelsComponent = ({
       }
     }
   };
-  console.log(videoThumbnail, 'videothumbnail');
 
   useFocusEffect(
     useCallback(() => {
       fetchThumbnail();
     }, [post]),
   );
+  console.log(videoThumbnail,"thum")
 
   // useEffect(() => {
   //   const isCurrentUserFavorited = favorites.some(
@@ -122,7 +113,7 @@ export const ReelsComponent = ({
     // if (isProfile === true) {
     //   handleFavoriteDialog();
     // } else {
-      navigation.navigate('FavoriteDialog' as never);
+    navigation.navigate('FavoriteDialog' as never);
     // }
   };
 
@@ -140,6 +131,10 @@ export const ReelsComponent = ({
         text1: `${error?.response?.data?.message}`,
       });
     }
+  };
+
+  const handleDeletePost = (id: string) => {
+    onDeletePost(id);
   };
 
   return (
@@ -163,7 +158,7 @@ export const ReelsComponent = ({
         </View>
         {isProfile && (
           <TouchableOpacity
-            onPress={handleCancelPress}
+            onPress={() => handleDeletePost(post._id)}
             style={{
               alignItems: 'flex-end',
               justifyContent: 'flex-end',
@@ -225,9 +220,27 @@ export const ReelsComponent = ({
         onLoad={() => {
           videoRef.current.seek(0);
         }}
+        playInBackground={false}
+        playWhenInactive={false}
         useTextureView={true}
+        bufferConfig={{
+          minBufferMs: 15000, // Minimum time (in milliseconds) to buffer before playback starts
+          maxBufferMs: 50000, // Maximum time (in milliseconds) to buffer ahead during playback
+          bufferForPlaybackMs: 2500, // Amount of time (in milliseconds) to buffer ahead during playback
+          bufferForPlaybackAfterRebufferMs: 5000, // Amount of time (in milliseconds) to buffer ahead after rebuffering
+        }}
       />
       <View style={styles.textContentContainer}>
+        {post?.title !== '' && (
+          <Text
+            style={[
+              styles.textContent,
+              {paddingBottom: 20, fontSize: 16, fontWeight: '700'},
+            ]}>
+            {post?.title}
+          </Text>
+        )}
+
         <Text style={styles.textContent}>{post?.text}</Text>
       </View>
       <View style={styles.iconContainer}>

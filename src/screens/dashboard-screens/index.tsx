@@ -15,7 +15,10 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 import ScheduleDashboardIcon from '../../../assets/icons/ScheduleDashboardIcon';
 import WalletDashboardIcon from '../../../assets/icons/WalletDashboard';
 import PackagesMealIcon from '../../../assets/icons/PackagesMealIcon';
-import {CustomTransaction} from '../../components/dashboard-components/CustomTransaction';
+import {
+  CustomTransaction,
+  CustomSchedule,
+} from '../../components/dashboard-components/CustomTransactionSchedule';
 import {ScheduleContainer} from '../../components/dashboard-components/ScheduleContainer';
 import {TransactionModal} from '../../components/dashboard-components/TransactionModal';
 import {HeaderContainer} from '../../components/dashboard-components/HeaderContainer';
@@ -131,13 +134,14 @@ const DashboardScreen = ({navigation}: any) => {
       <View style={[styles.bottomContainer, isTrainerAvailable && {flex: 1}]}>
         <Text style={styles.transactionText}>Last Transaction</Text>
         {userData.role === 'trainer' ? (
-          <Text
-            style={[
-              styles.transactionText,
-              {fontSize: 14, paddingVertical: 0, opacity: 0.8},
-            ]}>
-            Coming soon
-          </Text>
+          // <Text
+          //   style={[
+          //     styles.transactionText,
+          //     {fontSize: 14, paddingVertical: 0, opacity: 0.8},
+          //   ]}>
+          //   Coming soon
+          // </Text>
+          <CustomSchedule />
         ) : (
           <TouchableOpacity
             onPress={() => navigation.navigate('TransactionScreen')}>

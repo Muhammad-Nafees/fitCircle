@@ -10,12 +10,18 @@ import {NutritionData} from '../../../interfaces/extra.interface';
 import {calculateMacro} from '../../../api/dashboard-module';
 import Toast from 'react-native-toast-message';
 
+const highCarbs = `High Carb${''.padEnd(49)}50c-30p-20f`;
+const highProtein = `High Protein${''.padEnd(45)}40c-30p-30f`;
+const recommended = `Recommended${''.padEnd(40)}40c-30p-30f`;
+const lowCarbs = `Low Carb${''.padEnd(51)}40c-30p-30f`;
+const ketogenic = `Ketogenic${''.padEnd(50)}40c-30p-30f`;
+
 const presets = {
-  'High Carb': {value: 'HIGH_CARB'},
-  'High Protein': {value: 'HIGH_PROTEIN'},
-  Recommended: {value: 'RECOMMENDED'},
-  'Low Carb': {value: 'LOW_CARB'},
-  Ketogenic: {value: 'KETOGENIC'},
+  [highCarbs]: {value: 'HIGH_CARB'},
+  [highProtein]: {value: 'HIGH_PROTEIN'},
+  [recommended]: {value: 'RECOMMENDED'},
+  [lowCarbs]: {value: 'LOW_CARB'},
+  [ketogenic]: {value: 'KETOGENIC'},
 };
 
 export const MacroCalculator = ({navigation, route}: any) => {
@@ -29,28 +35,17 @@ export const MacroCalculator = ({navigation, route}: any) => {
     fatRatio: 0,
     proteinRatio: 0,
   });
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
+  const [percentageData, setPercentageData] = useState({
+    carbsPercentage: 0,
+    proteinPercentage: 0,
+    fatsPercentage: 0,
+  });
 
   const handleSubmit = () => {
-    // if (chartData._id === '') {
-    //   navigation.navigate('TdeeCalculatorScreen');
-    // } else {
-    console.log(data?.tdee);
     navigation.navigate('Chart', {
       chartData: chartData,
       dailyCalories: route.params.data.dailyCalories,
     });
-    // /}
   };
 
   const calculateMacros = async () => {
@@ -58,11 +53,30 @@ export const MacroCalculator = ({navigation, route}: any) => {
       const reqObj = {
         goal: presets[preset as keyof typeof presets].value,
         tdee: data?.tdee,
-        calorieDeficit: data?.calorieDeficit,
+        calorieDeficit: Math.abs(data?.calorieDeficit),
       };
       const response = await calculateMacro(reqObj);
       const responseData = response?.data?.data;
-      console.log(responseData, 'Resp');
+      if (reqObj.goal === 'HIGH_CARB') {
+        setPercentageData({
+          carbsPercentage: 50,
+          proteinPercentage: 30,
+          fatsPercentage: 20,
+        });
+      } else if (reqObj.goal === 'HIGH_PROTEIN') {
+        setPercentageData({
+          carbsPercentage: 40,
+          proteinPercentage: 40,
+          fatsPercentage: 20,
+        });
+      } else {
+        setPercentageData({
+          carbsPercentage: 40,
+          proteinPercentage: 30,
+          fatsPercentage: 30,
+        });
+      }
+      console.log(presets[preset as keyof typeof presets].value);
       setChartData(responseData);
     } catch (error: any) {
       console.log('error from calculate macros:', error?.response?.data);
@@ -109,20 +123,24 @@ export const MacroCalculator = ({navigation, route}: any) => {
             />
             <Text style={styles.textNote}>
               Note: To use a custom Macro setting, please visit our new and
-              improved Macro Calculator
+              improved{' '}
+              <Text style={{textDecorationLine: 'underline'}}>
+                {' '}
+                Macro Calculator
+              </Text>
             </Text>
           </View>
           <View style={{marginVertical: 20, marginRight: '60%'}}>
             <Text style={styles.heading}>Carbohydrates</Text>
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.data}>{(0).toFixed(0)}%</Text>
+            <Text style={styles.data}>{percentageData.carbsPercentage}%</Text>
             <Text style={styles.data}>
               {chartData?.carbohydrates.toFixed(0)} grams
             </Text>
           </View>
           <Slider
-            value={chartData?.carbRatio}
+            value={percentageData.carbsPercentage}
             maximumValue={100}
             onValueChange={() => null}
             style={{width: '85%'}}
@@ -135,13 +153,13 @@ export const MacroCalculator = ({navigation, route}: any) => {
             <Text style={styles.heading}>Protein</Text>
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.data}>{(0).toFixed(0)}%</Text>
+            <Text style={styles.data}>{percentageData.proteinPercentage}%</Text>
             <Text style={styles.data}>
               {chartData?.proteins.toFixed(0)} grams
             </Text>
           </View>
           <Slider
-            value={chartData.proteinRatio}
+            value={percentageData.proteinPercentage}
             maximumValue={100}
             onValueChange={() => null}
             style={{width: '85%'}}
@@ -154,11 +172,11 @@ export const MacroCalculator = ({navigation, route}: any) => {
             <Text style={styles.heading}>Fat</Text>
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.data}> {(0).toFixed(0)}%</Text>
+            <Text style={styles.data}> {percentageData.fatsPercentage}%</Text>
             <Text style={styles.data}>{chartData?.fats.toFixed(0)} grams</Text>
           </View>
           <Slider
-            value={chartData.fatRatio}
+            value={percentageData.fatsPercentage}
             maximumValue={100}
             onValueChange={() => null}
             style={{width: '85%'}}

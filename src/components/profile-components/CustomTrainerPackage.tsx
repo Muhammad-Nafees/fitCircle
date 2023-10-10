@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, {useRef, useState} from 'react';
+=======
+import React, {useState} from 'react';
+>>>>>>> dev
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {MealPlanStarIcon} from '../../../assets/icons/MealPlanStar';
 import {useNavigation} from '@react-navigation/core';
@@ -15,10 +19,15 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 export const CustomTrainerPackage = ({
   hidePriceAndPackage,
   isTrainerView,
+<<<<<<< HEAD
   handleDeleteButton,
   hidePackageButton = false,
   videoEnabled,
   packageTitle = '30 Days New Year Challenge',
+=======
+  hidePackageButton = false,
+  videoEnabled,
+>>>>>>> dev
 }: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const [isSwiped, setIsSwiped] = useState(false);
@@ -26,6 +35,7 @@ export const CustomTrainerPackage = ({
   const navigation = useNavigation();
 
   const onPressHandler = () => {
+<<<<<<< HEAD
     // if (userData?.role !== 'trainer' || isTrainerView) {
     navigation.navigate('PackageDetail', {hidePackageButton});
     // }
@@ -91,6 +101,72 @@ export const CustomTrainerPackage = ({
                   }}>
                   <Image source={PlayIcon} style={styles.playIcon} />
                 </View>
+=======
+    navigation.navigate('PackageDetail', {hidePackageButton});
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={onPressHandler}
+      style={[
+        styles.container,
+        hidePriceAndPackage && {backgroundColor: 'transparent'},
+      ]}>
+      <TouchableOpacity style={styles.imageContainer} onPress={videoEnabled}>
+        <Image source={ImagePreview} style={styles.image} />
+        {hidePriceAndPackage && (
+          <View style={styles.playIconContainer}>
+            <View
+              style={{
+                backgroundColor: 'rgba(141, 156, 152, 0.8)',
+                borderRadius: 30,
+                padding: 3,
+              }}>
+              <Image source={PlayIcon} style={styles.playIcon} />
+            </View>
+          </View>
+        )}
+      </TouchableOpacity>
+      <View style={styles.packageInfo}>
+        <View style={styles.topInfo}>
+          <Text
+            style={[
+              styles.packageTitle,
+              hidePriceAndPackage && {fontSize: 16},
+            ]}>
+            30 Days New Year Challenge
+          </Text>
+          <View style={styles.ratingContainer}>
+            {[1, 2, 3, 4, 5].map((_, index) => (
+              <MealPlanStarIcon key={index} />
+            ))}
+            <Text
+              style={[
+                styles.ratingCount,
+                hidePriceAndPackage && {fontSize: 12},
+              ]}>
+              (1,515)
+            </Text>
+          </View>
+          <Text
+            style={[
+              styles.packageDuration,
+              hidePriceAndPackage && {fontSize: 14},
+            ]}>
+            1 hour
+          </Text>
+        </View>
+        {!hidePriceAndPackage ? (
+          <View style={styles.priceContainer}>
+            <Text style={styles.price}>$100</Text>
+            {!hidePackageButton && (
+              <View>
+                {userData?.role !== 'user' ? (
+                  <Text style={styles.getPackage}>Edit this package</Text>
+                ) : (
+                  <Text style={styles.getPackage}>Get this package</Text>
+                )}
+>>>>>>> dev
               </View>
             )}
           </TouchableOpacity>
@@ -212,6 +288,7 @@ const styles = StyleSheet.create({
     width: horizontalScale(12),
     height: verticalScale(12),
     tintColor: '#fff',
+<<<<<<< HEAD
   },
   rightActionsContainer: {
     flexDirection: 'row',
@@ -229,5 +306,7 @@ const styles = StyleSheet.create({
   rightActionText: {
     color: 'white',
     fontWeight: 'bold',
+=======
+>>>>>>> dev
   },
 });

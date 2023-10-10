@@ -1,6 +1,6 @@
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
-import {View, Text, StyleSheet} from 'react-native';
-import {Avatar} from 'react-native-paper';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+const Option = require('../../../assets/icons/customPostOption.png');
 
 export const CustomTransaction = ({
   profileImageUrl,
@@ -31,13 +31,54 @@ export const CustomTransaction = ({
   );
 };
 
+export const CustomSchedule = ({
+  profileImageUrl,
+  username,
+  name,
+  time,
+  exercise,
+}: any) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.avatarName}>
+        <View>
+          <CustomProfileAvatar username="Sameer" size={48} />
+        </View>
+        <View style={[styles.nameDate, {gap: 0}]}>
+          <Text style={styles.scheduleName}>Isaac Butler</Text>
+          <Text
+            style={[
+              styles.date,
+              {fontSize: 12, color: 'rgba(255, 255, 255, 1)'},
+            ]}>
+            Back and Triceps
+          </Text>
+          <Text
+            style={[
+              styles.date,
+              {fontSize: 12, color: 'rgba(255, 255, 255, 0.65)'},
+            ]}>
+            1:00 PM- 2:00 PM
+          </Text>
+        </View>
+      </View>
+      <TouchableOpacity style={styles.amountList}>
+        <Image
+          source={Option}
+          style={{tintColor: 'white', width: 12, height: 32}}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     height: 70,
     marginHorizontal: 20,
     marginVertical: 5,
     paddingHorizontal: 20,
-    backgroundColor: '#004c58',
+    backgroundColor: 'rgba(19, 114, 140, 0.5)',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -66,5 +107,10 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 10,
     color: 'rgba(255,255,255,0.5)',
+  },
+  scheduleName: {
+    fontWeight: '400',
+    fontSize: 10,
+    color: 'rgba(32, 155, 204, 1)',
   },
 });

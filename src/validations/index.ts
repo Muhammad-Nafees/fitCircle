@@ -59,8 +59,9 @@ export const createProfileSchema = (userRole: any) => {
       .max(10, 'Username must be at most 10 characters'),
     bio: Yup.string()
       .required('Bio is required')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+      .matches(/^[A-Za-z][A-Za-z.\s]*$/, 'Invalid input')
       .min(10, 'Bio must be at least 10 characters'),
+
     phone: Yup.string().required('Phone number is required'),
     country: Yup.string().required('Select country'),
     city: Yup.string().required('Select city'),
@@ -69,7 +70,7 @@ export const createProfileSchema = (userRole: any) => {
       exclusive: true,
       message: 'Gender is required',
       test: value => {
-        if (userRole === 'trainer') {
+        if (userRole !== 'user') {
           return value !== undefined && value !== '';
         }
         return true;
@@ -179,10 +180,12 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
   email: email,
   firstName: Yup.string()
     .required('First Name is required')
-    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .min(3, 'First Name must be at least 3 characters long'),
   lastName: Yup.string()
     .required('Last Name is required')
-    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .min(3, 'Last Name must be at least 3 characters long'),
   address: Yup.string().required('Address is required'),
   city: Yup.string().required('City is required'),
   zip: Yup.string().required('ZIP code is required'),
@@ -224,7 +227,12 @@ export const PhysicalReadinessFourSchema = Yup.object().shape({
 export const PhysicalActivitySchema = Yup.object().shape({
   desiredBodyFat: Yup.number().required('This field is required'),
   desiredWeight: Yup.number().required('This field is required'),
-  desiredLeanMuscle: Yup.number().required('This field is required'),
+  desiredLeanMuscle: Yup.string()
+    .matches(
+      /^(100|\d{1,2})-(100|\d{1,2})$/,
+      'Value must be in the format of X-Y',
+    )
+    .required('This field is required'),
   exercisesPerWeek: Yup.number().required('This field is required'),
 });
 

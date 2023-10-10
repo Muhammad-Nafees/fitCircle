@@ -18,7 +18,10 @@ export const HeaderContainer = ({
           Hi, {userData?.firstName} {userData?.lastName}
         </Text>
         <View>
-          <CustomProfileAvatar username={username} />
+          <CustomProfileAvatar
+            profileImage={userData?.profileImage}
+            username={username}
+          />
         </View>
       </View>
       {isTrainerAvailable ? (

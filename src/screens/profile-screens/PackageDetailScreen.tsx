@@ -22,7 +22,10 @@ const reviewData = Array.from({length: 5});
 
 export const PackageDetailScreen = ({navigation, route}: any) => {
   const [videoVisible, setVideoVisible] = useState(false);
+<<<<<<< HEAD
   console.log(route.params, 'raosfonnsad');
+=======
+>>>>>>> dev
   const renderCustomPackageReview = () => {
     return <CustomPackageReview />;
   };
@@ -89,7 +92,10 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
           <CustomTrainerPackage
             hidePriceAndPackage={true}
             videoEnabled={videoEnabled}
+<<<<<<< HEAD
             packageTitle={packageTitle}
+=======
+>>>>>>> dev
           />
         </View>
         <View style={[styles.horizontalLine, {marginTop: 0}]} />
@@ -113,6 +119,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
         </View>
         <View style={styles.horizontalLine} />
       </View>
+<<<<<<< HEAD
       {!route.params.packageData && (
         <View style={styles.bottomContainer}>
           <Text style={styles.bottomContainerHeading}>Review ( 1,515)</Text>
@@ -124,6 +131,17 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
           />
         </View>
       )}
+=======
+      <View style={styles.bottomContainer}>
+        <Text style={styles.bottomContainerHeading}>Review ( 1,515)</Text>
+        <FlatList
+          data={reviewData}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={() => renderCustomPackageReview()}
+          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+        />
+      </View>
+>>>>>>> dev
       <Modal
         isVisible={videoVisible}
         onBackButtonPress={() => setVideoVisible(false)}
@@ -135,7 +153,11 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
         }}>
         <View style={styles.videoContainer}>
           <Video
+<<<<<<< HEAD
             source={route.params.packageData ? preview : TestVideo}
+=======
+            source={TestVideo}
+>>>>>>> dev
             style={styles.video}
             resizeMode="contain"
             onEnd={() => setVideoVisible(false)}

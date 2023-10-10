@@ -25,11 +25,12 @@ import CustomHeader from '../../../components/shared-components/CustomHeader';
 import {Unit} from '../../../components/auth-components/create-profile/GenderForm';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {format, parse} from 'date-fns';
+import {format, parse, parseISO} from 'date-fns';
 import {ITDEE} from '../../../interfaces/user.interface';
 import {calculateTdee} from '../../../api/dashboard-module';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+import {useFocusEffect} from '@react-navigation/native';
 
 export const TdeeCalculator = ({navigation, disabled}: any) => {
   const [weightUnit, setWeightUnit] = useState<Unit['kg']>('kg');
@@ -47,7 +48,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       setGoalWeightUnit(unit);
     }
   };
-  useEffect(() => {
+  useFocusEffect(() => {
     const backAction = () => {
       navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
       return true;
@@ -57,18 +58,19 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  });
 
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
+    const parsedDate = parse(values.startDate, 'dd/MM/yyyy', new Date());
+    const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+
     try {
-      const parsedDate = parse(values.startDate, 'dd/MM/yyyy', new Date());
-      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
       const reqData: ITDEE = {
         age: values.age,
         gender: values.gender.toLowerCase(),
         goal: values.goal,
-        startDate: formattedDate,
+        startDate: new Date(formattedDate),
         height: {
           value: values.height,
           unit: heightUnit,
@@ -91,6 +93,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
             .value,
       };
       setIsLoading(true);
+      console.log(reqData, 'reqData from tdee!');
       const response = await calculateTdee(reqData);
       const data = response?.data?.data;
       navigation.navigate('Results', {
@@ -98,7 +101,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       });
       setIsLoading(false);
     } catch (error: any) {
-      console.log(error?.response?.data, 'from calculate tdee');
+      console.log(error?.response, 'from calculate tdee');
       Toast.show({
         type: 'error',
         text1: `${error?.response?.data?.message}`,
@@ -171,7 +174,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                   starlabel={true}
                   placeholder="Type here"
                   value={values.age}
-                  error={errors.age}
+                  error={errors.age as string}
                   touched={touched.age}
                   initialTouched={true}
                   keyboardType="numeric"
@@ -185,6 +188,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
                   </Text>
                   <DropdownTextInput
+                    editable={true}
                     value={values.height}
                     options={['ft', 'm']}
                     placeholder="Type here"
@@ -199,7 +203,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     onSelectUnit={handleSelectUnit}
                   />
                 </View>
-                <View style={{width: '85%'}}>
+                <View style={{width: '85%', marginTop: 2}}>
                   <Text style={styles.label}>
                     Weight
                     <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
@@ -244,7 +248,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                       label="Start Date (dd/mm/yyyy)"
                       placeholder="Type here"
                       value={values.startDate}
-                      error={errors.startDate}
+                      error={errors.startDate as string}
                       touched={touched.startDate}
                       initialTouched={true}
                       handleChange={handleChange('dob')}
@@ -379,5 +383,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(68, 68, 68, 1)',
     marginVertical: 0,
     borderRadius: 0,
+  },
+  inputContainer: {
+    flex: 1,
+    marginTop: 3,
   },
 });

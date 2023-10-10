@@ -7,19 +7,23 @@ import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
 import DashboardSvgIcon from '../../assets/icons/DashboardSvgIcon';
 import DashboardScreen from '../screens/dashboard-screens/index';
-import {ProfileScreen} from '../screens/profile-screens';
-import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 import UserSchedule from '../screens/schedule-trainer-screens/UserSchedule';
 import Transaction from '../screens/dashboard-screens/Transaction';
 import MealPlanStackNavigator from './MealPlanStackNavigator';
 import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
-import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
-import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
 import PackagesScreen from '../screens/packages-screens/Packages';
 import CreatePackage from '../screens/packages-screens/CreatePackage';
 import TestDetailScreen from '../screens/profile-screens/TestDetails';
 import NotificationScreen from '../screens/profile-screens/Notification';
+import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
+import ProfileScreen from '../screens/profile-screens';
+import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
+import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
+import MessageStackNavigator from './MessageStackNavigator';
+import SettingsStackNavigator from './SettingsStackNavigator';
+import {SearchScreen} from '../screens/home-screens/SearchScreen';
+import HomeStackNavigator from './HomeStackNavigator';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -29,11 +33,6 @@ const Tab = createBottomTabNavigator();
 interface ScreenContentProps {
   title: string;
 }
-
-const MessageStackNavigator = () => <ScreenContent title="Message" />;
-const SearchScreen = () => <ScreenContent title="Search" />;
-const HomeScreen = () => <ScreenContent title="Home" />;
-const HomeStackNavigator = () => <ScreenContent title="Post" />;
 
 const ScreenContent = ({title}: ScreenContentProps) => (
   <View
@@ -215,13 +214,13 @@ const HomeTabNavigator = () => {
           ),
         }}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
           tabBarButton: () => null,
         }}
-      /> */}
+      />
       <Tab.Screen
         name="SearchProfile"
         component={SearchProfileScreen}
@@ -273,6 +272,14 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="PhysicalReadiness"
         component={PhysicalReadinessStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsStackNavigator}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,

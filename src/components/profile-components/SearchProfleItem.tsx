@@ -1,40 +1,40 @@
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {STYLES} from '../../styles/globalStyles';
 
-export const SearchProfileItem = ({item, onToggle, isRemoved}: any) => {
+export const SearchProfleItem = ({item, selectedOption, onToggle}: any) => {
   return (
     <View style={styles.profileContainer}>
       <View style={styles.profileInfo}>
-        <CustomProfileAvatar size={40} username={item.username} />
-        <View style={styles.nameContainer}>
-          <Text style={styles.name}>{item.username}</Text>
-        </View>
+        <CustomProfileAvatar
+          size={50}
+          username={item.username}
+          profileImage={item?.profileImage || item?.image}
+        />
+        {selectedOption !== 'community' && (
+          <View style={styles.nameContainer}>
+            <Text style={styles.name}>{item.username}</Text>
+          </View>
+        )}
+        {item?.members && (
+          <View style={{gap: 5, marginLeft: 10}}>
+            <Text style={STYLES.text12}>{item.name}</Text>
+            <Text style={[STYLES.text12, {fontWeight: '400'}]}>
+              {item.members.length} member
+            </Text>
+          </View>
+        )}
       </View>
       <TouchableOpacity
         style={styles.removeButtonContainer}
         onPress={() => onToggle(item._id)}>
-        <Text style={styles.remove}>{!isRemoved ? 'Remove' : 'Add'}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-export const SearchCommunityItem = ({item, onToggle, isUnsubscribed}: any) => {
-  return (
-    <View style={styles.profileContainer}>
-      <View style={styles.profileInfo}>
-        <CustomProfileAvatar size={40} profileImageUrl={item.photo} />
-        <View style={styles.nameContainer}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.members}>{`${item.membersCount} Members`}</Text>
-        </View>
-      </View>
-      <TouchableOpacity
-        style={styles.removeButtonContainer}
-        onPress={() => onToggle(item._id, item.name)}>
         <Text style={styles.remove}>
-          {!isUnsubscribed ? 'Unsubscribe' : 'Join'}
+          {selectedOption == 'followers'
+            ? 'Remove'
+            : selectedOption == 'following'
+            ? 'Unfollow'
+            : 'Unsubscribe'}
         </Text>
       </TouchableOpacity>
     </View>

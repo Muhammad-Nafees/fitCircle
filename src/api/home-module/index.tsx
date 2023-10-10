@@ -29,6 +29,9 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
   formData.append('text', reqData?.text);
   formData.append('media', reqData?.media);
   formData.append('mediaType', reqData?.mediaType);
+  if (reqData?.title) {
+    formData.append('title', reqData.title);
+  }
   if (reqData?.thumbnail) {
     formData.append('thumbnail', reqData.thumbnail);
   }
@@ -49,7 +52,30 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
 };
 
 export const createPostWithContent = async (reqData: Partial<IPost>) => {
-  const response = await api.post(`post`, reqData);
+  let formData = new FormData();
+  formData.append('text', reqData?.text);
+
+  if (reqData?.cost) {
+    formData.append('cost', reqData.cost);
+  }
+  if (reqData?.visibility) {
+    formData.append('visibility', reqData?.visibility);
+  }
+  if (reqData?.hexCode?.length == 7) {
+    formData.append('hexCode[]', reqData.hexCode);
+  } else {
+    for (let i = 0; i < reqData.hexCode.length; i++) {
+      formData.append('hexCode[]', reqData.hexCode[i]);
+    }
+  }
+
+  console.log(formData, 'dooo');
+  const response = await api.post(`post`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
   return response;
 };
 
@@ -74,6 +100,10 @@ export const getVideoPosts = async (page: number, limit: number) => {
   const response = await api.get(
     `post/search?&mediaType=video&page=${page}&limit=${limit}`,
   );
+  return response;
+};
+export const deletePost = async (postId: string) => {
+  const response = await api.put(`post/remove/${postId}`);
   return response;
 };
 

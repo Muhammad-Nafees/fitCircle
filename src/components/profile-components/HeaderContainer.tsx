@@ -11,19 +11,23 @@ import {
 import {TrainerProfileMsgIcon} from '../../../assets/icons/TrainerProfileMsg';
 import {ProfileSettingsIcon} from '../../../assets/icons/profilesettings';
 import {TrainerProfileScheduleIcon} from '../../../assets/icons/trainerProfileSchedule';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {verticalScale, horizontalScale} from '../../utils/metrics';
 import {useNavigation} from '@react-navigation/native';
+import {s3bucketReference} from '../../api';
+import {SearchProfileNavigationProp} from '../../interfaces/navigation.type';
+import {followToggle} from '../../api/profile-module';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 const Image1 = require('../../../assets/images/backgroundImage.jpg');
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 
 export const ProfileHeaderContainer = ({
   isTrainerView,
-  username,
   userData,
   followers,
-  following,
-  communities,
+  isFollowing,
+  profilePersonalData,
 }: any) => {
   const [followButtonStyle, setFollowButtonStyle] = useState(
     styles.profileButton,
@@ -31,29 +35,64 @@ export const ProfileHeaderContainer = ({
   const [subscribeButtonStyle, setSubscribeButtonStyle] = useState(
     styles.profileButton,
   );
-  const [isFollowed, setIsFollowed] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(isFollowing);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<SearchProfileNavigationProp>();
+
+  const [count, setCount] = useState<number>(0);
+  const loginUserDataId = useSelector(
+    (state: RootState) => state.auth.user?._id,
+  );
+  const [isSeachUser, setIsSearchUser] = useState<boolean>(
+    loginUserDataId === userData._id,
+  );
+
+  useEffect(() => {
+    setIsSearchUser(loginUserDataId === userData._id);
+  }, [loginUserDataId, userData._id]);
+
+  const handleFollowToggle = async () => {
+    setIsFollowed(!isFollowed);
+    if (isFollowed) {
+      setCount(prev => prev - 1);
+    } else {
+      setCount(prev => prev + 1);
+    }
+    setFollowButtonStyle(
+      isFollowed ? styles.profileButton : styles.transparentButton,
+    );
+    try {
+      const response = await followToggle(userData?._id);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'from follow toggle on search!');
+    }
+  };
+
   return (
     <ImageBackground
       style={styles.topContainer}
-      source={Image1}
+      source={{uri: `${s3bucketReference}/${userData?.coverImage}`} || Image1}
       resizeMode="cover">
       <View style={styles.topContentContainer}>
         <TouchableOpacity
           onPress={() => {
-            isTrainerView ? navigation.navigate('Search') : navigation.goBack();
+            isTrainerView
+              ? navigation.navigate('Search' as never)
+              : navigation.goBack();
           }}>
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
-          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-            {isTrainerView ? (
+          {isTrainerView ? (
+            <TouchableOpacity>
               <TrainerProfileScheduleIcon />
-            ) : (
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Settings' as never)}>
               <ProfileSettingsIcon />
-            )}
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
           {isFollowed && (
             <TouchableOpacity>
               <TrainerProfileMsgIcon />
@@ -63,13 +102,11 @@ export const ProfileHeaderContainer = ({
       </View>
       <View style={styles.headerContainer}>
         <CustomProfileAvatar
-          username={username}
+          username={userData?.username}
           size={90}
-          avatarTextStyles={styles.avatarText}
+          profileImage={userData?.profileImage as any}
         />
-        {userData?.firstName && userData?.lastName && (
-          <Text style={styles.name}>{username}</Text>
-        )}
+        <Text style={styles.name}>{userData?.username}</Text>
         {isTrainerView && (
           <View style={styles.profileButtonsContainer}>
             <TouchableHighlight
@@ -79,49 +116,46 @@ export const ProfileHeaderContainer = ({
               ]}
               activeOpacity={1}
               underlayColor="transparent"
-              onPress={() => {
-                setIsFollowed(!isFollowed);
-                setFollowButtonStyle(
-                  isFollowed ? styles.profileButton : styles.transparentButton,
-                );
-              }}>
+              onPress={handleFollowToggle}>
               <Text style={styles.profileButtonText}>
                 {isFollowed ? 'Followed' : 'Follow'}
               </Text>
             </TouchableHighlight>
-            <Text style={styles.email}>@{username}</Text>
-            <TouchableHighlight
-              style={[subscribeButtonStyle, {paddingHorizontal: 16}]}
-              activeOpacity={1}
-              onPress={() => {
-                setIsSubscribed(!isSubscribed);
-                setSubscribeButtonStyle(
-                  isSubscribed
-                    ? styles.profileButton
-                    : styles.transparentButton,
-                );
-              }}>
-              <Text style={styles.profileButtonText}>
-                {isSubscribed ? 'Subscribed' : 'Subscribe'}
-              </Text>
-            </TouchableHighlight>
+            <Text style={styles.email}>@{userData?.username}</Text>
+            {userData?.role !== 'user' && (
+              <TouchableHighlight
+                style={[subscribeButtonStyle, {paddingHorizontal: 16}]}
+                activeOpacity={1}
+                onPress={() => {
+                  setIsSubscribed(!isSubscribed);
+                  setSubscribeButtonStyle(
+                    isSubscribed
+                      ? styles.profileButton
+                      : styles.transparentButton,
+                  );
+                }}>
+                <Text style={styles.profileButtonText}>
+                  {isSubscribed ? 'Subscribed' : 'Subscribe'}
+                </Text>
+              </TouchableHighlight>
+            )}
           </View>
         )}
-        {!isTrainerView && <Text style={styles.email}>@{username}</Text>}
+        {!isTrainerView && (
+          <Text style={styles.email}>@{userData?.username}</Text>
+        )}
       </View>
       <View style={styles.rowContainer}>
-        {isTrainerView || userData?.role === 'trainer' ? (
+        {userData?.role !== 'user' ? (
           <TouchableOpacity
             style={styles.column}
             onPress={() =>
+              isSeachUser &&
               navigation.navigate('SearchProfile', {
                 default: 'community',
-                followers: followers,
-                following: following,
-                communities: communities,
               })
             }>
-            <Text style={styles.columnText}>{communities.length}</Text>
+            <Text style={styles.columnText}>0</Text>
             <Text style={[styles.columnLabel, {textDecorationLine: 'none'}]}>
               Subs
             </Text>
@@ -130,14 +164,18 @@ export const ProfileHeaderContainer = ({
         <TouchableOpacity
           style={styles.column}
           onPress={() =>
+            isSeachUser &&
             navigation.navigate('SearchProfile', {
               default: 'community',
-              followers: followers,
-              following: following,
-              communities: communities,
             })
           }>
-          <Text style={styles.columnText}>{communities.length}</Text>
+          <Text style={styles.columnText}>
+            {isSeachUser
+              ? profilePersonalData?.communitiesList !== undefined
+                ? profilePersonalData?.communitiesList?.length
+                : 0
+              : userData?.communities?.length}
+          </Text>
           <Text
             style={[
               styles.columnLabel,
@@ -149,14 +187,18 @@ export const ProfileHeaderContainer = ({
         <TouchableOpacity
           style={styles.column}
           onPress={() =>
+            isSeachUser &&
             navigation.navigate('SearchProfile', {
               default: 'following',
-              followers: followers,
-              following: following,
-              communities: communities,
             })
           }>
-          <Text style={styles.columnText}>{following.length}</Text>
+          <Text style={styles.columnText}>
+            {isSeachUser
+              ? profilePersonalData?.followingsList !== undefined
+                ? profilePersonalData?.followingsList?.length
+                : 0
+              : userData?.noOfFollowings}
+          </Text>
           <Text
             style={[
               styles.columnLabel,
@@ -168,14 +210,18 @@ export const ProfileHeaderContainer = ({
         <TouchableOpacity
           style={styles.column}
           onPress={() =>
+            isSeachUser &&
             navigation.navigate('SearchProfile', {
               default: 'followers',
-              followers: followers,
-              following: following,
-              communities: communities,
             })
           }>
-          <Text style={styles.columnText}>{followers.length}</Text>
+          <Text style={styles.columnText}>
+            {isSeachUser
+              ? profilePersonalData?.followersList !== undefined
+                ? profilePersonalData?.followersList?.length
+                : 0
+              : userData?.noOfFollowers + count}
+          </Text>
           <Text
             style={[
               styles.columnLabel,
@@ -263,8 +309,10 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   profileButtonsContainer: {
+    marginTop: 5,
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     gap: 10,
   },
   profileButton: {
