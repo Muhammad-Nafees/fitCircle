@@ -15,6 +15,9 @@ import {TransactionHistoryScreen} from '../screens/settings-screens/TransactionH
 import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
 import SubscriptionScreen from '../screens/settings-screens/Subscription';
 import PaymentStackNavigator from './PaymentStackNavigator';
+import DeleteAccountScreen from '../screens/settings-screens/DeleteAccount';
+import SupportOne from '../screens/settings-screens/Support';
+import SupportMessage from '../screens/settings-screens/SupportMessage';
 
 const Stack = createStackNavigator();
 const SettingsStackNavigator = () => {
@@ -61,6 +64,9 @@ const SettingsStackNavigator = () => {
         name="TransactionHistory"
         component={TransactionHistoryScreen}
       />
+      <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
+      <Stack.Screen name="Support" component={SupportOne} />
+      <Stack.Screen name="SupportMessage" component={SupportMessage} />
       <Stack.Screen
         name="Subscription"
         component={SubscriptionScreen}

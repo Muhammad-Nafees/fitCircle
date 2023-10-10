@@ -18,7 +18,12 @@ export const settingsData = [
     text: 'Notifications',
     routeName: 'Notification',
   },
-  {id: '3', icon: <ProfileSvgIcon color={'white'} />, text: 'Support'},
+  {
+    id: '3',
+    icon: <ProfileSvgIcon color={'white'} />,
+    text: 'Support',
+    routeName: 'Support',
+  },
   {id: '4', icon: <SettingsFaqIcon />, text: 'FAQ', routeName: 'Faq'},
   {
     id: '5',
@@ -65,5 +70,6 @@ export const settingsData = [
       />
     ),
     text: 'Delete Account',
+    routeName: 'DeleteAccount',
   },
 ];
