@@ -24,6 +24,7 @@ import MessageStackNavigator from './MessageStackNavigator';
 import SettingsStackNavigator from './SettingsStackNavigator';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
+import HomeScreen from '../screens/home-screens';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -140,7 +141,7 @@ const HomeTabNavigator = () => {
   };
   return (
     <Tab.Navigator
-      initialRouteName="Profile"
+      initialRouteName="Home"
       screenOptions={{
         unmountOnBlur: true,
         tabBarHideOnKeyboard: true,
@@ -151,8 +152,8 @@ const HomeTabNavigator = () => {
         },
       }}>
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="Home"
+        component={HomeScreen}
         options={{
           tabBarIcon: ({focused}) => (
             <View>

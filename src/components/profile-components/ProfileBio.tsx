@@ -16,10 +16,6 @@ import {RootState} from '../../redux/store';
 import Toast from 'react-native-toast-message';
 const Instagram = require('../../../assets/icons/Instagram.png');
 
-<<<<<<< HEAD
-export const ProfileBio = ({isTrainerView, handleBioModal}: any) => {
-  const userData: any = useSelector((state: RootState) => state.auth.user);
-=======
 export const ProfileBio = ({userData, isTrainerView}: any) => {
   const {socialMediaLinks} = userData;
   const [twitterLink, setTwitterLink] = useState<string>('');
@@ -53,7 +49,6 @@ export const ProfileBio = ({userData, isTrainerView}: any) => {
     Linking.openURL(`http://${link}`);
   };
 
->>>>>>> dev
   return (
     <View style={{paddingHorizontal: 16}}>
       <ScrollView>

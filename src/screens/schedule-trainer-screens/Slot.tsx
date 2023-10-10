@@ -14,14 +14,11 @@ import {enUS} from 'date-fns/locale';
 // ----------------------------------------------------------------------//
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-<<<<<<< HEAD
 import CustomHourlyRate from '../../components/buypackage-components/CustomHourlyRate';
 import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
-=======
 import {getTrainerSlotList} from '../../api/dashboard-module';
 import {useFocusEffect} from '@react-navigation/native';
 import {STYLES} from '../../styles/globalStyles';
->>>>>>> dev
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
 export const Slot = ({navigation}: any) => {
