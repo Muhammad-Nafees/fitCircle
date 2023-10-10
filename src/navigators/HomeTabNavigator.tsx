@@ -25,6 +25,7 @@ import SettingsStackNavigator from './SettingsStackNavigator';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
 import HomeScreen from '../screens/home-screens';
+import CommentScreen from '../screens/home-screens/CommentScreen';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -241,6 +242,14 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="PackageDetail"
         component={PackageDetailScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="CommentScreen"
+        component={CommentScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
