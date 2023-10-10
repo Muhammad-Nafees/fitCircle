@@ -24,20 +24,13 @@ const PaymentScreen = ({navigation}: any) => {
   const userRole = useSelector((state: RootState) => state.auth.userRole);
   const [amount, setAmount] = useState<any>('');
   const [balance, setBalance] = useState('50.00');
-  const [failedModal, setFailedModal] = useState(false);
 
   const handleAmountChange = (text: string) => {
     setAmount(text);
   };
 
   const handleModalNavigation = () => {
-    setTopupVisible(false);
-    if (amount > balance) {
-      setFailedModal(true);
-      setAmount('');
-      return;
-    }
-    navigation.navigate('PaymentMethod');
+    navigation.navigate('PaymentMethod', {amount: amount});
     setAmount('');
   };
 
@@ -62,13 +55,13 @@ const PaymentScreen = ({navigation}: any) => {
         <CustomButton onPress={() => setTopupVisible(true)}>
           Top Up
         </CustomButton>
-        {userRole === 'admin' && (
+        {userRole !== 'user' && (
           <CustomButton onPress={() => setTopupVisible(true)}>
             Withdraw
           </CustomButton>
         )}
       </View>
-      {userRole === 'admin' ? <AdminSettingsView /> : <UserSettingsView />}
+      {userRole !== 'user' ? <AdminSettingsView /> : <UserSettingsView />}
       <Modal
         isVisible={topupVisible}
         backdropColor="rgba(0, 0, 0, 0.8)"
@@ -115,22 +108,6 @@ const PaymentScreen = ({navigation}: any) => {
             </CustomButton>
           </View>
         </View>
-      </Modal>
-      <Modal
-        isVisible={failedModal}
-        onBackButtonPress={() => setFailedModal(false)}
-        onBackdropPress={() => setFailedModal(false)}
-        style={styles.modal}>
-        <CustomOutputModal
-          type="failed"
-          modalText="Insufficient wallet funds"
-          extraTextStyles={{
-            fontWeight: '600',
-            fontSize: 16,
-            color: 'rgba(255, 101, 101, 1)',
-          }}
-          onPress={() => setFailedModal(false)}
-        />
       </Modal>
     </View>
   );

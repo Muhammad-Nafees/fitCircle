@@ -23,6 +23,7 @@ export const AdminSettingsView = () => {
         extraCardNumberStyles={{color: 'white'}}
         cardNumber="**** 3257"
         extraStyles={{borderRadius: 10}}
+        onPress={() => navigation.navigate('BankPaymentMethods')}
       />
       <Text
         style={{
@@ -39,7 +40,23 @@ export const AdminSettingsView = () => {
         extraStyles={{paddingVertical: 12, borderRadius: 10}}
       />
       <Text style={styles.text1}>Payment Methods</Text>
-      <CardPayment type="Mastercard" cardNumber="**** 4637" />
+      <CardPayment
+        type="Mastercard"
+        cardNumber="**** 4637"
+        onPress={() =>
+          navigation.navigate('AddCard' as never, {
+            dummyData: {
+              type: 'Mastercard',
+              cardNumber: '1234 5678 9012 3456',
+              expiry: '12/24',
+              cvv: '123',
+              firstName: 'John',
+              lastName: 'Doe',
+              country: 'United States',
+            },
+          })
+        }
+      />
     </View>
   );
 };

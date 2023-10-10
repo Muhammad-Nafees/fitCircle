@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 90,
     textAlignVertical: 'top',
+    color: 'black',
   },
   modal: {
     backgroundColor: 'black',

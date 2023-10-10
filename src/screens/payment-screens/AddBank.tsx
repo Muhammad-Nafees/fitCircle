@@ -8,23 +8,23 @@ import {bankSchema} from '../../validations';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 const BankImage = require('../../../assets/images/bank.png');
 
-const initialValues = {
-  lastName: '',
-  firstName: '',
-  bankName: '',
-  accountNumber: '',
-  routingNumber: '',
-  country: '',
-};
-
-export const AddBankScreen = () => {
+export const AddBankScreen = ({route}: any) => {
+  const {dummyData} = route.params || {};
   const handleSubmit = values => {
     console.log(values);
   };
 
+  const initialValues = {
+    lastName: (dummyData && dummyData.lastName) || '',
+    firstName: (dummyData && dummyData.firstName) || '',
+    bankName: (dummyData && dummyData.bankName) || '',
+    accountNumber: (dummyData && dummyData.accountNumber) || '',
+    routingNumber: (dummyData && dummyData.routingNumber) || '',
+    country: (dummyData && dummyData.country) || '',
+  };
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
-      <Text style={styles.heading}>Add Bank</Text>
+      <Text style={styles.heading}>{dummyData ? 'Edit Bank' : 'Add Bank'}</Text>
       <Formik
         initialValues={initialValues}
         validationSchema={bankSchema}
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: verticalScale(40),
     marginHorizontal: verticalScale(30),
+    paddingBottom: 30,
   },
   bankImageTextContainer: {
     flexDirection: 'row',
