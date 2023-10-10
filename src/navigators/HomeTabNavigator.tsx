@@ -18,6 +18,7 @@ import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScree
 import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
 import PackagesScreen from '../screens/packages-screens/Packages';
 import CreatePackage from '../screens/packages-screens/CreatePackage';
+import TestDetailScreen from '../screens/profile-screens/TestDetails';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -139,7 +140,7 @@ const HomeTabNavigator = () => {
   };
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Profile"
       screenOptions={{
         unmountOnBlur: true,
         tabBarHideOnKeyboard: true,
@@ -150,8 +151,8 @@ const HomeTabNavigator = () => {
         },
       }}>
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Profile"
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({focused}) => (
             <View>
@@ -213,13 +214,13 @@ const HomeTabNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
           tabBarButton: () => null,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="SearchProfile"
         component={SearchProfileScreen}
@@ -231,6 +232,22 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="PackageDetail"
         component={PackageDetailScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TestDetails"
+        component={TestDetailScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TestDetails2"
+        component={TestDetailScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,

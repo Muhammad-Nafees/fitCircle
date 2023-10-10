@@ -13,7 +13,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 const Instagram = require('../../../assets/icons/Instagram.png');
 
-export const ProfileBio = ({isTrainerView}: any) => {
+export const ProfileBio = ({isTrainerView, handleBioModal}: any) => {
   const userData: any = useSelector((state: RootState) => state.auth.user);
   return (
     <View style={{paddingHorizontal: 16}}>
@@ -27,8 +27,8 @@ export const ProfileBio = ({isTrainerView}: any) => {
           <Text style={{fontSize: 12, fontWeight: '600', color: 'white'}}>
             Social Media Accounts
           </Text>
-          {isTrainerView !== true && (
-            <TouchableOpacity>
+          {
+            <TouchableOpacity onPress={handleBioModal}>
               <Text
                 style={{
                   fontSize: 12,
@@ -38,7 +38,7 @@ export const ProfileBio = ({isTrainerView}: any) => {
                 More Details
               </Text>
             </TouchableOpacity>
-          )}
+          }
         </View>
         <View style={{flexDirection: 'row', gap: 6, paddingBottom: 18}}>
           <Twitter />

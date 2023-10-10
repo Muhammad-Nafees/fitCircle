@@ -24,6 +24,7 @@ import {ProfileBio} from '../../components/profile-components/ProfileBio';
 import {ProfileSuccessModal} from '../../components/profile-components/ProfileModals';
 import {ProfileHeaderContainer} from '../../components/profile-components/HeaderContainer';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
+import BioModal from '../../components/profile-components/BioModal';
 
 export const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
@@ -41,6 +42,7 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const [firstVideoPost, setFirstVideoPost] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [removeModal, setRemoveModal] = useState(false);
+  const [bioModal, setBioModal] = useState(false);
 
   useEffect(() => {
     const backAction = () => {
@@ -77,6 +79,10 @@ export const ProfileScreen = ({navigation, route}: any) => {
   const toggleModal = () => {
     setIsModalVisible(false);
     setRemoveModal(!removeModal);
+  };
+
+  const handleBioModal = () => {
+    setBioModal(!bioModal);
   };
 
   const filteredPostsWithoutVideo = posts?.filter(
@@ -189,7 +195,9 @@ export const ProfileScreen = ({navigation, route}: any) => {
             <CustomTrainerPackage isTrainerView={isTrainerView} />
           </View>
         )}
-        {selectedOption === 'Bio' && <ProfileBio isTrainerView />}
+        {selectedOption === 'Bio' && (
+          <ProfileBio isTrainerView handleBioModal={handleBioModal} />
+        )}
         {selectedOption === 'Videos' && (
           <View style={{width: '100%'}}>
             <FlatList
@@ -249,6 +257,12 @@ export const ProfileScreen = ({navigation, route}: any) => {
           reelsModal={reelsModal}
         />
       </Modal>
+      <Modal
+        isVisible={bioModal}
+        style={styles.bottomModal}
+        backdropOpacity={0.1}>
+        <BioModal />
+      </Modal>
     </View>
   );
 };
@@ -270,6 +284,10 @@ const styles = StyleSheet.create({
     marginHorizontal: horizontalScale(10),
     paddingVertical: verticalScale(2),
     marginVertical: verticalScale(5),
+  },
+  bottomModal: {
+    justifyContent: 'flex-end',
+    margin: 0,
   },
   optionButton: {
     paddingHorizontal: horizontalScale(28),
