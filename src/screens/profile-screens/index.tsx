@@ -260,6 +260,8 @@ export const ProfileScreen = ({navigation, route}: any) => {
       <Modal
         isVisible={bioModal}
         style={styles.bottomModal}
+        onBackButtonPress={() => setBioModal(false)}
+        onBackdropPress={() => setBioModal(false)}
         backdropOpacity={0.1}>
         <BioModal />
       </Modal>

@@ -1,12 +1,17 @@
+import {useEffect} from 'react';
 import CustomButton from '../../components/shared-components/CustomButton';
 import CustomHeader from '../../components/shared-components/CustomHeader';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
 
 const TestDetailScreen = ({navigation, route}: any) => {
   const isTestDetails2 = route.name === 'TestDetails2';
   const data = [
     {label: 'Date', value: '02/28/2023'},
-    {label: 'Email', value: 'lincolnsmith@gmail.com'},
+    {
+      label: 'Email',
+      value: 'lincolnsmith@gmail.com',
+      color: 'rgba(32, 155, 204, 1)',
+    },
     {label: 'First name', value: 'Lincoln'},
     {label: 'Last name', value: 'Smith'},
     {label: 'Address', value: '123 Main St'},
@@ -123,6 +128,7 @@ const TestDetailScreen = ({navigation, route}: any) => {
     {label: 'Increase Lean Muscle'},
     {label: 'Increase Stamina'},
     {label: 'Increase Strength'},
+    {label: 'Improve Overall Health'},
     {label: 'Lose Weight'},
   ];
 
@@ -136,9 +142,29 @@ const TestDetailScreen = ({navigation, route}: any) => {
     }
   };
 
+  useEffect(() => {
+    const backAction = () => {
+      handleBackNavigation();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
+
+  const handleBackNavigation = () => {
+    if (isTestDetails2) {
+      navigation.navigate('TestDetails');
+    } else {
+      navigation.navigate('Profile');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <CustomHeader onPress={() => navigation.navigate('Profile')} />
+      <CustomHeader onPress={handleBackNavigation} />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={{paddingHorizontal: 16}}>
           <Text style={styles.heading}>Physical Activity Readiness</Text>

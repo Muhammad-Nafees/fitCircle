@@ -23,6 +23,7 @@ interface OutputModalProps {
   type: 'success' | 'failed';
   onPress: any;
   modalText: string;
+  buttonText?: string;
 }
 
 export const CustomConfirmationModal = ({
@@ -91,6 +92,7 @@ export const CustomOutputModal = ({
   onPress,
   extraTextStyles,
   modalText,
+  buttonText = 'Return',
 }: OutputModalProps) => {
   return (
     <View style={[styles.modalContent, {backgroundColor: 'transparent'}]}>
@@ -106,7 +108,7 @@ export const CustomOutputModal = ({
           {modalText}
         </Text>
         <View style={{width: '75%', marginTop: verticalScale(25)}}>
-          <CustomButton onPress={onPress}>Return</CustomButton>
+          <CustomButton onPress={onPress}>{buttonText}</CustomButton>
         </View>
       </View>
     </View>

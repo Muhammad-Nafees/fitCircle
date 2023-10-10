@@ -19,6 +19,7 @@ import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
 import PackagesScreen from '../screens/packages-screens/Packages';
 import CreatePackage from '../screens/packages-screens/CreatePackage';
 import TestDetailScreen from '../screens/profile-screens/TestDetails';
+import NotificationScreen from '../screens/profile-screens/Notification';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -224,6 +225,14 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="SearchProfile"
         component={SearchProfileScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Notification"
+        component={NotificationScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
