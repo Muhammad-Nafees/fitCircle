@@ -34,6 +34,19 @@ const BankPaymentMethodsScreen = ({navigation}: any) => {
             cardNumber="**** 4637"
             deleteIcon={true}
             handleCardDelete={handleCardDelete}
+            onPress={() =>
+              navigation.navigate('AddCard' as never, {
+                dummyData: {
+                  type: 'Mastercard',
+                  cardNumber: '1234 5678 9012 3456',
+                  expiry: '12/24',
+                  cvv: '123',
+                  firstName: 'John',
+                  lastName: 'Doe',
+                  country: 'United States',
+                },
+              })
+            }
           />
           <Text style={styles.miniText}>
             You can use multiple payment methods
@@ -41,6 +54,7 @@ const BankPaymentMethodsScreen = ({navigation}: any) => {
           <CustomPaymentMethod
             text={'Add Payment Method'}
             onPress={() => navigation.navigate('AddPayment')}
+            arrowColor={'rgba(41, 45, 50, 1)'}
           />
         </View>
         <View style={styles.contentContainer}>
@@ -54,6 +68,18 @@ const BankPaymentMethodsScreen = ({navigation}: any) => {
             cardNumber="**** 3257"
             deleteIcon={true}
             handleCardDelete={handleCardDelete}
+            onPress={() =>
+              navigation.navigate('AddBank' as never, {
+                dummyData: {
+                  lastName: 'Smith',
+                  firstName: 'Lincoln',
+                  bankName: 'Something',
+                  accountNumber: '123456789',
+                  routingNumber: '123456789',
+                  country: 'United States',
+                },
+              })
+            }
           />
           <Text style={styles.miniText}>
             You can add multiple bank accounts
@@ -61,6 +87,7 @@ const BankPaymentMethodsScreen = ({navigation}: any) => {
           <CustomPaymentMethod
             text={'Add Bank Account'}
             onPress={() => navigation.navigate('AddBank')}
+            arrowColor={'rgba(41, 45, 50, 1)'}
           />
         </View>
         <View style={styles.contentContainer}>
