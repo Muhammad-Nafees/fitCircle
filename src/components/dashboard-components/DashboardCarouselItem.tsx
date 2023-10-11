@@ -18,7 +18,7 @@ export const DashboardCarouselItem = ({
         isDropdownVisible && (
           <View style={styles.dropdown}>
             <Text
-              onPress={() => console.log('Packages')}
+              onPress={() => item.selectOption('Packages')}
               style={styles.dropdownOption}>
               Packages
             </Text>
@@ -55,12 +55,11 @@ const styles = {
     lineHeight: 11.77,
   },
   dropdown: {
-    top: 100,
+    bottom: 0,
     position: 'absolute',
     backgroundColor: 'rgba(68, 68, 68, 1)',
     borderRadius: 5,
-    width: 110,
-    left: 5,
+    width: horizontalScale(106),
     zIndex: 9999999,
     justifyContent: 'center',
     alignItems: 'center',

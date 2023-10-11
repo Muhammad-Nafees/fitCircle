@@ -42,6 +42,14 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
     return () => backHandler.remove();
   }, [navigation]);
 
+  const {
+    hours = '1',
+    packageDescription = 'A great routine for biceps and triceps workout!',
+    cost = '100.00',
+    preview,
+    packageTitle = '30 Days New Year Challenge',
+  } = route.params.packageData || {};
+
   return (
     <View style={styles.container}>
       <View style={{paddingHorizontal: 16}}>
@@ -80,6 +88,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
           <CustomTrainerPackage
             hidePriceAndPackage={true}
             videoEnabled={videoEnabled}
+            packageTitle={packageTitle}
           />
         </View>
         <View style={[styles.horizontalLine, {marginTop: 0}]} />
@@ -87,22 +96,33 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
           <Text style={styles.heading2}>Description</Text>
           <Text
             style={[styles.paragraph1, {paddingVertical: verticalScale(16)}]}>
-            A great routine for biceps and triceps workout!
+            {packageDescription}
           </Text>
           <Text style={styles.heading2}>Duration</Text>
           <View style={styles.timeContainer}>
             <Text style={styles.paragraph1}>Length</Text>
-            <Text style={styles.duration}>1 HOUR</Text>
+            <Text style={styles.duration}>{hours} HOUR</Text>
           </View>
         </View>
         <View style={styles.horizontalLine} />
         <Text style={styles.heading2}>Service Cost</Text>
         <View style={styles.amountContainer}>
           <Text style={styles.paragraph1}>Package Cost</Text>
-          <Text style={styles.duration}>$100.00</Text>
+          <Text style={styles.duration}>${cost}</Text>
         </View>
         <View style={styles.horizontalLine} />
       </View>
+      {!route.params.packageData && (
+        <View style={styles.bottomContainer}>
+          <Text style={styles.bottomContainerHeading}>Review ( 1,515)</Text>
+          <FlatList
+            data={reviewData}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={() => renderCustomPackageReview()}
+            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+          />
+        </View>
+      )}
       <View style={styles.bottomContainer}>
         <Text style={styles.bottomContainerHeading}>Review ( 1,515)</Text>
         <FlatList
@@ -123,7 +143,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
         }}>
         <View style={styles.videoContainer}>
           <Video
-            source={TestVideo}
+            source={route.params.packageData ? preview : TestVideo}
             style={styles.video}
             resizeMode="contain"
             onEnd={() => setVideoVisible(false)}

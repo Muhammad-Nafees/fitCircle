@@ -8,9 +8,14 @@ import {MealPlanThree} from '../screens/dashboard-screens/meal-plan-screens/Meal
 import {MealPlanFour} from '../screens/dashboard-screens/meal-plan-screens/MealPlanFour';
 import RequestMealPlan from '../screens/dashboard-screens/meal-plan-screens/RequestMealPlan';
 import HomeTabNavigator from './HomeTabNavigator';
+import CreateMealPlan from '../screens/dashboard-screens/meal-plan-screens/CreateMealPlan';
+import {RootState} from '../redux/store';
+import {useSelector} from 'react-redux';
+import UploadMealPlan from '../screens/dashboard-screens/meal-plan-screens/UploadMealPlan';
 
 const Stack = createStackNavigator();
 const MealPlanStackNavigator = () => {
+  const userRole: any = useSelector((state: RootState) => state.auth.userRole);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -19,7 +24,9 @@ const MealPlanStackNavigator = () => {
         title: '',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="MealPlanOne">
+      initialRouteName={userRole !== 'user' ? 'CreateMealPlan' : 'MealPlanOne'}>
+      <Stack.Screen name="CreateMealPlan" component={CreateMealPlan} />
+      <Stack.Screen name="UploadMealPlan" component={UploadMealPlan} />
       <Stack.Screen name="MealPlanOne" component={MealPlanOne} />
       <Stack.Screen name="MealPlanTwo" component={MealPlanTwo} />
       <Stack.Screen name="MealPlanThree" component={MealPlanThree} />

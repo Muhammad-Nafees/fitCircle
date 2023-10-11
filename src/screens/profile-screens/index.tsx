@@ -22,6 +22,7 @@ import {communitiesData, followersData, followingData} from '../dummyData';
 import {ProfileBio} from '../../components/profile-components/ProfileBio';
 import {ProfileHeaderContainer} from '../../components/profile-components/HeaderContainer';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
+import BioModal from '../../components/profile-components/BioModal';
 import {
   getFollowersList,
   getFollowingList,
@@ -54,6 +55,7 @@ const ProfileScreen = ({navigation, route}: any) => {
   const [reelsModal, setReelsModal] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [removeModal, setRemoveModal] = useState(false);
+  const [bioModal, setBioModal] = useState(false);
 
   const [page, setPage] = useState<number>(1);
   const [videoPage, setVideoPage] = useState<number>(1);
@@ -133,6 +135,10 @@ const ProfileScreen = ({navigation, route}: any) => {
   const toggleModal = () => {
     setIsModalVisible(false);
     setRemoveModal(!removeModal);
+  };
+
+  const handleBioModal = () => {
+    setBioModal(!bioModal);
   };
 
   const handleCommentButtonPress = (selectedPost: any, userId: any) => {
@@ -411,7 +417,7 @@ const ProfileScreen = ({navigation, route}: any) => {
           </View>
         )}
         {selectedOption === 'Bio' && (
-          <ProfileBio userData={profileData} isTrainerView />
+          <ProfileBio isTrainerView handleBioModal={handleBioModal} />
         )}
         {selectedOption === 'Videos' && (
           <View style={{width: '100%'}}>
@@ -479,6 +485,14 @@ const ProfileScreen = ({navigation, route}: any) => {
           reelsModal={reelsModal}
         />
       </Modal>
+      <Modal
+        isVisible={bioModal}
+        style={styles.bottomModal}
+        onBackButtonPress={() => setBioModal(false)}
+        onBackdropPress={() => setBioModal(false)}
+        backdropOpacity={0.1}>
+        <BioModal />
+      </Modal>
     </View>
   );
 };
@@ -500,6 +514,10 @@ const styles = StyleSheet.create({
     marginHorizontal: horizontalScale(10),
     paddingVertical: verticalScale(2),
     marginVertical: verticalScale(5),
+  },
+  bottomModal: {
+    justifyContent: 'flex-end',
+    margin: 0,
   },
   optionButton: {
     paddingHorizontal: horizontalScale(28),

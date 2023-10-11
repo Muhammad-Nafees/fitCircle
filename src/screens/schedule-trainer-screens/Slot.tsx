@@ -14,6 +14,8 @@ import {enUS} from 'date-fns/locale';
 // ----------------------------------------------------------------------//
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import CustomHourlyRate from '../../components/buypackage-components/CustomHourlyRate';
+import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
 import {getTrainerSlotList} from '../../api/dashboard-module';
 import {useFocusEffect} from '@react-navigation/native';
 import {STYLES} from '../../styles/globalStyles';
@@ -21,6 +23,9 @@ const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
 export const Slot = ({navigation}: any) => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const packageView = true;
+  const hourlyRate: boolean = false;
+  const price = '$20.00';
   const months = [
     'JAN',
     'FEB',
@@ -121,9 +126,18 @@ export const Slot = ({navigation}: any) => {
         </TouchableOpacity>
         <Text style={styles.heading}>Schedule</Text>
       </View>
+      {hourlyRate && <CustomHourlyRate />}
+      {packageView && <CustomTrainerPackage hidePackageButton={true} />}
       <TouchableOpacity
         style={styles.calenderButton}
-        onPress={() => navigation.navigate('SetSchedule', {selectedMonth})}>
+        onPress={() =>
+          navigation.navigate('SetSchedule', {
+            selectedMonth,
+            hourlyRate,
+            price,
+            packageView,
+          })
+        }>
         <View style={styles.buttonContent}>
           <Text style={styles.buttonText}>{selectedMonth}</Text>
           <ArrowForward />

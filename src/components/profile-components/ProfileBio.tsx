@@ -61,8 +61,8 @@ export const ProfileBio = ({userData, isTrainerView}: any) => {
           <Text style={{fontSize: 12, fontWeight: '600', color: 'white'}}>
             Social Media Accounts
           </Text>
-          {isTrainerView !== true && (
-            <TouchableOpacity>
+          {
+            <TouchableOpacity onPress={handleBioModal}>
               <Text
                 style={{
                   fontSize: 12,
@@ -72,7 +72,7 @@ export const ProfileBio = ({userData, isTrainerView}: any) => {
                 More Details
               </Text>
             </TouchableOpacity>
-          )}
+          }
         </View>
         <View style={{flexDirection: 'row', gap: 6, paddingBottom: 18}}>
           <TouchableOpacity

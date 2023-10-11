@@ -2,10 +2,6 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {View, Text, Image, Keyboard} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import HomeScreen from '../screens/home-screens';
-import {SearchScreen} from '../screens/home-screens/SearchScreen';
-import HomeStackNavigator from './HomeStackNavigator';
-import CommentsScreen from '../screens/home-screens/CommentScreen';
 import HomeSvgIcon from '../../assets/icons/HomeSvgIcon';
 import SearchSvgIcon from '../../assets/icons/SearchSvgIcon';
 import MessageSvgIcon from '../../assets/icons/MessageSvgIcon';
@@ -16,13 +12,20 @@ import Transaction from '../screens/dashboard-screens/Transaction';
 import MealPlanStackNavigator from './MealPlanStackNavigator';
 import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
+import PackagesScreen from '../screens/packages-screens/Packages';
+import CreatePackage from '../screens/packages-screens/CreatePackage';
+import TestDetailScreen from '../screens/profile-screens/TestDetails';
+import NotificationScreen from '../screens/profile-screens/Notification';
 import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
-import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
 import ProfileScreen from '../screens/profile-screens';
 import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
 import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 import MessageStackNavigator from './MessageStackNavigator';
 import SettingsStackNavigator from './SettingsStackNavigator';
+import {SearchScreen} from '../screens/home-screens/SearchScreen';
+import HomeStackNavigator from './HomeStackNavigator';
+import HomeScreen from '../screens/home-screens';
+import CommentScreen from '../screens/home-screens/CommentScreen';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -214,17 +217,25 @@ const HomeTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="FavoriteDialog"
-        component={FavoriteDialogScreen}
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="SearchProfile"
+        component={SearchProfileScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="Notification"
+        component={NotificationScreen}
         options={{
+          tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
       />
@@ -237,17 +248,32 @@ const HomeTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="SearchProfile"
-        component={SearchProfileScreen}
+        name="CommentScreen"
+        component={CommentScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
       />
-
       <Tab.Screen
-        name="CommentsScreen"
-        component={CommentsScreen}
+        name="TestDetails"
+        component={TestDetailScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="TestDetails2"
+        component={TestDetailScreen}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="CreatePackageScreen"
+        component={CreatePackage}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
@@ -288,6 +314,14 @@ const HomeTabNavigator = () => {
       <Tab.Screen
         name="MealPlanScreen"
         component={MealPlanStackNavigator}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="PackagesScreen"
+        component={PackagesScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
