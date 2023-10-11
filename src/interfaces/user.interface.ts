@@ -114,7 +114,7 @@ export interface IMacro {
 }
 
 export interface IPhysicalActivity {
-  date: Date | string;
+  date: Date | string | any;
   email: string;
   firstName: string;
   lastName: string;

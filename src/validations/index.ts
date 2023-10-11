@@ -47,11 +47,12 @@ export const createProfileSchema = (userRole: any) => {
   return Yup.object().shape({
     firstName: Yup.string()
       .required('First Name is required')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
-
+      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+      .min(3, 'First name must be at least 3 characters'),
     lastName: Yup.string()
       .required('Last Name is required')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+      .min(3, 'Last name must be at least 3 characters'),
     username: Yup.string()
       .required('Username is required')
       .matches(/^[A-Za-z0-9]+$/, 'Invalid input: No spaces allowed')
@@ -186,8 +187,12 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
     .required('Last Name is required')
     .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
     .min(3, 'Last Name must be at least 3 characters long'),
-  address: Yup.string().required('Address is required'),
-  city: Yup.string().required('City is required'),
+  address: Yup.string()
+    .required('Address is required')
+    .min(3, 'address must be at least 3 characters long'),
+  city: Yup.string()
+    .required('City is required')
+    .min(3, 'city must be at least 3 characters long'),
   zip: Yup.string().required('ZIP code is required'),
   homePhone: Yup.string().required('Home phone is required'),
   cellPhone: Yup.string().required('Cell phone is required'),

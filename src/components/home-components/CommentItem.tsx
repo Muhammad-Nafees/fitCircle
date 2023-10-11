@@ -40,8 +40,8 @@ const CommentItem = ({comment, onReply, isNested}: Props) => {
         marginTop: isNested ? 10 : undefined,
       }}>
       <CustomProfileAvatar
-        profileImage={comment?.user.profileImage as any}
-        username={comment?.user.firstName.charAt(0) as string}
+        profileImage={comment?.user?.profileImage as any}
+        username={comment?.user?.firstName?.charAt(0) as string}
       />
       <View style={{gap: 4}}>
         <View style={[styles.commentContainer, {width: isNested ? 210 : 260}]}>

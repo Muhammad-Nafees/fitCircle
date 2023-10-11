@@ -29,6 +29,7 @@ import CustomHeader from '../../../components/shared-components/CustomHeader';
 import {Unit} from '../../../components/auth-components/create-profile/GenderForm';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
+import {IPhysicalActivity} from '../../../interfaces/user.interface';
 
 export const VerificationOne = ({
   navigation,
@@ -43,6 +44,7 @@ export const VerificationOne = ({
   const [phoneCode, setPhoneCode] = useState('1');
   const [weightUnit, setWeightUnit] = useState<Unit['kg']>('kg');
   const [heightUnit, setHeightUnit] = useState<Unit['ft']>('ft');
+  console.log(phoneCode, 'phoneCode');
 
   const handleSelectUnit = (unit: keyof Unit, type: string) => {
     if (type == 'kg') {
@@ -69,8 +71,9 @@ export const VerificationOne = ({
     }
     const parsedDate = parse(values.date, 'dd/MM/yyyy', new Date());
     const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+    const {phone, ...VALUESWithoutPhone} = values;
     const VALUES = {
-      ...values,
+      ...VALUESWithoutPhone,
       weight: {
         value: values.weight,
         unit: weightUnit,
@@ -79,6 +82,7 @@ export const VerificationOne = ({
         value: values.height,
         unit: heightUnit,
       },
+      homePhone: values.cellPhone,
       date: formattedDate,
       cellPhone: `+${phoneCode}${values.cellPhone}`,
     };
@@ -392,7 +396,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: moderateScale(15),
     marginHorizontal: horizontalScale(30),
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   inputContainer: {
     flex: 1,
