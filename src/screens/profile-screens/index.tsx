@@ -417,7 +417,7 @@ const ProfileScreen = ({navigation, route}: any) => {
           </View>
         )}
         {selectedOption === 'Bio' && (
-          <ProfileBio isTrainerView handleBioModal={handleBioModal} />
+          <ProfileBio isTrainerView handleBioModal={handleBioModal} userData={profileData} />
         )}
         {selectedOption === 'Videos' && (
           <View style={{width: '100%'}}>
