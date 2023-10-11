@@ -67,17 +67,3 @@ index e518000..2754dea 100644
          </Text>
        )}
      </TouchableOpacity>
-diff --git a/node_modules/react-native-select-dropdown/src/styles.js b/node_modules/react-native-select-dropdown/src/styles.js
-index 4115f96..e8d37ac 100644
---- a/node_modules/react-native-select-dropdown/src/styles.js
-+++ b/node_modules/react-native-select-dropdown/src/styles.js
-@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
-     flex: 1,
-     fontSize: 18,
-     color: '#000000',
--    textAlign: 'center',
-     marginHorizontal: 8,
-+    width: '99%'
-   },
-   dropdownCustomizedRowParent: {
-     flex: 1,

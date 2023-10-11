@@ -248,7 +248,7 @@ const HomeTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="CommentScreen"
+        name="CommentsScreen"
         component={CommentScreen}
         options={{
           tabBarStyle: {display: 'none'},

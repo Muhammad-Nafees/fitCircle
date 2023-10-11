@@ -249,8 +249,6 @@ export const AddPostScreen = ({route}: any) => {
 
   // api call here
   const handleCreatePost = async () => {
-    console.log(textInputBackgroundColor, 'bg');
-    console.log(videoUri, mediaUri, textInputValue);
     if (textInputValue == '') {
       Toast.show({
         type: 'error',
@@ -270,8 +268,10 @@ export const AddPostScreen = ({route}: any) => {
           type: mediaUri?.type as string,
           uri: result,
         };
+        const cleanedText = textInputValue.replace(/\n{3,}/g, '\n\n').trim();
+
         const reqData: Partial<IPost> = {
-          text: textInputValue,
+          text: cleanedText,
           media: compressedImage,
           mediaType: 'image',
           visibility: visibility,
@@ -287,8 +287,9 @@ export const AddPostScreen = ({route}: any) => {
           text1: `${response?.data.message}`,
         });
       } else {
+        const cleanedText = textInputValue.replace(/\n{3,}/g, '\n\n').trim();
         const reqData: Partial<IPost> = {
-          text: textInputValue,
+          text: cleanedText,
           hexCode:
             textInputBackgroundColor === 'transparent'
               ? ['#292A2C']

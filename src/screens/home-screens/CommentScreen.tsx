@@ -61,9 +61,10 @@ const CommentsScreen = ({route, navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(100);
+  const [limit, setLimit] = useState<number>(2);
   const [hasMoreComments, setHasMoreComments] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState<boolean>(false);
+  const [noComments, setNoComments] = useState<boolean>(true);
 
   const handlePhotoButtonPress = async () => {
     setMediaUri(null);
@@ -82,7 +83,6 @@ const CommentsScreen = ({route, navigation}: any) => {
       }
     });
   };
-  console.log(selectedPost,"from ccomment")
 
   useFocusEffect(
     useCallback(() => {
@@ -100,21 +100,32 @@ const CommentsScreen = ({route, navigation}: any) => {
             limit,
             page,
           );
-          console.log(route.params.id, 'id');
           const data = response?.data?.data;
+          console.log(data);
+          setTimeout(() => {
+            if (data?.comments?.length === 0) {
+              console.log(data.length, 'Ss');
+              setNoComments(true);
+            } else {
+              setNoComments(false);
+            }
+          }, 2000);
           const sortedData = data?.comments.sort((sortA: any, sortB: any) => {
-            const dateA = new Date(sortA.createdAt);
-            const dateB = new Date(sortB.createdAt);
+            const dateA: any = new Date(sortA.createdAt);
+            const dateB: any = new Date(sortB.createdAt);
             return dateA - dateB;
           });
 
-          if (loadMore) {
-            setComments((prev: any) => [...sortedData, ...prev]);
+          if (comments && loadMore) {
+            setComments((prevComments: any) => {
+              return [...sortedData];
+            });
           } else {
             setComments(sortedData);
           }
-          dispatch(setCommentCount(data?.pagination?.totalItems));
+          dispatch(setCommentCount(sortedData?.length));
           setCommentsCount(data?.pagination?.totalItems);
+          setLoadMore(false);
           setHasMoreComments(data?.pagination?.hasNextPage);
         } catch (error: any) {
           console.log('errorfrom fetching comments', error);
@@ -122,13 +133,14 @@ const CommentsScreen = ({route, navigation}: any) => {
         setLoading(false);
       };
       getComments();
-    }, [isLoading, route.params.id, page, limit]),
+    }, [isLoading, page]),
   );
 
   const handleLoadMoreComments = () => {
     if (hasMoreComments) {
       setLoadMore(true);
       setPage(prevPage => prevPage + 1);
+      setLimit(prevLimit => prevLimit + 10);
     }
   };
 
@@ -183,7 +195,6 @@ const CommentsScreen = ({route, navigation}: any) => {
         media: mediaUri || compressedImage,
         ...(replyId !== '' && {parent: replyId}),
       };
-      console.log(reqData, 'req');
       setIsLoading(true);
       const response = await addComment(reqData);
       const data = response?.data.data;
@@ -227,7 +238,6 @@ const CommentsScreen = ({route, navigation}: any) => {
             commentCount={commentsCount}
             isCommentsScreenActive={commentScreenActive}
             // handleBackPress={handleBackPress}
-            isLoading={isLoading}
             heightFull={!selectedPost?.media}
           />
         </View>
@@ -240,9 +250,10 @@ const CommentsScreen = ({route, navigation}: any) => {
             nestedScrollEnabled={true}
             keyboardShouldPersistTaps="always">
             {
-              // loading ? (
+              // isLoading ? (
               //   <CustomLoader isStyle={true} extraStyles={{marginTop: 80}} />
-              comments?.length !== 0 ? (
+              // ) :
+              comments && comments?.length > 0 ? (
                 <Comment
                   allComments={comments}
                   commentsCount={commentsCount}
@@ -251,13 +262,13 @@ const CommentsScreen = ({route, navigation}: any) => {
                   onReply={handleReply}
                 />
               ) : (
-                <NoComment />
+                noComments && <NoComment />
               )
             }
             {comments && comments.length > 0 ? (
               <View
                 style={{
-                  height: comments.length < 3 ? 120 : 70,
+                  height: comments.length < 2 ? 120 : 70,
                   backgroundColor: '#ffffff',
                 }}
               />

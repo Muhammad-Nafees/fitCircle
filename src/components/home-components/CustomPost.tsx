@@ -20,7 +20,11 @@ const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 import CustomButton from '../shared-components/CustomButton';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import Toast from 'react-native-toast-message';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {s3bucketReference} from '../../api';
@@ -36,9 +40,9 @@ const height = Dimensions.get('window').height;
 interface CustomPostProps {
   isCommentsScreenActive?: boolean;
   handleCommentButtonPress?: (post: any, id: string) => void;
-  handleBackPress: () => void;
+  handleBackPress?: () => void;
   isPersonalProfile?: boolean;
-  post: any;
+  post?: any;
   heightFull?: boolean;
   commentCount?: any;
   onEditDeletePost?: (type: string, postId: string) => void;
@@ -54,7 +58,6 @@ export const CustomPost = ({
   commentCount,
   onEditDeletePost,
 }: CustomPostProps) => {
-  console.log(post.hexCode, 'myPost');
   const [isShareModalVisible, setShareModalVisible] = useState(false);
   const [likesCount, setLikesCount] = useState(post?.likes?.length);
   const [commentsCount, setCommentsCount] = useState<number | null>(0);
@@ -64,14 +67,13 @@ export const CustomPost = ({
   const navigation = useNavigation();
 
   const isLocked = post?.cost && post?.cost > 0;
-
   useFocusEffect(
     useCallback(() => {
       if (post && commentCount) {
         setCommentsCount(commentCount);
       }
       if (post && !commentCount) {
-        setCommentsCount(post.comments.length);
+        setCommentsCount(post?.comments?.length);
       }
     }, [post, commentCount]),
   );
@@ -128,17 +130,30 @@ export const CustomPost = ({
   };
   let isGradient =
     (post?.hexCode && post.hexCode?.length === 2) || post.hexCode?.length === 3;
-  console.log(isGradient, 'isGra');
 
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const dropdownOptions = ['Edit', 'Delete'];
-  const [isSeeMore, setIsSeeMore] = useState<boolean>(false);
 
   const handleOptionSelect = (option: string, id: string) => {
     setDropdownVisible(false);
     if (onEditDeletePost) {
       onEditDeletePost(option, id);
     }
+  };
+  const route = useRoute();
+  const [showFullContent, setShowFullContent] = useState(false);
+  const thresholdLines = post?.media ? 7 : 15; // Set your threshold here
+
+  const contentToShow = post?.text
+    ? showFullContent
+      ? post.text
+      : post.text.split('\n').slice(0, thresholdLines).join('\n')
+    : '';
+    console.log(contentToShow,"contentToShow",contentToShow.length,"contentToLength")
+
+
+  const toggleShowMore = () => {
+    setShowFullContent(!showFullContent);
   };
 
   return (
@@ -241,9 +256,19 @@ export const CustomPost = ({
             styles.content,
             {height: heightFull ? verticalScale(290) : undefined},
           ]}>
-          <Text style={styles.contentText}>{post?.text}</Text>
+          <ScrollView scrollEnabled={true}>
+            <Text style={styles.contentText}>{contentToShow}</Text>
+            {contentToShow ? (
+              <TouchableOpacity onPress={toggleShowMore}>
+                <Text style={{color: 'blue'}}>
+                  {/* See More */}
+                  {showFullContent ? 'See Less' : 'See More'}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+          </ScrollView>
         </LinearGradient>
-      ) : post?.text ? (
+      ) : (
         <ScrollView
           scrollEnabled={true}
           style={[
@@ -262,7 +287,9 @@ export const CustomPost = ({
                 ? verticalScale(290)
                 : post.cost !== null
                 ? verticalScale(100)
-                : undefined,
+                : // : !post?.media
+                  // ? verticalScale(200)
+                  undefined,
             },
           ]}>
           <View style={styles.content}>
@@ -275,18 +302,26 @@ export const CustomPost = ({
                 {post?.title}
               </Text>
             )}
-            <Text style={styles.contentText}>{post?.text}</Text>
+            <Text style={styles.contentText}>{contentToShow}</Text>
+            {contentToShow?.length > 20 ? (
+              <TouchableOpacity onPress={toggleShowMore}>
+                <Text style={{color: 'blue'}}>
+                  {/* See More */}
+                  {showFullContent ? 'See Less' : 'See More'}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </ScrollView>
-      ) : (
-        post?.media && (
-          <TouchableOpacity onPress={handleImagePress}>
-            <Image
-              style={styles.image}
-              source={{uri: `${s3bucketReference}/${post.media}`}}
-            />
-          </TouchableOpacity>
-        )
+      )}
+
+      {post?.media && (
+        <TouchableOpacity onPress={handleImagePress}>
+          <Image
+            style={styles.image}
+            source={{uri: `${s3bucketReference}/${post.media}`}}
+          />
+        </TouchableOpacity>
       )}
       <View style={[styles.postButtons, isLocked ? {zIndex: 9999} : null]}>
         <View style={styles.postButtonsContainer}>

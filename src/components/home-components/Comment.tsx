@@ -25,24 +25,23 @@ const Comment = ({
   onReply,
   onLoadComments,
 }: Props) => {
-  console.log(allComments,"allcmnts!!!!!s")
   return (
     <View style={styles.container}>
-      {/* {hasMoreComments && commentsCount > 3 && (
+      {hasMoreComments && commentsCount > 2 && (
         <TouchableOpacity onPress={onLoadComments}>
           <Text
             style={{
               color: 'rgba(40, 88, 144, 1)',
               fontWeight: '500',
-              fontSize: 11,
+              fontSize: 12,
             }}>
             {' '}
             View previous comments
           </Text>
         </TouchableOpacity>
-      )} */}
+      )}
       {allComments?.map((comment: any, index: number) => (
-        <View key={comment._id + index} style={{marginTop: 20}}>
+        <View key={comment._id + index} style={{marginTop: 8}}>
           <CommentItem comment={comment} index={index} onReply={onReply} />
 
           {comment?.nestedComments?.length > 0 &&
@@ -65,6 +64,7 @@ export default Comment;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
+    paddingTop: 10,
     paddingBottom: 20,
     backgroundColor: '#ffffff',
     gap: 10,
