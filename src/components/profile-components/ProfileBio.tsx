@@ -16,7 +16,7 @@ import {RootState} from '../../redux/store';
 import Toast from 'react-native-toast-message';
 const Instagram = require('../../../assets/icons/Instagram.png');
 
-export const ProfileBio = ({userData, isTrainerView}: any) => {
+export const ProfileBio = ({userData, isTrainerView,handleBioModal}: any) => {
   const {socialMediaLinks} = userData;
   const [twitterLink, setTwitterLink] = useState<string>('');
   const [facebookLink, setFacebookLink] = useState<string>('');
@@ -62,7 +62,7 @@ export const ProfileBio = ({userData, isTrainerView}: any) => {
             Social Media Accounts
           </Text>
           {
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleBioModal}>
               <Text
                 style={{
                   fontSize: 12,
