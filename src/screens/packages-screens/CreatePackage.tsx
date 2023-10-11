@@ -21,6 +21,7 @@ import {
 } from 'react-native-image-picker';
 import {useState} from 'react';
 import Video from 'react-native-video';
+import {createPackageSchema} from '../../validations';
 
 const initialValues = {
   packageTitle: '',
@@ -78,7 +79,11 @@ const CreatePackage = ({navigation}: any) => {
           />
         </TouchableOpacity>
         <Text style={styles.heading}>Create a package</Text>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={createPackageSchema}
+          validateOnChange={false}>
           {({
             handleChange,
             handleSubmit,
@@ -169,6 +174,7 @@ const CreatePackage = ({navigation}: any) => {
                   setFieldError={setFieldError}
                   fieldName="cost"
                   handleChange={handleChange('cost')}
+                  keyboardType="numeric"
                 />
                 <CustomInput
                   label="Hours"

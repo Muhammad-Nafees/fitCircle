@@ -43,6 +43,10 @@ import CustomLoader from '../../components/shared-components/CustomLoader';
 import {deletePost} from '../../api/home-module';
 import {useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import {
+  CustomNutritionistPlan,
+  CustomPlanDescription,
+} from '../../components/dashboard-components/CustomNutritionistPlan';
 
 const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
@@ -341,10 +345,23 @@ const ProfileScreen = ({navigation, route}: any) => {
             <TouchableOpacity
               style={[
                 styles.optionButton,
-                selectedOption === 'Packages' && styles.selectedOption,
+                selectedOption ===
+                  (profileData?.role === 'nutritionist'
+                    ? 'MealPlan'
+                    : 'Packages') && styles.selectedOption,
               ]}
-              onPress={() => setSelectedOption('Packages')}>
-              <Text style={styles.optionText}>Packages</Text>
+              onPress={() =>
+                setSelectedOption(
+                  profileData?.role === 'nutritionist'
+                    ? 'MealPlan'
+                    : 'Packages',
+                )
+              }>
+              <Text style={styles.optionText}>
+                {profileData?.role === 'nutritionist'
+                  ? 'Meal Plan'
+                  : 'Packages'}
+              </Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -410,10 +427,22 @@ const ProfileScreen = ({navigation, route}: any) => {
             <Favorites />
           </>
         )}
+        {selectedOption === 'MealPlan' && (
+          <>
+            <CustomPlanDescription
+              plan={{
+                id: 1,
+                planName: 'Premium Meal Plan',
+                price: '$79.99',
+                description: 'Lincoln Smith',
+              }}
+            />
+          </>
+        )}
         {selectedOption === 'Packages' && (
           <View style={styles.trainerPackageContainer}>
-            <CustomTrainerPackage isTrainerView={isTrainerView} />
-            <CustomTrainerPackage isTrainerView={isTrainerView} />
+            <CustomTrainerPackage />
+            <CustomTrainerPackage />
           </View>
         )}
         {selectedOption === 'Bio' && (
@@ -550,7 +579,6 @@ const styles = StyleSheet.create({
   },
   trainerPackageContainer: {
     justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: 12,
     marginTop: 5,
   },

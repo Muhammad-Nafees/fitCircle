@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
   BackHandler,
+  ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Video from 'react-native-video';
@@ -14,6 +15,7 @@ import Video from 'react-native-video';
 import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
 import {CustomPackageReview} from '../../components/profile-components/CustomPackageReview';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import CustomButton from '../../components/shared-components/CustomButton';
 const TestVideo = require('../../../assets/test5mbvideo.mp4');
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
@@ -52,86 +54,86 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
 
   return (
     <View style={styles.container}>
-      <View style={{paddingHorizontal: 16}}>
-        <View
-          style={
-            route.params.hidePackageButton && {
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }
-          }>
-          <TouchableOpacity
-            style={{paddingTop: 24, paddingBottom: 16}}
-            onPress={() => navigation.navigate('Profile')}>
-            <Image
-              source={ArrowBack}
-              style={{width: 24, height: 24, tintColor: 'white'}}
-            />
-          </TouchableOpacity>
-          {route.params.hidePackageButton && (
+      <ScrollView>
+        <View style={{paddingHorizontal: 16}}>
+          <View
+            style={
+              route.params.hidePackageButton && {
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }
+            }>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ScheduleScreen')}>
-              <Text
-                style={{
-                  fontWeight: '500',
-                  fontSize: 10,
-                  color: 'rgba(32, 155, 204, 1)',
-                }}>
-                Get this package
-              </Text>
+              style={{paddingTop: 24, paddingBottom: 16}}
+              onPress={() => navigation.navigate('Profile')}>
+              <Image
+                source={ArrowBack}
+                style={{width: 24, height: 24, tintColor: 'white'}}
+              />
             </TouchableOpacity>
-          )}
-        </View>
-        <Text style={styles.heading}>Details</Text>
-        <View style={{marginHorizontal: -10}}>
-          <CustomTrainerPackage
-            hidePriceAndPackage={true}
-            videoEnabled={videoEnabled}
-            packageTitle={packageTitle}
-          />
-        </View>
-        <View style={[styles.horizontalLine, {marginTop: 0}]} />
-        <View>
-          <Text style={styles.heading2}>Description</Text>
-          <Text
-            style={[styles.paragraph1, {paddingVertical: verticalScale(16)}]}>
-            {packageDescription}
-          </Text>
-          <Text style={styles.heading2}>Duration</Text>
-          <View style={styles.timeContainer}>
-            <Text style={styles.paragraph1}>Length</Text>
-            <Text style={styles.duration}>{hours} HOUR</Text>
+            {route.params.hidePackageButton && (
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ScheduleScreen')}>
+                <Text
+                  style={{
+                    fontWeight: '500',
+                    fontSize: 10,
+                    color: 'rgba(32, 155, 204, 1)',
+                  }}>
+                  Get this package
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
+          <Text style={styles.heading}>Details</Text>
+          <View style={{marginHorizontal: -10}}>
+            <CustomTrainerPackage
+              hidePriceAndPackage={true}
+              videoEnabled={videoEnabled}
+              packageTitle={packageTitle}
+            />
+          </View>
+          <View style={[styles.horizontalLine, {marginTop: 0}]} />
+          <View>
+            <Text style={styles.heading2}>Description</Text>
+            <Text
+              style={[styles.paragraph1, {paddingVertical: verticalScale(16)}]}>
+              {packageDescription}
+            </Text>
+            <Text style={styles.heading2}>Duration</Text>
+            <View style={styles.timeContainer}>
+              <Text style={styles.paragraph1}>Length</Text>
+              <Text style={styles.duration}>{hours} HOUR</Text>
+            </View>
+          </View>
+          <View style={styles.horizontalLine} />
+          <Text style={styles.heading2}>Service Cost</Text>
+          <View style={styles.amountContainer}>
+            <Text style={styles.paragraph1}>Package Cost</Text>
+            <Text style={styles.duration}>${cost}</Text>
+          </View>
+          <View style={styles.horizontalLine} />
         </View>
-        <View style={styles.horizontalLine} />
-        <Text style={styles.heading2}>Service Cost</Text>
-        <View style={styles.amountContainer}>
-          <Text style={styles.paragraph1}>Package Cost</Text>
-          <Text style={styles.duration}>${cost}</Text>
-        </View>
-        <View style={styles.horizontalLine} />
-      </View>
-      {!route.params.packageData && (
-        <View style={styles.bottomContainer}>
-          <Text style={styles.bottomContainerHeading}>Review ( 1,515)</Text>
-          <FlatList
-            data={reviewData}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={() => renderCustomPackageReview()}
-            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-          />
+        {!route.params.packageData && (
+          <View style={styles.bottomContainer}>
+            <Text style={styles.bottomContainerHeading}>Review ( 1,515)</Text>
+            <FlatList
+              data={reviewData}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={() => renderCustomPackageReview()}
+              ItemSeparatorComponent={() => (
+                <View style={styles.itemSeparator} />
+              )}
+            />
+          </View>
+        )}
+      </ScrollView>
+      {route.params.packageData && (
+        <View style={styles.buttonContainer}>
+          <CustomButton>Create</CustomButton>
         </View>
       )}
-      <View style={styles.bottomContainer}>
-        <Text style={styles.bottomContainerHeading}>Review ( 1,515)</Text>
-        <FlatList
-          data={reviewData}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={() => renderCustomPackageReview()}
-          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-        />
-      </View>
       <Modal
         isVisible={videoVisible}
         onBackButtonPress={() => setVideoVisible(false)}
@@ -237,5 +239,9 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     tintColor: 'white',
+  },
+  buttonContainer: {
+    paddingBottom: verticalScale(30),
+    marginHorizontal: horizontalScale(40),
   },
 });

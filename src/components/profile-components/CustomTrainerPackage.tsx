@@ -11,10 +11,10 @@ const PlayIcon = require('../../../assets/icons/playIcon.png');
 const ImagePreview = require('../../../assets/images/TestMealPlanImage.png');
 import Icon from 'react-native-vector-icons/Feather';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {useRoute} from '@react-navigation/native';
 
 export const CustomTrainerPackage = ({
   hidePriceAndPackage,
-  isTrainerView,
   handleDeleteButton,
   hidePackageButton = false,
   videoEnabled,
@@ -24,6 +24,7 @@ export const CustomTrainerPackage = ({
   const [isSwiped, setIsSwiped] = useState(false);
   const swipeableRef: any = useRef(null);
   const navigation = useNavigation();
+  const route = useRoute();
 
   const onPressHandler = () => {
     // if (userData?.role !== 'trainer' || isTrainerView) {
@@ -32,33 +33,36 @@ export const CustomTrainerPackage = ({
   };
 
   const renderRightActions = () => {
-    return (
-      <View
-        style={[
-          styles.rightActionsContainer,
-          isSwiped && {backgroundColor: 'rgba(0, 0, 0, 0.2)'},
-        ]}>
-        <TouchableOpacity
+    if (route.name === 'PackagesScreen') {
+      return (
+        <View
           style={[
-            styles.rightAction,
-            {backgroundColor: 'rgba(222, 49, 49, 1)'},
-          ]}
-          onPress={() => {
-            swipeableRef.current.close();
-            handleDeleteButton();
-          }}>
-          <DeleteMessageIcon />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.rightAction,
-            {backgroundColor: 'rgba(32, 155, 204, 1)'},
-          ]}
-          onPress={() => console.log('Edit Button')}>
-          <Icon name="edit-3" color={'white'} />
-        </TouchableOpacity>
-      </View>
-    );
+            styles.rightActionsContainer,
+            isSwiped && {backgroundColor: 'rgba(0, 0, 0, 0.2)'},
+          ]}>
+          <TouchableOpacity
+            style={[
+              styles.rightAction,
+              {backgroundColor: 'rgba(222, 49, 49, 1)'},
+            ]}
+            onPress={() => {
+              swipeableRef.current.close();
+              handleDeleteButton();
+            }}>
+            <DeleteMessageIcon />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.rightAction,
+              {backgroundColor: 'rgba(32, 155, 204, 1)'},
+            ]}
+            onPress={() => console.log('Edit Button')}>
+            <Icon name="edit-3" color={'white'} />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return null;
   };
 
   return (
@@ -147,7 +151,6 @@ export const CustomTrainerPackage = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
     borderRadius: 12,
     padding: 10,

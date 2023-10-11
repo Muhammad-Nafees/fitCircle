@@ -12,27 +12,38 @@ const NotificationScreen = ({navigation}: any) => {
       id: 1,
       username: 'Sameer',
       dateTime: '02/10/2023 - 10:00 AM',
-      requestText: 'Requesting for a package training schedule',
+      requestText: 'Requesting for a meal plan',
       responseTime: 'You have until 24hrs to respond',
     },
     {
       id: 2,
       username: 'John',
       dateTime: '02/12/2023 - 09:30 AM',
-      requestText: 'Invitation to the team meeting',
-      responseTime: 'Please confirm your attendance',
+      requestText: 'Requesting for a pakacage training schedule.',
+      responseTime: 'You have until 24hrs to respond',
     },
     {
       id: 3,
       username: 'Alice',
       dateTime: '02/15/2023 - 03:45 PM',
-      requestText: 'New task assignment',
-      responseTime: 'Due date: 02/20/2023',
+      requestText: 'Requesting for a training schedule.',
+      responseTime: 'You have until 24hrs to respond',
     },
   ]);
 
   const handleModal = () => {
     setIsModalVisible(!isModalVisible);
+  };
+
+  const handleConfirmPress = (notificationText: string, username: string) => {
+    if (notificationText === 'Requesting for a training schedule.') {
+      handleModal();
+    } else {
+      navigation.navigate('Message', {
+        screen: 'ChatDetails',
+        params: {username},
+      });
+    }
   };
 
   const handleDeclinePress = (notificationId: any) => {
@@ -61,7 +72,9 @@ const NotificationScreen = ({navigation}: any) => {
           requestText={notification.requestText}
           responseTime={notification.responseTime}
           handleDeclinePress={() => handleDeclinePress(notification.id)}
-          handleConfirmPress={handleModal}
+          handleConfirmPress={() =>
+            handleConfirmPress(notification.requestText, notification.username)
+          }
         />
       ))}
       <Modal
