@@ -18,6 +18,7 @@ import PaymentStackNavigator from './PaymentStackNavigator';
 import DeleteAccountScreen from '../screens/settings-screens/DeleteAccount';
 import SupportOne from '../screens/settings-screens/Support';
 import SupportMessage from '../screens/settings-screens/SupportMessage';
+import SupportChat from '../screens/settings-screens/SupportChat';
 
 const Stack = createStackNavigator();
 const SettingsStackNavigator = () => {
@@ -67,6 +68,7 @@ const SettingsStackNavigator = () => {
       <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
       <Stack.Screen name="Support" component={SupportOne} />
       <Stack.Screen name="SupportMessage" component={SupportMessage} />
+      <Stack.Screen name="SupportChat" component={SupportChat} />
       <Stack.Screen
         name="Subscription"
         component={SubscriptionScreen}

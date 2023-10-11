@@ -6,13 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  ScrollView, // Import ScrollView
+  ScrollView,
 } from 'react-native';
 import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import CancelIcon from '../../../assets/icons/cancel.png';
+const CancelIcon = require('../../../assets/icons/cancel.png');
 import CustomButton from '../../components/shared-components/CustomButton';
 import CameraSupportIcon from '../../../assets/icons/CameraSupportIcon';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
@@ -97,9 +97,10 @@ const SupportMessage = ({navigation}: any) => {
       <View
         style={{
           paddingTop: verticalScale(110),
+          paddingBottom: verticalScale(30),
           marginHorizontal: horizontalScale(24),
         }}>
-        <CustomButton onPress={() => navigation.navigate('SupportMessage')}>
+        <CustomButton onPress={() => navigation.navigate('SupportChat')}>
           Send New Message
         </CustomButton>
       </View>
