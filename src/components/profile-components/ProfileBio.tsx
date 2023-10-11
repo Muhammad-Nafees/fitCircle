@@ -24,7 +24,7 @@ export const ProfileBio = ({userData, isTrainerView}: any) => {
   const [instagramLink, setInstagramLink] = useState<string>('');
 
   useEffect(() => {
-    const links = socialMediaLinks.map((link: any) => {
+    const links = socialMediaLinks?.map((link: any) => {
       if (link.name == 'twitter') {
         setTwitterLink(link.link);
       } else if (link.name == 'instagram') {
@@ -62,7 +62,7 @@ export const ProfileBio = ({userData, isTrainerView}: any) => {
             Social Media Accounts
           </Text>
           {
-            <TouchableOpacity onPress={handleBioModal}>
+            <TouchableOpacity>
               <Text
                 style={{
                   fontSize: 12,
