@@ -1,15 +1,17 @@
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {View, Text, StyleSheet} from 'react-native';
 
-const CustomHourlyRate = () => {
+const TrainerHourlyRate = ({trainerData}: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer1}>
-        <CustomProfileAvatar size={50} username={'Sameer'} />
-        <Text style={styles.name}>Sameer Ather</Text>
+        <CustomProfileAvatar size={50} profileImage={trainerData?.profileImage} username={trainerData?.username} />
+        <Text style={styles.name}>
+          {trainerData?.firstName} {trainerData?.lastName}
+        </Text>
       </View>
       <View style={{alignItems: 'flex-end'}}>
-        <Text style={styles.priceText}>$20.00</Text>
+        <Text style={styles.priceText}>${trainerData?.hourlyRate}</Text>
         <Text style={styles.priceText}>Hourly Rate</Text>
       </View>
     </View>
@@ -44,4 +46,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomHourlyRate;
+export default TrainerHourlyRate;

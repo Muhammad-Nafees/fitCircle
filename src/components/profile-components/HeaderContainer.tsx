@@ -68,6 +68,16 @@ export const ProfileHeaderContainer = ({
     }
   };
 
+  const navigateToSchedule = () => {
+    navigation.navigate('ScheduleScreen', {
+      screen: 'Slot',
+      params: {
+        hourlyRate: true,
+        userData: userData,
+      },
+    });
+  };
+
   return (
     <ImageBackground
       style={styles.topContainer}
@@ -83,16 +93,8 @@ export const ProfileHeaderContainer = ({
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
-          {isTrainerView ? (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('ScheduleScreen', {
-                  screen: 'Slot',
-                  params: {
-                    hourlyRate: true,
-                  },
-                })
-              }>
+          {userData?.role !== 'user' ? (
+            <TouchableOpacity onPress={navigateToSchedule}>
               <TrainerProfileScheduleIcon />
             </TouchableOpacity>
           ) : (

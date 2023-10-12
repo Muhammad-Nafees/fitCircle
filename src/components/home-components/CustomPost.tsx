@@ -149,8 +149,6 @@ export const CustomPost = ({
       ? post.text
       : post.text.split('\n').slice(0, thresholdLines).join('\n')
     : '';
-    console.log(contentToShow,"contentToShow",contentToShow.length,"contentToLength")
-
 
   const toggleShowMore = () => {
     setShowFullContent(!showFullContent);
