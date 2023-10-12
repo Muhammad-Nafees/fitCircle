@@ -84,7 +84,15 @@ export const ProfileHeaderContainer = ({
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
           {isTrainerView ? (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ScheduleScreen', {
+                  screen: 'Slot',
+                  params: {
+                    hourlyRate: true,
+                  },
+                })
+              }>
               <TrainerProfileScheduleIcon />
             </TouchableOpacity>
           ) : (

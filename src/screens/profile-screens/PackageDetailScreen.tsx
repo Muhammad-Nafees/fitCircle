@@ -24,6 +24,7 @@ const reviewData = Array.from({length: 5});
 
 export const PackageDetailScreen = ({navigation, route}: any) => {
   const [videoVisible, setVideoVisible] = useState(false);
+  const hidePackageButton = false;
   const renderCustomPackageReview = () => {
     return <CustomPackageReview />;
   };
@@ -57,13 +58,11 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
       <ScrollView>
         <View style={{paddingHorizontal: 16}}>
           <View
-            style={
-              route.params.hidePackageButton && {
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }
-            }>
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
             <TouchableOpacity
               style={{paddingTop: 24, paddingBottom: 16}}
               onPress={() => navigation.navigate('Profile')}>
@@ -72,19 +71,24 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                 style={{width: 24, height: 24, tintColor: 'white'}}
               />
             </TouchableOpacity>
-            {route.params.hidePackageButton && (
-              <TouchableOpacity
-                onPress={() => navigation.navigate('ScheduleScreen')}>
-                <Text
-                  style={{
-                    fontWeight: '500',
-                    fontSize: 10,
-                    color: 'rgba(32, 155, 204, 1)',
-                  }}>
-                  Get this package
-                </Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ScheduleScreen', {
+                  screen: 'Slot',
+                  params: {
+                    packageView: true,
+                  },
+                })
+              }>
+              <Text
+                style={{
+                  fontWeight: '500',
+                  fontSize: 10,
+                  color: 'rgba(32, 155, 204, 1)',
+                }}>
+                Get this package
+              </Text>
+            </TouchableOpacity>
           </View>
           <Text style={styles.heading}>Details</Text>
           <View style={{marginHorizontal: -10}}>
