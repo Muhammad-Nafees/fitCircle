@@ -6,7 +6,7 @@ import {
 import {api} from '../../api/utils/interceptor';
 
 export const calculateTdee = async (reqData: ITDEE) => {
-  console.log(reqData,"from cal tdee reqpost")
+  console.log(reqData, 'from cal tdee reqpost');
   const response = await api.post(`readings/tdee`, reqData);
   return response;
 };
@@ -26,6 +26,8 @@ export const generateSlots = async () => {
   return response;
 };
 
+// trainer pov
+
 export const setSlots = async (reqData: any) => {
   const response = await api.post(`schedule/trainer/set-slots`, reqData);
   return response;
@@ -41,6 +43,29 @@ export const getTrainerSlots = async (date: string) => {
 export const getTrainerSlotList = async () => {
   const response = await api.get(
     `schedule/trainer/monthly-count?month=10&year=2023`,
+  );
+  return response;
+};
+
+// user pov
+
+export const getTrainerSlotsByMonthForUser = async (
+  month: number,
+  year: number,
+  trainerId: string,
+) => {
+  const response = await api.get(
+    `schedule/monthly-count?month=${month}&year=${year}&trainer=${trainerId}`,
+  );
+  return response;
+};
+
+export const getTrainerAvailableSlotsByDateForUser = async (
+  date: any,
+  trainerId: string,
+) => {
+  const response = await api.get(
+    `schedule/available-slots?scheduleDate=${date}&trainer=${trainerId}`,
   );
   return response;
 };
