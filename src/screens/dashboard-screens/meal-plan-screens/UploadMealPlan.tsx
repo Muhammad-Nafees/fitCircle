@@ -21,6 +21,8 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
 import {useState} from 'react';
+import {uploadPlanSchema} from '../../../validations';
+import Toast from 'react-native-toast-message';
 
 const initialValues = {
   title: '',
@@ -37,7 +39,16 @@ const UploadMealPlan = ({navigation}: any) => {
   const [fileName, setFileName] = useState<any>('');
 
   const handleSubmit = (values: any) => {
-    console.log(values);
+    if (result === null || result === undefined) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'You need to attach a Meal Plan PDF',
+      });
+    } else {
+      console.log(values);
+      navigation.navigate('CreateMealPlan');
+    }
   };
 
   const openDocument = async () => {
@@ -48,6 +59,7 @@ const UploadMealPlan = ({navigation}: any) => {
       console.log(res);
       if (!isCancel(res)) {
         const nameWithoutExtension = res.name.replace('.pdf', '');
+        setResult(res);
         setFileName(nameWithoutExtension);
       }
     } catch (e) {
@@ -67,7 +79,11 @@ const UploadMealPlan = ({navigation}: any) => {
           />
         </TouchableOpacity>
         <Text style={styles.heading}>Upload Meal Plan</Text>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validateOnChange={false}
+          validationSchema={uploadPlanSchema}>
           {({
             handleChange,
             handleSubmit,
@@ -134,7 +150,9 @@ const UploadMealPlan = ({navigation}: any) => {
                           fontWeight: '500',
                           color: 'rgba(255, 255, 255, 1)',
                         }}>
-                        {fileName}
+                        {fileName.length > 27
+                          ? fileName.substring(0, 27 - 3) + '...'
+                          : fileName}
                       </Text>
                     </View>
                   ) : (
@@ -161,6 +179,7 @@ const UploadMealPlan = ({navigation}: any) => {
                   setFieldError={setFieldError}
                   fieldName="cost"
                   handleChange={handleChange('cost')}
+                  keyboardType="numeric"
                 />
                 <CustomInput
                   label="Username  (only the username listed will see this Meal plan)"
@@ -197,6 +216,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16.8,
     color: 'white',
+    marginBottom: 20,
   },
   textInput: {
     borderRadius: 10,
@@ -206,6 +226,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'white',
     marginBottom: 7,
+  },
+  button: {
+    marginTop: 35,
+    marginHorizontal: 30,
   },
 });
 

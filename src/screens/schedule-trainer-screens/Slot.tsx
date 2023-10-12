@@ -21,11 +21,11 @@ import {useFocusEffect} from '@react-navigation/native';
 import {STYLES} from '../../styles/globalStyles';
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
-export const Slot = ({navigation}: any) => {
+export const Slot = ({navigation, route}: any) => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-  const packageView = true;
-  const hourlyRate: boolean = false;
   const price = '$20.00';
+  const hourlyRate = route?.params.hourlyRate || false;
+  const packageView = route?.params.packageView || false;
   const months = [
     'JAN',
     'FEB',
@@ -126,7 +126,7 @@ export const Slot = ({navigation}: any) => {
         </TouchableOpacity>
         <Text style={styles.heading}>Schedule</Text>
       </View>
-      {hourlyRate && <CustomHourlyRate />}
+      {hourlyRate !== false && <CustomHourlyRate />}
       {packageView && <CustomTrainerPackage hidePackageButton={true} />}
       <TouchableOpacity
         style={styles.calenderButton}

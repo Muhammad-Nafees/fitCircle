@@ -8,7 +8,7 @@ import {
 import Modal from 'react-native-modal';
 import {useState} from 'react';
 
-const DeleteAccountScreen = () => {
+const DeleteAccountScreen = ({navigation}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [outputModal, setOutputModal] = useState(false);
 
@@ -46,7 +46,7 @@ const DeleteAccountScreen = () => {
               Delete
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={[styles.text, {fontSize: 12, textAlign: 'center'}]}>
               Cancel
             </Text>

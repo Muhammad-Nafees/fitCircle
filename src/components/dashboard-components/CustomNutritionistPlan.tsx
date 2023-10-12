@@ -17,31 +17,35 @@ export const CustomPlanDescription = ({
 }: any) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const swipeableRef: any = useRef(null);
+  const route = useRoute();
 
   const renderRightActions = () => {
-    return (
-      <View style={[styles.rightActionsContainer]}>
-        <TouchableOpacity
-          style={[
-            styles.rightAction,
-            {backgroundColor: 'rgba(222, 49, 49, 1)'},
-          ]}
-          onPress={() => {
-            swipeableRef.current.close();
-            handleDeleteButton();
-          }}>
-          <DeleteMessageIcon />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.rightAction,
-            {backgroundColor: 'rgba(32, 155, 204, 1)'},
-          ]}
-          onPress={() => console.log('Edit Button')}>
-          <Icon name="edit-3" color={'white'} />
-        </TouchableOpacity>
-      </View>
-    );
+    if (route.name === 'CreateMealPlan') {
+      return (
+        <View style={[styles.rightActionsContainer]}>
+          <TouchableOpacity
+            style={[
+              styles.rightAction,
+              {backgroundColor: 'rgba(222, 49, 49, 1)'},
+            ]}
+            onPress={() => {
+              swipeableRef.current.close();
+              handleDeleteButton();
+            }}>
+            <DeleteMessageIcon />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.rightAction,
+              {backgroundColor: 'rgba(32, 155, 204, 1)'},
+            ]}
+            onPress={() => console.log('Edit Button')}>
+            <Icon name="edit-3" color={'white'} />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return null;
   };
 
   return (
@@ -171,7 +175,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '400',
     textAlign: 'right',
-    alignSelf: 'center',
     color: 'rgba(255, 255, 255, 0.5)',
   },
   price: {
