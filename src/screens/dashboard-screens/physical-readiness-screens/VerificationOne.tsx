@@ -88,18 +88,6 @@ export const VerificationOne = ({
     };
     navigation.navigate('VerificationTwo', {verificationOne: VALUES});
   };
-
-  useFocusEffect(() => {
-    const backAction = () => {
-      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  });
   console.log(formdata, 'FORM');
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>

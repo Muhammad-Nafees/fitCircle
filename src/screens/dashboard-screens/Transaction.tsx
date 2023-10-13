@@ -30,7 +30,7 @@ export const Transaction = ({
       {!settingsView && (
         <TouchableOpacity
           style={styles.navigationBack}
-          onPress={() => navigation.navigate('Dashboard')}>
+          onPress={() => navigation.goBack()}>
           <Image
             source={ArrowBack}
             style={{width: 24, height: 24, tintColor: 'white'}}

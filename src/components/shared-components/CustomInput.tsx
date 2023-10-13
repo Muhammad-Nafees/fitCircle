@@ -61,7 +61,21 @@ const CustomInput = ({...props}: Props) => {
   };
 
   const handleChangeText = (text: string) => {
-    props.handleChange(text);
+    if (props.label === 'Number' && route.name === 'AddCard') {
+      const cleanedText = text.replace(/[^0-9]/g, '');
+      const formattedText = cleanedText.replace(/(.{4})/g, '$1 ');
+      if (
+        props.value.length > formattedText.length &&
+        formattedText.endsWith(' ')
+      ) {
+        props.handleChange(formattedText.slice(0, -1));
+      } else {
+        props.handleChange(formattedText);
+      }
+    } else {
+      props.handleChange(text);
+    }
+
     if (props.touched && props.error) {
       props.setFieldError(props.fieldName, '');
     }
@@ -121,7 +135,7 @@ const CustomInput = ({...props}: Props) => {
               route.name === 'VerificationOne' && {
                 width: horizontalScale(75),
                 marginBottom: verticalScale(0),
-                height: 27
+                height: 27,
               },
           ]}>
           <Icon name="alert-circle" size={22} color="red" />

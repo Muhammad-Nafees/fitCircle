@@ -53,7 +53,11 @@ const DashboardScreen = ({navigation}: any) => {
 
   const withNavigationAction = (routeName: string) => {
     return () => {
-      navigation.navigate(routeName);
+      if (routeName === 'Wallet') {
+        navigation.navigate('Settings', {screen: 'Payment'});
+      } else {
+        navigation.navigate(routeName);
+      }
     };
   };
 
@@ -76,6 +80,7 @@ const DashboardScreen = ({navigation}: any) => {
           {
             text: 'Wallet',
             icon: <WalletDashboardIcon />,
+            routeName: 'Wallet',
           },
           {
             text: 'Schedule',

@@ -29,10 +29,10 @@ export const ProfileHeaderContainer = ({
   isFollowing,
   profilePersonalData,
 }: any) => {
-  const [followButtonStyle, setFollowButtonStyle] = useState(
+  const [followButtonStyle, setFollowButtonStyle] = useState<any>(
     styles.profileButton,
   );
-  const [subscribeButtonStyle, setSubscribeButtonStyle] = useState(
+  const [subscribeButtonStyle, setSubscribeButtonStyle] = useState<any>(
     styles.profileButton,
   );
   const [isFollowed, setIsFollowed] = useState(isFollowing);
@@ -120,7 +120,7 @@ export const ProfileHeaderContainer = ({
             <TouchableHighlight
               style={[
                 isFollowed ? styles.transparentButton : styles.profileButton,
-                isFollowed && {paddingHorizontal: 14},
+                isFollowed,
               ]}
               activeOpacity={1}
               underlayColor="transparent"
@@ -132,7 +132,7 @@ export const ProfileHeaderContainer = ({
             <Text style={styles.email}>@{userData?.username}</Text>
             {userData?.role !== 'user' && (
               <TouchableHighlight
-                style={[subscribeButtonStyle, {paddingHorizontal: 16}]}
+                style={[subscribeButtonStyle]}
                 activeOpacity={1}
                 onPress={() => {
                   setIsSubscribed(!isSubscribed);
@@ -142,7 +142,7 @@ export const ProfileHeaderContainer = ({
                       : styles.transparentButton,
                   );
                 }}>
-                <Text style={styles.profileButtonText}>
+                <Text style={styles.profileButtonText} numberOfLines={1}>
                   {isSubscribed ? 'Subscribed' : 'Subscribe'}
                 </Text>
               </TouchableHighlight>
@@ -325,21 +325,26 @@ const styles = StyleSheet.create({
   },
   profileButton: {
     backgroundColor: 'rgba(32, 155, 204, 1)',
-    paddingHorizontal: horizontalScale(25),
-    paddingVertical: verticalScale(4),
+    width: horizontalScale(88),
+    height: verticalScale(24),
     borderRadius: 40,
-  },
-  profileButtonText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   transparentButton: {
     backgroundColor: 'transparent',
     borderColor: 'white',
     borderWidth: 1,
-    paddingHorizontal: horizontalScale(25),
-    paddingVertical: verticalScale(4),
+    width: horizontalScale(88),
+    height: verticalScale(24),
     borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  profileButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: 'white',
   },
 });

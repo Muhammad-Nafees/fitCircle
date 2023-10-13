@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 50,
   },
   text: {
     fontSize: 24,
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: verticalScale(100),
+    paddingTop: verticalScale(85),
   },
   iconWrapper: {
     backgroundColor: 'rgba(19, 114, 140, 1)',
@@ -146,7 +145,8 @@ const styles = StyleSheet.create({
   lineContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: -50,
+    marginTop: -verticalScale(50),
+    marginVertical: verticalScale(15),
   },
   line: {
     flex: 1,
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   currentPlanText: {
-    paddingHorizontal: 12,
-    paddingVertical: 3,
+    paddingHorizontal: horizontalScale(12),
+    paddingVertical: verticalScale(3),
     fontSize: 12,
     fontWeight: '400',
     color: 'white',
@@ -165,10 +165,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#209BCC',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: horizontalScale(20),
+    paddingVertical: verticalScale(16),
     borderRadius: 11.5,
-    marginTop: -50,
+    marginTop: -verticalScale(50),
   },
   freeContainer: {
     flex: 1,

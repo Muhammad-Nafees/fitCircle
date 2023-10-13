@@ -37,7 +37,7 @@ const CustomToggleButton = ({
               inActiveBackgroundColor: 'rgba(235, 236, 239, 1)',
               borderActiveColor: 'rgba(32, 155, 204, 1)',
               borderInActiveColor: 'rgba(235, 236, 239, 1)',
-              width: 50,
+              width: 45,
               height: 15,
             }}
           />

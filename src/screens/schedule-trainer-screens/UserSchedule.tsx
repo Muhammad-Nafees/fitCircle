@@ -48,7 +48,6 @@ const SetSchedule = ({route, navigation}: any) => {
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [slot, setSlot] = useState<ScheduleItem | undefined>();
 
-
   const handleDayPress = (day: DateData) => {
     const selected = day.dateString;
 
@@ -69,18 +68,6 @@ const SetSchedule = ({route, navigation}: any) => {
     return moment(date).format('ddd, D MMM');
   };
 
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate('Dashboard');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
-
   const formattedSelectedDate = selectedDate
     ? formatDate(selectedDate)
     : formatDate(new Date());
@@ -88,7 +75,7 @@ const SetSchedule = ({route, navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
-        <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image source={ArrowBackIcon} style={styles.arrowBack} />
         </TouchableOpacity>
         <Text style={styles.heading}>My Schedule</Text>

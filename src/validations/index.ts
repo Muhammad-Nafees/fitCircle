@@ -307,24 +307,41 @@ export const socialMediaSchema = Yup.object().shape({
 });
 
 export const cardSchema = Yup.object().shape({
-  number: Yup.string().required('Required'),
+  number: Yup.string()
+    .matches(
+      /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
+      'Invalid credit card number',
+    )
+    .required('Number is Required'),
   expiry: Yup.string()
     .matches(
       /^(0[1-9]|1[0-2])\/(2[3-9]|[3-9][0-9])$/,
       'Invalid expiration date',
     )
-    .required('Required'),
+    .required('Expiry Date is Required'),
   cvv: Yup.string()
     .matches(/^\d{3,4}$/, 'Invalid CVV')
-    .required('Required'),
-  firstName: Yup.string().required('Required'),
-  lastName: Yup.string().required('Required'),
-  country: Yup.string().required('Required'),
+    .required('CVV is Required'),
+  firstName: Yup.string()
+    .required('First Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .min(3, 'First Name must be at least 3 characters long'),
+  lastName: Yup.string()
+    .required('Last Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .min(3, 'Last name must be at least 3 characters'),
+  country: Yup.string().required('Country is Required'),
 });
 
 export const bankSchema = Yup.object().shape({
-  lastName: Yup.string().required('Last Name is required'),
-  firstName: Yup.string().required('First Name is required'),
+  lastName: Yup.string()
+    .required('Last Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .min(3, 'Last name must be at least 3 characters'),
+  firstName: Yup.string()
+    .required('First Name is required')
+    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .min(3, 'First Name must be at least 3 characters long'),
   bankName: Yup.string().required('Bank Name is required'),
   accountNumber: Yup.string().required('Account Number is required'),
   routingNumber: Yup.string().required('Routing Number is required'),

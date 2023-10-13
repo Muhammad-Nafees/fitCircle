@@ -13,17 +13,6 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 const ArrowBack = require('../../../../assets/icons/arrow-back.png');
 
 export const MealPlanOne = ({navigation}: any) => {
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
   return (
     <View style={styles.container}>
       <TouchableOpacity

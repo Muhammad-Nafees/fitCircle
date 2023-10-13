@@ -78,6 +78,7 @@ const AddCardScreen = ({route}: any) => {
             type={route.params.type}
             cardNumber="**** 4637"
           />
+          <Text style={styles.text1}>INFO ABOUT YOUR CARD</Text>
         </View>
         <Formik
           initialValues={initialValues}
@@ -94,7 +95,7 @@ const AddCardScreen = ({route}: any) => {
             setFieldError,
           }) => (
             <>
-              <View style={[styles.formContainer, {marginTop: 35}]}>
+              <View style={{marginTop: 10}}>
                 <CustomInput
                   label="Number"
                   placeholder="Required"
@@ -130,6 +131,11 @@ const AddCardScreen = ({route}: any) => {
                   fieldName="cvv"
                   keyboardType="numeric"
                 />
+                <View>
+                  <Text style={[styles.text1, {marginTop: 0}]}>
+                    INFO ABOUT YOU
+                  </Text>
+                </View>
                 <CustomInput
                   label="First Name"
                   placeholder="Required"
@@ -156,11 +162,12 @@ const AddCardScreen = ({route}: any) => {
                   label="Country"
                   placeholder="Select here"
                   width={horizontalScale(340)}
-                  placeholderColor="black"
+                  placeholderColor="rgba(255, 255, 255, 0.5)"
                   selectedValue={values.country}
                   extraButtonStyles={{
                     backgroundColor: 'rgba(54, 55, 56, 1)',
                     borderRadius: 12,
+                    fontSize: 20,
                   }}
                   values={allCountries}
                   extraRowStyle={{backgroundColor: 'rgba(54, 55, 56, 1)'}}
@@ -170,10 +177,11 @@ const AddCardScreen = ({route}: any) => {
                   setFieldValue={setFieldValue}
                   fieldName="country"
                   setFieldError={setFieldError}
+                  fontColor="white"
                 />
               </View>
               <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+                <CustomButton onPress={handleSubmit}>Next</CustomButton>
               </View>
             </>
           )}
@@ -210,9 +218,6 @@ const styles = StyleSheet.create({
     fontSize: 16.8,
     color: 'white',
   },
-  formContainer: {
-    alignItems: 'center',
-  },
   textInput: {
     backgroundColor: 'rgba(54, 55, 56, 1)',
     borderRadius: 12,
@@ -224,6 +229,12 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
     marginHorizontal: verticalScale(30),
     marginBottom: verticalScale(35),
+  },
+  text1: {
+    marginVertical: 15,
+    fontWeight: '500',
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.5)',
   },
 });
 

@@ -43,18 +43,6 @@ const SettingsOne = ({navigation}: any) => {
     }
   };
 
-  useFocusEffect(() => {
-    const backAction = () => {
-      navigation.navigate('Profile');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  });
-
   const withNavigationAction = (routeName: any) => {
     return () => {
       if (routeName) {
@@ -87,7 +75,7 @@ const SettingsOne = ({navigation}: any) => {
             inActiveBackgroundColor: 'rgba(235, 236, 239, 1)',
             borderActiveColor: 'rgba(32, 155, 204, 1)',
             borderInActiveColor: 'rgba(235, 236, 239, 1)',
-            width: 47,
+            width: 45,
             height: 15,
           }}
         />
@@ -125,7 +113,8 @@ const SettingsOne = ({navigation}: any) => {
             <View style={styles.textInputContainer}>
               <TextInput
                 style={styles.textInput}
-                placeholder="Your text here"
+                placeholder="https://link.fitcircle.com..."
+                placeholderTextColor="gray"
                 value={textInputValue}
                 onChangeText={handleTextInputChange}
               />

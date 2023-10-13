@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
+  BackHandler,
 } from 'react-native';
 import Modal from 'react-native-modal';
 // -----------------------------------------------------------------------------//
@@ -19,6 +20,7 @@ import {
   CustomConfirmationModal,
   CustomOutputModal,
 } from '../../components/shared-components/CustomModals';
+import {useFocusEffect} from '@react-navigation/native';
 
 export const MessagesOne = ({navigation}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -56,11 +58,24 @@ export const MessagesOne = ({navigation}: any) => {
       setActionType={setActionType}
     />
   );
+
+  useFocusEffect(() => {
+    const backAction = () => {
+      navigation.navigate('HomeTabNav');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  });
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.navigate('HomeTabNav')}>
         <Image
           source={ArrowBack}
           style={{width: 24, height: 24, tintColor: 'white'}}

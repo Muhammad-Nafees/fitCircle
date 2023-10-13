@@ -31,6 +31,7 @@ interface Props {
   starlabel?: boolean;
   handleChange?: any;
   placeholder?: string;
+  placeholderColor?: any;
 }
 
 export const CustomSelect: React.FC<Props> = ({
@@ -57,6 +58,7 @@ export const CustomSelect: React.FC<Props> = ({
   starlabel,
   handleChange,
   placeholder,
+  placeholderColor,
   extraButtonStyles,
 }) => {
   const field = label.toLowerCase().replace(/\s/g, '');
@@ -134,6 +136,7 @@ export const CustomSelect: React.FC<Props> = ({
           ...extraButtonStyles,
         }}
         dropdownStyle={{...extraDropdownStyle}}
+        placeholderColor={placeholderColor}
       />
       {(error && !values) || (error && touched) ? (
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 2}}>

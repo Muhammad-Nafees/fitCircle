@@ -47,7 +47,24 @@ export const AdminSettingsView = () => {
           navigation.navigate('AddCard' as never, {
             dummyData: {
               type: 'Mastercard',
-              cardNumber: '1234 5678 9012 3456',
+              cardNumber: '4929 4685 0480 5705',
+              expiry: '12/24',
+              cvv: '123',
+              firstName: 'John',
+              lastName: 'Doe',
+              country: 'United States',
+            },
+          })
+        }
+      />
+      <CardPayment
+        type="Mastercard"
+        cardNumber="**** 4637"
+        onPress={() =>
+          navigation.navigate('AddCard' as never, {
+            dummyData: {
+              type: 'Mastercard',
+              cardNumber: '4929 4685 0480 5705',
               expiry: '12/24',
               cvv: '123',
               firstName: 'John',
@@ -75,7 +92,7 @@ export const UserSettingsView = () => {
           navigation.navigate('AddCard' as never, {
             dummyData: {
               type: 'Mastercard',
-              cardNumber: '1234 5678 9012 3456',
+              cardNumber: '4929 4685 0480 5705',
               expiry: '12/24',
               cvv: '123',
               firstName: 'John',
@@ -102,7 +119,7 @@ export const UserSettingsView = () => {
       <CustomPaymentMethod
         text={'Apple Pay'}
         onPress={() =>
-          navigation.navigate('AddCard' as never, {type: 'Paypal'})
+          navigation.navigate('AddCard' as never, {type: 'ApplePay'})
         }
       />
     </View>

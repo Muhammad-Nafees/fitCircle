@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {Avatar} from 'react-native-paper';
 import {Swipeable} from 'react-native-gesture-handler';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 // ------------------------------------------------------------------//
 import DeleteMessageIcon from '../../../assets/icons/DeleteMessage';
 import DoNotDisturbIcon from '../../../assets/icons/DoNotDisturb';
@@ -23,6 +23,10 @@ const CustomContact = ({
   const [isSwiped, setIsSwiped] = useState(false);
   const navigation = useNavigation();
   const swipeableRef: any = useRef(null);
+
+  useEffect(() => {
+    swipeableRef.current.close();
+  }, [navigation]);
 
   const renderRightActions = () => {
     return (

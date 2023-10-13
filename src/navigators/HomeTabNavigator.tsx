@@ -143,6 +143,7 @@ const HomeTabNavigator = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
+      backBehavior="history"
       screenOptions={{
         unmountOnBlur: true,
         tabBarHideOnKeyboard: true,

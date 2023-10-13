@@ -28,7 +28,7 @@ export const settingsData = [
   {
     id: '5',
     icon: <SettingsFileIcon />,
-    text: 'Terms and Conditions',
+    text: 'Terms & Condition',
     routeName: 'TermsConditions',
   },
   {
@@ -45,7 +45,7 @@ export const settingsData = [
   },
   {
     id: '8',
-    icon: <ProfileSettingsIcon />,
+    icon: <ProfileSettingsIcon width={37} height={37} />,
     text: 'Privacy Settings',
     routeName: 'PrivacySettings',
   },

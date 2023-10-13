@@ -24,8 +24,8 @@ const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 export const Slot = ({navigation, route}: any) => {
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const price = '$20.00';
-  const hourlyRate = route?.params.hourlyRate || false;
-  const packageView = route?.params.packageView || false;
+  const hourlyRate = route?.params?.hourlyRate || false;
+  const packageView = route?.params?.packageView || false;
   const months = [
     'JAN',
     'FEB',
@@ -78,18 +78,6 @@ export const Slot = ({navigation, route}: any) => {
       </TouchableOpacity>
     );
   };
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
 
   useFocusEffect(
     useCallback(() => {
