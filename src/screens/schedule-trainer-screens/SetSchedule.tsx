@@ -260,7 +260,7 @@ const SetSchedule = ({navigation, route}: any) => {
 
   const handlePayment = (type: string) => {
     setIsModalVisible(false);
-    setPaymentType(type);
+    setPaymentType(type as any);
     setPaymentModal(true);
   };
 

@@ -36,7 +36,7 @@ const Comment = ({
               fontSize: 12,
             }}>
             {' '}
-            View previous comments
+            View {commentsCount - 2} more comments
           </Text>
         </TouchableOpacity>
       )}
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 100,
     backgroundColor: '#ffffff',
     gap: 10,
   },

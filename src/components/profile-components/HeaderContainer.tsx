@@ -77,6 +77,7 @@ export const ProfileHeaderContainer = ({
       },
     });
   };
+  console.log(isSeachUser,"isSearch")
 
   return (
     <ImageBackground
@@ -93,11 +94,12 @@ export const ProfileHeaderContainer = ({
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
-          {userData?.role !== 'user' ? (
+          {userData?.role !== 'user' && (
             <TouchableOpacity onPress={navigateToSchedule}>
               <TrainerProfileScheduleIcon />
             </TouchableOpacity>
-          ) : (
+          )}
+          {isSeachUser && (
             <TouchableOpacity
               onPress={() => navigation.navigate('Settings' as never)}>
               <ProfileSettingsIcon />

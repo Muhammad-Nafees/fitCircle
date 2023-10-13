@@ -21,9 +21,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/shared-components/CustomButton';
 import {STYLES} from '../../styles/globalStyles';
 import {searchProfile, searchTrainerProfile} from '../../api/profile-module';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {setUserProfile} from '../../redux/authSlice';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import {RootState} from '../../redux/store';
 
 const SearchIcon = require('../../../assets/icons/search.png');
 const FilterIcon = require('../../../assets/icons/filter.png');
@@ -40,6 +41,7 @@ export const SearchScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [message, setMessage] = useState<string>('');
+  const userData = useSelector((state: RootState) => state.auth.user);
 
   const handleSearchBarBlur = () => {
     setIsSearchActive(false);
@@ -90,7 +92,6 @@ export const SearchScreen = () => {
         const response = await searchProfile(searchQuery);
         console.log('from user   search');
         const users = response?.data?.data?.users;
-        console.log(users,"mlalallalal")
         setSearchData(users);
         setMessage('No users Found!');
       } else {
@@ -105,7 +106,6 @@ export const SearchScreen = () => {
       setIsLoading(false);
     }
   };
-  console.log(searchData?.length, 'searchData');
 
   return (
     <View style={styles.container}>
@@ -127,11 +127,13 @@ export const SearchScreen = () => {
               onBlur={handleSearchBarBlur}
               placeholderTextColor="#fff"
             />
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={showFilterOptions}>
-              <Image source={FilterIcon} style={styles.icon} />
-            </TouchableOpacity>
+            {userData?.role === 'user' && (
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={showFilterOptions}>
+                <Image source={FilterIcon} style={styles.icon} />
+              </TouchableOpacity>
+            )}
           </View>
           {isSearchActive ? (
             <View style={styles.searchOverlay}>
