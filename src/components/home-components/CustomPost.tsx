@@ -142,15 +142,23 @@ export const CustomPost = ({
   };
   const route = useRoute();
   const [showFullContent, setShowFullContent] = useState(false);
-  const thresholdLines = post?.media ? 7 : 15; // Set your threshold here
+  const thresholdLines = post?.media
+    ? 7
+    : route.name == 'CommentsScreen'
+    ? 12
+    : 15; // Set your threshold here
 
   const contentToShow = post?.text
     ? showFullContent
       ? post.text
       : post.text.split('\n').slice(0, thresholdLines).join('\n')
     : '';
-    console.log(contentToShow,"contentToShow",contentToShow.length,"contentToLength")
-
+  console.log(
+    contentToShow,
+    'contentToShow',
+    contentToShow.length,
+    'contentToLength',
+  );
 
   const toggleShowMore = () => {
     setShowFullContent(!showFullContent);
@@ -256,7 +264,7 @@ export const CustomPost = ({
             styles.content,
             {height: heightFull ? verticalScale(290) : undefined},
           ]}>
-          <ScrollView scrollEnabled={true}>
+          <ScrollView scrollEnabled={true} nestedScrollEnabled={true}>
             <Text style={styles.contentText}>{contentToShow}</Text>
             {contentToShow ? (
               <TouchableOpacity onPress={toggleShowMore}>
@@ -270,6 +278,7 @@ export const CustomPost = ({
         </LinearGradient>
       ) : (
         <ScrollView
+          nestedScrollEnabled={true}
           scrollEnabled={true}
           style={[
             {

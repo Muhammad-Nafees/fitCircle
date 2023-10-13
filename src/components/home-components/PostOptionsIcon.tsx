@@ -26,7 +26,7 @@ export const PostOptionsIcon = ({
     if (userRole !== 'user') {
       navigation.navigate('Schedule');
     } else {
-      navigation.navigate('Schedule', {screen: 'SetSchedule'});
+      navigation.navigate('UserSchedule');
     }
   };
 

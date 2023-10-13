@@ -14,9 +14,12 @@ import {enUS} from 'date-fns/locale';
 // ----------------------------------------------------------------------//
 import ArrowForward from '../../../assets/icons/ArrowForward';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-import CustomHourlyRate from '../../components/buypackage-components/CustomHourlyRate';
+import TrainerHourlyRate from '../../components/buypackage-components/TrainerHourlyRate';
 import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
-import {getTrainerSlotList} from '../../api/dashboard-module';
+import {
+  getTrainerSlotList,
+  getTrainerSlotsByMonthForUser,
+} from '../../api/dashboard-module';
 import {useFocusEffect} from '@react-navigation/native';
 import {STYLES} from '../../styles/globalStyles';
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
@@ -26,6 +29,12 @@ export const Slot = ({navigation, route}: any) => {
   const price = '$20.00';
   const hourlyRate = route?.params?.hourlyRate || false;
   const packageView = route?.params?.packageView || false;
+<<<<<<< HEAD
+=======
+  const trainerId = route?.params?.userData?._id;
+
+  console.log(trainerId, 'trainerId');
+>>>>>>> dev
   const months = [
     'JAN',
     'FEB',
@@ -50,9 +59,17 @@ export const Slot = ({navigation, route}: any) => {
   const [trainerSchedules, setTrainerSchedules] = useState([]);
   const today = new Date();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const userData = route?.params?.userData;
 
   const renderCarouselItem = ({item}: any) => {
-    const inputDateString = item?._id;
+    console.log(item, 'item');
+    let inputDateString;
+    if (userData) {
+      inputDateString = item?.scheduleDate;
+    } else {
+      inputDateString = item?._id;
+    }
+    console.log(item?._id);
     const parsedDate = parse(
       inputDateString,
       "yyyy-MM-dd'T'HH:mm:ss.SSSX",
@@ -67,41 +84,92 @@ export const Slot = ({navigation, route}: any) => {
 
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('SetSchedule', {date: parsedDate})}
+        onPress={() =>
+          navigation.navigate('SetSchedule', {
+            date: parsedDate,
+            userData: userData,
+          })
+        }
         style={styles.carouselItem}>
         <Text style={styles.carouselItemText1}>{day}</Text>
         <View style={styles.dateMonthRow}>
           <Text style={styles.carouselItemText}>{date} </Text>
           <Text style={styles.carouselItemText}>{month}</Text>
         </View>
-        <Text style={styles.carouselItemText1}>{item?.count} Slots</Text>
+        <Text style={styles.carouselItemText1}>
+          {item?.count ? item.count : item?.availableSlots} Slots
+        </Text>
       </TouchableOpacity>
+      // <Text>sss</Text>
     );
   };
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
+
+  // trainer pov
+
+  const fetchTrainerSlotsByMonth = async () => {
+    try {
+      const response = await getTrainerSlotList();
+      const slotsCount = response?.data?.data;
+
+      const sortedData = slotsCount?.sort((a: any, b: any) => {
+        return new Date(a._id).getTime() - new Date(b._id).getTime();
+      });
+
+      setTrainerSchedules(sortedData);
+    } catch (error: any) {
+      console.log(
+        error?.response?.data,
+        'from fetching trainer slots by monnths!',
+      );
+    }
+  };
+
+  // user pov
+  const fetchTrainerSlotsByMonthForUser = async () => {
+    try {
+      const response = await getTrainerSlotsByMonthForUser(10, 2023, trainerId);
+      const slotsCount = response?.data?.data;
+
+      const sortedData = slotsCount?.sort((a: any, b: any) => {
+        return (
+          new Date(a.scheduleDate).getTime() -
+          new Date(b.scheduleDate).getTime()
+        );
+      });
+
+      setTrainerSchedules(sortedData);
+    } catch (error: any) {
+      console.log(
+        error?.response?.data,
+        'from fetching trainer slots for user by months!',
+      );
+    }
+  };
+
+>>>>>>> dev
   useFocusEffect(
     useCallback(() => {
-      const fetchTrainerSlotsByMonth = async () => {
-        try {
-          const response = await getTrainerSlotList();
-          const slotsCount = response?.data?.data;
-
-          const sortedData = slotsCount?.sort((a: any, b: any) => {
-            return new Date(a._id).getTime() - new Date(b._id).getTime();
-          });
-
-          setTrainerSchedules(sortedData);
-        } catch (error: any) {
-          console.log(
-            error?.response?.data,
-            'from fetching trainer slots by monnths!',
-          );
-        }
-      };
-      fetchTrainerSlotsByMonth();
+      if (userData) {
+        fetchTrainerSlotsByMonthForUser();
+      } else {
+        fetchTrainerSlotsByMonth();
+      }
     }, []),
   );
-  console.log(trainerSchedules?.length, 'lkkk');
 
   return (
     <View style={styles.container}>
@@ -114,7 +182,7 @@ export const Slot = ({navigation, route}: any) => {
         </TouchableOpacity>
         <Text style={styles.heading}>Schedule</Text>
       </View>
-      {hourlyRate !== false && <CustomHourlyRate />}
+      {hourlyRate !== false && <TrainerHourlyRate trainerData={userData} />}
       {packageView && <CustomTrainerPackage hidePackageButton={true} />}
       <TouchableOpacity
         style={styles.calenderButton}

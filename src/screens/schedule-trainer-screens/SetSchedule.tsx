@@ -23,6 +23,7 @@ import {
 } from '../../components/shared-components/CustomModals';
 import {
   generateSlots,
+  getTrainerAvailableSlotsByDateForUser,
   getTrainerSlots,
   setSlots,
 } from '../../api/dashboard-module';
@@ -46,29 +47,46 @@ const SetSchedule = ({navigation, route}: any) => {
   const [selectedSlotDates, setSelectedSlotDates] = useState<string[]>([]);
   const today = format(new Date(), 'yyyy-MM-dd');
   const [currentDate, setCurrentDate] = useState<Date | string>(today);
-  const [selectedDate, setSelectedDate] = useState<Date | string>(today);
+  const [selectedDate, setSelectedDate] = useState<Date | string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isListLoading, setIsListLoading] = useState<boolean>(false);
   const [isDateFormatted, setIsDateFormatted] = useState(false);
-  const [slotsDate, setSlotsDate] = useState<any>();
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [selectedOptionsWDate, setSelectedOptionsWDate] = useState<TimeSlot[]>(
-    [],
-  );
   const userData = useSelector((state: RootState) => state.auth.user);
   const [selectedSlotDate, setSelectedSlotDate] = useState<any>();
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [paymentType, setPaymentType] = useState<'success' | 'failed'>(
     'success',
   );
   const [paymentModal, setPaymentModal] = useState(false);
-  console.log(route.params);
+
+  // for user viewing trainer profile!
+  const [availableSlots, setAvailableSlots] = useState<any>([]);
+  const isSearchTrainer = route?.params?.userData;
+  const searchTrainerId = route?.params?.userData?._id;
+
+  // useEffect(() => {
+  //   const date = route?.params?.date;
+  //   if (date) {
+  //     const formattedDate = format(date, 'yyyy-MM-dd');
+  //     setSelectedDate(formattedDate);
+  //   }
+  // }, []);
 
   useEffect(() => {
-    const date = route?.params?.date;
-    if (date) {
-      const formattedDate = format(date, 'yyyy-MM-dd');
-      setSelectedDate(formattedDate);
+    if (route.params?.date) {
+      const formattedSelectedDate = format(route.params?.date, 'yyyy-MM-dd');
+      setSelectedDate(formattedSelectedDate);
+
+      // setSelectedDate(route.params.date);
+      setIsDateFormatted(true);
+      const parsedDate = new Date(route.params.date);
+      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+      setSelectedSlotDate(formattedDate);
+    } else {
+      setIsDateFormatted(false);
+
+      setSelectedDate(today);
     }
   }, []);
 
@@ -123,17 +141,27 @@ const SetSchedule = ({navigation, route}: any) => {
             slotStart.format('h:mmA') === start &&
             slotEnd.format('h:mmA') === end
           );
-        });
+        }); 
 
         return slot;
       });
-      setTimeSlots(extractedData);
+      if (availableSlots) {
+        const availableSlotsForUser = extractedData.filter((slot: any) =>
+          availableSlots.includes(slot._id),
+        );
+        console.log(availableSlotsForUser, 'availableSlotsForUser');
+        setTimeSlots(availableSlotsForUser);
+      } else {
+        setTimeSlots(extractedData);
+      }
       setIsListLoading(false);
     } catch (error: any) {
       console.log(error?.response, 'error from generate slots!');
       setIsListLoading(false);
     }
   };
+
+  // trainer pov
 
   const fetchTrainerSlots = async () => {
     try {
@@ -149,11 +177,6 @@ const SetSchedule = ({navigation, route}: any) => {
       console.log(error?.response?.data, 'error from trainer booled slots!');
     }
   };
-
-  useEffect(() => {
-    fetchTimeSlots();
-    fetchTrainerSlots();
-  }, [selectedDate]);
 
   const handleSetSchedule = async () => {
     setIsLoading(true);
@@ -179,6 +202,33 @@ const SetSchedule = ({navigation, route}: any) => {
       setIsLoading(false);
     }
   };
+
+  // user searching trainer pov
+
+  const fetchTrainerAvailableSlots = async () => {
+    try {
+      const response = await getTrainerAvailableSlotsByDateForUser(
+        selectedDate as string,
+        searchTrainerId,
+      );
+      console.log(response?.data, 'fetchTrainerAvailableSlots');
+      const availableSlots = response?.data?.data;
+      setAvailableSlots(availableSlots);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'error from trainer booled slots!');
+    }
+  };
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchTimeSlots();
+      if (isSearchTrainer) {
+        fetchTrainerAvailableSlots();
+      } else {
+        fetchTrainerSlots();
+      }
+    }
+  }, [selectedDate]);
 
   const renderOptionItem = ({item}: any) => {
     return (
@@ -210,22 +260,10 @@ const SetSchedule = ({navigation, route}: any) => {
 
   const handlePayment = (type: string) => {
     setIsModalVisible(false);
-    setPaymentType(type);
+    setPaymentType(type as any);
     setPaymentModal(true);
   };
 
-  useEffect(() => {
-    if (route.params.date) {
-      setSelectedDate(route.params.date);
-      setIsDateFormatted(true);
-      const parsedDate = new Date(route.params.date);
-      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
-      setSelectedSlotDate(formattedDate);
-    } else {
-      setIsDateFormatted(false);
-    }
-  }, []);
-  console.log(selectedSlotDate);
   const currentttDate = startOfDay(new Date());
   const formattedCurrentDate = route.params.date
     ? format(route.params.date, 'yyyy-MM-dd')

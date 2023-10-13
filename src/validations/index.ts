@@ -47,11 +47,11 @@ export const createProfileSchema = (userRole: any) => {
   return Yup.object().shape({
     firstName: Yup.string()
       .required('First Name is required')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+      .matches(/^[A-Za-z]+$/, 'Invalid input') // Ensures no spaces in the name
       .min(3, 'First name must be at least 3 characters'),
     lastName: Yup.string()
       .required('Last Name is required')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+      .matches(/^[A-Za-z]+$/, 'Invalid input') // Ensures no spaces in the name
       .min(3, 'Last name must be at least 3 characters'),
     username: Yup.string()
       .required('Username is required')
@@ -181,11 +181,11 @@ export const PhysicalReadinessTestSchema = Yup.object().shape({
   email: email,
   firstName: Yup.string()
     .required('First Name is required')
-    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .matches(/^[A-Za-z]+$/, 'Invalid input') // Ensures no spaces in the name
     .min(3, 'First Name must be at least 3 characters long'),
   lastName: Yup.string()
     .required('Last Name is required')
-    .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input')
+    .matches(/^[A-Za-z]+$/, 'Invalid input') // Ensures no spaces in the name
     .min(3, 'Last Name must be at least 3 characters long'),
   address: Yup.string()
     .required('Address is required')

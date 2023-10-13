@@ -1,15 +1,24 @@
 import React from 'react';
 import {Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import {useDispatch} from 'react-redux';
+import {authenticate} from '../../redux/authSlice';
 
-const LogoutButton = () => (
-  <TouchableOpacity style={styles.logoutButton}>
-    <View style={styles.logoutIconContainer}>
-      <FontAwesomeIcon name="power-off" size={20} color="white" />
-    </View>
-    <Text style={styles.logoutText}>Log Out</Text>
-  </TouchableOpacity>
-);
+const LogoutButton = () => {
+  const dispatch = useDispatch();
+  return (
+    <TouchableOpacity
+      style={styles.logoutButton}
+      onPress={() => {
+        dispatch(authenticate(false));
+      }}>
+      <View style={styles.logoutIconContainer}>
+        <FontAwesomeIcon name="power-off" size={20} color="white" />
+      </View>
+      <Text style={styles.logoutText}>Log Out</Text>
+    </TouchableOpacity>
+  );
+};
 
 export default LogoutButton;
 
