@@ -44,7 +44,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
   const [userPhone, setUserPhone] = useState<string>('');
   const [countryCode, setCountryCode] = useState();
   const [allData, setAllData] = useState<any | null>([]);
-  console.log(userData,"from createprofile")
+  console.log(userData, 'from createprofile');
 
   useEffect(() => {
     if (userData?.phone) {
@@ -238,22 +238,23 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               setFieldError={setFieldError}
               fieldName="bio"
             />
-            {userRole == 'user' && (
-              <CustomPhoneInput
-                value={userData?.phone}
-                error={errors.phone}
-                touched={touched.phone}
-                handleChange={handleChange('phone')}
-                setFieldValue={setFieldValue}
-                phoneInput={phoneInput}
-                setIsError={setIsError}
-                setFieldError={setFieldError}
-                isError={isError}
-                setPhoneCode={setPhoneCode}
-                countryCode={userData?.countryCode}
-                disabled={true}
-              />
-            )}
+            {/* {userRole == 'user' && ( */}
+
+            <CustomPhoneInput
+              disabled={true}
+              value={userData?.phone}
+              error={errors.phone}
+              touched={touched.phone}
+              handleChange={handleChange('phone')}
+              setFieldValue={setFieldValue}
+              phoneInput={phoneInput}
+              setIsError={setIsError}
+              setFieldError={setFieldError}
+              isError={isError}
+              setPhoneCode={setPhoneCode}
+              countryCode={userData?.countryCode}
+            />
+            {/* )} */}
             <CustomSelect
               label="Country"
               selectedValue={values.country}

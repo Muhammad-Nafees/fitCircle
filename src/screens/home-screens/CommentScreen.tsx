@@ -66,6 +66,8 @@ const CommentsScreen = ({route, navigation}: any) => {
   const [loadMore, setLoadMore] = useState<boolean>(false);
   const [noComments, setNoComments] = useState<boolean>(true);
 
+  const commentRef = useRef();
+
   const handlePhotoButtonPress = async () => {
     setMediaUri(null);
     const options: ImageLibraryOptions = {
@@ -101,15 +103,14 @@ const CommentsScreen = ({route, navigation}: any) => {
             page,
           );
           const data = response?.data?.data;
-          console.log(data);
           setTimeout(() => {
             if (data?.comments?.length === 0) {
-              console.log(data.length, 'Ss');
               setNoComments(true);
             } else {
               setNoComments(false);
             }
           }, 2000);
+
           const sortedData = data?.comments.sort((sortA: any, sortB: any) => {
             const dateA: any = new Date(sortA.createdAt);
             const dateB: any = new Date(sortB.createdAt);
@@ -124,6 +125,7 @@ const CommentsScreen = ({route, navigation}: any) => {
             setComments(sortedData);
           }
           dispatch(setCommentCount(sortedData?.length));
+          console.log(sortedData.length);
           setCommentsCount(data?.pagination?.totalItems);
           setLoadMore(false);
           setHasMoreComments(data?.pagination?.hasNextPage);
@@ -199,6 +201,9 @@ const CommentsScreen = ({route, navigation}: any) => {
       const response = await addComment(reqData);
       const data = response?.data.data;
       console.log(data, 'response from add comment');
+      // if (commentRef) {
+      //   commentRef?.current.scrollToEnd({animated: true});
+      // }
     } catch (error: any) {
       console.log(error?.response?.data, 'error from add comment');
     }
@@ -230,9 +235,13 @@ const CommentsScreen = ({route, navigation}: any) => {
   // );
 
   return (
-    <ScrollView keyboardShouldPersistTaps="always" nestedScrollEnabled={true}>
-      <View style={{flex: 1, justifyContent: 'space-between'}}>
-        <View style={{backgroundColor: '#353535', zIndex: -1}}>
+    <View
+      style={{flex: 1, justifyContent: 'space-between', position: 'relative'}}>
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        nestedScrollEnabled={true}
+        style={{position: 'relative'}}>
+        <View style={{backgroundColor: '#353535'}}>
           <CustomPost
             post={selectedPost}
             commentCount={commentsCount}
@@ -241,14 +250,18 @@ const CommentsScreen = ({route, navigation}: any) => {
             heightFull={!selectedPost?.media}
           />
         </View>
-        <View>
+        <View
+          style={{
+            height: verticalScale(350),
+            width: '100%',
+            backgroundColor: '#ffffff',
+          }}>
           <ScrollView
-            style={{
-              height: verticalScale(350),
-              width: '100%',
-            }}
+            ref={commentRef}
             nestedScrollEnabled={true}
-            keyboardShouldPersistTaps="always">
+            keyboardShouldPersistTaps="always"
+            onContentSizeChange={() => commentRef?.current.scrollToEnd({ animated: true })}
+            >
             {
               // isLoading ? (
               //   <CustomLoader isStyle={true} extraStyles={{marginTop: 80}} />
@@ -265,14 +278,14 @@ const CommentsScreen = ({route, navigation}: any) => {
                 noComments && <NoComment />
               )
             }
-            {comments && comments.length > 0 ? (
+            {/* {comments && comments.length > 0 ? (
               <View
                 style={{
                   height: comments.length < 2 ? 120 : 70,
                   backgroundColor: '#ffffff',
                 }}
               />
-            ) : null}
+            ) : null} */}
           </ScrollView>
         </View>
         <Modal
@@ -293,70 +306,70 @@ const CommentsScreen = ({route, navigation}: any) => {
             />
           </TouchableOpacity>
         </Modal>
-        <View
-          style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
-          {mediaUri && !isReplying && (
-            <CustomAttachmentDialog
-              message="Photo Attached"
-              showCancel={true}
-              onCancel={() => setMediaUri(null)}
-            />
-          )}
-          {isReplying && (
-            <CustomAttachmentDialog
-              message="Replying"
-              showCancel={true}
-              onCancel={() => setIsReplying(false)}
-            />
-          )}
-          {isReplying && mediaUri && (
-            <CustomAttachmentDialog
-              message="Photo Attached in Reply"
-              showCancel={true}
-              onCancel={() => {
-                setIsReplying(false);
-                setMediaUri(null);
-              }}
-            />
-          )}
-          <View style={styles.inputContainer}>
-            <View
-              style={{
-                flexDirection: 'row',
-                backgroundColor: '#00abd2',
-                width: '85%',
-              }}>
-              <TextInput
-                style={styles.textInput}
-                ref={inputRef}
-                placeholder="Message"
-                placeholderTextColor="#fff"
-                value={commentText}
-                onChangeText={text => setCommentText(text)}
-              />
-              <TouchableOpacity
-                style={styles.photoButton}
-                onPress={handlePhotoButtonPress}>
-                <CreatePostCommentSvgIcon />
-              </TouchableOpacity>
-            </View>
 
+        <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
+        {mediaUri && !isReplying && (
+          <CustomAttachmentDialog
+            message="Photo Attached"
+            showCancel={true}
+            onCancel={() => setMediaUri(null)}
+          />
+        )}
+        {isReplying && (
+          <CustomAttachmentDialog
+            message="Replying"
+            showCancel={true}
+            onCancel={() => setIsReplying(false)}
+          />
+        )}
+        {isReplying && mediaUri && (
+          <CustomAttachmentDialog
+            message="Photo Attached in Reply"
+            showCancel={true}
+            onCancel={() => {
+              setIsReplying(false);
+              setMediaUri(null);
+            }}
+          />
+        )}
+        <View style={styles.inputContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: '#00abd2',
+              width: '85%',
+            }}>
+            <TextInput
+              style={styles.textInput}
+              ref={inputRef}
+              placeholder="Message"
+              placeholderTextColor="#fff"
+              value={commentText}
+              onChangeText={text => setCommentText(text)}
+            />
             <TouchableOpacity
-              style={styles.commentButton}
-              onPress={handleAddComment}>
-              {isLoading ? (
-                <CustomLoader />
-              ) : (
-                <Image
-                  source={SendIcon}
-                  style={{width: 20, height: 20, tintColor: '#fff'}}
-                />
-              )}
+              style={styles.photoButton}
+              onPress={handlePhotoButtonPress}>
+              <CreatePostCommentSvgIcon />
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity
+            style={styles.commentButton}
+            onPress={handleAddComment}>
+            {isLoading ? (
+              <CustomLoader />
+            ) : (
+              <Image
+                source={SendIcon}
+                style={{width: 20, height: 20, tintColor: '#fff'}}
+              />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
