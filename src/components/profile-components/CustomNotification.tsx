@@ -12,6 +12,7 @@ interface NotificationProps {
   handleDeclinePress?: any;
   buttonVisible?: boolean;
   containerPress?: any;
+  extraResponseStyles?: any;
 }
 
 const CustomNotification = ({
@@ -23,6 +24,7 @@ const CustomNotification = ({
   handleConfirmPress,
   buttonVisible = true,
   containerPress,
+  extraResponseStyles,
 }: NotificationProps) => {
   return (
     <TouchableOpacity style={styles.container} onPress={containerPress}>
@@ -37,7 +39,9 @@ const CustomNotification = ({
             <Text style={[styles.text, {color: 'rgba(255, 255, 255, 0.5)'}]}>
               {requestText}
             </Text>
-            <Text style={styles.text}>{responseTime}</Text>
+            <Text style={[styles.text, extraResponseStyles]}>
+              {responseTime}
+            </Text>
           </View>
         </View>
       </View>

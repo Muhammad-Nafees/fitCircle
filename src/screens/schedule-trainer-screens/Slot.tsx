@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  BackHandler,
   ScrollView,
 } from 'react-native';
 import {format, parse} from 'date-fns';
@@ -100,20 +99,6 @@ export const Slot = ({navigation, route}: any) => {
       // <Text>sss</Text>
     );
   };
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
-
-  // trainer pov
 
   const fetchTrainerSlotsByMonth = async () => {
     try {

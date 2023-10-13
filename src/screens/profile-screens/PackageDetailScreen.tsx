@@ -6,7 +6,6 @@ import {
   Image,
   StyleSheet,
   FlatList,
-  BackHandler,
   ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -32,18 +31,6 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
   const videoEnabled = () => {
     setVideoVisible(!videoVisible);
   };
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate('Profile');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
 
   const {
     hours = '1',

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  BackHandler,
   TextInput,
 } from 'react-native';
 import Toggle from 'react-native-toggle-element';

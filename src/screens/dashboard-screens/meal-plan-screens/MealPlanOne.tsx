@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  BackHandler,
-} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useEffect} from 'react';
 // ----------------------------------------------------------------------------//
 import MealPlanImage from '../../../../assets/icons/MealPlanImage';

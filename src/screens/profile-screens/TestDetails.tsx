@@ -1,7 +1,6 @@
 import CustomButton from '../../components/shared-components/CustomButton';
 import CustomHeader from '../../components/shared-components/CustomHeader';
-import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 
 const TestDetailScreen = ({navigation, route}: any) => {
   const isTestDetails2 = route.name === 'TestDetails2';
@@ -142,29 +141,9 @@ const TestDetailScreen = ({navigation, route}: any) => {
     }
   };
 
-  useFocusEffect(() => {
-    const backAction = () => {
-      handleBackNavigation();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  });
-
-  const handleBackNavigation = () => {
-    if (isTestDetails2) {
-      navigation.navigate('TestDetails');
-    } else {
-      navigation.navigate('Profile');
-    }
-  };
-
   return (
     <View style={styles.container}>
-      <CustomHeader onPress={handleBackNavigation} />
+      <CustomHeader onPress={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={{paddingHorizontal: 16}}>
           <Text style={styles.heading}>Physical Activity Readiness</Text>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View, Text, BackHandler} from 'react-native';
+import {ScrollView, StyleSheet, View, Text} from 'react-native';
 // --------------------------------------------------------------------------//
 import {STYLES} from '../../../styles/globalStyles';
 import {VerificationOne} from './VerificationOne';
@@ -21,17 +21,6 @@ type Mcq = {
 
 const VerificationSeven = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  useEffect(() => {
-    const backAction = () => {
-      navigation.goBack();
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
   const {
     verificationOne,
     verificationTwo,
@@ -91,11 +80,31 @@ const VerificationSeven = ({navigation, route}: any) => {
           Physical Activity Readiness
         </Text>
         <View style={styles.formContainer}>
-          <VerificationOne data={verificationOne} disabled={true} disabledStlyes={disabledStlyes}/>
-          <VerificationTwo data={verificationTwo} disabled={true}  disabledStlyes={disabledStlyes}/>
-          <VerificationFour data={verificationFour} disabled={true} disabledStlyes={disabledStlyes} />
-          <VerificationFive data={verificationFive} disabled={true} disabledStlyes={disabledStlyes} />
-          <VerificationSix data={verificationSix} disabled={true}  disabledStlyes={disabledStlyes}/>
+          <VerificationOne
+            data={verificationOne}
+            disabled={true}
+            disabledStlyes={disabledStlyes}
+          />
+          <VerificationTwo
+            data={verificationTwo}
+            disabled={true}
+            disabledStlyes={disabledStlyes}
+          />
+          <VerificationFour
+            data={verificationFour}
+            disabled={true}
+            disabledStlyes={disabledStlyes}
+          />
+          <VerificationFive
+            data={verificationFive}
+            disabled={true}
+            disabledStlyes={disabledStlyes}
+          />
+          <VerificationSix
+            data={verificationSix}
+            disabled={true}
+            disabledStlyes={disabledStlyes}
+          />
         </View>
         <View style={styles.buttonContainer}>
           <CustomButton

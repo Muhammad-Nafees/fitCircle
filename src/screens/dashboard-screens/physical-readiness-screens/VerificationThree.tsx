@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView, BackHandler} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {LinearGradient} from 'react-native-linear-gradient';
 import {Formik} from 'formik';
 import * as Yup from 'yup';

@@ -87,6 +87,23 @@ const NotificationScreen = ({navigation}: any) => {
           navigation.navigate('Message', {
             screen: 'ChatDetails',
             params: {
+              type: 'pending',
+              username: 'Jason Smith',
+            },
+          })
+        }
+      />
+      <CustomNotification
+        username={'Jason Smith'}
+        dateTime={'02/15/2023 - 03:45 PM'}
+        requestText={'Requesting for a meal plan'}
+        responseTime={'Accepted your meal plan request'}
+        buttonVisible={false}
+        extraResponseStyles={{color: 'rgba(32, 155, 204, 1)'}}
+        containerPress={() =>
+          navigation.navigate('Message', {
+            screen: 'ChatDetails',
+            params: {
               type: 'accepted',
               username: 'Jason Smith',
             },
