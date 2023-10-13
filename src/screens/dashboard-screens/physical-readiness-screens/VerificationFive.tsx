@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {BackHandler, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Formik} from 'formik';
 // -----------------------------------------------------------------------------//
 import CustomButton from '../../../components/shared-components/CustomButton';

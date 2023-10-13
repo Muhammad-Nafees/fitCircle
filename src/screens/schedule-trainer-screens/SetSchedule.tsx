@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  BackHandler,
   ScrollView,
 } from 'react-native';
 import {Calendar, DateData} from 'react-native-calendars';
@@ -141,7 +140,7 @@ const SetSchedule = ({navigation, route}: any) => {
             slotStart.format('h:mmA') === start &&
             slotEnd.format('h:mmA') === end
           );
-        }); 
+        });
 
         return slot;
       });

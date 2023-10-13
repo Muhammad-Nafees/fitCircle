@@ -24,20 +24,6 @@ const Rating = ({navigation, route}: any) => {
     setRating(selectedRating);
   };
 
-  useEffect(() => {
-    const handleBackPress = () => {
-      navigation.navigate('ChatDetails', {username: route.params.username});
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      handleBackPress,
-    );
-    return () => {
-      backHandler.remove();
-    };
-  }, [navigation]);
-
   return (
     <View style={styles.container}>
       <View style={styles.modalContent}>

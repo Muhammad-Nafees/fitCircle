@@ -1,12 +1,5 @@
 import React, {useEffect, useState, useCallback, useRef} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  BackHandler,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
@@ -86,7 +79,7 @@ const ProfileScreen = ({navigation, route}: any) => {
     userData?._id,
   );
   const profilePersonalData = useSelector((state: RootState) => state.profile);
-  console.log(searchUserProfile?._id,"idd")
+  console.log(searchUserProfile?._id, 'idd');
 
   useEffect(() => {
     if (searchUserProfile && searchUserProfile._id) {

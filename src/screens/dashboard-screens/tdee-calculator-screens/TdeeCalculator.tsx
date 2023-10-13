@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  BackHandler,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {Formik} from 'formik';

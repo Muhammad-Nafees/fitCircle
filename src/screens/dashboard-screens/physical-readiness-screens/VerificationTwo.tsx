@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, BackHandler} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Formik} from 'formik';
 // ------------------------------------------------------------------------------------------//
@@ -21,7 +21,13 @@ interface FormValues {
   isAnyReasonNotToParticipate: string;
 }
 
-const VerificationTwo = ({disabled, navigation, route, data,disabledStlyes}: any) => {
+const VerificationTwo = ({
+  disabled,
+  navigation,
+  route,
+  data,
+  disabledStlyes,
+}: any) => {
   const formdata: null | any = data;
   const [isFormSubmitted, setIsFormSubmitted] = useState<boolean>(false);
 

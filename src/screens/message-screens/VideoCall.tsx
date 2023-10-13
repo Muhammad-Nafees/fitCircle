@@ -5,7 +5,7 @@ import {Avatar} from 'react-native-paper';
 // --------------------------------------------------------------------//
 import {VideoCallModal} from '../../components/message-components/VideoCallModal';
 
-export const VideoCall = ({route, navigation}: any) => {
+export const VideoCall = ({route}: any) => {
   const devices = useCameraDevices();
   const cameraRef = useRef(null);
   const [flip, setFlip] = useState(false);
@@ -18,20 +18,6 @@ export const VideoCall = ({route, navigation}: any) => {
       setFlip(!flip);
     }
   };
-
-  useEffect(() => {
-    const handleBackPress = () => {
-      navigation.navigate('ChatDetails', {username: route.params.username});
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      handleBackPress,
-    );
-    return () => {
-      backHandler.remove();
-    };
-  }, [navigation]);
 
   const toggleCameraComponent = () => {
     setIsCameraActive(!isCameraActive);

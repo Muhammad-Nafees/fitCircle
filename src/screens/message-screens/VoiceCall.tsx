@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, Text, BackHandler} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {Avatar} from 'react-native-paper';
 // ----------------------------------------------------------------//
 import CallAcceptIcon from '../../../assets/icons/CallAccept';
@@ -8,19 +8,6 @@ import {TouchableOpacity} from 'react-native';
 import {moderateScale} from '../../utils/metrics';
 
 export const VoiceCall = ({route, navigation}: any) => {
-  useEffect(() => {
-    const handleBackPress = () => {
-      navigation.navigate('ChatDetails', {username: route.params.username});
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      handleBackPress,
-    );
-    return () => {
-      backHandler.remove();
-    };
-  }, [navigation]);
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>

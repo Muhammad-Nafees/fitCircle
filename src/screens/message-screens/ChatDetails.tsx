@@ -94,7 +94,7 @@ export const ChatDetails = ({route, navigation}: any) => {
     const staticMessages = [
       {
         id: 1,
-        text: 'Please wait 24 hours until Smith accepts',
+        text: 'Please wait 24 hours until Jason accepts',
       },
       {
         id: 2,
@@ -105,7 +105,7 @@ export const ChatDetails = ({route, navigation}: any) => {
     if (route.params.type === 'accepted') {
       staticMessages.unshift({
         id: 3,
-        text: 'Lindsey accepted your request',
+        text: 'Jason accepted your request',
       });
     }
     setUserMessages(route.params.type ? staticMessages : []);
@@ -120,19 +120,22 @@ export const ChatDetails = ({route, navigation}: any) => {
           keyExtractor={item => item.id.toString()}
           inverted
           renderItem={({item}) =>
-            item.text === 'Requesting for a meal plan' ||
-            item.text === 'Please wait 24 hours until Smith accepts' ||
-            item.text === 'Lindsey accepted your request' ? (
+            item.text === 'Please wait 24 hours until Jason accepts' ||
+            item.text === 'Jason accepted your request' ? (
               <View style={styles.centeredMessageContainer}>
                 <Text
                   style={
-                    item.text === 'Requesting for a meal plan' ||
-                    item.text === 'Please wait 24 hours until Smith accepts'
-                      ? styles.grayText
+                    item.text === 'Please wait 24 hours until Jason accepts' &&
+                    route.params.type === 'accepted'
+                      ? styles.whiteText
                       : styles.blueText
                   }>
                   {item.text}
                 </Text>
+              </View>
+            ) : item.text === 'Requesting for a meal plan' ? (
+              <View style={styles.centeredMessageContainer}>
+                <Text style={styles.grayText}>{item.text}</Text>
               </View>
             ) : (
               <View style={styles.userMessageContainer}>
@@ -261,17 +264,21 @@ const styles = StyleSheet.create({
   centeredMessageContainer: {
     alignSelf: 'center',
     alignItems: 'center',
+    marginVertical: 5,
   },
   grayText: {
     color: 'rgba(255, 255, 255, 0.5)',
     fontWeight: '400',
     fontSize: 12,
-    marginVertical: 10,
   },
   blueText: {
     color: 'rgba(32, 155, 204, 1)',
     fontWeight: '400',
     fontSize: 12,
-    marginBottom: 16,
+  },
+  whiteText: {
+    color: 'white',
+    fontWeight: '400',
+    fontSize: 12,
   },
 });

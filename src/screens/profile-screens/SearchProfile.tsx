@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
-  BackHandler,
 } from 'react-native';
 import Modal from 'react-native-modal';
 // -----------------------------------------------------------------------//
@@ -189,18 +188,6 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     setModalVisible(false);
   };
 
-  useFocusEffect(() => {
-    const backAction = () => {
-      navigation.navigate('Profile');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  });
-
   const renderItem = ({item}: any) => {
     const handleToggleRemove = (id: string) => {
       console.log(id, 'idd');
@@ -221,7 +208,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.backIconContainer}
-        onPress={() => navigation.navigate('Profile')}>
+        onPress={() => navigation.goBack()}>
         <Image source={BackArrowIcon} style={styles.backArrowIcon} />
       </TouchableOpacity>
       <SearchOptionContainer
