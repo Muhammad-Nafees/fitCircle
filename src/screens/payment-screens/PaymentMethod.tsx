@@ -24,7 +24,20 @@ export const PaymentMethodScreen = ({navigation, route}: any) => {
     <View style={styles.container}>
       <View style={styles.headingContainer}>
         <Text style={styles.heading}>Payment Method</Text>
-        <TouchableOpacity onPress={() => console.log('Something')}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('AddCard' as never, {
+              dummyData: {
+                type: 'Mastercard',
+                cardNumber: '4929 4685 0480 5705',
+                expiry: '12/24',
+                cvv: '123',
+                firstName: 'John',
+                lastName: 'Doe',
+                country: 'United States',
+              },
+            })
+          }>
           <Text style={styles.edit}>Edit</Text>
         </TouchableOpacity>
       </View>

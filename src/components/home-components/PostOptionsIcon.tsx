@@ -54,12 +54,18 @@ export const PostOptionsIcon = ({
         <Text style={styles.options}>My Profile</Text>
       </TouchableOpacity>
       {userRole !== 'user' && (
-        <TouchableOpacity style={styles.bottomContainerButtons}>
+        <TouchableOpacity
+          style={styles.bottomContainerButtons}
+          onPress={() =>
+            navigation.navigate('HomeTab', {screen: 'CreatePackageScreen'})
+          }>
           <PackageIcon />
           <Text style={styles.options}>My Package</Text>
         </TouchableOpacity>
       )}
-      <TouchableOpacity style={styles.bottomContainerButtons}>
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={() => navigation.navigate('MealPlan')}>
         <MealPlanSvgIcon />
         <Text style={styles.options}>My Meal Plan</Text>
       </TouchableOpacity>

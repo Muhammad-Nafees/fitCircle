@@ -77,6 +77,22 @@ const NotificationScreen = ({navigation}: any) => {
           }
         />
       ))}
+      <CustomNotification
+        username={'Jason Smith'}
+        dateTime={'02/15/2023 - 03:45 PM'}
+        requestText={'Requesting for a meal plan'}
+        responseTime={'Please wait until 24 hours to respond'}
+        buttonVisible={false}
+        containerPress={() =>
+          navigation.navigate('Message', {
+            screen: 'ChatDetails',
+            params: {
+              type: 'accepted',
+              username: 'Jason Smith',
+            },
+          })
+        }
+      />
       <Modal
         isVisible={isModalVisible}
         onBackButtonPress={handleModal}

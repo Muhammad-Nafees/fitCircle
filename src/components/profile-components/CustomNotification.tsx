@@ -1,6 +1,6 @@
 import CustomButton from '../shared-components/CustomButton';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 
 interface NotificationProps {
@@ -10,6 +10,8 @@ interface NotificationProps {
   responseTime: string;
   handleConfirmPress?: any;
   handleDeclinePress?: any;
+  buttonVisible?: boolean;
+  containerPress?: any;
 }
 
 const CustomNotification = ({
@@ -19,9 +21,11 @@ const CustomNotification = ({
   responseTime,
   handleDeclinePress,
   handleConfirmPress,
+  buttonVisible = true,
+  containerPress,
 }: NotificationProps) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={containerPress}>
       <View style={{flexDirection: 'row', gap: 10, alignItems: 'center'}}>
         <CustomProfileAvatar username={username} size={50} />
         <View style={{flex: 1, gap: 5}}>
@@ -37,19 +41,21 @@ const CustomNotification = ({
           </View>
         </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          extraStyles={styles.declineButton}
-          onPress={handleDeclinePress}>
-          Decline
-        </CustomButton>
-        <CustomButton
-          extraStyles={{paddingHorizontal: 16, height: 25}}
-          onPress={handleConfirmPress}>
-          Confirm
-        </CustomButton>
-      </View>
-    </View>
+      {buttonVisible && (
+        <View style={styles.buttonContainer}>
+          <CustomButton
+            extraStyles={styles.declineButton}
+            onPress={handleDeclinePress}>
+            Decline
+          </CustomButton>
+          <CustomButton
+            extraStyles={{paddingHorizontal: 16, height: 25}}
+            onPress={handleConfirmPress}>
+            Confirm
+          </CustomButton>
+        </View>
+      )}
+    </TouchableOpacity>
   );
 };
 

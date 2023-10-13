@@ -5,6 +5,7 @@ const Bank = require('../../../assets/images/bank.png');
 const Paypal = require('../../../assets/images/paypal.png');
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const GooglePay = require('../../../assets/images/google-pay.jpg');
+const ApplePay = require('../../../assets/images/applePay.png');
 
 interface CardPaymentProps {
   defaultView?: boolean;
@@ -40,6 +41,8 @@ const CardPayment = ({
     imageSource = Paypal;
   } else if (type === 'GooglePay') {
     imageSource = GooglePay;
+  } else if (type === 'ApplePay') {
+    imageSource = ApplePay;
   }
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, extraStyles]}>
@@ -59,7 +62,7 @@ const CardPayment = ({
             />
           </TouchableOpacity>
         )}
-        <Image source={imageSource} />
+        <Image source={imageSource} style={{width: 82, height: 52}} />
         <View style={{gap: 4, justifyContent: 'center'}}>
           <Text
             style={{

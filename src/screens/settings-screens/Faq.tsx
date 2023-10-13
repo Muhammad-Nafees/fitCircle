@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: verticalScale(25),
+    marginVertical: verticalScale(8),
     paddingVertical: verticalScale(8),
     paddingHorizontal: horizontalScale(16),
     justifyContent: 'space-between',
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   answerContainer: {
-    marginTop: verticalScale(10),
     padding: moderateScale(16),
     borderRadius: 8,
   },

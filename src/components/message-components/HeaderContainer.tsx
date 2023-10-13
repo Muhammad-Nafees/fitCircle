@@ -19,7 +19,7 @@ export const MessageHeaderContainer = ({username}: any) => {
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
         <TouchableOpacity
           style={styles.arrowBack}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate('MessagesOne')}>
           <Image
             source={ArrowBack}
             style={{width: 24, height: 24, tintColor: 'white'}}
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     gap: moderateScale(15),
     alignItems: 'center',
     marginRight: horizontalScale(10),
+    marginTop: 6,
   },
   name: {
     fontWeight: '600',

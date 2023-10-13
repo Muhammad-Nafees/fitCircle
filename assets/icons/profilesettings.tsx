@@ -1,8 +1,8 @@
 import Svg, {Circle, Path} from 'react-native-svg';
 
-export const ProfileSettingsIcon = () => {
+export const ProfileSettingsIcon = ({width = 25, height = 25}) => {
   return (
-    <Svg width="25" height="25" viewBox="0 0 25 25" fill="none">
+    <Svg width={width} height={height} viewBox="0 0 25 25" fill="none">
       <Circle cx="12.0114" cy="12.0114" r="12.0114" fill="#209BCC" />
       <Path
         d="M12.0105 13.5861C12.8814 13.5861 13.5874 12.88 13.5874 12.0091C13.5874 11.1382 12.8814 10.4322 12.0105 10.4322C11.1396 10.4322 10.4336 11.1382 10.4336 12.0091C10.4336 12.88 11.1396 13.5861 12.0105 13.5861Z"

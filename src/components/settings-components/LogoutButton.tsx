@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 20,
     marginBottom: 30,
-    marginHorizontal: 20,
+    marginHorizontal: 9,
     gap: 16,
   },
   logoutIconContainer: {

@@ -12,6 +12,7 @@ import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
 import TdeeCalculatorStackNavigator from './TdeeCalculatorStackNavigator';
 import ScheduleStackNavigator from './ScheduleStackNavigator';
 import PaymentStackNavigator from './PaymentStackNavigator';
+import MealPlanStackNavigator from './MealPlanStackNavigator';
 
 const Stack = createStackNavigator();
 const HomeStackNavigator = () => {
@@ -52,6 +53,11 @@ const HomeStackNavigator = () => {
       <Stack.Screen
         name="Payment"
         component={PaymentStackNavigator}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="MealPlan"
+        component={MealPlanStackNavigator}
         options={{headerShown: false}}
       />
       {/* <Stack.Screen

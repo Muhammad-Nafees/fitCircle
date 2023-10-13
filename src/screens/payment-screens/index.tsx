@@ -5,37 +5,41 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
+import * as Yup from 'yup';
 //--------------------------------------------------------------------------------//
 import {PaymentEllipse} from '../../../assets/images/PaymentEllipse';
 import CustomButton from '../../components/shared-components/CustomButton';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-import {CustomOutputModal} from '../../components/shared-components/CustomModals';
 import {RootState} from '../../redux/store';
 import {
   AdminSettingsView,
   UserSettingsView,
 } from '../../components/payment-components/SettingsView';
+import {Formik} from 'formik';
+import CustomInput from '../../components/shared-components/CustomInput';
+
+const validationSchema = Yup.object().shape({
+  amount: Yup.number()
+    .required('Amount is required')
+    .min(1, 'Amount must be greater than zero'),
+});
 
 const PaymentScreen = ({navigation}: any) => {
   const [topupVisible, setTopupVisible] = useState(false);
   const userRole = useSelector((state: RootState) => state.auth.userRole);
-  const [amount, setAmount] = useState<any>('');
   const [balance, setBalance] = useState('50.00');
 
-  const handleAmountChange = (text: string) => {
-    setAmount(text);
-  };
-
-  const handleModalNavigation = () => {
-    navigation.navigate('PaymentMethod', {amount: amount});
-    setAmount('');
+  const handleModalNavigation = values => {
+    console.log(values);
+    navigation.navigate('PaymentMethod', {amount: values.amount});
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.heading}>Wallet</Text>
       <View style={styles.topContainer}>
         <View style={{marginLeft: 16}}>
@@ -71,7 +75,7 @@ const PaymentScreen = ({navigation}: any) => {
         <View
           style={{
             backgroundColor: 'rgba(41, 42, 44, 1)',
-            height: '35%',
+            height: verticalScale(340),
             width: '100%',
             borderTopRightRadius: 30,
             borderTopLeftRadius: 30,
@@ -86,30 +90,49 @@ const PaymentScreen = ({navigation}: any) => {
               Amount
             </Text>
           </View>
-          <View style={styles.textInputContainer}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter amount"
-              placeholderTextColor={'rgba(255, 255, 255, 0.5)'}
-              value={amount}
-              onChangeText={handleAmountChange}
-              keyboardType="numeric"
-            />
-          </View>
-          <View
-            style={{
-              width: '100%',
-            }}>
-            <CustomButton
-              isDisabled={amount === ''}
-              onPress={handleModalNavigation}
-              extraTextStyles={{color: 'white'}}>
-              Continue
-            </CustomButton>
-          </View>
+          <Formik
+            initialValues={{
+              amount: '',
+            }}
+            validationSchema={validationSchema}
+            validateOnChange={false}
+            onSubmit={handleModalNavigation}>
+            {({
+              values,
+              handleChange,
+              handleSubmit,
+              errors,
+              touched,
+              setFieldError,
+            }) => (
+              <>
+                <View style={styles.textInputContainer}>
+                  <CustomInput
+                    placeholder="Enter amount"
+                    value={values.amount}
+                    error={errors.amount}
+                    touched={touched.amount}
+                    initialTouched={true}
+                    keyboardType="numeric"
+                    handleChange={handleChange('amount')}
+                    setFieldError={setFieldError}
+                    fieldName="amount"
+                  />
+                </View>
+                <View style={{width: '100%'}}>
+                  <CustomButton
+                    isDisabled={!values.amount}
+                    onPress={handleSubmit}
+                    extraTextStyles={{color: 'white'}}>
+                    Continue
+                  </CustomButton>
+                </View>
+              </>
+            )}
+          </Formik>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -173,8 +196,9 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   textInputContainer: {
-    marginVertical: verticalScale(54),
+    marginVertical: verticalScale(20),
     width: '100%',
+    alignItems: 'center',
   },
 });
 

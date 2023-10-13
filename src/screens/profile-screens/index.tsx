@@ -105,34 +105,6 @@ const ProfileScreen = ({navigation, route}: any) => {
     };
   }, [searchUserProfile, userData, dispatch]);
 
-  useEffect(() => {
-    const backAction = () => {
-      setSelectedOption('Feed');
-      navigation.navigate('Home');
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove();
-  });
-
-  useEffect(() => {
-    const backAction = () => {
-      setSelectedOption('Feed');
-      navigation.navigate('Home');
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  }, [navigation]);
-
   const handleCancelButton = () => {
     setIsModalVisible(!isModalVisible);
   };
@@ -447,7 +419,11 @@ const ProfileScreen = ({navigation, route}: any) => {
           </View>
         )}
         {selectedOption === 'Bio' && (
-          <ProfileBio isTrainerView handleBioModal={handleBioModal} userData={profileData} />
+          <ProfileBio
+            isTrainerView
+            handleBioModal={handleBioModal}
+            userData={profileData}
+          />
         )}
         {selectedOption === 'Videos' && (
           <View style={{width: '100%'}}>

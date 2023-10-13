@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -8,6 +8,7 @@ import {
   TextInput,
   FlatList,
   Dimensions,
+  BackHandler,
 } from 'react-native';
 import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
 import Modal from 'react-native-modal';
@@ -25,10 +26,11 @@ import {
 import {UserMessage} from '../../components/message-components/UserMessage';
 import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
 import {MessageHeaderContainer} from '../../components/message-components/HeaderContainer';
+import {useFocusEffect} from '@react-navigation/native';
 const SendIcon = require('../../../assets/icons/send.png');
 
 const width = Dimensions.get('window').width;
-export const ChatDetails = ({route}: any) => {
+export const ChatDetails = ({route, navigation}: any) => {
   const [message, setMessage] = useState('');
   const [userMessages, setUserMessages] = useState<any>([]);
   const [mediaUri, setMediaUri] = useState(null);
@@ -49,6 +51,18 @@ export const ChatDetails = ({route}: any) => {
       setMediaUri(null);
     }
   };
+
+  useFocusEffect(() => {
+    const backAction = () => {
+      navigation.navigate('MessagesOne');
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  });
 
   const handleImageClose = () => {
     setImageFullScreen(false);
@@ -76,6 +90,27 @@ export const ChatDetails = ({route}: any) => {
     });
   };
 
+  useEffect(() => {
+    const staticMessages = [
+      {
+        id: 1,
+        text: 'Please wait 24 hours until Smith accepts',
+      },
+      {
+        id: 2,
+        text: 'Requesting for a meal plan',
+      },
+    ];
+
+    if (route.params.type === 'accepted') {
+      staticMessages.unshift({
+        id: 3,
+        text: 'Lindsey accepted your request',
+      });
+    }
+    setUserMessages(route.params.type ? staticMessages : []);
+  }, [route.params.type]);
+
   return (
     <View style={styles.container}>
       <MessageHeaderContainer username={route.params.username} />
@@ -84,14 +119,32 @@ export const ChatDetails = ({route}: any) => {
           data={userMessages}
           keyExtractor={item => item.id.toString()}
           inverted
-          renderItem={({item}) => (
-            <UserMessage
-              text={item.text}
-              timestamp={item.timestamp}
-              mediaUri={item.mediaUri}
-              handleMessageImagePress={handleMessageImagePress}
-            />
-          )}
+          renderItem={({item}) =>
+            item.text === 'Requesting for a meal plan' ||
+            item.text === 'Please wait 24 hours until Smith accepts' ||
+            item.text === 'Lindsey accepted your request' ? (
+              <View style={styles.centeredMessageContainer}>
+                <Text
+                  style={
+                    item.text === 'Requesting for a meal plan' ||
+                    item.text === 'Please wait 24 hours until Smith accepts'
+                      ? styles.grayText
+                      : styles.blueText
+                  }>
+                  {item.text}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.userMessageContainer}>
+                <UserMessage
+                  text={item.text}
+                  timestamp={item.timestamp}
+                  mediaUri={item.mediaUri}
+                  handleMessageImagePress={handleMessageImagePress}
+                />
+              </View>
+            )
+          }
         />
       </View>
       {mediaUri && (
@@ -194,13 +247,31 @@ const styles = StyleSheet.create({
   },
   flatlistContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
   },
   commentSvgIcon: {
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: horizontalScale(13),
     opacity: 0.8,
+  },
+  userMessageContainer: {
+    alignSelf: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  centeredMessageContainer: {
+    alignSelf: 'center',
+    alignItems: 'center',
+  },
+  grayText: {
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontWeight: '400',
+    fontSize: 12,
+    marginVertical: 10,
+  },
+  blueText: {
+    color: 'rgba(32, 155, 204, 1)',
+    fontWeight: '400',
+    fontSize: 12,
+    marginBottom: 16,
   },
 });

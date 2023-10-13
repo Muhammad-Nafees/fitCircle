@@ -48,17 +48,6 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       setGoalWeightUnit(unit);
     }
   };
-  useFocusEffect(() => {
-    const backAction = () => {
-      navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
-  });
 
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
