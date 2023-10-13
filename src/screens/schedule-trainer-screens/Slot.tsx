@@ -29,12 +29,9 @@ export const Slot = ({navigation, route}: any) => {
   const price = '$20.00';
   const hourlyRate = route?.params?.hourlyRate || false;
   const packageView = route?.params?.packageView || false;
-<<<<<<< HEAD
-=======
   const trainerId = route?.params?.userData?._id;
 
   console.log(trainerId, 'trainerId');
->>>>>>> dev
   const months = [
     'JAN',
     'FEB',
@@ -104,8 +101,6 @@ export const Slot = ({navigation, route}: any) => {
     );
   };
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     const backAction = () => {
       navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
@@ -160,7 +155,6 @@ export const Slot = ({navigation, route}: any) => {
     }
   };
 
->>>>>>> dev
   useFocusEffect(
     useCallback(() => {
       if (userData) {
