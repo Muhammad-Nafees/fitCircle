@@ -15,6 +15,8 @@ import {DateData, MarkedDates} from 'react-native-calendars/src/types';
 // ----------------------------------------------------------------------------------------------//
 import {CustomScheduleTime} from '../../components/dashboard-components/CustomScheduleTime';
 import {RootState} from '../../redux/store';
+import {getUserBookings} from '../../api/dashboard-module';
+import {IUserBookings} from '../../interfaces/schedule.interface';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -45,9 +47,10 @@ const SetSchedule = ({route, navigation}: any) => {
     },
   });
   const userData = useSelector((state: RootState) => state.auth.user);
-  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [userBookedSchedules, setUserBookedSchedules] = useState<
+    IUserBookings[]
+  >([]);
   const [slot, setSlot] = useState<ScheduleItem | undefined>();
-
 
   const handleDayPress = (day: DateData) => {
     const selected = day.dateString;
@@ -58,10 +61,10 @@ const SetSchedule = ({route, navigation}: any) => {
       return;
     }
 
-    const availableSlot = schedule.find(
-      ({scheduleDate}) => scheduleDate === selected,
-    );
-    setSlot(availableSlot);
+    // const availableSlot = schedule.find(
+    //   ({scheduleDate}) => scheduleDate === selected,
+    // );
+    // setSlot(availableSlot);
     setSelectedDate(selected);
   };
 
@@ -84,6 +87,25 @@ const SetSchedule = ({route, navigation}: any) => {
   const formattedSelectedDate = selectedDate
     ? formatDate(selectedDate)
     : formatDate(new Date());
+
+  // api call
+
+  const fetchUserBookings = async () => {
+    try {
+      const response = await getUserBookings('2023-10-16');
+      const data = response?.data;
+      console.log(data, 'From fetching user booking schedules!');
+    } catch (error: any) {
+      console.log(
+        error?.response?.data,
+        'From fetching user booking schedules!',
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchUserBookings();
+  }, []);
 
   return (
     <View style={styles.container}>

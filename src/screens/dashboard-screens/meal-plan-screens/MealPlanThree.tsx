@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -18,11 +18,14 @@ const ArrowBack = require('../../../../assets/icons/arrow-back.png');
 import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {nutritionistInfo2 as nutritionistInfo} from '../../dummyData';
+import {getAllMealPlans} from '../../../api/mealPlan-module';
 
 export const MealPlanThree = ({navigation}: any) => {
   const [planModal, setPlanModal] = useState(false);
   const [modalText, setModalText] = useState('');
   const [modalPrice, setModalPrice] = useState('');
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
 
   const handleModalOpen = (text: string, price: string) => {
     setModalPrice(price);
@@ -36,6 +39,21 @@ export const MealPlanThree = ({navigation}: any) => {
     setModalText('');
     setModalPrice('');
   };
+  // api call
+
+  const fetchAllMealPlans = async () => {
+    try {
+      const response = await getAllMealPlans();
+      const data = response?.data;
+      console.log(data, 'from mealplansss');
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From fetching All meal plans!');
+    }
+  };
+
+  useEffect(() => {
+    fetchAllMealPlans();
+  }, []);
 
   return (
     <View style={styles.container}>

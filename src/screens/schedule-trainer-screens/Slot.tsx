@@ -85,6 +85,7 @@ export const Slot = ({navigation, route}: any) => {
         currentYear,
         trainerId,
       );
+      
       const data = response?.data?.data;
 
       const filterData = data.filter((slot: any) => {
