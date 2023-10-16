@@ -453,6 +453,7 @@ export const AddPostScreen = ({route}: any) => {
             backdropOpacity={0.3}>
             <View style={styles.modal}>
               <WhoCanSeeThisPost
+                isMedia={mediaUri || videoUri}
                 selectedOption={visibility}
                 onSelectOption={handleOptionSelect}
                 modalClose={handleAvatarButtonPress}
