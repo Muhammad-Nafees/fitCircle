@@ -43,7 +43,10 @@ export const ScheduleContainer = ({
           <Text style={styles.dateText}>Today's Schedule</Text>
           <View style={styles.scheduleInfoContainer}>
             <View style={styles.avatarColumn}>
-              <CustomProfileAvatar username={username} />
+              <CustomProfileAvatar
+                profileImage={userData?.profileImage}
+                username={userData?.username}
+              />
             </View>
             <View style={styles.detailsColumn}>
               <Text style={[styles.scheduleText, {color: '#209BCC'}]}>

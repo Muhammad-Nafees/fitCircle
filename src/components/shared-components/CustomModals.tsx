@@ -11,12 +11,14 @@ import CrossIcon from '../../../assets/icons/Cross';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from './CustomButton';
 import {STYLES} from '../../styles/globalStyles';
+import CustomLoader from './CustomLoader';
 
 interface modalProps {
   onCancel: () => void;
   onConfirm: () => void;
   modalText: string;
   confirmText: string;
+  isLoading?: boolean;
   cancelText: string;
   confirmColor: any;
   cancelColor: any;
@@ -39,6 +41,7 @@ export const CustomConfirmationModal = ({
   onConfirm,
   modalText,
   confirmText,
+  isLoading,
   cancelText,
   confirmColor,
   cancelColor,
@@ -126,7 +129,7 @@ export const CustomConfirmationModal = ({
           ]}
           onPress={handleConfirm}>
           <Text style={[styles.modalButtonText, {color: confirmColor}]}>
-            {confirmText}
+            {isLoading ? <CustomLoader /> : confirmText}
           </Text>
         </TouchableOpacity>
       </View>

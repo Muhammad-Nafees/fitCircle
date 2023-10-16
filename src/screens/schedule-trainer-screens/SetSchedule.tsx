@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  BackHandler,
   ScrollView,
 } from 'react-native';
 import {Calendar, DateData} from 'react-native-calendars';
@@ -22,6 +21,7 @@ import {
   CustomOutputModal,
 } from '../../components/shared-components/CustomModals';
 import {
+  bookTrainerSchedule,
   generateSlots,
   getTrainerAvailableSlotsByDateForUser,
   getTrainerSlots,
@@ -31,29 +31,24 @@ import {generateTimeSlots} from '../../utils/helper';
 import {STYLES} from '../../styles/globalStyles';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import {ITimeSlot} from '../../interfaces/extra.interface';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
-type ITimeSlot = {
-  _id: string;
-  endTime: Date;
-  startTime: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 const SetSchedule = ({navigation, route}: any) => {
-  const [timeSlots, setTimeSlots] = useState<ITimeSlot[]>([]);
-  const [selectedSlotDates, setSelectedSlotDates] = useState<string[]>([]);
+  const [timeSlots, setTimeSlots] = useState<ITimeSlot[]>([]); // after generating timeSlots data will be stored
+  const [selectedSlotDates, setSelectedSlotDates] = useState<string[]>([]); // for selecting slots
+
+  // date states
   const today = format(new Date(), 'yyyy-MM-dd');
   const [currentDate, setCurrentDate] = useState<Date | string>(today);
   const [selectedDate, setSelectedDate] = useState<Date | string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isListLoading, setIsListLoading] = useState<boolean>(false);
   const [isDateFormatted, setIsDateFormatted] = useState(false);
-  const userData = useSelector((state: RootState) => state.auth.user);
-  const [selectedSlotDate, setSelectedSlotDate] = useState<any>();
 
+  const [isListLoading, setIsListLoading] = useState<boolean>(false); // loading state
+
+  // paymet and payment method modal states
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [paymentType, setPaymentType] = useState<'success' | 'failed'>(
     'success',
@@ -64,28 +59,17 @@ const SetSchedule = ({navigation, route}: any) => {
   const [availableSlots, setAvailableSlots] = useState<any>([]);
   const isSearchTrainer = route?.params?.userData;
   const searchTrainerId = route?.params?.userData?._id;
+  const [bookTrainerScheduleId, setBookTrainerScheduleId] =
+    useState<string>('');
 
-  // useEffect(() => {
-  //   const date = route?.params?.date;
-  //   if (date) {
-  //     const formattedDate = format(date, 'yyyy-MM-dd');
-  //     setSelectedDate(formattedDate);
-  //   }
-  // }, []);
-
+  // checking if user wants to check todays schedules and other dates
   useEffect(() => {
     if (route.params?.date) {
       const formattedSelectedDate = format(route.params?.date, 'yyyy-MM-dd');
       setSelectedDate(formattedSelectedDate);
-
-      // setSelectedDate(route.params.date);
       setIsDateFormatted(true);
-      const parsedDate = new Date(route.params.date);
-      const formattedDate = format(parsedDate, 'yyyy-MM-dd');
-      setSelectedSlotDate(formattedDate);
     } else {
       setIsDateFormatted(false);
-
       setSelectedDate(today);
     }
   }, []);
@@ -102,7 +86,6 @@ const SetSchedule = ({navigation, route}: any) => {
 
     if (selected === selectedDate) {
       setSelectedDate('');
-
       return;
     }
     setSelectedDate(selected);
@@ -118,6 +101,21 @@ const SetSchedule = ({navigation, route}: any) => {
 
   const handleSelectOption = (id: string) => {
     const isSelected = selectedSlotDates?.some((slot: any) => slot === id);
+
+    if (isSearchTrainer && selectedSlotDates.length === 1 && !isSelected) {
+      Toast.show({
+        type: 'error',
+        text1: 'You can only book one slot at a time!',
+      });
+      return;
+    }
+    if (isSearchTrainer) {
+      setBookTrainerScheduleId(id);
+    }
+    if (bookTrainerScheduleId === id) {
+      setBookTrainerScheduleId('');
+    }
+
     if (isSelected) {
       const updatedSlots = selectedSlotDates?.filter(slot => slot !== id);
       setSelectedSlotDates(updatedSlots);
@@ -141,19 +139,12 @@ const SetSchedule = ({navigation, route}: any) => {
             slotStart.format('h:mmA') === start &&
             slotEnd.format('h:mmA') === end
           );
-        }); 
+        });
 
         return slot;
       });
-      if (availableSlots) {
-        const availableSlotsForUser = extractedData.filter((slot: any) =>
-          availableSlots.includes(slot._id),
-        );
-        console.log(availableSlotsForUser, 'availableSlotsForUser');
-        setTimeSlots(availableSlotsForUser);
-      } else {
-        setTimeSlots(extractedData);
-      }
+
+      setTimeSlots(extractedData);
       setIsListLoading(false);
     } catch (error: any) {
       console.log(error?.response, 'error from generate slots!');
@@ -162,7 +153,6 @@ const SetSchedule = ({navigation, route}: any) => {
   };
 
   // trainer pov
-
   const fetchTrainerSlots = async () => {
     try {
       const response = await getTrainerSlots(selectedDate as string);
@@ -178,6 +168,7 @@ const SetSchedule = ({navigation, route}: any) => {
     }
   };
 
+  // for trainer setting schedule
   const handleSetSchedule = async () => {
     setIsLoading(true);
     try {
@@ -195,6 +186,37 @@ const SetSchedule = ({navigation, route}: any) => {
       setIsLoading(false);
     } catch (error: any) {
       console.log('error from setSchedule', error?.response);
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  // for user booking trainer schedule
+  const handleBookTrainerSchedule = async () => {
+    setIsModalVisible(true);
+  };
+  const handlePayment = async (type: string) => {
+    if (type == 'failed') {
+      setIsModalVisible(false);
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const reqData = {
+        trainer: searchTrainerId,
+        date: selectedDate == null ? currentDate : selectedDate,
+        slot: bookTrainerScheduleId,
+      };
+      const response = await bookTrainerSchedule(reqData);
+      setIsModalVisible(false);
+      setPaymentType(type as any);
+      setPaymentModal(true);
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log('error from booking schedule!', error?.response);
       Toast.show({
         type: 'error',
         text1: `${error?.response?.data?.message}`,
@@ -233,9 +255,27 @@ const SetSchedule = ({navigation, route}: any) => {
   const renderOptionItem = ({item}: any) => {
     return (
       <TouchableOpacity
+        disabled={
+          isSearchTrainer &&
+          availableSlots &&
+          !availableSlots.includes(item._id)
+            ? true
+            : false
+        }
         style={[styles.optionItem]}
         onPress={() => handleSelectOption(item._id)}>
-        <Text style={styles.optionTime}>
+        <Text
+          style={[
+            styles.optionTime,
+            {
+              color:
+                isSearchTrainer &&
+                availableSlots &&
+                !availableSlots.includes(item._id)
+                  ? '#484849'
+                  : '#fff',
+            },
+          ]}>
           {item?.startTime} - {item?.endTime}
         </Text>
         <View style={styles.optionCheckboxContainer}>
@@ -243,8 +283,19 @@ const SetSchedule = ({navigation, route}: any) => {
             style={[
               styles.optionCheckbox,
               {
+                paddingHorizontal: 2,
+                borderColor:
+                  isSearchTrainer &&
+                  availableSlots &&
+                  !availableSlots.includes(item._id)
+                    ? '#484849'
+                    : '#209BCC',
                 backgroundColor: selectedSlotDates?.includes(item._id)
                   ? '#209BCC'
+                  : isSearchTrainer &&
+                    availableSlots &&
+                    !availableSlots.includes(item._id)
+                  ? '#484849'
                   : 'transparent',
               },
             ]}
@@ -256,12 +307,6 @@ const SetSchedule = ({navigation, route}: any) => {
 
   const handleButtonPress = () => {
     setIsModalVisible(true);
-  };
-
-  const handlePayment = (type: string) => {
-    setIsModalVisible(false);
-    setPaymentType(type as any);
-    setPaymentModal(true);
   };
 
   const currentttDate = startOfDay(new Date());
@@ -360,12 +405,15 @@ const SetSchedule = ({navigation, route}: any) => {
           modalHeading="Please Confirm"
           modalText={
             route.params.packageView
-              ? `Are you sure you want to purchase this package for ${route.params.price} ?`
-              : `Are you sure you want to schedule for ${route.params.price} ?`
+              ? `Are you sure you want to purchase this package for ${route.params?.userData?.hourlyRate} ?`
+              : `Are you sure you want to schedule for $${route.params?.userData?.hourlyRate.toFixed(
+                  2,
+                )} ?`
           }
           onCancel={() => handlePayment('failed')}
           onConfirm={() => handlePayment('success')}
           confirmText="Yes"
+          isLoading={isLoading}
           cancelText="No"
           cancelColor={'rgba(220, 77, 77, 1)'}
           confirmColor={'rgba(32, 128, 183, 1)'}
@@ -378,7 +426,14 @@ const SetSchedule = ({navigation, route}: any) => {
         style={styles.modal}>
         <CustomOutputModal
           type={paymentType}
-          onPress={() => setPaymentModal(false)}
+          onPress={() => {
+            setPaymentModal(false),
+              Toast.show({
+                type: 'success',
+                text1: `Slot booked Successfully!`,
+              });
+            navigation.navigate('UserSchedule');
+          }}
           modalText={
             paymentType === 'success'
               ? 'Payment Successful'
@@ -391,9 +446,13 @@ const SetSchedule = ({navigation, route}: any) => {
         timeSlots.length > 0 && (
           <View style={styles.buttonContainer}>
             <CustomButton
-              isDisabled={isLoading}
-              extraStyles={{paddingHorizontal: 110}}
-              onPress={handleSetSchedule}>
+              isDisabled={
+                isLoading ? true : selectedSlotDates.length < 1 ? true : false
+              }
+              extraStyles={{paddingHorizontal: 120}}
+              onPress={
+                isSearchTrainer ? handleBookTrainerSchedule : handleSetSchedule
+              }>
               {isLoading ? <CustomLoader /> : 'Set Schedule'}
             </CustomButton>
           </View>
@@ -463,7 +522,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: '#209BCC',
   },
   buttonContainer: {
     position: 'absolute',
@@ -472,6 +530,7 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     zIndex: 999,
+    width: '100%',
   },
   modal: {
     backgroundColor: 'black',

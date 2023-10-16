@@ -238,23 +238,22 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               setFieldError={setFieldError}
               fieldName="bio"
             />
-            {/* {userRole == 'user' && ( */}
-
-            <CustomPhoneInput
-              disabled={true}
-              value={userData?.phone}
-              error={errors.phone}
-              touched={touched.phone}
-              handleChange={handleChange('phone')}
-              setFieldValue={setFieldValue}
-              phoneInput={phoneInput}
-              setIsError={setIsError}
-              setFieldError={setFieldError}
-              isError={isError}
-              setPhoneCode={setPhoneCode}
-              countryCode={userData?.countryCode}
-            />
-            {/* )} */}
+            {userRole == 'user' && (
+              <CustomPhoneInput
+                disabled={true}
+                value={userData?.phone}
+                error={errors.phone}
+                touched={touched.phone}
+                handleChange={handleChange('phone')}
+                setFieldValue={setFieldValue}
+                phoneInput={phoneInput}
+                setIsError={setIsError}
+                setFieldError={setFieldError}
+                isError={isError}
+                setPhoneCode={setPhoneCode}
+                countryCode={userData?.countryCode}
+              />
+            )}
             <CustomSelect
               label="Country"
               selectedValue={values.country}
