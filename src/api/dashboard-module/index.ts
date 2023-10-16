@@ -40,9 +40,12 @@ export const getTrainerSlots = async (date: string) => {
   return response;
 };
 
-export const getTrainerSlotList = async () => {
+export const getTrainerSlotList = async (
+  currentMonth: any,
+  currentYear: any,
+) => {
   const response = await api.get(
-    `schedule/trainer/monthly-count?month=10&year=2023`,
+    `schedule/trainer/monthly-count?month=${currentMonth}&year=${currentYear}`,
   );
   return response;
 };
@@ -67,5 +70,15 @@ export const getTrainerAvailableSlotsByDateForUser = async (
   const response = await api.get(
     `schedule/available-slots?scheduleDate=${date}&trainer=${trainerId}`,
   );
+  return response;
+};
+
+export const bookTrainerSchedule = async (reqData: any) => {
+  const response = await api.post(`schedule`, reqData);
+  return response;
+};
+
+export const getUserBookings = async () => {
+  const response = await api.get('schedule/bookings?scheduleDate=2023-10-16');
   return response;
 };

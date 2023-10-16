@@ -58,3 +58,27 @@ export const timeDifference = (createdAt: any) => {
     return `${days} ${days === 1 ? 'day' : 'days'} ago`;
   }
 };
+
+
+export const months = [
+  'JAN',
+  'FEB',
+  'MAR',
+  'APR',
+  'MAY',
+  'JUN',
+  'JUL',
+  'AUG',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DEC',
+];
+
+export const getCurrentMonth = () => {
+  const currentMonthIndex = new Date().getMonth();
+  return months[currentMonthIndex];
+};
+
+export const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+

@@ -13,3 +13,11 @@ export type NutritionData = {
   // _id: string;
   // __v: number;
 };
+
+export type ITimeSlot = {
+  _id: string;
+  endTime: Date;
+  startTime: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};

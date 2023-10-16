@@ -21,9 +21,10 @@ export const WhoCanSeeThisPost = ({
   onSelectOption,
   modalClose,
   onSelectCost,
+  isMedia,
 }: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
-  const isCostAvailable = userData?.role !== 'user';
+  const isCostAvailable = userData?.role !== 'user' && isMedia;
   const [cost, setCost] = useState(0);
   const [selectedOptionInternal, setSelectedOptionInternal] =
     useState(selectedOption);
@@ -80,13 +81,21 @@ export const WhoCanSeeThisPost = ({
           <Image source={LockIcon} style={styles.icon} />
           <TouchableOpacity
             style={styles.bulletContainer}
-            onPress={() => handleOptionSelect('Subscribers')}>
-            <Text style={styles.optionText}>Subscribers only</Text>
+            onPress={() =>
+              handleOptionSelect(
+                userData?.role !== 'user' ? 'Subscribers' : 'Followers',
+              )
+            }>
+            <Text style={styles.optionText}>
+              {userData?.role !== 'user' ? 'Subscribers' : 'Followers'}
+            </Text>
             <Text style={styles.optionDescription}>
-              Anyone subscribed to you
+              {userData?.role !== 'user'
+                ? 'Anyone with subscription'
+                : 'Your followers'}
             </Text>
           </TouchableOpacity>
-          {renderRadioButton('Subscribers')}
+          {renderRadioButton(userData?.role !== 'user' ? 'Subscribers' : 'Followers')}
         </View>
         {isCostAvailable && (
           <View style={styles.textInputContainer}>
