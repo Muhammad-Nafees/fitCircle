@@ -62,6 +62,18 @@ const CreateMealPlan = ({navigation}: any) => {
     setOutputModal(!outputModal);
   };
 
+  const handleEditPlan = (planId: number) => {
+    const selectedPlan = data.find(plan => plan.id === planId);
+    navigation.navigate('UploadMealPlan', {
+      dummyData: {
+        title: selectedPlan?.planName,
+        cost: selectedPlan?.price,
+        description: selectedPlan?.description,
+        username: '@testingUser',
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -79,6 +91,7 @@ const CreateMealPlan = ({navigation}: any) => {
             key={plan.id}
             plan={plan}
             handleDeleteButton={() => handleDeleteMealPlan(plan.id)}
+            handleEditButton={() => handleEditPlan(plan.id)}
           />
         ))}
       </ScrollView>

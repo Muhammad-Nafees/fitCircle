@@ -351,9 +351,11 @@ export const bankSchema = Yup.object().shape({
 export const createPackageSchema = Yup.object().shape({
   packageTitle: Yup.string()
     .required('Package title is required')
+    .matches(/^\S+$/, 'Invalid Package Title')
     .min(3, 'Package title must be at least 3 characters'),
   packageDescription: Yup.string()
     .required('Package description is required')
+    .matches(/^\S+$/, 'Invalid Package Description')
     .min(10, 'Package description must be at least 10 characters'),
   cost: Yup.number()
     .required('Cost is required')
@@ -373,9 +375,12 @@ export const createPackageSchema = Yup.object().shape({
 export const uploadPlanSchema = Yup.object().shape({
   title: Yup.string()
     .required('Title is required')
+    .matches(/^\S+$/, 'Invalid Title')
     .min(3, 'Title must be at least 3 characters'),
   description: Yup.string()
     .required('Description is required')
+    .matches(/^\S+$/, 'Invalid Description')
+    .max(50, 'Description cannot exceed 50 characters')
     .min(10, 'Description must be at least 10 characters'),
   cost: Yup.number()
     .required('Cost is required')

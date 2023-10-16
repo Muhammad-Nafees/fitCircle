@@ -13,12 +13,12 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const paymentMethods = [
   {
-    type: 'CreditCard',
+    type: 'Mastercard',
     label: 'Credit/Debit Card',
     miniText: 'Visa, MasterCard, American Express',
   },
   {type: 'Paypal', label: 'Paypal'},
-  {type: 'Paypal', label: 'Apple Pay'},
+  {type: 'ApplePay', label: 'Apple Pay'},
   {type: 'GooglePay', label: 'Google Pay'},
 ];
 

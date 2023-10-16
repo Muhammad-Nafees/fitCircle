@@ -34,12 +34,25 @@ const PackagesScreen = ({navigation}: any) => {
     setOutputModal(!outputModal);
   };
 
+  const handleEditPackage = () => {
+    navigation.navigate('CreatePackageScreen', {
+      dummyData: {
+        packageTitle: '30 Days New Year Challenge',
+        packageDescription: 'A great routine for biceps and triceps workout!',
+        preview: 'Something',
+        cost: '100',
+        hours: '1',
+        username: '@testingUser123',
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <TouchableOpacity
           style={{paddingTop: 24, paddingBottom: 16}}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate('Dashboard')}>
           <Image
             source={ArrowBack}
             style={{width: 24, height: 24, tintColor: 'white'}}
@@ -49,14 +62,17 @@ const PackagesScreen = ({navigation}: any) => {
         <View style={{marginVertical: 16}}>
           <CustomTrainerPackage
             hidePackageButton={true}
+            handleEditButton={handleEditPackage}
             handleDeleteButton={handleDeletePackage}
           />
           <CustomTrainerPackage
             hidePackageButton={true}
+            handleEditButton={handleEditPackage}
             handleDeleteButton={handleDeletePackage}
           />
           <CustomTrainerPackage
             hidePackageButton={true}
+            handleEditButton={handleEditPackage}
             handleDeleteButton={handleDeletePackage}
           />
         </View>

@@ -26,8 +26,8 @@ const CustomToggleButton = ({
             value={isEnabled}
             onPress={onToggle}
             thumbButton={{
-              width: 20,
-              height: 20,
+              width: 21,
+              height: 21,
               radius: 30,
               activeBackgroundColor: '#209BCC',
               inActiveBackgroundColor: '#C2C5CE',
