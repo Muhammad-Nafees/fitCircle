@@ -29,7 +29,7 @@ export const MealPlanOne = ({navigation}: any) => {
         </View>
       </View>
       <View style={styles.buttonContainer}>
-        <CustomButton onPress={() => navigation.navigate('MealPlanTwo')}>
+        <CustomButton onPress={() => navigation.navigate('MealPlanThree')}>
           Request a Meal Plan
         </CustomButton>
       </View>

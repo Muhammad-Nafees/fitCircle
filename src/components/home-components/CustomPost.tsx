@@ -153,12 +153,6 @@ export const CustomPost = ({
       ? post.text
       : post.text.split('\n').slice(0, thresholdLines).join('\n')
     : '';
-  console.log(
-    contentToShow,
-    'contentToShow',
-    contentToShow.length,
-    'contentToLength',
-  );
 
   const toggleShowMore = () => {
     setShowFullContent(!showFullContent);
@@ -266,7 +260,7 @@ export const CustomPost = ({
           ]}>
           <ScrollView scrollEnabled={true} nestedScrollEnabled={true}>
             <Text style={styles.contentText}>{contentToShow}</Text>
-            {contentToShow ? (
+            {contentToShow.length > 300 ? (
               <TouchableOpacity onPress={toggleShowMore}>
                 <Text style={{color: 'blue'}}>
                   {/* See More */}

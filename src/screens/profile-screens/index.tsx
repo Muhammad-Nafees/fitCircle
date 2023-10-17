@@ -79,7 +79,7 @@ const ProfileScreen = ({navigation, route}: any) => {
     userData?._id,
   );
   const profilePersonalData = useSelector((state: RootState) => state.profile);
-  console.log(searchUserProfile?._id, 'idd');
+  console.log(searchUserProfile, 'personalData');
 
   useEffect(() => {
     if (searchUserProfile && searchUserProfile._id) {

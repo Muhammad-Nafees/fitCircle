@@ -8,13 +8,19 @@ import MessageSvgIcon from '../../../assets/icons/MessageSvgIcon';
 import DeleteMessageIcon from '../../../assets/icons/DeleteMessage';
 import {Swipeable} from 'react-native-gesture-handler';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-const ImageSomething = require('../../../assets/images/backgroundImage.jpg');
+import {s3bucketReference} from '../../api';
+
+interface Props {
+  plan: any;
+  extraStyles?: any;
+  handleDeleteButton?: () => void;
+}
 
 export const CustomPlanDescription = ({
   plan,
   extraStyles,
   handleDeleteButton,
-}: any) => {
+}: Props) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const swipeableRef: any = useRef(null);
   const route = useRoute();
@@ -65,14 +71,23 @@ export const CustomPlanDescription = ({
         <View style={{flexDirection: 'row'}}>
           <MealPlanPdf width={27} height={36} />
           <View style={{marginHorizontal: 10}}>
-            <Text style={{fontSize: 12, fontWeight: '500', color: 'white'}}>
-              {plan.planName}
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '500',
+                color: 'white',
+                width: 127,
+              }}>
+              {plan?.title || plan?.planName}
             </Text>
-            <Text style={styles.price}>{plan.price}</Text>
+            <Text style={styles.price}>
+              {plan?.cost ? '$' : null}
+              {plan?.cost || plan?.price}
+            </Text>
           </View>
         </View>
         <View style={{flex: 1, marginLeft: 13, marginRight: 5}}>
-          <Text style={styles.description}>{plan.description}</Text>
+          <Text style={styles.description}>{plan?.description}</Text>
         </View>
       </View>
     </Swipeable>
@@ -80,27 +95,33 @@ export const CustomPlanDescription = ({
 };
 
 export const CustomNutritionistPlan = ({
-  name,
-  role,
   plans,
+  nutritionistInfo,
+  key,
   handleModalOpen,
 }: any) => {
+  console.log(plans, 'plllll');
   const navigation = useNavigation();
   const route = useRoute();
   const showRequestText = route.name === 'MealPlanFour';
   return (
-    <View style={styles.container}>
+    <View style={styles.container} key={key}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
-          source={ImageSomething}
+          source={{
+            uri: `${s3bucketReference}/${nutritionistInfo?.profileImage}`,
+          }}
           style={{width: 78, height: 80, borderRadius: 10}}
         />
         <View style={{justifyContent: 'flex-start', marginHorizontal: 10}}>
           <Text style={{fontSize: 14, fontWeight: '600', color: 'white'}}>
-            {name}
+            {nutritionistInfo?.firstName} {nutritionistInfo?.lastName}
           </Text>
-          <Text style={styles.username}>@lindseymiddleton</Text>
-          <Text style={styles.role}>{role}</Text>
+          <Text style={styles.username}>@{nutritionistInfo?.username}</Text>
+          <Text style={styles.role}>
+            {nutritionistInfo?.role.charAt(0).toUpperCase() +
+              nutritionistInfo?.role.slice(1)}
+          </Text>
         </View>
       </View>
       {plans.map((plan: any, index: any) => (
@@ -113,7 +134,9 @@ export const CustomNutritionistPlan = ({
         onPress={() => {
           showRequestText
             ? navigation.navigate('RequestMealPlan' as never)
-            : navigation.navigate('MealPlanFour' as never);
+            : navigation.navigate('MealPlanFour' as never, {
+                nutritionistInfo: nutritionistInfo,
+              });
         }}>
         {showRequestText ? (
           <View style={styles.buttonIconContainer}>
@@ -154,7 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: 'rgba(68, 68, 68, 0.5)',
     paddingHorizontal: 10,
-    height: verticalScale(52),
+    // height: verticalScale(52),
     paddingVertical: 10,
     marginTop: 10,
     alignItems: 'center',
@@ -175,6 +198,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '400',
     textAlign: 'right',
+    // width: 88,
     color: 'rgba(255, 255, 255, 0.5)',
   },
   price: {
@@ -192,7 +216,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: horizontalScale(43),
-    height: verticalScale(52),
+    height: verticalScale(62),
   },
   rightActionText: {
     color: 'white',

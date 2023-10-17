@@ -78,7 +78,10 @@ export const bookTrainerSchedule = async (reqData: any) => {
   return response;
 };
 
-export const getUserBookings = async () => {
-  const response = await api.get('schedule/bookings?scheduleDate=2023-10-16');
+export const getUserBookings = async (scheduleDate: string) => {
+  console.log(scheduleDate,"from booking apiii")
+  const response = await api.get(
+    `schedule/bookings?scheduleDate=${scheduleDate}`,
+  );
   return response;
 };

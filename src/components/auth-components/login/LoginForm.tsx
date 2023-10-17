@@ -121,30 +121,39 @@ const LoginForm = () => {
               setFieldError={setFieldError}
               fieldName="email"
             />
-            <View style={{gap: 0, position: 'relative'}}>
-              <CustomInput
-                label="Password"
-                placeholder="Password"
-                value={values.password}
-                error={errors.password}
-                touched={touched.email}
-                initialTouched={true}
-                isPasswordIcon={true}
-                handleChange={handleChange('password')}
-                setFieldError={setFieldError}
-                fieldName="password"
-              />
-              <TouchableOpacity
-                onPress={() => navigation.navigate('ForgetPasswordEmail')}>
-                <Text style={[STYLES.text12, styles.forgetPasswordText]}>
-                  Forget Password
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{marginTop: verticalScale(37), gap: 37}}>
+            {/* <View style={{gap: 0, position: 'relative'}}> */}
+            <CustomInput
+              label="Password"
+              placeholder="Password"
+              value={values.password}
+              error={errors.password}
+              touched={touched.email}
+              initialTouched={true}
+              isPasswordIcon={true}
+              handleChange={handleChange('password')}
+              setFieldError={setFieldError}
+              fieldName="password"
+            />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ForgetPasswordEmail')}>
+              <Text style={[STYLES.text12, styles.forgetPasswordText]}>
+                Forget Password
+              </Text>
+            </TouchableOpacity>
+            {/* </View> */}
+            <View
+              style={{
+                marginTop: verticalScale(37),
+                gap: 37,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
               <CustomButton
                 onPress={handleSubmit}
-                extraStyles={{height: verticalScale(50)}}
+                extraStyles={{
+                  height: verticalScale(50),
+                  width: horizontalScale(300),
+                }}
                 isDisabled={isLoading ? true : false}>
                 {' '}
                 {isLoading ? <CustomLoader /> : ' Log in'}
@@ -192,13 +201,13 @@ const styles = StyleSheet.create({
   container: {
     marginTop: verticalScale(42),
     gap: 0,
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   forgetPasswordText: {
     color: '#209BCC',
     borderBottomWidth: 1,
     borderBottomColor: '#209BCC',
-    width: horizontalScale(96),
+    // width: 104,
     position: 'absolute',
     left: 0,
     bottom: -verticalScale(10),

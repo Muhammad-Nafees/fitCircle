@@ -211,6 +211,7 @@ const SetSchedule = ({navigation, route}: any) => {
         slot: bookTrainerScheduleId,
       };
       const response = await bookTrainerSchedule(reqData);
+      console.log(response?.data);
       setIsModalVisible(false);
       setPaymentType(type as any);
       setPaymentModal(true);
