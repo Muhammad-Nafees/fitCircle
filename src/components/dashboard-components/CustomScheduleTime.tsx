@@ -4,17 +4,21 @@ import {Avatar} from 'react-native-paper';
 const Options = require('../../../assets/icons/customPostOption.png');
 
 export const CustomScheduleTime = ({
-  profileImageUrl,
+  profileImage,
   name,
   username,
   timeSlot,
   exercise,
+  key,
 }: any) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} key={key}>
       <View style={styles.avatarName}>
         <View>
-          <CustomProfileAvatar username={username} />
+          <CustomProfileAvatar
+            profileImage={profileImage}
+            username={username}
+          />
         </View>
         <View style={styles.data}>
           <Text

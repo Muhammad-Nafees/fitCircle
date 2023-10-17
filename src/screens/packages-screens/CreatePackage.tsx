@@ -38,7 +38,6 @@ const CreatePackage = ({navigation}: any) => {
   const [playIconVisible, setPlayIconVisible] = useState(false);
 
   const handleSubmit = (values: any) => {
-    console.log(values);
     navigation.navigate('PackageDetail', {
       packageData: {
         ...values,
@@ -204,7 +203,7 @@ const CreatePackage = ({navigation}: any) => {
                   handleChange={handleChange('username')}
                 />
               </View>
-              <View style={styles.button}>
+              <View>
                 <CustomButton onPress={handleSubmit}>Continue</CustomButton>
               </View>
             </>

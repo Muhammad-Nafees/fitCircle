@@ -23,6 +23,8 @@ import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
 import {useState} from 'react';
 import {uploadPlanSchema} from '../../../validations';
 import Toast from 'react-native-toast-message';
+import {createMealPlan} from '../../../api/mealPlan-module';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 const initialValues = {
   title: '',
@@ -33,20 +35,39 @@ const initialValues = {
 };
 
 const UploadMealPlan = ({navigation}: any) => {
-  const [result, setResult] = useState<
+  const [pdfFile, setpdfFile] = useState<
     Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
   >();
   const [fileName, setFileName] = useState<any>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSubmit = (values: any) => {
-    if (result === null || result === undefined) {
+  const handleSubmit = async (values: any) => {
+    if (pdfFile === null || pdfFile === undefined) {
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2: 'You need to attach a Meal Plan PDF',
       });
     } else {
-      console.log(values);
+      const reqData = {
+        title: values.title,
+        description: values.description,
+        cost: values.cost,
+        pdf: pdfFile,
+        ...(values.username !== '' && {username: values.username}),
+      };
+      setIsLoading(true);
+      try {
+        const response = await createMealPlan(reqData);
+        console.log(response?.data, 'response');
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data?.message}`,
+        });
+      } catch (error: any) {
+        console.log('ERROR FROM CREAING MEAL PLAN', error?.response?.data);
+      }
+      setIsLoading(false);
       navigation.navigate('CreateMealPlan');
     }
   };
@@ -59,7 +80,7 @@ const UploadMealPlan = ({navigation}: any) => {
       console.log(res);
       if (!isCancel(res)) {
         const nameWithoutExtension = res.name.replace('.pdf', '');
-        setResult(res);
+        setpdfFile(res);
         setFileName(nameWithoutExtension);
       }
     } catch (e) {
@@ -196,7 +217,9 @@ const UploadMealPlan = ({navigation}: any) => {
                 />
               </View>
               <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Create</CustomButton>
+                <CustomButton onPress={handleSubmit} isDisabled={isLoading}>
+                  {isLoading ? <CustomLoader /> : 'Create'}{' '}
+                </CustomButton>
               </View>
             </>
           )}

@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment';
 import {useSelector} from 'react-redux';
@@ -10,6 +17,7 @@ import {CustomScheduleTime} from '../../components/dashboard-components/CustomSc
 import {RootState} from '../../redux/store';
 import {getUserBookings} from '../../api/dashboard-module';
 import {IUserBookings} from '../../interfaces/schedule.interface';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
@@ -22,9 +30,8 @@ type ScheduleItem = {
 
 const SetSchedule = ({route, navigation}: any) => {
   const currentMonth = moment().format('YYYY-MM-DD');
-  const [selectedDate, setSelectedDate] = useState<any>();
-  const [profileImageUrl, setProfileImageUrl] = useState();
   const today = format(new Date(), 'u-MM-dd');
+  const [selectedDate, setSelectedDate] = useState<any>(today);
   const [customDatesStyles, setCustomDatesStyles] = useState<
     MarkedDates | undefined
   >({
@@ -44,20 +51,17 @@ const SetSchedule = ({route, navigation}: any) => {
     IUserBookings[]
   >([]);
   const [slot, setSlot] = useState<ScheduleItem | undefined>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleDayPress = (day: DateData) => {
     const selected = day.dateString;
 
     if (selected === selectedDate) {
-      setSelectedDate(undefined);
+      setSelectedDate(today);
       setSlot(undefined);
       return;
     }
-
-    // const availableSlot = schedule.find(
-    //   ({scheduleDate}) => scheduleDate === selected,
-    // );
-    // setSlot(availableSlot);
+    console.log(selected, 'from daypress!');
     setSelectedDate(selected);
   };
 
@@ -68,26 +72,28 @@ const SetSchedule = ({route, navigation}: any) => {
   const formattedSelectedDate = selectedDate
     ? formatDate(selectedDate)
     : formatDate(new Date());
+  console.log(selectedDate, 'select');
 
   // api call
 
   const fetchUserBookings = async () => {
+    setIsLoading(true);
     try {
-      const response = await getUserBookings('2023-10-16');
-      const data = response?.data;
-      console.log(data, 'From fetching user booking schedules!');
+      if (selectedDate) {
+        const response = await getUserBookings(selectedDate);
+        const data = response?.data?.data;
+        setUserBookedSchedules(data?.bookings);
+      }
     } catch (error: any) {
-      console.log(
-        error?.response?.data,
-        'From fetching user booking schedules!',
-      );
+      console.log(error, 'From fetching user booking schedules!');
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchUserBookings();
-  }, []);
-
+  }, [selectedDate]);
+  console.log(userBookedSchedules, 'boookkkkk');
   return (
     <View style={styles.container}>
       <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
@@ -125,21 +131,33 @@ const SetSchedule = ({route, navigation}: any) => {
           />
         </View>
       </View>
-      <View style={styles.bottomContainer}>
-        <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
-
-        {slot ? (
-          <CustomScheduleTime
-            profileImageUrl={profileImageUrl}
-            name={userData?.firstName + ' ' + userData?.lastName}
-            timeSlot={slot?.slot}
-            exercise="None"
-            username="Sam"
-          />
-        ) : (
-          <Text style={{color: 'white'}}>Coming Soon!</Text>
-        )}
-      </View>
+      <ScrollView contentContainerStyle={{minHeight: 300}}>
+        <View style={styles.bottomContainer}>
+          <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
+          {isLoading ? (
+            <CustomLoader />
+          ) : !userBookedSchedules ? (
+            <Text style={{color: 'white', paddingTop: 20}}>No Bookings!</Text>
+          ) : (
+            userBookedSchedules?.map((schedule: IUserBookings) => (
+              <CustomScheduleTime
+                key={schedule?._id}
+                profileImage={schedule?.trainer?.profileImage}
+                name={
+                  schedule?.trainer?.firstName +
+                  ' ' +
+                  schedule?.trainer?.lastName
+                }
+                timeSlot={
+                  schedule?.slot.startTime + ' - ' + schedule?.slot?.endTime
+                }
+                exercise="Back and Triceps"
+                username={schedule?.trainer?.username}
+              />
+            ))
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -170,12 +188,14 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flex: 1,
+    gap: 20,
     backgroundColor: '#212223',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 30,
     marginTop: 8,
     width: '100%',
+    paddingBottom: 20,
   },
   selectedDateText: {
     fontSize: 16,

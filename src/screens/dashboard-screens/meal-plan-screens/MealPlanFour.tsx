@@ -8,19 +8,25 @@ import {
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import Modal from 'react-native-modal';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 // ----------------------------------------------------------------------------------------------------//
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import {CustomNutritionistPlan} from '../../../components/dashboard-components/CustomNutritionistPlan';
 const ArrowBack = require('../../../../assets/icons/arrow-back.png');
 import CustomButton from '../../../components/shared-components/CustomButton';
 import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
-import {nutritionistInfo} from '../../dummyData';
+import {getMealPlansByNutritionist} from '../../../api/mealPlan-module';
+import {IMealPlan} from '../../../interfaces/mealPlan.interface';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 
-export const MealPlanFour = ({navigation}: any) => {
+export const MealPlanFour = ({navigation, route}: any) => {
   const [planModal, setPlanModal] = useState(false);
   const [modalText, setModalText] = useState('');
   const [modalPrice, setModalPrice] = useState('');
+  const [mealPlans, setMealPlans] = useState<IMealPlan[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(20);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleModalOpen = (text: string, price: string) => {
     setModalPrice(price);
@@ -34,6 +40,26 @@ export const MealPlanFour = ({navigation}: any) => {
     setModalText('');
     setModalPrice('');
   };
+
+  const fetchMealPlansByNutritionist = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getMealPlansByNutritionist(
+        page,
+        limit,
+        route?.params?.nutritionistInfo?._id,
+      );
+      const data = response?.data?.data;
+      const mealPlans = data?.mealPlans;
+      setMealPlans(mealPlans);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From Meal plans!');
+    }
+    setIsLoading(false);
+  };
+  useEffect(() => {
+    fetchMealPlansByNutritionist();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -50,10 +76,15 @@ export const MealPlanFour = ({navigation}: any) => {
           Meal Plans
         </Text>
         <View style={{flex: 1, marginTop: 10}}>
-          <CustomNutritionistPlan
-            {...nutritionistInfo}
-            handleModalOpen={handleModalOpen}
-          />
+          {isLoading ? (
+            <CustomLoader />
+          ) : (
+            <CustomNutritionistPlan
+              plans={mealPlans}
+              nutritionistInfo={route?.params?.nutritionistInfo}
+              handleModalOpen={handleModalOpen}
+            />
+          )}
         </View>
       </ScrollView>
       <Modal

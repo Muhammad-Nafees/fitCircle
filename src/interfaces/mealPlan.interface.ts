@@ -11,6 +11,7 @@ export interface IMealPlan {
   _id: string;
   user: string;
   title: string;
+  description: string;
   pdf: string;
   cost: number;
   username: string;
