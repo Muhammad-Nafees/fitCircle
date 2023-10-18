@@ -256,6 +256,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
         <CustomConfirmationModal
           onCancel={toggleModal}
           onConfirm={onRemove}
+          extraModalStyles={{height: 175, width: 290}}
           modalText={`Are you sure you want to ${
             selectedOption === 'followers'
               ? 'remove this person'

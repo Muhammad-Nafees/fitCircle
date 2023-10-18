@@ -188,7 +188,7 @@ export const ProfileHeaderContainer = ({
             //     default: 'community',
             //   })
             // }
-            >
+          >
             <Text style={styles.columnText}>
               {subscriberCount + userData?.subscribers?.length}
             </Text>
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: verticalScale(25),
+    height: '62%',
   },
   email: {
     fontSize: 10,

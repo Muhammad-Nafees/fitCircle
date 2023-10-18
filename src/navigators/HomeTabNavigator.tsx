@@ -313,22 +313,22 @@ const HomeTabNavigator = () => {
           tabBarButton: () => null,
         }}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name="MealPlanScreen"
         component={MealPlanStackNavigator}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
-      /> */}
-      {/* <Tab.Screen
+      />
+      <Tab.Screen
         name="PackagesScreen"
         component={PackagesScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
-      /> */}
+      />
       <Tab.Screen
         name="TransactionScreen"
         component={Transaction}

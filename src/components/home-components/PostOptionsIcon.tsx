@@ -56,7 +56,9 @@ export const PostOptionsIcon = ({
       {userRole !== 'user' && userRole !== 'nutritionist' && (
         <TouchableOpacity
           style={styles.bottomContainerButtons}
-          onPress={() => console.log('Create Package')}>
+          onPress={() =>
+            navigation.navigate('HomeTab', {screen: 'PackagesScreen'})
+          }>
           <PackageIcon />
           <Text style={styles.options}>My Package</Text>
         </TouchableOpacity>
