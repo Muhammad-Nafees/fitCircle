@@ -25,6 +25,7 @@ import {RootState} from '../../../redux/store';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
 import Toast from 'react-native-toast-message';
 import {useFocusEffect} from '@react-navigation/native';
+import NutritionisitPlanContainer from '../../../components/dashboard-components/NutritionisitPlanContainer';
 
 const CreateMealPlan = ({navigation}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -92,7 +93,7 @@ const CreateMealPlan = ({navigation}: any) => {
         </TouchableOpacity>
         <Text style={styles.heading}>My Meal Plan</Text>
 
-        {isLoading ? (
+        {/* {isLoading ? (
           <CustomLoader extraStyles={{marginTop: 30}} />
         ) : !mealPlans ? (
           <Text style={{color: 'white', paddingTop: 20}}>
@@ -106,7 +107,12 @@ const CreateMealPlan = ({navigation}: any) => {
               handleDeleteButton={() => handleDeleteMealPlan(plan._id)}
             />
           ))
-        )}
+        )} */}
+        <NutritionisitPlanContainer
+          isLoading={isLoading}
+          mealPlans={mealPlans}
+          handleDeleteMealPlan={handleDeleteMealPlan}
+        />
       </ScrollView>
       <View style={styles.buttonContainer}>
         <CustomButton onPress={() => navigation.navigate('UploadMealPlan')}>

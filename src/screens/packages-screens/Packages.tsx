@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {
   View,
   Text,
@@ -17,22 +17,65 @@ import {
   CustomConfirmationModal,
   CustomOutputModal,
 } from '../../components/shared-components/CustomModals';
+import {IPackage} from '../../interfaces/package.interface';
+import {deletePackageById, getTrainerPackages} from '../../api/packages-module';
+import {useFocusEffect} from '@react-navigation/native';
+import CustomLoader from '../../components/shared-components/CustomLoader';
+import TrainerPackagesContainer from '../../components/profile-components/TrainerPackagesContainer';
 
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
 const PackagesScreen = ({navigation}: any) => {
-  const userRole: any = useSelector((state: RootState) => state.auth.userRole);
+  const userData: any = useSelector((state: RootState) => state.auth.user);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [outputModal, setOutputModal] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [packages, setPackages] = useState<IPackage[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [deletedItemId, setDeletedItemId] = useState<string>('');
 
-  const handleDeletePackage = () => {
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+
+  const handleDeletePackage = (id: string) => {
     setIsModalVisible(!isModalVisible);
+    setDeletedItemId(id);
   };
 
-  const handleDeleteConfirmed = () => {
-    setIsModalVisible(false);
-    setOutputModal(!outputModal);
+  const handleDeleteConfirmed = async () => {
+    setIsLoading(true);
+    try {
+      const response = await deletePackageById(deletedItemId);
+      setIsLoading(false);
+      setIsDeleted(!isDeleted);
+      setIsModalVisible(false);
+      setOutputModal(!outputModal);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From Delete Package!');
+    }
   };
+
+  const fetchPackagesByTrainer = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getTrainerPackages(
+        page,
+        limit,
+        userData?._id as string,
+      );
+      const data = response?.data?.data;
+      setPackages(data?.packages);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From Packages!');
+    }
+    setIsLoading(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPackagesByTrainer();
+    }, [isDeleted]),
+  );
 
   return (
     <View style={styles.container}>
@@ -46,20 +89,12 @@ const PackagesScreen = ({navigation}: any) => {
           />
         </TouchableOpacity>
         <Text style={styles.heading}>Packages</Text>
-        <View style={{marginVertical: 16}}>
-          <CustomTrainerPackage
-            hidePackageButton={true}
-            handleDeleteButton={handleDeletePackage}
-          />
-          <CustomTrainerPackage
-            hidePackageButton={true}
-            handleDeleteButton={handleDeletePackage}
-          />
-          <CustomTrainerPackage
-            hidePackageButton={true}
-            handleDeleteButton={handleDeletePackage}
-          />
-        </View>
+
+        <TrainerPackagesContainer
+          isLoading={isLoading}
+          packages={packages}
+          handleDeletePackage={handleDeletePackage}
+        />
       </ScrollView>
       <View style={{margin: 20}}>
         <CustomButton
@@ -69,12 +104,12 @@ const PackagesScreen = ({navigation}: any) => {
       </View>
       <Modal
         isVisible={isModalVisible}
-        onBackButtonPress={handleDeletePackage}
-        onBackdropPress={handleDeletePackage}
+        onBackButtonPress={() => {}}
+        onBackdropPress={() => setIsModalVisible(false)}
         style={styles.modal}>
         <CustomConfirmationModal
           onCancel={handleDeleteConfirmed}
-          onConfirm={handleDeletePackage}
+          onConfirm={() => {}}
           modalText="Are you sure you want to Delete this?"
           highlightedWord={'Delete'}
           confirmText="Return"
@@ -108,6 +143,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16.8,
     color: 'white',
+    marginBottom: 30,
   },
   modal: {
     backgroundColor: 'black',

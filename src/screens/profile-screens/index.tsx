@@ -1,5 +1,12 @@
 import React, {useEffect, useState, useCallback, useRef} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
@@ -36,10 +43,13 @@ import CustomLoader from '../../components/shared-components/CustomLoader';
 import {deletePost} from '../../api/home-module';
 import {useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import {
-  CustomNutritionistPlan,
-  CustomPlanDescription,
-} from '../../components/dashboard-components/CustomNutritionistPlan';
+
+import {getMealPlansByNutritionist} from '../../api/mealPlan-module';
+import {IMealPlan} from '../../interfaces/mealPlan.interface';
+import {IPackage} from '../../interfaces/package.interface';
+import {getTrainerPackages} from '../../api/packages-module';
+import TrainerPackagesContainer from '../../components/profile-components/TrainerPackagesContainer';
+import NutritionisitPlanContainer from '../../components/dashboard-components/NutritionisitPlanContainer';
 
 const ProfileScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
@@ -70,6 +80,14 @@ const ProfileScreen = ({navigation, route}: any) => {
   >(null);
   const [isEditDeletePost, setIsEditDeletePost] = useState<boolean>(false);
   const [isDeleteVideo, setIsDeleteVideo] = useState<boolean>(false);
+
+  // meal plan data
+
+  const [mealPlans, setMealPlans] = useState<IMealPlan[]>([]);
+
+  // packages data
+
+  const [packages, setPackages] = useState<IPackage[]>([]);
 
   const [profileData, setProfileData] = useState<IUser | null>(userData);
   const searchUserProfile = useSelector(
@@ -224,6 +242,41 @@ const ProfileScreen = ({navigation, route}: any) => {
     }
     setIsLoading(false);
   };
+  // if logged in user or search user is nutritionist
+  const fetchMealPlansByNutritionist = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getMealPlansByNutritionist(
+        page,
+        limit,
+        profileData?._id as string,
+      );
+      const data = response?.data?.data;
+      const mealPlans = data?.mealPlans;
+      console.log(mealPlans, 'mealslsdasjndasjkdkjadjasksnjdnjkasjnk');
+      setMealPlans(mealPlans);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From Meal plans!');
+    }
+    setIsLoading(false);
+  };
+  // if logged in user or search user is trainer
+
+  const fetchPackagesByTrainer = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getTrainerPackages(
+        page,
+        limit,
+        profileData?._id as string,
+      );
+      const data = response?.data?.data;
+      setPackages(data?.packages);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From Packages!');
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     if (shouldFetchPostsInitially) {
@@ -232,6 +285,18 @@ const ProfileScreen = ({navigation, route}: any) => {
       fetchFollowersList();
       fetchFollowingList();
       fetchCommunityList();
+      if (
+        searchUserProfile?.role === 'nutritionist' ||
+        profileData?.role === 'nutritionist'
+      ) {
+        fetchMealPlansByNutritionist();
+      }
+      if (
+        searchUserProfile?.role === 'trainer' ||
+        profileData?.role === 'trainer'
+      ) {
+        fetchPackagesByTrainer();
+      }
     }
   }, [shouldFetchPostsInitially]);
 
@@ -317,11 +382,9 @@ const ProfileScreen = ({navigation, route}: any) => {
                     : 'Packages') && styles.selectedOption,
               ]}
               onPress={() =>
-                setSelectedOption(
-                  profileData?.role === 'nutritionist'
-                    ? 'MealPlan'
-                    : 'Packages',
-                )
+                profileData?.role === 'nutritionist'
+                  ? setSelectedOption('MealPlan')
+                  : setSelectedOption('Packages')
               }>
               <Text style={styles.optionText}>
                 {profileData?.role === 'nutritionist'
@@ -394,22 +457,22 @@ const ProfileScreen = ({navigation, route}: any) => {
           </>
         )}
         {selectedOption === 'MealPlan' && (
-          <>
-            <CustomPlanDescription
-              plan={{
-                id: 1,
-                planName: 'Premium Meal Plan',
-                price: '$79.99',
-                description: 'Lincoln Smith',
-              }}
+          <ScrollView>
+            <NutritionisitPlanContainer
+              isLoading={isLoading}
+              mealPlans={mealPlans}
             />
-          </>
+          </ScrollView>
         )}
         {selectedOption === 'Packages' && (
-          <View style={styles.trainerPackageContainer}>
-            <CustomTrainerPackage />
-            <CustomTrainerPackage />
-          </View>
+          <ScrollView>
+            <View style={styles.trainerPackageContainer}>
+              <TrainerPackagesContainer
+                isLoading={isLoading}
+                packages={packages}
+              />
+            </View>
+          </ScrollView>
         )}
         {selectedOption === 'Bio' && (
           <ProfileBio

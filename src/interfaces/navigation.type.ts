@@ -1,4 +1,5 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {IPackage} from './package.interface';
 
 export type AuthStackParamList = {
   CreateAccount: any;
@@ -14,6 +15,7 @@ export type AuthStackParamList = {
   Profile: any;
   commentsScreen: any;
   SearchProfile: any;
+  PackageDetail: {packageDetails: IPackage | undefined};
 
   // Add other routes here...
 };

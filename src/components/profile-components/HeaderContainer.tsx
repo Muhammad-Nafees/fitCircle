@@ -52,10 +52,10 @@ export const ProfileHeaderContainer = ({
   useEffect(() => {
     setIsSearchUser(loginUserDataId === userData._id);
     console.log(
-      userData?.subscribers.includes(loginUserDataId),
+      userData?.subscribers?.includes(loginUserDataId),
       'isSubscriber',
     );
-    if (userData?.subscribers.includes(loginUserDataId)) {
+    if (userData?.subscribers?.includes(loginUserDataId)) {
       setIsSubscribed(true);
       setSubscribeButtonStyle(
         isSubscribed ? styles.profileButton : styles.transparentButton,
@@ -183,12 +183,13 @@ export const ProfileHeaderContainer = ({
         {userData?.role !== 'user' ? (
           <TouchableOpacity
             style={styles.column}
-            onPress={() =>
-              isSeachUser &&
-              navigation.navigate('SearchProfile', {
-                default: 'community',
-              })
-            }>
+            // onPress={() =>
+            //   isSeachUser &&
+            //   navigation.navigate('SearchProfile', {
+            //     default: 'community',
+            //   })
+            // }
+            >
             <Text style={styles.columnText}>
               {subscriberCount + userData?.subscribers?.length}
             </Text>
