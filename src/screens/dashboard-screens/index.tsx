@@ -6,6 +6,7 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
@@ -96,7 +97,7 @@ const DashboardScreen = ({navigation}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={[styles.topContainer]}>
         <HeaderContainer
           username={username}
@@ -163,7 +164,7 @@ const DashboardScreen = ({navigation}: any) => {
         style={styles.modal}>
         <TransactionModal closeModal={closeModal} />
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -187,6 +188,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#222123',
     flex: 2,
     marginTop: -verticalScale(20),
+    height: 250,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     zIndex: -1,

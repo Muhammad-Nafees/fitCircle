@@ -8,9 +8,9 @@ const NoComment = () => {
     <View
       style={{
         alignItems: 'center',
-        marginTop: 40,
-        height: verticalScale(200),
-        paddingBottom: 50,
+        marginVertical: verticalScale(40),
+        height: verticalScale(340),
+        paddingBottom: 0,
       }}>
       <Entypo name="chat" color={'#898c93'} size={120} />
       <Text
