@@ -33,6 +33,6 @@ const styles = {
     marginVertical: 10,
     marginHorizontal: 6,
     textAlign: 'center',
-    lineHeight: 11.77,
+    // lineHeight: 11.77,
   },
 };

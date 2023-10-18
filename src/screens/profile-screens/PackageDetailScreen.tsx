@@ -96,7 +96,6 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                 style={{width: 24, height: 24, tintColor: 'white'}}
               />
             </TouchableOpacity>
-<<<<<<< Updated upstream
             {!route?.params?.isCreatingPackage && (
               <TouchableOpacity
                 onPress={() =>
@@ -117,18 +116,6 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                 </Text>
               </TouchableOpacity>
             )}
-=======
-            <TouchableOpacity onPress={() => console.log('Package')}>
-              <Text
-                style={{
-                  fontWeight: '500',
-                  fontSize: 10,
-                  color: 'rgba(32, 155, 204, 1)',
-                }}>
-                Get this package
-              </Text>
-            </TouchableOpacity>
->>>>>>> Stashed changes
           </View>
           <Text
             style={[

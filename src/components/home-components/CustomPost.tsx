@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
-    lineHeight: 24,
+    // lineHeight: 24,
     marginRight: horizontalScale(30),
   },
   lockedContainer: {

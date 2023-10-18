@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'white',
     fontWeight: 'bold',
-    lineHeight: 19,
+    // lineHeight: 19,
   },
   email: {
     color: '#209BCC',

@@ -110,7 +110,7 @@ export const styles = StyleSheet.create({
   bioText: {
     fontSize: 12,
     color: 'rgba(255, 255, 255, 0.5)',
-    lineHeight: 18.74,
+    // lineHeight: 18.74,
     fontWeight: '500',
   },
   heading: {

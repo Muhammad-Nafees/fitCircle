@@ -49,7 +49,6 @@ const UploadMealPlan = ({navigation}: any) => {
         text2: 'You need to attach a Meal Plan PDF',
       });
     } else {
-<<<<<<< Updated upstream
       const reqData = {
         title: values.title,
         description: values.description,
@@ -70,10 +69,6 @@ const UploadMealPlan = ({navigation}: any) => {
       }
       setIsLoading(false);
       navigation.navigate('CreateMealPlan');
-=======
-      console.log(values);
-      // navigation.navigate('CreateMealPlan');
->>>>>>> Stashed changes
     }
   };
 

@@ -67,24 +67,10 @@ const DashboardScreen = ({navigation}: any) => {
           {
             text: userData.role === 'nutritionist' ? 'Meal Plan' : 'Packages',
             icon: <PackagesMealIcon />,
-<<<<<<< Updated upstream
             routeName:
               userData.role === 'nutritionist'
                 ? 'MealPlanScreen'
                 : 'PackagesScreen',
-=======
-            dropdown: isDropdownVisible,
-            selectOption: (option: any) => {
-              setSelectedOption(option);
-              if (option === 'Meal Plan') {
-                // navigation.navigate('MealPlanScreen');
-                console.log('MealPlan');
-              } else if (option === 'Packages') {
-                // navigation.navigate('PackagesScreen');
-                console.log('Packages');
-              }
-            },
->>>>>>> Stashed changes
           },
           {
             text: 'Wallet',

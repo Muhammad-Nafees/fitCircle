@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: moderateScale(12),
-    lineHeight: verticalScale(17),
+    // lineHeight: verticalScale(17),
     fontWeight: '700',
     color: '#ffffff',
   },
