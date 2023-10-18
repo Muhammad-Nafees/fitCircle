@@ -124,13 +124,12 @@ export const ProfileHeaderContainer = ({
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
           {userData?.role !== 'user' && (
-            <TouchableOpacity onPress={navigateToSchedule}>
+            <TouchableOpacity onPress={() => console.log('Schedule')}>
               <TrainerProfileScheduleIcon />
             </TouchableOpacity>
           )}
           {isSeachUser && (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Settings' as never)}>
+            <TouchableOpacity onPress={() => console.log('Settings Pressed')}>
               <ProfileSettingsIcon />
             </TouchableOpacity>
           )}

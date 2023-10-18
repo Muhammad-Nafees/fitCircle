@@ -56,13 +56,12 @@ export const PostOptionsIcon = ({
       {userRole !== 'user' && userRole !== 'nutritionist' && (
         <TouchableOpacity
           style={styles.bottomContainerButtons}
-          onPress={() =>
-            navigation.navigate('HomeTab', {screen: 'CreatePackageScreen'})
-          }>
+          onPress={() => console.log('Create Package')}>
           <PackageIcon />
           <Text style={styles.options}>My Package</Text>
         </TouchableOpacity>
       )}
+<<<<<<< Updated upstream
       {userRole === 'nutritionist' && (
         <TouchableOpacity
           style={styles.bottomContainerButtons}
@@ -71,6 +70,14 @@ export const PostOptionsIcon = ({
           <Text style={styles.options}>My Meal Plan</Text>
         </TouchableOpacity>
       )}
+=======
+      <TouchableOpacity
+        style={styles.bottomContainerButtons}
+        onPress={() => console.log('MealPlan')}>
+        <MealPlanSvgIcon />
+        <Text style={styles.options}>My Meal Plan</Text>
+      </TouchableOpacity>
+>>>>>>> Stashed changes
       <TouchableOpacity
         style={styles.bottomContainerButtons}
         onPress={handleScheduleRoute}>
@@ -95,7 +102,7 @@ export const PostOptionsIcon = ({
       )}
       <TouchableOpacity
         style={styles.bottomContainerButtons}
-        onPress={() => navigation.navigate('Payment')}>
+        onPress={() => console.log('Wallet')}>
         <WalletSvgIcon />
         <Text style={styles.options}>My Wallet</Text>
       </TouchableOpacity>
