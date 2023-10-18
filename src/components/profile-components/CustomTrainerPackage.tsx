@@ -12,24 +12,49 @@ const ImagePreview = require('../../../assets/images/TestMealPlanImage.png');
 import Icon from 'react-native-vector-icons/Feather';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
+import {IPackage} from '../../interfaces/package.interface';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthStackParamList} from 'interfaces/navigation.type';
+import {s3bucketReference} from '../../api';
+
+type NavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'PackageDetail'
+>;
+
+interface Props {
+  myPackage?: IPackage;
+  hidePriceAndPackage?: any;
+  onDeletePackage?: (id: string) => void;
+  hidePackageButton?: any;
+  videoEnabled?: any;
+  isCreatingPackage?: boolean;
+}
 
 export const CustomTrainerPackage = ({
+  myPackage,
   hidePriceAndPackage,
-  handleDeleteButton,
+  onDeletePackage,
   hidePackageButton = false,
   videoEnabled,
-  packageTitle = '30 Days New Year Challenge',
-}: any) => {
+  isCreatingPackage,
+}: Props) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const [isSwiped, setIsSwiped] = useState(false);
   const swipeableRef: any = useRef(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
 
   const onPressHandler = () => {
     // if (userData?.role !== 'trainer' || isTrainerView) {
-    navigation.navigate('PackageDetail', {hidePackageButton});
+    navigation.navigate('PackageDetail', {packageDetails: myPackage});
     // }
+  };
+  const handleDeletePackage = (id: string) => {
+    swipeableRef.current.close();
+    if (onDeletePackage) {
+      onDeletePackage(id);
+    }
   };
 
   const renderRightActions = () => {
@@ -45,10 +70,7 @@ export const CustomTrainerPackage = ({
               styles.rightAction,
               {backgroundColor: 'rgba(222, 49, 49, 1)'},
             ]}
-            onPress={() => {
-              swipeableRef.current.close();
-              handleDeleteButton();
-            }}>
+            onPress={() => handleDeletePackage(myPackage?._id as string)}>
             <DeleteMessageIcon />
           </TouchableOpacity>
           <TouchableOpacity
@@ -84,7 +106,14 @@ export const CustomTrainerPackage = ({
           <TouchableOpacity
             style={styles.imageContainer}
             onPress={videoEnabled}>
-            <Image source={ImagePreview} style={styles.image} />
+            <Image
+              source={{
+                uri: isCreatingPackage
+                  ? myPackage?.thumbnail && myPackage?.thumbnail.uri
+                  : `${s3bucketReference}/${myPackage?.thumbnail}`,
+              }}
+              style={styles.image}
+            />
             {hidePriceAndPackage && (
               <View style={styles.playIconContainer}>
                 <View
@@ -105,7 +134,7 @@ export const CustomTrainerPackage = ({
                   styles.packageTitle,
                   hidePriceAndPackage && {fontSize: 16},
                 ]}>
-                {packageTitle}
+                {myPackage?.title}
               </Text>
               <View style={styles.ratingContainer}>
                 {[1, 2, 3, 4, 5].map((_, index) => (
@@ -116,7 +145,7 @@ export const CustomTrainerPackage = ({
                     styles.ratingCount,
                     hidePriceAndPackage && {fontSize: 12},
                   ]}>
-                  (1,515)
+                  {myPackage?.reviewsCount}
                 </Text>
               </View>
               <Text
@@ -124,12 +153,13 @@ export const CustomTrainerPackage = ({
                   styles.packageDuration,
                   hidePriceAndPackage && {fontSize: 14},
                 ]}>
-                1 hour
+                {myPackage?.hours}{' '}
+                {myPackage?.hours && myPackage?.hours > 1 ? 'hours' : 'hour'}
               </Text>
             </View>
             {!hidePriceAndPackage ? (
               <View style={styles.priceContainer}>
-                <Text style={styles.price}>$100</Text>
+                <Text style={styles.price}>${myPackage?.cost}</Text>
                 {!hidePackageButton && (
                   <View>
                     {userData?.role !== 'user' ? (
@@ -161,6 +191,8 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: 'cover',
+    width: 100,
+    height: 86,
   },
   packageInfo: {
     flex: 1,

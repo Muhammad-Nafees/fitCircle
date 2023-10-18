@@ -1,6 +1,6 @@
 import {IUser} from './user.interface';
 
-export type IUserRole = 'user' | 'admin';
+export type IUserRole = 'user' | 'admin' | 'trainer' | 'nutritionist';
 export type IAccountType = 'signup' | 'login' | null;
 
 export interface IAuth {

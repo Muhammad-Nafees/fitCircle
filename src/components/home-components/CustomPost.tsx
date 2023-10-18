@@ -154,6 +154,8 @@ export const CustomPost = ({
       : post.text.split('\n').slice(0, thresholdLines).join('\n')
     : '';
 
+  const newlineCount = post?.text?.split('\n');
+
   const toggleShowMore = () => {
     setShowFullContent(!showFullContent);
   };
@@ -260,7 +262,7 @@ export const CustomPost = ({
           ]}>
           <ScrollView scrollEnabled={true} nestedScrollEnabled={true}>
             <Text style={styles.contentText}>{contentToShow}</Text>
-            {contentToShow.length > 300 ? (
+            {newlineCount?.length > 10 ? (
               <TouchableOpacity onPress={toggleShowMore}>
                 <Text style={{color: 'blue'}}>
                   {/* See More */}
@@ -306,10 +308,9 @@ export const CustomPost = ({
               </Text>
             )}
             <Text style={styles.contentText}>{contentToShow}</Text>
-            {contentToShow?.length > 20 ? (
+            {newlineCount?.length > 10 ? (
               <TouchableOpacity onPress={toggleShowMore}>
                 <Text style={{color: 'blue'}}>
-                  {/* See More */}
                   {showFullContent ? 'See Less' : 'See More'}
                 </Text>
               </TouchableOpacity>

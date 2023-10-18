@@ -100,7 +100,6 @@ export const CustomNutritionistPlan = ({
   key,
   handleModalOpen,
 }: any) => {
-  console.log(plans, 'plllll');
   const navigation = useNavigation();
   const route = useRoute();
   const showRequestText = route.name === 'MealPlanFour';
