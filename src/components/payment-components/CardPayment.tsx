@@ -1,6 +1,6 @@
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
-const Bank = require('../../../assets/images/bank.png');
+import BankIcon from '../../../assets/Bank';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MastercardIcon from '../../../assets/Mastercard';
 import ApplePayIcon from '../../../assets/ApplePay';
@@ -36,6 +36,7 @@ const CardPayment = ({
   if (type === 'Mastercard') {
     IconComponent = MastercardIcon;
   } else if (type === 'Bank') {
+    IconComponent = BankIcon;
   } else if (type === 'Paypal') {
     IconComponent = PaypalIcon;
   } else if (type === 'GooglePay') {
@@ -52,6 +53,8 @@ const CardPayment = ({
               backgroundColor: 'rgba(255, 64, 64, 1)',
               borderRadius: 30,
               borderWidth: 0,
+              height: '100%',
+              zIndex: 10000,
             }}>
             <Icon
               name="minus"

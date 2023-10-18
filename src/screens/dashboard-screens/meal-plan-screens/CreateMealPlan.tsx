@@ -20,25 +20,25 @@ const dummyData = [
   {
     id: 1,
     planName: 'Basic Meal Plan',
-    price: '$49.99',
+    price: '49.99',
     description: 'For people who are losing weight',
   },
   {
     id: 2,
     planName: 'Premium Meal Plan',
-    price: '$79.99',
+    price: '79.99',
     description: 'For people who are losing weight',
   },
   {
     id: 3,
     planName: 'Vegetarian Meal Plan',
-    price: '$59.99',
+    price: '59.99',
     description: 'For people who are losing weight',
   },
   {
     id: 4,
     planName: 'Family Meal Plan',
-    price: '$99.99',
+    price: '99.99',
     description: 'For people who are losing weight',
   },
 ];

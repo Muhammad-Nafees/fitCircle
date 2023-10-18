@@ -11,9 +11,21 @@ import {
 } from '../../utils/metrics';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 const Option = require('../../../assets/icons/customPostOption.png');
+import {dummyDataProfile} from '../../screens/dummyData';
+import {setUserProfile} from '../../redux/authSlice';
+import {useDispatch} from 'react-redux';
 
 export const MessageHeaderContainer = ({username}: any) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const handleSeeUserProfile = () => {
+    dispatch(setUserProfile(dummyDataProfile));
+    navigation.navigate('HomeTabNav', {
+      screen: 'Profile',
+      params: {isTrainerView: true, isFollowing: true},
+    });
+  };
+
   return (
     <View style={styles.contentContainer}>
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
@@ -25,7 +37,9 @@ export const MessageHeaderContainer = ({username}: any) => {
             style={{width: 24, height: 24, tintColor: 'white'}}
           />
         </TouchableOpacity>
-        <View style={styles.userDetailStatus}>
+        <TouchableOpacity
+          style={styles.userDetailStatus}
+          onPress={handleSeeUserProfile}>
           <Userpic
             name={username[0]}
             size={40}
@@ -39,7 +53,7 @@ export const MessageHeaderContainer = ({username}: any) => {
             <Text style={styles.name}>{username}</Text>
             <Text style={styles.status}>Online</Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.iconContainer}>
         <TouchableOpacity

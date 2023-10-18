@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Dimensions,
   ScrollView, // Import ScrollView
 } from 'react-native';
 import CustomSupportChat from '../../components/settings-components/CustomSupportChat';
@@ -18,10 +17,24 @@ import {
 } from 'react-native-image-picker';
 import {openCamera} from 'react-native-image-crop-picker';
 
-const SupportChat = () => {
+const SupportChat = ({route}: any) => {
   const [mediaUri, setMediaUri] = useState(null);
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([]);
+  const {message, imageUri} = route.params;
+
+  useEffect(() => {
+    if (message || imageUri) {
+      const newMessage = {
+        username: 'Sameer',
+        dateTime: '02/10/2023 | 6:00 AM',
+        messageId: 'KGNV83JNFG8',
+        message: message,
+        imageUri: imageUri,
+      };
+      setMessages([newMessage]);
+    }
+  }, [message, imageUri]);
 
   const handleCaptureButtonPress = async () => {
     setMediaUri(null);
@@ -32,11 +45,7 @@ const SupportChat = () => {
     })
       .then(image => {
         if (image.path) {
-          setMediaUri({
-            uri: image.path,
-            name: 'camera',
-            type: image.mime,
-          });
+          setMediaUri(image.path);
         }
       })
       .catch(error => {
@@ -45,6 +54,13 @@ const SupportChat = () => {
         }
       });
   };
+
+  useEffect(() => {
+    if (mediaUri) {
+      console.log(mediaUri);
+      handleSend();
+    }
+  }, [mediaUri]);
 
   const handlePhotoButtonPress = () => {
     setMediaUri(null);
@@ -63,9 +79,28 @@ const SupportChat = () => {
   };
 
   const handleSend = () => {
-    if (messageInput) {
-      setMessages([...messages, messageInput]);
-      setMessageInput('');
+    if (mediaUri) {
+      const newMessage = {
+        username: 'Sameer',
+        dateTime: '02/10/2023 | 6:00 AM',
+        messageId: 'KGNV83JNFG8',
+        message: '',
+        imageUri: mediaUri,
+      };
+
+      setMessages([...messages, newMessage]);
+      setMediaUri(null); // Clear the mediaUri
+    } else if (messageInput) {
+      const newMessage = {
+        username: 'Sameer',
+        dateTime: '02/10/2023 | 6:00 AM',
+        messageId: 'KGNV83JNFG8',
+        message: messageInput,
+        imageUri: null,
+      };
+
+      setMessages([...messages, newMessage]);
+      setMessageInput(''); // Clear the message input
     }
   };
 
@@ -78,10 +113,11 @@ const SupportChat = () => {
             {messages.map((message, index) => (
               <CustomSupportChat
                 key={index}
-                username="Sameer"
-                dateTime="02/10/2023 | 6:00 AM"
-                messageId="KGNV83JNFG8"
-                message={message}
+                username={message.username}
+                dateTime={message.dateTime}
+                messageId={message.messageId}
+                message={message.message}
+                imageUri={message.imageUri}
               />
             ))}
           </View>

@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: 10,
+    color: 'black',
   },
   copyButton: {
     fontWeight: '400',

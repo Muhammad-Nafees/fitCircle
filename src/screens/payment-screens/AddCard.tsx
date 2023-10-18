@@ -168,6 +168,7 @@ const AddCardScreen = ({route}: any) => {
                     backgroundColor: 'rgba(54, 55, 56, 1)',
                     borderRadius: 12,
                     fontSize: 20,
+                    color: 'white',
                   }}
                   values={allCountries}
                   extraRowStyle={{backgroundColor: 'rgba(54, 55, 56, 1)'}}

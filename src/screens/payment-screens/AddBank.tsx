@@ -1,14 +1,21 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {Formik} from 'formik';
 //----------------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
 import CustomBankInput from '../../components/payment-components/CustomBankInput';
 import {bankSchema} from '../../validations';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-const BankImage = require('../../../assets/images/bank.png');
+import BankIcon from '../../../assets/Bank';
+import CustomHeader from '../../components/shared-components/CustomHeader';
 
-export const AddBankScreen = ({route}: any) => {
+export const AddBankScreen = ({route, navigation}: any) => {
   const {dummyData} = route.params || {};
   const handleSubmit = values => {
     console.log(values);
@@ -24,6 +31,33 @@ export const AddBankScreen = ({route}: any) => {
   };
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingBottom: 20,
+          paddingRight: horizontalScale(20),
+        }}>
+        <CustomHeader />
+        {dummyData && (
+          <TouchableOpacity
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: verticalScale(20),
+            }}>
+            <Text
+              style={{
+                color: 'rgba(32, 155, 204, 1)',
+                fontWeight: '400',
+                fontSize: 12,
+              }}>
+              Done
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
       <Text style={styles.heading}>{dummyData ? 'Edit Bank' : 'Add Bank'}</Text>
       <Formik
         initialValues={initialValues}
@@ -38,11 +72,11 @@ export const AddBankScreen = ({route}: any) => {
           touched,
           setFieldError,
         }) => (
-          <>
+          <View style={{paddingHorizontal: horizontalScale(16)}}>
             <View style={{marginTop: 35, flex: 1, paddingHorizontal: 16}}>
               <View style={{gap: 15, marginBottom: 20}}>
                 <View style={styles.bankImageTextContainer}>
-                  <Image source={BankImage} />
+                  <BankIcon />
                   <Text
                     style={{fontWeight: '500', fontSize: 14, color: 'white'}}>
                     Bank Account
@@ -114,9 +148,9 @@ export const AddBankScreen = ({route}: any) => {
               />
             </View>
             <View style={styles.button}>
-              <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+              <CustomButton onPress={handleSubmit}>Next</CustomButton>
             </View>
-          </>
+          </View>
         )}
       </Formik>
     </ScrollView>
@@ -127,12 +161,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292a2c',
-    paddingHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',
     fontSize: 16.8,
     color: 'white',
+    paddingHorizontal: horizontalScale(16),
   },
   button: {
     marginTop: verticalScale(40),

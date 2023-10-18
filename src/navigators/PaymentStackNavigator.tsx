@@ -31,7 +31,11 @@ const PaymentStackNavigator = () => {
       <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
       <Stack.Screen name="AddPayment" component={AddPaymentScreen} />
       <Stack.Screen name="AddCard" component={AddCardScreen} />
-      <Stack.Screen name="AddBank" component={AddBankScreen} />
+      <Stack.Screen
+        name="AddBank"
+        component={AddBankScreen}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="BankPaymentMethods"
         component={BankPaymentMethodsScreen}

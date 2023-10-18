@@ -375,13 +375,10 @@ export const createPackageSchema = Yup.object().shape({
 export const uploadPlanSchema = Yup.object().shape({
   title: Yup.string()
     .required('Title is required')
-    .matches(/^\S+$/, 'Invalid Title')
-    .min(3, 'Title must be at least 3 characters'),
+    .matches(/^[^\s].{1,}$/, 'Invalid Title'),
   description: Yup.string()
     .required('Description is required')
-    .matches(/^\S+$/, 'Invalid Description')
-    .max(50, 'Description cannot exceed 50 characters')
-    .min(10, 'Description must be at least 10 characters'),
+    .matches(/^[^\s].{8,48}$/, 'Invalid Description'),
   cost: Yup.number()
     .required('Cost is required')
     .min(0, 'Cost cannot be negative'),

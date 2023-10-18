@@ -11,7 +11,7 @@ import {RootState} from '../../redux/store';
 export const PaymentMethodScreen = ({navigation, route}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const userRole = useSelector((state: RootState) => state.auth.userRole);
-  const sufficient = route.params.amount <= '50';
+  const sufficient = route?.params?.amount <= '50' || null;
 
   let modalText = 'Insufficient Wallet Funds';
   if (userRole !== 'user' && sufficient) {
@@ -19,6 +19,13 @@ export const PaymentMethodScreen = ({navigation, route}: any) => {
   } else if (userRole === 'user' && sufficient) {
     modalText = 'Successfully Paid!';
   }
+
+  const handleAmountPayment = () => {
+    if (sufficient !== null) {
+      setIsModalVisible(true);
+    }
+    return;
+  };
 
   return (
     <View style={styles.container}>
@@ -47,7 +54,7 @@ export const PaymentMethodScreen = ({navigation, route}: any) => {
           arrowColor={'rgba(43,47,50,255)'}
           cardNumber="**** 4637"
           type="Mastercard"
-          onPress={() => setIsModalVisible(true)}
+          onPress={handleAmountPayment}
         />
         <Text style={styles.subheading}>
           YOU CAN USE MULTIPLE PAYMENT METHODS

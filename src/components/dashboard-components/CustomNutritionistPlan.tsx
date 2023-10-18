@@ -72,7 +72,7 @@ export const CustomPlanDescription = ({
             <Text style={{fontSize: 12, fontWeight: '500', color: 'white'}}>
               {plan.planName}
             </Text>
-            <Text style={styles.price}>{plan.price}</Text>
+            <Text style={styles.price}>${plan.price}</Text>
           </View>
         </View>
         <View style={{flex: 1, marginLeft: 13, marginRight: 5}}>

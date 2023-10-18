@@ -65,17 +65,12 @@ const DashboardScreen = ({navigation}: any) => {
     userData?.role !== 'user'
       ? [
           {
-            text: 'Packages / Meal Plan',
+            text: userData.role === 'nutritionist' ? 'Meal Plan' : 'Packages',
             icon: <PackagesMealIcon />,
-            dropdown: isDropdownVisible,
-            selectOption: (option: any) => {
-              setSelectedOption(option);
-              if (option === 'Meal Plan') {
-                navigation.navigate('MealPlanScreen');
-              } else if (option === 'Packages') {
-                navigation.navigate('PackagesScreen');
-              }
-            },
+            routeName:
+              userData.role === 'nutritionist'
+                ? 'MealPlanScreen'
+                : 'PackagesScreen',
           },
           {
             text: 'Wallet',
@@ -95,18 +90,14 @@ const DashboardScreen = ({navigation}: any) => {
       <DashboardCarouselItem
         isDropdownVisible={isDropdownVisible}
         item={item}
-        onPress={
-          item.text === 'Packages / Meal Plan'
-            ? () => setIsDropdownVisible(!isDropdownVisible)
-            : item.routeName && withNavigationAction(item.routeName)
-        }
+        onPress={item.routeName && withNavigationAction(item.routeName)}
       />
     );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
+      <View style={[styles.topContainer]}>
         <HeaderContainer
           username={username}
           isTrainerAvailable={isTrainerAvailable}
@@ -124,7 +115,6 @@ const DashboardScreen = ({navigation}: any) => {
           style={{
             marginTop: 10,
             width: screenWidth,
-            paddingRight: 30,
           }}>
           <FlatList
             horizontal
@@ -132,7 +122,9 @@ const DashboardScreen = ({navigation}: any) => {
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderItem}
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{gap: 10}}
+            contentContainerStyle={{
+              gap: 10,
+            }}
           />
         </View>
       </View>
@@ -209,6 +201,27 @@ const styles = StyleSheet.create({
     margin: 0,
     width: '100%',
     height: '100%',
+  },
+  dropdown: {
+    top: '90%', // Position it just below the carousel item
+    position: 'absolute', // Set absolute positioning
+    backgroundColor: 'rgba(68, 68, 68, 1)',
+    borderRadius: 5,
+    width: horizontalScale(106),
+    zIndex: 9999999, // Ensure the dropdown has a high zIndex
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dropdownOption: {
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    fontSize: 10,
+    color: 'white',
+  },
+  horizontalLine: {
+    width: '75%',
+    height: 1,
+    backgroundColor: 'gray',
   },
 });
 

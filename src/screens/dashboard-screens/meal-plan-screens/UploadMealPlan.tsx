@@ -29,7 +29,7 @@ const UploadMealPlan = ({navigation, route}: any) => {
     Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
   >();
   const [fileName, setFileName] = useState<any>('');
-  const dummyData = route.params.dummyData || {};
+  const dummyData = route?.params?.dummyData || {};
 
   const initialValues = {
     title: dummyData.title || '',
@@ -47,8 +47,17 @@ const UploadMealPlan = ({navigation, route}: any) => {
         text2: 'You need to attach a Meal Plan PDF',
       });
     } else {
-      console.log(values);
-      navigation.navigate('CreateMealPlan');
+      const username = values.username;
+      if (username && username.startsWith('@') && dummyData) {
+        // If a username starts with "@" and dummyData is present, navigate to CreateMealPlan
+        navigation.navigate('CreateMealPlan');
+      } else if (username && username.startsWith('@')) {
+        // Remove the "@" symbol from the username
+        const cleanedUsername = username.substring(1);
+        navigation.navigate('Message', {username: cleanedUsername});
+      } else {
+        navigation.navigate('CreateMealPlan');
+      }
     }
   };
 
