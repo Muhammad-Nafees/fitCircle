@@ -7,7 +7,6 @@ import {
   Image,
   TextInput,
   FlatList,
-  ActivityIndicator,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {UserSearch} from '../../components/home-components/UserSearch';
@@ -229,7 +228,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: moderateScale(16),
     color: '#fff',
     marginLeft: horizontalScale(8),
   },

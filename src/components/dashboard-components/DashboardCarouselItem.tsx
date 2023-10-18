@@ -2,11 +2,7 @@ import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 
-export const DashboardCarouselItem = ({
-  item,
-  onPress,
-  isDropdownVisible,
-}: any) => {
+export const DashboardCarouselItem = ({item, onPress}: any) => {
   return (
     <View style={{flex: 1}}>
       <TouchableOpacity onPress={onPress} style={styles.carouselItem}>
@@ -22,8 +18,8 @@ const styles = {
     backgroundColor: '#209BCC',
     alignItems: 'center',
     justifyContent: 'center',
-    width: horizontalScale(106),
-    height: verticalScale(115),
+    width: 106,
+    height: 115,
     borderRadius: 10,
   },
   carouselItemText: {

@@ -124,6 +124,7 @@ const DashboardScreen = ({navigation}: any) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{
               gap: 10,
+              paddingRight: horizontalScale(35),
             }}
           />
         </View>

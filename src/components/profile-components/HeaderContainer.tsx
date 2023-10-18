@@ -207,7 +207,7 @@ export const ProfileHeaderContainer = ({
           }>
           <Text style={styles.columnText}>
             {isSeachUser
-              ? profilePersonalData?.communitiesList !== undefined
+              ? profilePersonalData?.communitiesList
                 ? profilePersonalData?.communitiesList?.length
                 : 0
               : userData?.communities?.length}
@@ -230,7 +230,7 @@ export const ProfileHeaderContainer = ({
           }>
           <Text style={styles.columnText}>
             {isSeachUser
-              ? profilePersonalData?.followingsList !== undefined
+              ? profilePersonalData?.followingsList
                 ? profilePersonalData?.followingsList?.length
                 : 0
               : userData?.noOfFollowings}
@@ -253,7 +253,7 @@ export const ProfileHeaderContainer = ({
           }>
           <Text style={styles.columnText}>
             {isSeachUser
-              ? profilePersonalData?.followersList !== undefined
+              ? profilePersonalData?.followersList
                 ? profilePersonalData?.followersList?.length
                 : 0
               : userData?.noOfFollowers + count}

@@ -174,7 +174,8 @@ export default CustomInput;
 const styles = StyleSheet.create({
   input: {
     width: horizontalScale(320),
-    height: verticalScale(45),
+    // height: verticalScale(45),
+    height: 45,
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
     padding: moderateScale(10),
