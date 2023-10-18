@@ -10,69 +10,87 @@ import {
 const ArrowBack = require('../../../../assets/icons/arrow-back.png');
 import CustomButton from '../../../components/shared-components/CustomButton';
 import Modal from 'react-native-modal';
-import {useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
   CustomConfirmationModal,
   CustomOutputModal,
 } from '../../../components/shared-components/CustomModals';
-
-const dummyData = [
-  {
-    id: 1,
-    planName: 'Basic Meal Plan',
-    price: '49.99',
-    description: 'For people who are losing weight',
-  },
-  {
-    id: 2,
-    planName: 'Premium Meal Plan',
-    price: '79.99',
-    description: 'For people who are losing weight',
-  },
-  {
-    id: 3,
-    planName: 'Vegetarian Meal Plan',
-    price: '59.99',
-    description: 'For people who are losing weight',
-  },
-  {
-    id: 4,
-    planName: 'Family Meal Plan',
-    price: '99.99',
-    description: 'For people who are losing weight',
-  },
-];
+import {IMealPlan} from '../../../interfaces/mealPlan.interface';
+import {
+  deleteMealPlanById,
+  getMealPlansByNutritionist,
+} from '../../../api/mealPlan-module';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../redux/store';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
+import Toast from 'react-native-toast-message';
+import {useFocusEffect} from '@react-navigation/native';
+import NutritionisitPlanContainer from '../../../components/dashboard-components/NutritionisitPlanContainer';
 
 const CreateMealPlan = ({navigation}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [outputModal, setOutputModal] = useState(false);
-  const [deletedItemId, setDeletedItemId] = useState<number | null>(null);
-  const [data, setData] = useState(dummyData);
+  const [deletedItemId, setDeletedItemId] = useState<string>('');
+  const [mealPlans, setMealPlans] = useState<IMealPlan[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const userData = useSelector((state: RootState) => state.auth.user);
 
-  const handleDeleteMealPlan: any = (itemId: number) => {
+  const handleDeleteMealPlan: any = (itemId: string) => {
     setIsModalVisible(!isModalVisible);
     setDeletedItemId(itemId);
   };
 
-  const handleDeleteConfirmed = () => {
-    const updatedData = data.filter(item => item.id !== deletedItemId);
-    setData(updatedData);
-    setDeletedItemId(null);
-    setIsModalVisible(false);
-    setOutputModal(!outputModal);
+  const handleDeleteConfirmed = async () => {
+    setIsLoading(true);
+    try {
+      const response = await deleteMealPlanById(deletedItemId);
+      setIsLoading(false);
+      setIsDeleted(!isDeleted);
+      setDeletedItemId('');
+      setIsModalVisible(false);
+      setOutputModal(!outputModal);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From Delete meal plan!');
+    }
   };
 
   const handleEditPlan = (planId: number) => {
-    const selectedPlan = data.find(plan => plan.id === planId);
-    navigation.navigate('UploadMealPlan', {
-      dummyData: {
-        title: selectedPlan?.planName,
-        cost: selectedPlan?.price,
-        description: selectedPlan?.description,
-        username: '@testingUser',
-      },
-    });
+    // const selectedPlan = data.find(plan => plan.id === planId);
+    // navigation.navigate('UploadMealPlan', {
+    //   dummyData: {
+    //     title: selectedPlan?.planName,
+    //     cost: selectedPlan?.price,
+    //     description: selectedPlan?.description,
+    //     username: '@testingUser',
+    //   },
+    // });
   };
+
+  const fetchMealPlansByNutritionist = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getMealPlansByNutritionist(
+        page,
+        limit,
+        userData?._id as string,
+      );
+      const data = response?.data?.data;
+      const mealPlans = data?.mealPlans;
+      setMealPlans(mealPlans);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From Meal plans!');
+    }
+    setIsLoading(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMealPlansByNutritionist();
+    }, [isDeleted]),
+  );
 
   return (
     <View style={styles.container}>
@@ -86,14 +104,11 @@ const CreateMealPlan = ({navigation}: any) => {
           />
         </TouchableOpacity>
         <Text style={styles.heading}>My Meal Plan</Text>
-        {data.map((plan, index) => (
-          <CustomPlanDescription
-            key={plan.id}
-            plan={plan}
-            handleDeleteButton={() => handleDeleteMealPlan(plan.id)}
-            handleEditButton={() => handleEditPlan(plan.id)}
-          />
-        ))}
+        <NutritionisitPlanContainer
+          isLoading={isLoading}
+          mealPlans={mealPlans}
+          handleDeleteMealPlan={handleDeleteMealPlan}
+        />
       </ScrollView>
       <View style={styles.buttonContainer}>
         <CustomButton onPress={() => navigation.navigate('UploadMealPlan')}>
@@ -118,13 +133,13 @@ const CreateMealPlan = ({navigation}: any) => {
       </Modal>
       <Modal
         isVisible={outputModal}
-        onBackButtonPress={handleDeleteConfirmed}
-        onBackdropPress={handleDeleteConfirmed}
+        onBackButtonPress={() => setOutputModal(false)}
+        onBackdropPress={() => setOutputModal(false)}
         style={styles.modal}>
         <CustomOutputModal
           type="failed"
           modalText="Deleted"
-          onPress={handleDeleteConfirmed}
+          onPress={() => setOutputModal(false)}
         />
       </Modal>
     </View>

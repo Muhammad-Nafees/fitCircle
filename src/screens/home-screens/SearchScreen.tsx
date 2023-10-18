@@ -98,7 +98,7 @@ export const SearchScreen = () => {
         const response = await searchTrainerProfile(searchQuery);
         const users = response?.data?.data?.users;
         setSearchData(users);
-        setMessage('No trainers Found!');
+        setMessage(`No ${selectedFilter} Found!`);
       }
       setIsLoading(false);
     } catch (error: any) {

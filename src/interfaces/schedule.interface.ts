@@ -11,7 +11,7 @@ export interface ITrainer {
   username: string;
 }
 
-export interface IBooking {
+export interface IUserBookings {
   _id: string;
   user: string;
   trainer: ITrainer;
@@ -21,6 +21,6 @@ export interface IBooking {
   updatedAt: Date;
 }
 
-export interface IUserBookings {
-  bookings: IBooking[];
-}
+// export interface IUserBookings {
+//   bookings: IBooking[];
+// }

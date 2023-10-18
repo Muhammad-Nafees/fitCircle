@@ -19,6 +19,8 @@ import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {nutritionistInfo2 as nutritionistInfo} from '../../dummyData';
 import {getAllMealPlans} from '../../../api/mealPlan-module';
+import {IAllMealPlans, IMealPlan} from '../../../interfaces/mealPlan.interface';
+import CustomLoader from '../../../components/shared-components/CustomLoader';
 
 export const MealPlanThree = ({navigation}: any) => {
   const [planModal, setPlanModal] = useState(false);
@@ -26,6 +28,8 @@ export const MealPlanThree = ({navigation}: any) => {
   const [modalPrice, setModalPrice] = useState('');
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [allMealPlans, setAllMealPlans] = useState<IAllMealPlans[]>([]);
 
   const handleModalOpen = (text: string, price: string) => {
     setModalPrice(price);
@@ -42,13 +46,16 @@ export const MealPlanThree = ({navigation}: any) => {
   // api call
 
   const fetchAllMealPlans = async () => {
+    setIsLoading(true);
     try {
-      const response = await getAllMealPlans();
-      const data = response?.data;
-      console.log(data, 'from mealplansss');
+      const response = await getAllMealPlans(page, limit);
+      const data = response?.data?.data;
+      console.log(data.mealPlans, 'from mealplansss');
+      setAllMealPlans(data?.mealPlans);
     } catch (error: any) {
       console.log(error?.response?.data, 'From fetching All meal plans!');
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -79,19 +86,24 @@ export const MealPlanThree = ({navigation}: any) => {
             />
           </View>
         </View>
-        <View style={{flex: 0.9, marginTop: 10}}>
-          <CustomNutritionistPlan
-            {...nutritionistInfo}
-            handleModalOpen={handleModalOpen}
-          />
-          <CustomNutritionistPlan
-            {...nutritionistInfo}
-            handleModalOpen={handleModalOpen}
-          />
-          <CustomNutritionistPlan
-            {...nutritionistInfo}
-            handleModalOpen={handleModalOpen}
-          />
+        <View style={{flex: 0.9, marginTop: 10, gap: 20}}>
+          {isLoading ? (
+            <CustomLoader extraStyles={{marginTop: 30}} />
+          ) : !allMealPlans ? (
+            <Text style={{color: 'white', paddingTop: 20}}>
+              No Meal Plans yet!
+            </Text>
+          ) : (
+            allMealPlans?.map((mealPlan: IAllMealPlans) => (
+              <CustomNutritionistPlan
+                {...nutritionistInfo}
+                plans={mealPlan?.mealPlans}
+                nutritionistInfo={mealPlan?.nutritionist}
+                key={mealPlan?._id}
+                handleModalOpen={handleModalOpen}
+              />
+            ))
+          )}
         </View>
       </ScrollView>
       <Modal

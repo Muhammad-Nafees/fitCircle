@@ -83,3 +83,8 @@ export const communitiesToggle = async (communityId: string) => {
   });
   return response;
 };
+
+export const toggleSubscribe = async (userId: string) => {
+  const response = await api.put(`user/subscribe-toggle?userId=${userId}`);
+  return response;
+};

@@ -15,15 +15,22 @@ import {CustomTrainerPackage} from '../../components/profile-components/CustomTr
 import {CustomPackageReview} from '../../components/profile-components/CustomPackageReview';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import CustomButton from '../../components/shared-components/CustomButton';
-const TestVideo = require('../../../assets/test5mbvideo.mp4');
+import {s3bucketReference} from '../../api';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
+import {Image as ImageCompress} from 'react-native-compressor';
+import {createPackage} from '../../api/packages-module';
+import {IPackage} from '../../interfaces/package.interface';
+import Toast from 'react-native-toast-message';
 
 const reviewData = Array.from({length: 5});
 
 export const PackageDetailScreen = ({navigation, route}: any) => {
   const [videoVisible, setVideoVisible] = useState(false);
-  const hidePackageButton = false;
+  const {packageDetails} = route?.params;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const renderCustomPackageReview = () => {
     return <CustomPackageReview />;
   };
@@ -31,14 +38,45 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
   const videoEnabled = () => {
     setVideoVisible(!videoVisible);
   };
+  const handleCreatePackage = async () => {
+    setIsLoading(true);
+    try {
+      let compressedThumbnail = null;
 
-  const {
-    hours = '1',
-    packageDescription = 'A great routine for biceps and triceps workout!',
-    cost = '100.00',
-    preview,
-    packageTitle = '30 Days New Year Challenge',
-  } = route.params.packageData || {};
+      if (packageDetails?.thumbnail) {
+        const result = await ImageCompress.compress(
+          packageDetails.thumbnail?.uri,
+          {
+            quality: 0.8,
+          },
+        );
+        compressedThumbnail = {
+          name: packageDetails?.thumbnail?.name as string,
+          type: packageDetails?.thumbnail?.type as string,
+          uri: result,
+        };
+      }
+      const reqData: Partial<IPackage> = {
+        ...packageDetails,
+        thumbnail: compressedThumbnail,
+      };
+      const response = await createPackage(reqData);
+      console.log(response?.data);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
+      console.log(error, 'From Creating Package!');
+    }
+    setIsLoading(false);
+
+    console.log(packageDetails, 'from handle CreatePackage!!');
+  };
 
   return (
     <View style={styles.container}>
@@ -58,24 +96,26 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                 style={{width: 24, height: 24, tintColor: 'white'}}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('ScheduleScreen', {
-                  screen: 'Slot',
-                  params: {
-                    packageView: true,
-                  },
-                })
-              }>
-              <Text
-                style={{
-                  fontWeight: '500',
-                  fontSize: 10,
-                  color: 'rgba(32, 155, 204, 1)',
-                }}>
-                Get this package
-              </Text>
-            </TouchableOpacity>
+            {!route?.params?.isCreatingPackage && (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ScheduleScreen', {
+                    screen: 'Slot',
+                    params: {
+                      packageView: true,
+                    },
+                  })
+                }>
+                <Text
+                  style={{
+                    fontWeight: '500',
+                    fontSize: 10,
+                    color: 'rgba(32, 155, 204, 1)',
+                  }}>
+                  Get this package
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
           <Text
             style={[
@@ -88,7 +128,8 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
             <CustomTrainerPackage
               hidePriceAndPackage={true}
               videoEnabled={videoEnabled}
-              packageTitle={packageTitle}
+              myPackage={packageDetails}
+              isCreatingPackage={route?.params?.isCreatingPackage}
             />
           </View>
           <View style={[styles.horizontalLine, {marginTop: 0}]} />
@@ -96,40 +137,58 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
             <Text style={styles.heading2}>Description</Text>
             <Text
               style={[styles.paragraph1, {paddingVertical: verticalScale(16)}]}>
-              {packageDescription}
+              {packageDetails?.description}
             </Text>
             <Text style={styles.heading2}>Duration</Text>
             <View style={styles.timeContainer}>
               <Text style={styles.paragraph1}>Length</Text>
-              <Text style={styles.duration}>{hours} HOUR</Text>
+              <Text style={styles.duration}>
+                {packageDetails?.hours}{' '}
+                {packageDetails?.hours > 1 ? 'HOURS' : 'HOUR'}
+              </Text>
             </View>
           </View>
           <View style={styles.horizontalLine} />
           <Text style={styles.heading2}>Service Cost</Text>
           <View style={styles.amountContainer}>
             <Text style={styles.paragraph1}>Package Cost</Text>
-            <Text style={styles.duration}>${cost}</Text>
+            <Text style={styles.duration}>${packageDetails?.cost}</Text>
           </View>
           <View style={styles.horizontalLine} />
         </View>
-        {!route.params.packageData && (
-          <View style={styles.bottomContainer}>
-            <Text style={styles.bottomContainerHeading}>Review ( 1,515)</Text>
-            <FlatList
-              data={reviewData}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={() => renderCustomPackageReview()}
-              ItemSeparatorComponent={() => (
-                <View style={styles.itemSeparator} />
-              )}
-            />
+        {!route?.params?.isCreatingPackage && (
+          <View
+            style={[
+              styles.bottomContainer,
+              {
+                borderRadius:
+                  packageDetails?.reviews?.length === 0 ? 30 : undefined,
+              },
+            ]}>
+            <Text style={styles.bottomContainerHeading}>
+              Review ({packageDetails?.reviewsCount})
+            </Text>
+            {packageDetails?.reviews?.length === 0 ? (
+              <Text style={{color: 'white', paddingBottom: 15}}>
+                No Reviews Yet!
+              </Text>
+            ) : (
+              <FlatList
+                data={reviewData}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={() => renderCustomPackageReview()}
+                ItemSeparatorComponent={() => (
+                  <View style={styles.itemSeparator} />
+                )}
+              />
+            )}
           </View>
         )}
       </ScrollView>
-      {route.params.packageData && (
+      {route?.params?.isCreatingPackage && (
         <View style={styles.buttonContainer}>
-          <CustomButton onPress={() => navigation.navigate('PackagesScreen')}>
-            Create
+          <CustomButton isDisabled={isLoading} onPress={handleCreatePackage}>
+            {isLoading ? <CustomLoader /> : 'Create'}
           </CustomButton>
         </View>
       )}
@@ -144,7 +203,11 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
         }}>
         <View style={styles.videoContainer}>
           <Video
-            source={route.params.packageData ? preview : TestVideo}
+            source={{
+              uri: route?.params?.isCreatingPackage
+                ? packageDetails?.media?.uri
+                : `${s3bucketReference}/${packageDetails?.media}`,
+            }}
             style={styles.video}
             resizeMode="contain"
             onEnd={() => setVideoVisible(false)}

@@ -19,28 +19,78 @@ import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import {useState} from 'react';
+import {useState, useCallback} from 'react';
 import Video from 'react-native-video';
 import {createPackageSchema} from '../../validations';
+import {IPackage} from '../../interfaces/package.interface';
+import {FileData} from '../../interfaces/user.interface';
+import {createThumbnail} from 'react-native-create-thumbnail';
+import {useFocusEffect} from '@react-navigation/native';
 
-const CreatePackage = ({navigation, route}: any) => {
-  const [selectedVideoUri, setSelectedVideoUri] = useState<any>(null);
+const initialValues = {
+  packageTitle: '',
+  packageDescription: '',
+  preview: '',
+  cost: '',
+  hours: '',
+  username: '',
+};
+
+const CreatePackage = ({navigation}: any) => {
+  const [selectedVideoUri, setSelectedVideoUri] = useState<
+    FileData | undefined
+  >(undefined);
+  const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(undefined);
   const [videoVisible, setVideoVisible] = useState(false);
   const [playIconVisible, setPlayIconVisible] = useState(false);
-  const dummyData = route.params.dummyData || {};
+  // const dummyData = route.params.dummyData || {};
+
+  const fetchThumbnail = async () => {
+    if (selectedVideoUri) {
+      try {
+        const response = await createThumbnail({
+          url: selectedVideoUri?.uri,
+          timeStamp: 1000,
+          format: 'jpeg',
+        });
+        setVideoThumbnail({
+          uri: response.path,
+          name: 'thumbnail',
+          type: 'image/jpeg',
+        });
+      } catch (err) {
+        console.log('err', err);
+      }
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (selectedVideoUri) {
+        fetchThumbnail();
+      }
+    }, [selectedVideoUri]),
+  );
 
   const handleSubmit = (values: any) => {
-    console.log(values);
+    console.log(values, 'valuess');
+    const myPackage: Partial<IPackage> = {
+      title: values.packageTitle,
+      description: values.packageDescription,
+      cost: values.cost,
+      hours: values.hours,
+      media: selectedVideoUri,
+      thumbnail: videoThumbnail,
+    };
+    console.log(videoThumbnail,"videooo")
     navigation.navigate('PackageDetail', {
-      packageData: {
-        ...values,
-        preview: selectedVideoUri,
-      },
+      packageDetails: myPackage,
+      isCreatingPackage: true,
     });
   };
 
   const handleVideoLibrary = async () => {
-    setSelectedVideoUri(null);
+    setSelectedVideoUri(undefined);
     const options: ImageLibraryOptions = {
       mediaType: 'video',
     };
@@ -55,14 +105,14 @@ const CreatePackage = ({navigation, route}: any) => {
     });
   };
 
-  const initialValues = {
-    packageTitle: dummyData.packageTitle || '',
-    packageDescription: dummyData.packageDescription || '',
-    preview: dummyData.preview || '',
-    cost: dummyData.cost || '',
-    hours: dummyData.hours || '',
-    username: dummyData.username || '',
-  };
+  // const initialValues = {
+  //   packageTitle: dummyData.packageTitle || '',
+  //   packageDescription: dummyData.packageDescription || '',
+  //   preview: dummyData.preview || '',
+  //   cost: dummyData.cost || '',
+  //   hours: dummyData.hours || '',
+  //   username: dummyData.username || '',
+  // };
 
   const handlePlayIconPress = () => {
     setVideoVisible(true);
@@ -205,7 +255,7 @@ const CreatePackage = ({navigation, route}: any) => {
                   handleChange={handleChange('username')}
                 />
               </View>
-              <View style={styles.button}>
+              <View>
                 <CustomButton onPress={handleSubmit}>Continue</CustomButton>
               </View>
             </>
@@ -223,7 +273,7 @@ const CreatePackage = ({navigation, route}: any) => {
         }}>
         <View style={styles.videoContainer}>
           <Video
-            source={selectedVideoUri}
+            source={{uri: selectedVideoUri?.uri}}
             style={styles.video}
             resizeMode="contain"
             onEnd={() => setVideoVisible(false)}

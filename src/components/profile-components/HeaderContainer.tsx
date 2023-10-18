@@ -16,7 +16,7 @@ import {verticalScale, horizontalScale} from '../../utils/metrics';
 import {useNavigation} from '@react-navigation/native';
 import {s3bucketReference} from '../../api';
 import {SearchProfileNavigationProp} from '../../interfaces/navigation.type';
-import {followToggle} from '../../api/profile-module';
+import {followToggle, toggleSubscribe} from '../../api/profile-module';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 const Image1 = require('../../../assets/images/backgroundImage.jpg');
@@ -40,6 +40,8 @@ export const ProfileHeaderContainer = ({
   const navigation = useNavigation<SearchProfileNavigationProp>();
 
   const [count, setCount] = useState<number>(0);
+  const [subscriberCount, setSubscriberCount] = useState<number>(0);
+
   const loginUserDataId = useSelector(
     (state: RootState) => state.auth.user?._id,
   );
@@ -49,6 +51,16 @@ export const ProfileHeaderContainer = ({
 
   useEffect(() => {
     setIsSearchUser(loginUserDataId === userData._id);
+    console.log(
+      userData?.subscribers?.includes(loginUserDataId),
+      'isSubscriber',
+    );
+    if (userData?.subscribers?.includes(loginUserDataId)) {
+      setIsSubscribed(true);
+      setSubscribeButtonStyle(
+        isSubscribed ? styles.profileButton : styles.transparentButton,
+      );
+    }
   }, [loginUserDataId, userData._id]);
 
   const handleFollowToggle = async () => {
@@ -67,6 +79,23 @@ export const ProfileHeaderContainer = ({
       console.log(error?.response?.data, 'from follow toggle on search!');
     }
   };
+  const handleSubscribeToggle = async () => {
+    setIsSubscribed(!isSubscribed);
+    if (isSubscribed) {
+      setSubscriberCount(prev => prev - 1);
+    } else {
+      setSubscriberCount(prev => prev + 1);
+    }
+    setSubscribeButtonStyle(
+      isSubscribed ? styles.profileButton : styles.transparentButton,
+    );
+    try {
+      const response = await toggleSubscribe(userData?._id);
+      console.log(response?.data, 'sss');
+    } catch (error: any) {
+      console.log(error?.response?.data, 'from follow subscribe on search!');
+    }
+  };
 
   const navigateToSchedule = () => {
     navigation.navigate('ScheduleScreen', {
@@ -77,7 +106,7 @@ export const ProfileHeaderContainer = ({
       },
     });
   };
-  console.log(isSeachUser,"isSearch")
+  console.log(isSeachUser, 'isSearch');
 
   return (
     <ImageBackground
@@ -138,14 +167,7 @@ export const ProfileHeaderContainer = ({
               <TouchableHighlight
                 style={[subscribeButtonStyle]}
                 activeOpacity={1}
-                onPress={() => {
-                  setIsSubscribed(!isSubscribed);
-                  setSubscribeButtonStyle(
-                    isSubscribed
-                      ? styles.profileButton
-                      : styles.transparentButton,
-                  );
-                }}>
+                onPress={handleSubscribeToggle}>
                 <Text style={styles.profileButtonText} numberOfLines={1}>
                   {isSubscribed ? 'Subscribed' : 'Subscribe'}
                 </Text>
@@ -161,13 +183,16 @@ export const ProfileHeaderContainer = ({
         {userData?.role !== 'user' ? (
           <TouchableOpacity
             style={styles.column}
-            onPress={() =>
-              isSeachUser &&
-              navigation.navigate('SearchProfile', {
-                default: 'community',
-              })
-            }>
-            <Text style={styles.columnText}>0</Text>
+            // onPress={() =>
+            //   isSeachUser &&
+            //   navigation.navigate('SearchProfile', {
+            //     default: 'community',
+            //   })
+            // }
+            >
+            <Text style={styles.columnText}>
+              {subscriberCount + userData?.subscribers?.length}
+            </Text>
             <Text style={[styles.columnLabel, {textDecorationLine: 'none'}]}>
               Subs
             </Text>
