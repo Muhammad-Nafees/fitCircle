@@ -117,6 +117,12 @@ const PaymentScreen = ({navigation}: any) => {
                     handleChange={handleChange('amount')}
                     setFieldError={setFieldError}
                     fieldName="amount"
+                    extraStyles={{
+                      backgroundColor: 'rgba(54, 55, 56, 1)',
+                      borderRadius: 5,
+                      paddingLeft: 10,
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
                   />
                 </View>
                 <View style={{width: '100%'}}>
