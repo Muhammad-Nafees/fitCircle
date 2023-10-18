@@ -186,9 +186,8 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     backgroundColor: '#222123',
-    flex: 2,
+    height: verticalScale(400),
     marginTop: -verticalScale(20),
-    height: 250,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     zIndex: -1,
