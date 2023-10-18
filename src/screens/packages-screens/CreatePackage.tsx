@@ -40,7 +40,9 @@ const CreatePackage = ({navigation}: any) => {
   const [selectedVideoUri, setSelectedVideoUri] = useState<
     FileData | undefined
   >(undefined);
-  const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(undefined);
+  const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(
+    undefined,
+  );
   const [videoVisible, setVideoVisible] = useState(false);
   const [playIconVisible, setPlayIconVisible] = useState(false);
   // const dummyData = route.params.dummyData || {};
@@ -82,7 +84,7 @@ const CreatePackage = ({navigation}: any) => {
       media: selectedVideoUri,
       thumbnail: videoThumbnail,
     };
-    console.log(videoThumbnail,"videooo")
+    console.log(videoThumbnail, 'videooo');
     navigation.navigate('PackageDetail', {
       packageDetails: myPackage,
       isCreatingPackage: true,
@@ -215,7 +217,7 @@ const CreatePackage = ({navigation}: any) => {
                 </View>
                 <CustomInput
                   label="Cost"
-                  placeholder=" $0.00"
+                  placeholder="  $0.00"
                   value={values.cost}
                   error={errors.cost}
                   labelStyles={styles.label}
@@ -229,7 +231,7 @@ const CreatePackage = ({navigation}: any) => {
                 />
                 <CustomInput
                   label="Hours"
-                  placeholder=" 1"
+                  placeholder="  1"
                   value={values.hours}
                   error={errors.hours}
                   touched={touched.hours}
@@ -243,7 +245,7 @@ const CreatePackage = ({navigation}: any) => {
                 />
                 <CustomInput
                   label="Username  (only the username listed will see this Meal plan)"
-                  placeholder=" @linconsmith"
+                  placeholder="  @linconsmith"
                   value={values.username}
                   error={errors.username}
                   touched={touched.username}
@@ -255,8 +257,8 @@ const CreatePackage = ({navigation}: any) => {
                   handleChange={handleChange('username')}
                 />
               </View>
-              <View>
-                <CustomButton onPress={handleSubmit}>Continue</CustomButton>
+              <View style={styles.button}>
+                <CustomButton onPress={handleSubmit}>Create</CustomButton>
               </View>
             </>
           )}

@@ -68,7 +68,16 @@ const UploadMealPlan = ({navigation}: any) => {
         console.log('ERROR FROM CREAING MEAL PLAN', error?.response?.data);
       }
       setIsLoading(false);
-      navigation.navigate('CreateMealPlan');
+      if (values.username && values.username.startsWith('@')) {
+        navigation.navigate('CreateMealPlan');
+        const cleanedUsername = values.username.substring(1);
+        navigation.navigate('Message', {
+          screen: 'ChatDetails',
+          params: {username: cleanedUsername},
+        });
+      } else {
+        navigation.navigate('CreateMealPlan');
+      }
     }
   };
 

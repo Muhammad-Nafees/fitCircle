@@ -42,6 +42,7 @@ export const AddBankScreen = ({route, navigation}: any) => {
         <CustomHeader />
         {dummyData && (
           <TouchableOpacity
+            onPress={() => navigation.navigate('BankPaymentMethods')}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
