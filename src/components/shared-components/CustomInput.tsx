@@ -36,9 +36,11 @@ interface Props {
   fieldName: string;
   editable?: boolean;
   starlabel?: boolean;
+  secondLabel?: boolean;
 }
 
 const CustomInput = ({...props}: Props) => {
+  const [characterCount, setCharacterCount] = useState(50);
   const route = useRoute();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -63,16 +65,14 @@ const CustomInput = ({...props}: Props) => {
   const handleChangeText = (text: string) => {
     if (props.label === 'Number' && route.name === 'AddCard') {
       const cleanedText = text.replace(/[^0-9]/g, '');
-      const formattedText = cleanedText.replace(/(.{4})/g, '$1 ');
-      if (
-        props.value.length > formattedText.length &&
-        formattedText.endsWith(' ')
-      ) {
-        props.handleChange(formattedText.slice(0, -1));
-      } else {
-        props.handleChange(formattedText);
-      }
+      const limitedText = cleanedText.slice(0, 16);
+      const formattedText = limitedText.replace(/(.{4})/g, '$1 ');
+      props.handleChange(formattedText);
     } else {
+      if (props.label === 'Description ' && route.name === 'UploadMealPlan') {
+        const newCharacterCount = 50 - text.length;
+        setCharacterCount(newCharacterCount);
+      }
       props.handleChange(text);
     }
 
@@ -91,6 +91,11 @@ const CustomInput = ({...props}: Props) => {
         {props.label}
         {props.starlabel ? (
           <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
+        ) : null}
+        {props.secondLabel ? (
+          <Text style={{color: 'rgba(255, 255, 255, 0.5)'}}>
+            {characterCount}/50
+          </Text>
         ) : null}
       </Text>
       <View>

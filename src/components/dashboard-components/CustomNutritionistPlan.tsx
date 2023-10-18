@@ -14,12 +14,14 @@ interface Props {
   plan: any;
   extraStyles?: any;
   handleDeleteButton?: () => void;
+  handleEditButton?: () => void;
 }
 
 export const CustomPlanDescription = ({
   plan,
   extraStyles,
   handleDeleteButton,
+  handleEditButton,
 }: Props) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const swipeableRef: any = useRef(null);
@@ -45,7 +47,10 @@ export const CustomPlanDescription = ({
               styles.rightAction,
               {backgroundColor: 'rgba(32, 155, 204, 1)'},
             ]}
-            onPress={() => console.log('Edit Button')}>
+            onPress={() => {
+              swipeableRef.current.close();
+              handleEditButton();
+            }}>
             <Icon name="edit-3" color={'white'} />
           </TouchableOpacity>
         </View>

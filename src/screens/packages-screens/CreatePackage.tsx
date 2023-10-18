@@ -43,6 +43,7 @@ const CreatePackage = ({navigation}: any) => {
   const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(undefined);
   const [videoVisible, setVideoVisible] = useState(false);
   const [playIconVisible, setPlayIconVisible] = useState(false);
+  // const dummyData = route.params.dummyData || {};
 
   const fetchThumbnail = async () => {
     if (selectedVideoUri) {
@@ -104,6 +105,15 @@ const CreatePackage = ({navigation}: any) => {
     });
   };
 
+  // const initialValues = {
+  //   packageTitle: dummyData.packageTitle || '',
+  //   packageDescription: dummyData.packageDescription || '',
+  //   preview: dummyData.preview || '',
+  //   cost: dummyData.cost || '',
+  //   hours: dummyData.hours || '',
+  //   username: dummyData.username || '',
+  // };
+
   const handlePlayIconPress = () => {
     setVideoVisible(true);
   };
@@ -135,7 +145,7 @@ const CreatePackage = ({navigation}: any) => {
             setFieldError,
           }) => (
             <>
-              <View style={{alignItems: 'center'}}>
+              <View style={{alignItems: 'center', marginTop: 40}}>
                 <CustomInput
                   label="Package Title"
                   placeholder="Enter here"
@@ -205,7 +215,7 @@ const CreatePackage = ({navigation}: any) => {
                 </View>
                 <CustomInput
                   label="Cost"
-                  placeholder="$0.00"
+                  placeholder=" $0.00"
                   value={values.cost}
                   error={errors.cost}
                   labelStyles={styles.label}
@@ -219,7 +229,7 @@ const CreatePackage = ({navigation}: any) => {
                 />
                 <CustomInput
                   label="Hours"
-                  placeholder="1"
+                  placeholder=" 1"
                   value={values.hours}
                   error={errors.hours}
                   touched={touched.hours}
@@ -233,11 +243,11 @@ const CreatePackage = ({navigation}: any) => {
                 />
                 <CustomInput
                   label="Username  (only the username listed will see this Meal plan)"
-                  placeholder="@linconsmith"
+                  placeholder=" @linconsmith"
                   value={values.username}
                   error={errors.username}
                   touched={touched.username}
-                  labelStyles={styles.label}
+                  labelStyles={[styles.label, {width: horizontalScale(320)}]}
                   initialTouched={true}
                   extraStyles={styles.textInput}
                   setFieldError={setFieldError}
@@ -293,6 +303,8 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderRadius: 10,
+    paddingHorizontal: horizontalScale(14),
+    width: horizontalScale(340),
   },
   label: {
     fontWeight: '400',
@@ -303,7 +315,7 @@ const styles = StyleSheet.create({
   uploadContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: horizontalScale(320),
+    width: horizontalScale(340),
     height: verticalScale(155),
     borderRadius: 10,
     marginBottom: 16,
@@ -330,6 +342,10 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     tintColor: 'white',
+  },
+  button: {
+    marginVertical: 35,
+    marginHorizontal: 30,
   },
 });
 

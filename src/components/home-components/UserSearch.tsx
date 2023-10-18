@@ -60,6 +60,7 @@ export const UserSearch = ({
     }
   };
   const handleSeeUserProfile = () => {
+    console.log(searchProfileData, '1111');
     dispatch(setUserProfile(searchProfileData));
     navigation.navigate('Profile', {
       isTrainerView: true,

@@ -90,7 +90,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
             }}>
             <TouchableOpacity
               style={{paddingTop: 24, paddingBottom: 16}}
-              onPress={() => navigation.navigate('Profile')}>
+              onPress={() => navigation.goBack()}>
               <Image
                 source={ArrowBack}
                 style={{width: 24, height: 24, tintColor: 'white'}}
@@ -117,7 +117,13 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
               </TouchableOpacity>
             )}
           </View>
-          <Text style={styles.heading}>Details</Text>
+          <Text
+            style={[
+              styles.heading,
+              route.params.packageData && {marginBottom: verticalScale(14)},
+            ]}>
+            Details
+          </Text>
           <View style={{marginHorizontal: -10}}>
             <CustomTrainerPackage
               hidePriceAndPackage={true}

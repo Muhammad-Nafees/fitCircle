@@ -130,7 +130,8 @@ const UploadMealPlan = ({navigation}: any) => {
                   fieldName="title"
                 />
                 <CustomInput
-                  label="Description"
+                  label="Description "
+                  secondLabel={true}
                   placeholder="Description here"
                   value={values.description}
                   error={errors.description}
@@ -146,17 +147,7 @@ const UploadMealPlan = ({navigation}: any) => {
                 />
                 <TouchableOpacity
                   onPress={openDocument}
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    width: horizontalScale(320),
-                    paddingHorizontal: 16,
-                    paddingVertical: 8,
-                    marginBottom: 20,
-                    borderRadius: 10,
-                  }}>
+                  style={styles.document}>
                   {fileName ? (
                     <View
                       style={{
@@ -190,7 +181,7 @@ const UploadMealPlan = ({navigation}: any) => {
                 </TouchableOpacity>
                 <CustomInput
                   label="Cost"
-                  placeholder="$0.00"
+                  placeholder=" $0.00"
                   value={values.cost}
                   error={errors.cost}
                   labelStyles={styles.label}
@@ -204,11 +195,11 @@ const UploadMealPlan = ({navigation}: any) => {
                 />
                 <CustomInput
                   label="Username  (only the username listed will see this Meal plan)"
-                  placeholder="@linconsmith"
+                  placeholder=" @linconsmith"
                   value={values.username}
                   error={errors.username}
                   touched={touched.username}
-                  labelStyles={styles.label}
+                  labelStyles={[styles.label, {width: horizontalScale(320)}]}
                   initialTouched={true}
                   extraStyles={styles.textInput}
                   setFieldError={setFieldError}
@@ -233,7 +224,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292A2C',
-    paddingHorizontal: 16,
+    paddingHorizontal: horizontalScale(16),
   },
   heading: {
     fontWeight: '700',
@@ -243,6 +234,8 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderRadius: 10,
+    paddingHorizontal: horizontalScale(14),
+    width: horizontalScale(340),
   },
   label: {
     fontWeight: '400',
@@ -251,8 +244,19 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   button: {
-    marginTop: 35,
+    marginVertical: 35,
     marginHorizontal: 30,
+  },
+  document: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: horizontalScale(340),
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginBottom: 20,
+    borderRadius: 10,
   },
 });
 

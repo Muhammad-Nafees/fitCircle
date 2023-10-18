@@ -29,6 +29,7 @@ interface Props {
   hidePackageButton?: any;
   videoEnabled?: any;
   isCreatingPackage?: boolean;
+  handleEditButton?: any;
 }
 
 export const CustomTrainerPackage = ({
@@ -78,7 +79,10 @@ export const CustomTrainerPackage = ({
               styles.rightAction,
               {backgroundColor: 'rgba(32, 155, 204, 1)'},
             ]}
-            onPress={() => console.log('Edit Button')}>
+            onPress={() => {
+              swipeableRef.current.close();
+              handleEditButton();
+            }}>
             <Icon name="edit-3" color={'white'} />
           </TouchableOpacity>
         </View>
@@ -215,13 +219,13 @@ const styles = StyleSheet.create({
   ratingCount: {
     fontWeight: '400',
     fontSize: 10,
-    color: 'white',
+    color: 'rgba(255, 255, 255, 0.6)',
     marginLeft: 5,
   },
   packageDuration: {
     fontWeight: '400',
     fontSize: 10,
-    color: 'white',
+    color: 'rgba(255, 255, 255, 0.6)',
   },
   priceContainer: {
     flexDirection: 'row',

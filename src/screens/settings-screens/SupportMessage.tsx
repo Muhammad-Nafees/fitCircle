@@ -19,6 +19,7 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 const SupportMessage = ({navigation}: any) => {
   const [mediaUri, setMediaUri] = useState(null);
+  const [messageInput, setMessageInput] = useState('');
 
   const handlePhotoButtonPress = () => {
     setMediaUri(null);
@@ -40,6 +41,14 @@ const SupportMessage = ({navigation}: any) => {
     setMediaUri(null);
   };
 
+  const handleMessageSend = () => {
+    const dataToSend = {
+      message: messageInput,
+      imageUri: mediaUri,
+    };
+    navigation.navigate('SupportChat', dataToSend);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.content}>
@@ -59,6 +68,8 @@ const SupportMessage = ({navigation}: any) => {
             placeholder="Type here"
             placeholderTextColor="rgba(155, 155, 155, 1)"
             multiline
+            value={messageInput}
+            onChangeText={text => setMessageInput(text)}
           />
           {mediaUri !== null ? (
             <View style={{marginVertical: 30}}>
@@ -100,7 +111,7 @@ const SupportMessage = ({navigation}: any) => {
           paddingBottom: verticalScale(30),
           marginHorizontal: horizontalScale(24),
         }}>
-        <CustomButton onPress={() => navigation.navigate('SupportChat')}>
+        <CustomButton onPress={handleMessageSend}>
           Send New Message
         </CustomButton>
       </View>
@@ -131,6 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     textAlignVertical: 'top',
     paddingHorizontal: 18,
+    color: 'white',
   },
   attachmentContainer: {
     justifyContent: 'center',

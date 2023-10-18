@@ -57,6 +57,18 @@ const CreateMealPlan = ({navigation}: any) => {
     }
   };
 
+  const handleEditPlan = (planId: number) => {
+    // const selectedPlan = data.find(plan => plan.id === planId);
+    // navigation.navigate('UploadMealPlan', {
+    //   dummyData: {
+    //     title: selectedPlan?.planName,
+    //     cost: selectedPlan?.price,
+    //     description: selectedPlan?.description,
+    //     username: '@testingUser',
+    //   },
+    // });
+  };
+
   const fetchMealPlansByNutritionist = async () => {
     setIsLoading(true);
     try {
@@ -92,22 +104,6 @@ const CreateMealPlan = ({navigation}: any) => {
           />
         </TouchableOpacity>
         <Text style={styles.heading}>My Meal Plan</Text>
-
-        {/* {isLoading ? (
-          <CustomLoader extraStyles={{marginTop: 30}} />
-        ) : !mealPlans ? (
-          <Text style={{color: 'white', paddingTop: 20}}>
-            No Meal Plans yet!
-          </Text>
-        ) : (
-          mealPlans?.map((plan: IMealPlan) => (
-            <CustomPlanDescription
-              key={plan._id}
-              plan={plan}
-              handleDeleteButton={() => handleDeleteMealPlan(plan._id)}
-            />
-          ))
-        )} */}
         <NutritionisitPlanContainer
           isLoading={isLoading}
           mealPlans={mealPlans}

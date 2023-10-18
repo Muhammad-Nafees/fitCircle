@@ -1,11 +1,11 @@
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import ArrowForward from '../../../assets/icons/ArrowForward';
-const Mastercard = require('../../../assets/images/mastercard.png');
-const Bank = require('../../../assets/images/bank.png');
-const Paypal = require('../../../assets/images/paypal.png');
+import BankIcon from '../../../assets/Bank';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-const GooglePay = require('../../../assets/images/google-pay.jpg');
-const ApplePay = require('../../../assets/images/applePay.png');
+import MastercardIcon from '../../../assets/Mastercard';
+import ApplePayIcon from '../../../assets/ApplePay';
+import PaypalIcon from '../../../assets/Paypal';
+import GooglePayIcon from '../../../assets/GooglePay';
 
 interface CardPaymentProps {
   defaultView?: boolean;
@@ -32,17 +32,17 @@ const CardPayment = ({
   onPress,
   handleCardDelete,
 }: CardPaymentProps) => {
-  let imageSource;
+  let IconComponent;
   if (type === 'Mastercard') {
-    imageSource = Mastercard;
+    IconComponent = MastercardIcon;
   } else if (type === 'Bank') {
-    imageSource = Bank;
+    IconComponent = BankIcon;
   } else if (type === 'Paypal') {
-    imageSource = Paypal;
+    IconComponent = PaypalIcon;
   } else if (type === 'GooglePay') {
-    imageSource = GooglePay;
+    IconComponent = GooglePayIcon;
   } else if (type === 'ApplePay') {
-    imageSource = ApplePay;
+    IconComponent = ApplePayIcon;
   }
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, extraStyles]}>
@@ -53,6 +53,8 @@ const CardPayment = ({
               backgroundColor: 'rgba(255, 64, 64, 1)',
               borderRadius: 30,
               borderWidth: 0,
+              height: '100%',
+              zIndex: 10000,
             }}>
             <Icon
               name="minus"
@@ -62,7 +64,7 @@ const CardPayment = ({
             />
           </TouchableOpacity>
         )}
-        <Image source={imageSource} style={{width: 82, height: 52}} />
+        {IconComponent && <IconComponent />}
         <View style={{gap: 4, justifyContent: 'center'}}>
           <Text
             style={{

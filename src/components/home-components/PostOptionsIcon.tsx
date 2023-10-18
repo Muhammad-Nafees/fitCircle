@@ -53,7 +53,7 @@ export const PostOptionsIcon = ({
         <ProfileSvgIcon />
         <Text style={styles.options}>My Profile</Text>
       </TouchableOpacity>
-      {userRole !== 'user' && (
+      {userRole !== 'user' && userRole !== 'nutritionist' && (
         <TouchableOpacity
           style={styles.bottomContainerButtons}
           onPress={() =>
@@ -63,12 +63,14 @@ export const PostOptionsIcon = ({
           <Text style={styles.options}>My Package</Text>
         </TouchableOpacity>
       )}
-      <TouchableOpacity
-        style={styles.bottomContainerButtons}
-        onPress={() => navigation.navigate('MealPlan')}>
-        <MealPlanSvgIcon />
-        <Text style={styles.options}>My Meal Plan</Text>
-      </TouchableOpacity>
+      {userRole === 'nutritionist' && (
+        <TouchableOpacity
+          style={styles.bottomContainerButtons}
+          onPress={() => navigation.navigate('MealPlan')}>
+          <MealPlanSvgIcon />
+          <Text style={styles.options}>My Meal Plan</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
         style={styles.bottomContainerButtons}
         onPress={handleScheduleRoute}>

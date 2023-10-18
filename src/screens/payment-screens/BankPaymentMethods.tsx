@@ -108,7 +108,7 @@ const BankPaymentMethodsScreen = ({navigation}: any) => {
         onBackdropPress={() => setIsModalVisible(false)}
         backdropOpacity={1}>
         <CustomConfirmationModal
-          onCancel={() => setIsModalVisible(false)}
+          onCancel={() => navigation.navigate('PaymentMethod')}
           onConfirm={() => setIsModalVisible(false)}
           modalText={`Do you want to remove this card ending with ${cardNumber}?`}
           confirmText="Remove"

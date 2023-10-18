@@ -135,7 +135,10 @@ const TestDetailScreen = ({navigation, route}: any) => {
 
   const handleNavigation = () => {
     if (isTestDetails2) {
-      navigation.navigate('Profile');
+      navigation.navigate('Message', {
+        screen: 'ChatDetails',
+        params: {username: 'Sameer'},
+      });
     } else {
       navigation.navigate('TestDetails2');
     }

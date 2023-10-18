@@ -54,7 +54,13 @@ const SettingsOne = ({navigation}: any) => {
     <TouchableOpacity
       style={[styles.settingItem, text === 'Support' && {marginBottom: 40}]}
       onPress={onPress}>
-      <View style={styles.settingIconContainer}>{icon}</View>
+      <View
+        style={[
+          styles.settingIconContainer,
+          text === 'Privacy Settings' && {padding: 0},
+        ]}>
+        {icon}
+      </View>
       <Text style={styles.settingText}>
         {text === 'Payment' && userRole !== 'user' ? 'Payment & Wallet' : text}
       </Text>
@@ -63,8 +69,8 @@ const SettingsOne = ({navigation}: any) => {
           value={isEnabled}
           onPress={onToggle}
           thumbButton={{
-            width: 20,
-            height: 20,
+            width: 21,
+            height: 21,
             radius: 30,
             activeBackgroundColor: '#209BCC',
             inActiveBackgroundColor: '#C2C5CE',
@@ -205,6 +211,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: 10,
+    color: 'black',
   },
   copyButton: {
     fontWeight: '400',

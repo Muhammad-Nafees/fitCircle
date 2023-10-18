@@ -1,8 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 
-const CustomSupportChat = ({username, dateTime, messageId, message}) => {
+const CustomSupportChat = ({
+  username,
+  dateTime,
+  messageId,
+  message,
+  imageUri,
+}) => {
   return (
     <View style={{gap: 10, flex: 1, marginVertical: 10}}>
       <View style={{flexDirection: 'row', gap: 15}}>
@@ -12,7 +18,13 @@ const CustomSupportChat = ({username, dateTime, messageId, message}) => {
           <Text style={styles.messageId}>{messageId}</Text>
         </View>
       </View>
-      <Text style={styles.message}>{message}</Text>
+      {message && <Text style={styles.message}>{message}</Text>}
+      {imageUri && (
+        <Image
+          source={{uri: imageUri}}
+          style={{borderRadius: 10, height: 200, width: 200}}
+        />
+      )}
     </View>
   );
 };

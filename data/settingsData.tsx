@@ -8,6 +8,7 @@ import SettingsPayment from '../assets/icons/SettingsPayment';
 import SettingsSubscriptionIcon from '../assets/icons/SettingsSubscription';
 import SettingsTransactionIcon from '../assets/icons/SettingsTransaction';
 import {ProfileSettingsIcon} from '../assets/icons/profilesettings';
+import Icon from 'react-native-vector-icons/Feather';
 const DeleteIcon = require('../assets/icons/cancel.png');
 
 export const settingsData = [
@@ -45,7 +46,7 @@ export const settingsData = [
   },
   {
     id: '8',
-    icon: <ProfileSettingsIcon width={37} height={37} />,
+    icon: <Icon name="settings" size={22} color="white" />,
     text: 'Privacy Settings',
     routeName: 'PrivacySettings',
   },

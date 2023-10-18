@@ -12,6 +12,7 @@ import CreateMealPlan from '../screens/dashboard-screens/meal-plan-screens/Creat
 import {RootState} from '../redux/store';
 import {useSelector} from 'react-redux';
 import UploadMealPlan from '../screens/dashboard-screens/meal-plan-screens/UploadMealPlan';
+import MessageStackNavigator from './MessageStackNavigator';
 
 const Stack = createStackNavigator();
 const MealPlanStackNavigator = () => {
@@ -39,6 +40,11 @@ const MealPlanStackNavigator = () => {
       <Stack.Screen
         name="DashboardScreen"
         component={HomeTabNavigator}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Message"
+        component={MessageStackNavigator}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

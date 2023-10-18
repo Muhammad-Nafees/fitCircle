@@ -105,6 +105,7 @@ export const CustomConfirmationModal = ({
               borderColor: focused ? 'rgba(255, 0, 0, 1)' : 'transparent',
               borderWidth: 1,
               paddingLeft: 8,
+              marginVertical: verticalScale(14),
             }}
             placeholder="CIRCLE"
             placeholderTextColor={'gray'}

@@ -17,11 +17,11 @@ import {
   CustomConfirmationModal,
   CustomOutputModal,
 } from '../../components/shared-components/CustomModals';
-import {IPackage} from '../../interfaces/package.interface';
 import {deletePackageById, getTrainerPackages} from '../../api/packages-module';
 import {useFocusEffect} from '@react-navigation/native';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import TrainerPackagesContainer from '../../components/profile-components/TrainerPackagesContainer';
+import {IPackage} from '../../interfaces/package.interface';
 
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 
@@ -82,7 +82,7 @@ const PackagesScreen = ({navigation}: any) => {
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <TouchableOpacity
           style={{paddingTop: 24, paddingBottom: 16}}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate('Dashboard')}>
           <Image
             source={ArrowBack}
             style={{width: 24, height: 24, tintColor: 'white'}}
