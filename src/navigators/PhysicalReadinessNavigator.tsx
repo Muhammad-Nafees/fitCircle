@@ -12,6 +12,7 @@ import VerificationSix from '../screens/dashboard-screens/physical-readiness-scr
 import VerificationThree from '../screens/dashboard-screens/physical-readiness-screens/VerificationThree';
 import VerificationSeven from '../screens/dashboard-screens/physical-readiness-screens/VerificationSeven';
 import {useNavigation} from '@react-navigation/native';
+import VerifyScreen from '../screens/auth-screens/create-profile-screens/VerifyScreen';
 
 const Stack = createStackNavigator();
 const PhysicalReadinessStackNavigator = () => {
@@ -41,6 +42,11 @@ const PhysicalReadinessStackNavigator = () => {
       <Stack.Screen name="VerificationFive" component={VerificationFive} />
       <Stack.Screen name="VerificationSix" component={VerificationSix} />
       <Stack.Screen name="VerificationSeven" component={VerificationSeven} />
+      <Stack.Screen
+        name="TdeeFromSavedScreen"
+        component={VerifyScreen}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };

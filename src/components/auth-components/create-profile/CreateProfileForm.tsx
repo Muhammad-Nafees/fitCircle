@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {format} from 'date-fns';
 import {checkUsername, getCities, getCountries} from '../../../api/auth-module';
 import PhoneInput from 'react-native-phone-number-input';
+import Toast from 'react-native-toast-message';
 
 interface Props {
   profilePicture: any;
@@ -92,6 +93,11 @@ const CreateProfileForm = ({profilePicture}: Props) => {
         setAllCities(fetchedCities);
       } catch (error: any) {
         console.log('Error fetching cities:', error?.response?.data);
+        setAllCities([]);
+        Toast.show({
+          type: 'error',
+          text1: `No cities found!`,
+        });
       }
     };
     if (countryCode) {
@@ -174,6 +180,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       }
     }
   };
+  console.log(allCities, 'Asdajdajdlaskjdljasdl');
   return (
     <Formik
       initialValues={initialValues}

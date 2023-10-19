@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
   },
   ageInput: {
     width: horizontalScale(80),
-    height: verticalScale(47),
+    height: 45,
     alignItems: 'center',
     marginTop: 7,
   },

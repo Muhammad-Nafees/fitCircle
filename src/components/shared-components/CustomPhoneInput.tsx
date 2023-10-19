@@ -92,7 +92,7 @@ const CustomPhoneInput = ({
             }}
             containerStyle={[
               {
-                height: verticalScale(45),
+                height: 45,
                 width: horizontalScale(320),
                 backgroundColor: 'white',
               },

@@ -36,6 +36,7 @@ const CreatorPosts = ({
         onChangeIndex={i => console.log(i)}
         renderItem={({item, index}) => (
           <ReelsComponent
+            isFavoriteVideo={true}
             post={item}
             index={index}
             userId={userId}

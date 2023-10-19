@@ -94,7 +94,7 @@ export const SearchScreen = () => {
         setSearchData(users);
         setMessage('No users Found!');
       } else {
-        const response = await searchTrainerProfile(searchQuery);
+        const response = await searchTrainerProfile(selectedFilter,searchQuery);
         const users = response?.data?.data?.users;
         setSearchData(users);
         setMessage(`No ${selectedFilter} Found!`);
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(13),
     color: '#fff',
     marginLeft: horizontalScale(8),
   },

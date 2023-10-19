@@ -83,7 +83,7 @@ export const Results = ({navigation, route}: any) => {
                   setFieldError={setFieldError}
                 />
                 <CustomInput
-                  label="Days to reach your goal"
+                  label="Days to reach your goals"
                   placeholder=""
                   value={values.daysToReachGoal}
                   fieldName="daysToReachGoal"

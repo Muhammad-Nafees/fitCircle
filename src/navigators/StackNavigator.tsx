@@ -3,7 +3,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import {View} from 'react-native';
-import SplashSc from "../screens"
+import SplashSc from '../screens';
 import SplashScreen from '../screens';
 import SignInScreenOne from '../screens/auth-screens/signin-screens/SigninScreenOne';
 import SignInScreenTwo from '../screens/auth-screens/signin-screens/SigninScreenTwo';
@@ -55,7 +55,6 @@ const StackNavigator = () => {
       initialRouteName="SplashScreen">
       {/* // initialRouteName="CreateProfile"> */}
 
-  
       <Stack.Screen
         name="SplashScreen"
         component={SplashScreen}

@@ -26,6 +26,7 @@ import SignupFormScreen from '../screens/auth-screens/signup-screens/SignupFormS
 import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 import HomeTabNavigator from './HomeTabNavigator';
+import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
 
 const Stack = createStackNavigator();
 
@@ -65,6 +66,11 @@ const AuthStackNavigator = () => {
       <Stack.Screen
         name="BlankButtonRender"
         component={BlankButtonRenderScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="FavoriteDialog"
+        component={FavoriteDialogScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

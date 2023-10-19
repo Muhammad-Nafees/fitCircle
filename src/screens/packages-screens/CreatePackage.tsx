@@ -63,6 +63,7 @@ const CreatePackage = ({navigation}: any) => {
       }
     }
   };
+  console.log(videoThumbnail,"videoThumbnail")
 
   useFocusEffect(
     useCallback(() => {

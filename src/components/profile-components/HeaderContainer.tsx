@@ -106,7 +106,6 @@ export const ProfileHeaderContainer = ({
       },
     });
   };
-  console.log(isSeachUser, 'isSearch');
 
   return (
     <ImageBackground

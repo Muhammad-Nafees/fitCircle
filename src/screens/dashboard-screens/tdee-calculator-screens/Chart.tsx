@@ -55,7 +55,7 @@ export const ChartScreen = ({navigation, route}: any) => {
               ))}
             </View>
           </View>
-          <CustomButton onPress={() => console.log('Something')}>
+          <CustomButton onPress={() => navigation.navigate('MealPlan')}>
             Continue to Meal Plan
           </CustomButton>
         </View>

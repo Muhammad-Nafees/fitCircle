@@ -29,6 +29,7 @@ import {
   getSubscribedCommunities,
   getUserPosts,
   getUserVideos,
+  searchCommunity,
 } from '../../api/profile-module';
 import MyCirclePosts from '../../components/home-components/MyCirclePosts';
 import {setUserProfile} from '../../redux/authSlice';
@@ -40,7 +41,11 @@ import {
   setFollowingsList,
 } from '../../redux/profileSlice';
 import CustomLoader from '../../components/shared-components/CustomLoader';
-import {deletePost} from '../../api/home-module';
+import {
+  deleteFavoritePost,
+  deletePost,
+  getUserFavoriteVideos,
+} from '../../api/home-module';
 import {useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
@@ -69,6 +74,8 @@ const ProfileScreen = ({navigation, route}: any) => {
   const [limit, setLimit] = useState<number>(40);
   const [myPosts, setMyPosts] = useState<any>();
   const [myVideos, setMyVideos] = useState<any>();
+  const [myFavoriteVideos, setMyFavoriteVideos] = useState<any>();
+
   const [hasMoreVideos, setHasMoreVideos] = useState<boolean>(false);
   const [hasMorePost, setHasMorePosts] = useState<boolean>(false);
   const [isLoadMorePost, setIsLoadMorePost] = useState<boolean>(false);
@@ -80,6 +87,12 @@ const ProfileScreen = ({navigation, route}: any) => {
   >(null);
   const [isEditDeletePost, setIsEditDeletePost] = useState<boolean>(false);
   const [isDeleteVideo, setIsDeleteVideo] = useState<boolean>(false);
+  const [isDeleteFavoriteVideo, setIsDeleteFavoriteVideo] =
+    useState<boolean>(false);
+
+  const [deletePostId, setDeletePostId] = useState<string>('');
+  const [isDeleteFavoritePost, setIsDeleteFavoritePost] =
+    useState<boolean>(false);
 
   // meal plan data
 
@@ -97,17 +110,20 @@ const ProfileScreen = ({navigation, route}: any) => {
     userData?._id,
   );
   const profilePersonalData = useSelector((state: RootState) => state.profile);
-  console.log(searchUserProfile, 'personalData');
+  const [isSearchProfile, setIsSearchProfile] = useState<boolean>();
+  console.log(isSearchProfile, 'iddddddd');
 
   useEffect(() => {
     if (searchUserProfile && searchUserProfile._id) {
       setUserSearchId(searchUserProfile._id);
       setProfileData(searchUserProfile);
       setShouldFetchPostsInitially(true);
+      setIsSearchProfile(true);
     } else {
       setUserSearchId(userData?._id as string);
       setProfileData(userData);
       setShouldFetchPostsInitially(true);
+      setIsSearchProfile(false);
     }
 
     return () => {
@@ -118,12 +134,19 @@ const ProfileScreen = ({navigation, route}: any) => {
 
   const handleCancelButton = () => {
     setIsModalVisible(!isModalVisible);
+    setRemoveModal(!removeModal);
+    if (isDeleteFavoritePost) {
+      handleEditDeletePost('DeleteFavoriteVideo', deletePostId);
+    } else {
+      handleEditDeletePost('DeleteVideo', deletePostId);
+    }
   };
 
-  const toggleModal = () => {
-    setIsModalVisible(false);
-    setRemoveModal(!removeModal);
-  };
+  // const toggleModal = () => {
+
+  //   setIsModalVisible(false);
+  //   setRemoveModal(!removeModal);
+  // };
 
   const handleBioModal = () => {
     setBioModal(!bioModal);
@@ -134,8 +157,15 @@ const ProfileScreen = ({navigation, route}: any) => {
     navigation.navigate('CommentsScreen', {userId, profileScreen: true});
   };
   const handleVideoPress = (video: any) => {
+    setIsFavoriteVideo(false);
     setSelectedVideo(video);
     setReelsModal(!reelsModal);
+  };
+  const [isFavoriteVideo, setIsFavoriteVideo] = useState<boolean>(false);
+  const handleFavoriteVideoPress = (video: any) => {
+    setSelectedVideo(video);
+    setReelsModal(!reelsModal);
+    setIsFavoriteVideo(true);
   };
 
   const handleFavoriteDialog = () => {
@@ -200,6 +230,26 @@ const ProfileScreen = ({navigation, route}: any) => {
     }
   };
 
+  const fetchUserFavoriteVideos = async () => {
+    try {
+      const response = await getUserFavoriteVideos(userSearchId as string);
+      // userSearchId as string,
+      // videoPage,
+      // limit,
+      const data = response?.data?.data;
+      if (myVideos && isLoadMoreVideos) {
+        setMyFavoriteVideos((prevData: any) => {
+          return [...prevData, ...data?.favoritePosts];
+        });
+      } else {
+        setMyFavoriteVideos(data?.favoritePosts);
+      }
+      setHasMoreVideos(data?.pagination?.hasNextPage);
+      setIsLoadMoreVideos(false);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From fetching user posts!');
+    }
+  };
   const loadMoreVideos = () => {
     if (hasMoreVideos) {
       setIsLoadMoreVideos(true);
@@ -224,7 +274,6 @@ const ProfileScreen = ({navigation, route}: any) => {
     try {
       const response = await getFollowingList();
       const followings = response?.data?.data?.users;
-      console.log(followings);
       dispatch(setFollowingsList(followings));
     } catch (error: any) {
       console.log(error?.response?.data, 'From followings List!');
@@ -233,6 +282,7 @@ const ProfileScreen = ({navigation, route}: any) => {
   };
   const fetchCommunityList = async () => {
     setIsLoading(true);
+    console.log('fetching cmommunities');
     try {
       const response = await getSubscribedCommunities();
       const communities = response?.data?.data?.communities;
@@ -261,6 +311,7 @@ const ProfileScreen = ({navigation, route}: any) => {
     setIsLoading(false);
   };
   // if logged in user or search user is trainer
+  console.log(myFavoriteVideos, 'myfavvvv');
 
   const fetchPackagesByTrainer = async () => {
     setIsLoading(true);
@@ -282,6 +333,7 @@ const ProfileScreen = ({navigation, route}: any) => {
     if (shouldFetchPostsInitially) {
       fetchUserPosts();
       fetchUserVideos();
+      fetchUserFavoriteVideos();
       fetchFollowersList();
       fetchFollowingList();
       fetchCommunityList();
@@ -318,6 +370,15 @@ const ProfileScreen = ({navigation, route}: any) => {
     };
   }, [isDeleteVideo]);
 
+  useEffect(() => {
+    if (isDeleteFavoriteVideo) {
+      fetchUserFavoriteVideos();
+    }
+    return () => {
+      setIsDeleteFavoriteVideo(false);
+    };
+  }, [isDeleteFavoriteVideo]);
+
   const handleEditDeletePost = async (type: string, postId: string) => {
     if (type == 'Delete' || type == 'DeleteVideo') {
       try {
@@ -339,10 +400,36 @@ const ProfileScreen = ({navigation, route}: any) => {
         });
         console.log(error?.response?.data, 'from from delete post!');
       }
+    } else {
+      try {
+        const response = await deleteFavoritePost(postId);
+
+        console.log(response?.data, 'sss');
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data?.message}`,
+        });
+      } catch (error: any) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data?.message}`,
+        });
+        console.log(error?.response?.data, 'from from delete favorite post!');
+      }
     }
   };
   const handleDeleteVideo = (id: string) => {
-    handleEditDeletePost('DeleteVideo', id);
+    setIsModalVisible(true);
+    setDeletePostId(id);
+    setIsDeleteFavoritePost(false);
+
+    // handleEditDeletePost('DeleteVideo', id);
+  };
+  const handleDeleteFavoriteVideo = (id: string) => {
+    setIsModalVisible(true);
+    setDeletePostId(id);
+    setIsDeleteFavoritePost(true);
+    // handleEditDeletePost('DeleteVideo', id);
   };
 
   return (
@@ -426,6 +513,7 @@ const ProfileScreen = ({navigation, route}: any) => {
           ) : (
             selectedOption === 'Feed' && (
               <MyCirclePosts
+                isSearchProfile={isSearchProfile}
                 data={myPosts}
                 isLoading={isLoading}
                 isPersonalProfile={true}
@@ -452,9 +540,33 @@ const ProfileScreen = ({navigation, route}: any) => {
         </View>
 
         {selectedOption === 'Favorites' && (
-          <>
-            <Favorites />
-          </>
+          <View style={{width: '100%'}}>
+            {myFavoriteVideos === undefined ? (
+              <Text style={{fontSize: 16, color: 'white', padding: 20}}>
+                No Favorites vidoes!
+              </Text>
+            ) : (
+              <FlatList
+                data={myFavoriteVideos}
+                keyExtractor={item => item._id}
+                renderItem={({item, index}) => (
+                  <CustomVideo
+                    isSearchProfile={isSearchProfile}
+                    isFavoriteVideo={true}
+                    key={item._id}
+                    userId={userId}
+                    video={item?.post}
+                    onDeleteVideo={handleDeleteFavoriteVideo}
+                    isTrainerView={isTrainerView}
+                    handleCancelButtonPress={handleCancelButton}
+                    onPressVideo={handleVideoPress}
+                    style={{marginRight: index % 2 === 0 ? 8 : 0}}
+                  />
+                )}
+                numColumns={2}
+              />
+            )}
+          </View>
         )}
         {selectedOption === 'MealPlan' && (
           <ScrollView>
@@ -493,13 +605,14 @@ const ProfileScreen = ({navigation, route}: any) => {
                 keyExtractor={item => item._id}
                 renderItem={({item, index}) => (
                   <CustomVideo
+                    isFavoriteVideo={isSearchProfile}
                     key={item._id}
                     userId={userId}
                     video={item}
                     onDeleteVideo={handleDeleteVideo}
                     isTrainerView={isTrainerView}
                     handleCancelButtonPress={handleCancelButton}
-                    onPressVideo={handleVideoPress}
+                    onPressVideo={handleFavoriteVideoPress}
                     style={{marginRight: index % 2 === 0 ? 8 : 0}}
                   />
                 )}
@@ -516,10 +629,13 @@ const ProfileScreen = ({navigation, route}: any) => {
         <View style={{height: '100%', width: '100%'}}>
           <ReelsComponent
             post={selectedVideo}
+            isFavoriteVideo={false}
             isProfile={true}
             handleCancelPress={handleVideoPress}
             handleFavoriteDialog={handleFavoriteDialog}
-            onDeletePost={() => {}}
+            onDeletePost={() => {
+              setReelsModal(false);
+            }}
           />
         </View>
       </Modal>
@@ -535,7 +651,7 @@ const ProfileScreen = ({navigation, route}: any) => {
           confirmColor={'rgba(32, 128, 183, 1)'}
           cancelColor={'rgba(220, 77, 77, 1)'}
           onCancel={handleCancelButton}
-          onConfirm={toggleModal}
+          onConfirm={() => setIsModalVisible(false)}
         />
       </Modal>
       <Modal
@@ -562,7 +678,7 @@ const ProfileScreen = ({navigation, route}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: '60%',
+    paddingBottom: verticalScale(220),
   },
   selectionContainerParent: {
     backgroundColor: '#292a2c',

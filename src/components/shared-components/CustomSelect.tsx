@@ -130,7 +130,7 @@ export const CustomSelect: React.FC<Props> = ({
         }}
         onFocus={handleFocus}
         buttonStyle={{
-          height: height ? height : verticalScale(45),
+          height: height ? height : 45,
           backgroundColor: backgroundColor ? backgroundColor : '#ffffff',
           width: width ? width : '85%',
           ...extraButtonStyles,
