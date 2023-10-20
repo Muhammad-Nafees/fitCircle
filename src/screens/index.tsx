@@ -16,7 +16,11 @@ const SplashScreen = ({navigation}: any) => {
       resizeMode="cover"
       style={styles.container}>
       <View style={{flex: 8, justifyContent: 'center'}}>
-        <Image source={require('../../assets/images/logo.png')} alt="logo" />
+        <Image
+          source={require('../../assets/images/logo.png')}
+          alt="logo"
+          style={{width: 135, height: 229}}
+        />
       </View>
       <TouchableOpacity
         style={{flex: 1, width: '70%', alignItems: 'center'}}
