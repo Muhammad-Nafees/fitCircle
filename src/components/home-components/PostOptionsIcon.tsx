@@ -57,20 +57,20 @@ export const PostOptionsIcon = ({
         <TouchableOpacity
           style={styles.bottomContainerButtons}
           onPress={() =>
-            navigation.navigate('HomeTab', {screen: 'CreatePackageScreen'})
+            navigation.navigate('HomeTab', {screen: 'PackagesScreen'})
           }>
           <PackageIcon />
           <Text style={styles.options}>My Package</Text>
         </TouchableOpacity>
       )}
-      {userRole === 'nutritionist' && (
+      {/* {userRole === 'nutritionist' && ( */}
         <TouchableOpacity
           style={styles.bottomContainerButtons}
           onPress={() => navigation.navigate('MealPlan')}>
           <MealPlanSvgIcon />
           <Text style={styles.options}>My Meal Plan</Text>
         </TouchableOpacity>
-      )}
+      {/* )} */}
       <TouchableOpacity
         style={styles.bottomContainerButtons}
         onPress={handleScheduleRoute}>
@@ -95,7 +95,7 @@ export const PostOptionsIcon = ({
       )}
       <TouchableOpacity
         style={styles.bottomContainerButtons}
-        onPress={() => navigation.navigate('Payment')}>
+        onPress={() => console.log('Wallet')}>
         <WalletSvgIcon />
         <Text style={styles.options}>My Wallet</Text>
       </TouchableOpacity>

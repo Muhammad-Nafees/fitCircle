@@ -8,6 +8,7 @@ interface MyCirclePostsProps {
   data: any;
   isLoading: boolean;
   isRefreshing?: any;
+  isSearchProfile?: boolean;
   handleRefresh?: () => void;
   handleCommentButtonPress: any;
   loadMoreItems: () => void;
@@ -21,6 +22,7 @@ const MyCirclePosts = ({
   isLoading,
   isRefreshing,
   isPersonalProfile,
+  isSearchProfile,
   handleRefresh,
   loadMoreItems,
   handleCommentButtonPress,
@@ -31,6 +33,7 @@ const MyCirclePosts = ({
       <CustomPost
         key={item._id + index}
         post={item}
+        isSearchProfile={isSearchProfile}
         handleCommentButtonPress={handleCommentButtonPress}
         isPersonalProfile={isPersonalProfile}
         onEditDeletePost={onEditDeletePost}

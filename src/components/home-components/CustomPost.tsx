@@ -8,6 +8,7 @@ import {
   TextInput,
   Dimensions,
   ScrollView,
+  Keyboard,
 } from 'react-native';
 import Modal from 'react-native-modal';
 const Heart = require('../../../assets/icons/heart.png');
@@ -28,10 +29,18 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {s3bucketReference} from '../../api';
-import {likePost, sharePost} from '../../api/home-module';
+import {
+  editPostWithContent,
+  editPostWithImage,
+  likePost,
+  sharePost,
+} from '../../api/home-module';
 import {setSelectedPost} from '../../redux/postSlice';
 import ImagePreview from './ImagePreview';
 import {timeDifference} from '../../utils/helper';
+import {useDispatch} from 'react-redux';
+import {IPost} from 'interfaces/user.interface';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 const Dot = require('../../../assets/icons/dot.png');
 
@@ -43,7 +52,9 @@ interface CustomPostProps {
   handleBackPress?: () => void;
   isPersonalProfile?: boolean;
   post?: any;
+  isSearchProfile?: boolean;
   heightFull?: boolean;
+  isEditing?: boolean;
   commentCount?: any;
   onEditDeletePost?: (type: string, postId: string) => void;
 }
@@ -51,6 +62,8 @@ interface CustomPostProps {
 export const CustomPost = ({
   post,
   isPersonalProfile,
+  isEditing,
+  isSearchProfile,
   heightFull,
   isCommentsScreenActive,
   handleBackPress,
@@ -65,6 +78,8 @@ export const CustomPost = ({
   const [isLiked, setIsLiked] = useState(post?.likedByMe);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
   const navigation = useNavigation();
+
+  const [editableContent, setEditableContent] = useState('');
 
   const isLocked = post?.cost && post?.cost > 0;
   useFocusEffect(
@@ -132,32 +147,114 @@ export const CustomPost = ({
     (post?.hexCode && post.hexCode?.length === 2) || post.hexCode?.length === 3;
 
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownOptions = ['Edit', 'Delete'];
+  const dropdownOptions = post?.media ? ['Delete'] : ['Edit', 'Delete'];
+  const dispatch = useDispatch();
+  const editInputRef = useRef(null);
 
-  const handleOptionSelect = (option: string, id: string) => {
+  const handleOptionSelect = (option: string, id: string, post: any) => {
     setDropdownVisible(false);
-    if (onEditDeletePost) {
+    if (option === 'Edit') {
+      dispatch(setSelectedPost(post));
+      navigation.navigate('CommentsScreen', {isEdit: true, id: id});
+    } else if (onEditDeletePost) {
       onEditDeletePost(option, id);
     }
   };
   const route = useRoute();
   const [showFullContent, setShowFullContent] = useState(false);
-  const thresholdLines = post?.media
-    ? 7
-    : route.name == 'CommentsScreen'
-    ? 12
-    : 15; // Set your threshold here
-
-  const contentToShow = post?.text
-    ? showFullContent
-      ? post.text
-      : post.text.split('\n').slice(0, thresholdLines).join('\n')
-    : '';
+  useFocusEffect(
+    useCallback(() => {
+      const thresholdLines = post?.media
+        ? 7
+        : route.name == 'CommentsScreen'
+        ? 12
+        : 15; // Set your threshold here
+      const contentToShow = post?.text
+        ? showFullContent
+          ? post.text
+          : post.text.split('\n').slice(0, thresholdLines).join('\n')
+        : '';
+      if (editInputRef.current) {
+        editInputRef.current.focus();
+        Keyboard.dismiss(); // This will open the keyboard
+      }
+      setEditableContent(contentToShow);
+    }, [post]),
+  );
 
   const newlineCount = post?.text?.split('\n');
 
   const toggleShowMore = () => {
     setShowFullContent(!showFullContent);
+  };
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleEditPost = async (post: any) => {
+    console.log(post);
+    if (editableContent == '') {
+      Toast.show({
+        type: 'error',
+        text1: `Add text to post a photo!`,
+      });
+      return;
+    }
+    setIsLoading(true);
+    try {
+      if (post?.media) {
+        console.log(post?.media, 'media');
+        const cleanedText = editableContent.replace(/\n{3,}/g, '\n\n').trim();
+        const reqData: Partial<IPost> = {
+          text: cleanedText,
+          media: {
+            uri: `${s3bucketReference}/${post?.media}`,
+            name: 'image',
+            type: 'image/jpeg',
+          },
+          visibility: post?.visibility,
+          ...(post?.title !== '' && {title: post.title}),
+          ...(post?.cost !== 0 && {cost: post?.cost}),
+        };
+        const response = await editPostWithImage(reqData, post?._id);
+        console.log(response?.data, 'response!');
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data.message}`,
+        });
+      } else {
+        const cleanedText = editableContent.replace(/\n{3,}/g, '\n\n').trim();
+        const reqData: Partial<IPost> = {
+          text: cleanedText,
+          hexCode: post?.hexCode,
+
+          visibility: post?.visibility,
+          ...(post?.cost !== 0 && {cost: post?.cost}),
+        };
+        const response = await editPostWithContent(reqData, post?._id);
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data.message}`,
+        });
+        navigation.goBack();
+      }
+      if (editInputRef.current) {
+        editInputRef.current.blur(); // This will remove focus from the TextInput
+      }
+      setIsLoading(false);
+    } catch (error: any) {
+      console.log(error?.response.data);
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data.message}`,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error.message}!`,
+        });
+      }
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -189,7 +286,7 @@ export const CustomPost = ({
             </View>
           </View>
         </View>
-        {isPersonalProfile && (
+        {isPersonalProfile && !isSearchProfile && (
           <TouchableOpacity
             onPress={() => setDropdownVisible(!isDropdownVisible)}>
             <Image
@@ -213,7 +310,7 @@ export const CustomPost = ({
             {dropdownOptions.map((option, index) => (
               <React.Fragment key={index}>
                 <TouchableOpacity
-                  onPress={() => handleOptionSelect(option, post?._id)}>
+                  onPress={() => handleOptionSelect(option, post?._id, post)}>
                   <Text
                     style={{
                       color: '#fff',
@@ -234,6 +331,23 @@ export const CustomPost = ({
           </TouchableOpacity>
         )}
       </View>
+      {isEditing && (
+        <View
+          style={{
+            position: 'absolute',
+            right: 10,
+            top: 24,
+            width: 80,
+            height: 10,
+          }}>
+          <CustomButton
+            extraStyles={{height: 30}}
+            isDisabled={isLoading}
+            onPress={() => handleEditPost(post)}>
+            {isLoading ? <CustomLoader /> : 'Edit Post'}
+          </CustomButton>
+        </View>
+      )}
       {isLocked ? (
         <View style={[styles.lockedOverlay]}>
           <View style={[styles.lockedContainer]}>
@@ -261,7 +375,18 @@ export const CustomPost = ({
             {height: heightFull ? verticalScale(290) : undefined},
           ]}>
           <ScrollView scrollEnabled={true} nestedScrollEnabled={true}>
-            <Text style={styles.contentText}>{contentToShow}</Text>
+            {isGradient && isEditing ? (
+              <TextInput
+                autoFocus={true}
+                ref={editInputRef}
+                style={{color: 'white'}}
+                onChangeText={text => setEditableContent(text)}
+                value={editableContent}
+                multiline={true}
+              />
+            ) : (
+              <Text style={styles.contentText}>{editableContent}</Text>
+            )}
             {newlineCount?.length > 10 ? (
               <TouchableOpacity onPress={toggleShowMore}>
                 <Text style={{color: 'blue'}}>
@@ -307,7 +432,18 @@ export const CustomPost = ({
                 {post?.title}
               </Text>
             )}
-            <Text style={styles.contentText}>{contentToShow}</Text>
+            {isEditing ? (
+              <TextInput
+                autoFocus={true}
+                ref={editInputRef}
+                style={{color: 'white'}}
+                onChangeText={text => setEditableContent(text)}
+                value={editableContent}
+                multiline={true}
+              />
+            ) : (
+              <Text style={styles.contentText}>{editableContent}</Text>
+            )}
             {newlineCount?.length > 10 ? (
               <TouchableOpacity onPress={toggleShowMore}>
                 <Text style={{color: 'blue'}}>
@@ -574,7 +710,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
-    lineHeight: 24,
+    // lineHeight: 24,
     marginRight: horizontalScale(30),
   },
   lockedContainer: {

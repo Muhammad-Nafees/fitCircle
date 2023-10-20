@@ -63,6 +63,7 @@ interface VideoPreviewScreenProps {
   handleBackButtonPress: () => void;
   costValue?: number;
   visibility?: IPostVisibility;
+  videoThumbnail: FileData | undefined;
 }
 
 export const VideoPreviewScreen = ({
@@ -72,6 +73,7 @@ export const VideoPreviewScreen = ({
   handleNavigation,
   setIsComponentMounted,
   handleBackButtonPress,
+  videoThumbnail,
 }: VideoPreviewScreenProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const options = [
@@ -274,7 +276,17 @@ export const VideoPreviewScreen = ({
             type: thumbnail?.type as string,
             uri: result,
           };
+        } else {
+          if (videoThumbnail) {
+            const result = await ImageCompress.compress(videoThumbnail.uri);
+            compressedThumbnail = {
+              name: videoThumbnail?.name as string,
+              type: videoThumbnail?.type as string,
+              uri: result,
+            };
+          }
         }
+
         const reqData: Partial<IPost> = {
           text: content,
           media: videoUri,
@@ -282,7 +294,7 @@ export const VideoPreviewScreen = ({
           title: titleInputValue,
           visibility: visibility,
           ...(costValue !== 0 && {cost: costValue}),
-          ...(thumbnail !== null && {thumbnail: compressedThumbnail}),
+          thumbnail: compressedThumbnail,
         };
         console.log(reqData, 'video req data');
         const response = await createPostWithVideo(reqData);

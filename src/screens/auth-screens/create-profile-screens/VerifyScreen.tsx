@@ -32,6 +32,8 @@ const VerifyScreen = ({navigation}: any) => {
   const handleNavigation = async () => {
     if (name == 'CertificateVerified') {
       navigation.navigate('InterestScreen');
+    } else if (name == 'TdeeFromSavedScreen') {
+      navigation.navigate('Dashboard');
     } else {
       setIsLoading(true);
       try {
@@ -104,7 +106,6 @@ const VerifyScreen = ({navigation}: any) => {
           certificates: compressedCertificates || userData?.certificates,
           socialMediaLinks: filteredLinks,
         };
-        console.log(reqUserData, 'req');
 
         const response = await updateProfile(reqUserData as IUser);
         const data = response?.data;
@@ -144,6 +145,8 @@ const VerifyScreen = ({navigation}: any) => {
               access to the Creator Features of FitCircle.
             </Text>
           </View>
+        ) : name == 'TdeeFromSavedScreen' ? (
+          <Text style={[STYLES.text14, {marginTop: 2}]}>Form Saved! </Text>
         ) : (
           <Text style={[STYLES.text14, {marginTop: 2}]}>Account created! </Text>
         )}
@@ -151,7 +154,13 @@ const VerifyScreen = ({navigation}: any) => {
           <CustomButton
             isDisabled={isLoading ? true : false}
             onPress={handleNavigation}>
-            {isLoading ? <CustomLoader /> : 'Continue'}
+            {isLoading ? (
+              <CustomLoader />
+            ) : name == 'TdeeFromSavedScreen' ? (
+              'Return'
+            ) : (
+              'Continue'
+            )}
           </CustomButton>
         </View>
       </View>

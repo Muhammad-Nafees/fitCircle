@@ -123,7 +123,7 @@ const NotificationScreen = ({navigation}: any) => {
           extraTextStyles={{
             marginHorizontal: 40,
             textAlign: 'center',
-            lineHeight: 24,
+            // lineHeight: 24,
             marginBottom: -7,
           }}
         />

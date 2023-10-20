@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: moderateScale(12),
-    lineHeight: verticalScale(17),
+    // lineHeight: verticalScale(17),
     fontWeight: '700',
     color: '#ffffff',
   },
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
   },
   ageInput: {
     width: horizontalScale(80),
-    height: verticalScale(47),
+    height: 45,
     alignItems: 'center',
     marginTop: 7,
   },

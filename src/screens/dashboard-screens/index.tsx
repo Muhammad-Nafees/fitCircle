@@ -6,6 +6,7 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
@@ -54,7 +55,7 @@ const DashboardScreen = ({navigation}: any) => {
   const withNavigationAction = (routeName: string) => {
     return () => {
       if (routeName === 'Wallet') {
-        navigation.navigate('Settings', {screen: 'Payment'});
+        console.log('Wallet');
       } else {
         navigation.navigate(routeName);
       }
@@ -96,7 +97,7 @@ const DashboardScreen = ({navigation}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={[styles.topContainer]}>
         <HeaderContainer
           username={username}
@@ -124,6 +125,7 @@ const DashboardScreen = ({navigation}: any) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{
               gap: 10,
+              paddingRight: horizontalScale(35),
             }}
           />
         </View>
@@ -160,9 +162,9 @@ const DashboardScreen = ({navigation}: any) => {
         animationIn="slideInUp"
         animationOut="slideOutDown"
         style={styles.modal}>
-        <TransactionModal />
+        <TransactionModal closeModal={closeModal} />
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -184,7 +186,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     backgroundColor: '#222123',
-    flex: 2,
+    height: verticalScale(400),
     marginTop: -verticalScale(20),
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,

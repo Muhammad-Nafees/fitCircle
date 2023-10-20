@@ -5,9 +5,9 @@ export const searchProfile = async (search: string) => {
   return response;
 };
 
-export const searchTrainerProfile = async (search: string) => {
+export const searchTrainerProfile = async (role: string, search: string) => {
   const response = await api.get(
-    `user/search-by-role?role=trainer&search=${search}`,
+    `user/search-by-role?role=${role}&search=${search}`,
   );
   return response;
 };
@@ -43,9 +43,17 @@ export const getFollowersList = async () => {
   const response = await api.get(`user/followers`);
   return response;
 };
+export const searchFollowersList = async (search: string) => {
+  const response = await api.get(`user/followers?search=${search}`);
+  return response;
+};
 
 export const getFollowingList = async () => {
   const response = await api.get(`user/following`);
+  return response;
+};
+export const searchFollowingList = async (search: string) => {
+  const response = await api.get(`user/following?search=${search}`);
   return response;
 };
 
@@ -74,6 +82,10 @@ export const searchCommunity = async (search: string) => {
 
 export const getSubscribedCommunities = async () => {
   const response = await api.get(`community/subscription`);
+  return response;
+};
+export const searchSubscribedCommunities = async (search: string) => {
+  const response = await api.get(`community/subscription?search=${search}`);
   return response;
 };
 

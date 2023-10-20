@@ -29,6 +29,10 @@ import {
   getFollowingList,
   getSubscribedCommunities,
   removeFollower,
+  searchCommunity,
+  searchFollowersList,
+  searchFollowingList,
+  searchSubscribedCommunities,
   followToggle as unFollow,
   communitiesToggle as unSubscribeCommunity,
 } from '../../api/profile-module';
@@ -37,6 +41,9 @@ import {
   deleteCommunity,
   unFollowUser,
   removeFollower as remove,
+  setFollowersList,
+  setFollowingsList,
+  setCommunitiesList,
 } from '../../redux/profileSlice';
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 const SearchIcon = require('../../../assets/icons/search.png');
@@ -94,7 +101,6 @@ const SearchProfileScreen = ({route, navigation}: any) => {
   };
 
   useEffect(() => {
-    console.log('iam running!!!!!');
     if (selectedOption == 'followers') {
       fetchFollowersList();
     } else if (selectedOption == 'following') {
@@ -156,8 +162,42 @@ const SearchProfileScreen = ({route, navigation}: any) => {
     } else setModalVisible(!isModalVisible);
   };
 
-  const handleSearch = (searchText: string) => {
+  const handleSearch = async (searchText: string) => {
     setSearchInput(searchText);
+    if (selectedOption === 'followers') {
+      setIsLoading(true);
+      try {
+        const response = await searchFollowersList(searchText);
+        console.log(response?.data, 'response from search');
+        const followers = response?.data?.data?.users;
+        dispatch(setFollowersList(followers));
+      } catch (error: any) {
+        console.log(error?.response?.data, 'From search followersList!');
+      }
+      setIsLoading(false);
+    } else if (selectedOption === 'following') {
+      setIsLoading(true);
+      try {
+        const response = await searchFollowingList(searchText);
+        console.log(response?.data, 'response from search');
+        const following = response?.data?.data?.users;
+        dispatch(setFollowingsList(following));
+      } catch (error: any) {
+        console.log(error?.response?.data, 'From search following!');
+      }
+      setIsLoading(false);
+    } else if (selectedOption === 'community') {
+      setIsLoading(true);
+      try {
+        const response = await searchSubscribedCommunities(searchText);
+        console.log(response?.data, 'response from search');
+        const communities = response?.data?.data?.communities;
+        dispatch(setCommunitiesList(communities));
+      } catch (error: any) {
+        console.log(error?.response?.data, 'From search community!');
+      }
+      setIsLoading(false);
+    }
   };
 
   const clearSearch = () => {
@@ -202,7 +242,6 @@ const SearchProfileScreen = ({route, navigation}: any) => {
       />
     );
   };
-  console.log(data, 'ff');
 
   return (
     <View style={styles.container}>
@@ -256,6 +295,7 @@ const SearchProfileScreen = ({route, navigation}: any) => {
         <CustomConfirmationModal
           onCancel={toggleModal}
           onConfirm={onRemove}
+          extraModalStyles={{height: 175, width: 290}}
           modalText={`Are you sure you want to ${
             selectedOption === 'followers'
               ? 'remove this person'

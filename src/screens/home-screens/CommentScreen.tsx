@@ -130,7 +130,7 @@ const CommentsScreen = ({route, navigation}: any) => {
           setLoadMore(false);
           setHasMoreComments(data?.pagination?.hasNextPage);
         } catch (error: any) {
-          console.log('errorfrom fetching comments', error);
+          console.log('errorfrom fetching comments', error?.response?.data);
         }
         setLoading(false);
       };
@@ -248,6 +248,7 @@ const CommentsScreen = ({route, navigation}: any) => {
             isCommentsScreenActive={commentScreenActive}
             // handleBackPress={handleBackPress}
             heightFull={!selectedPost?.media}
+            isEditing={route?.params?.isEdit}
           />
         </View>
         <View
@@ -260,8 +261,9 @@ const CommentsScreen = ({route, navigation}: any) => {
             ref={commentRef}
             nestedScrollEnabled={true}
             keyboardShouldPersistTaps="always"
-            onContentSizeChange={() => commentRef?.current.scrollToEnd({ animated: true })}
-            >
+            onContentSizeChange={() =>
+              commentRef?.current.scrollToEnd({animated: true})
+            }>
             {
               // isLoading ? (
               //   <CustomLoader isStyle={true} extraStyles={{marginTop: 80}} />
@@ -307,67 +309,68 @@ const CommentsScreen = ({route, navigation}: any) => {
           </TouchableOpacity>
         </Modal>
 
-        <View style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
-        {mediaUri && !isReplying && (
-          <CustomAttachmentDialog
-            message="Photo Attached"
-            showCancel={true}
-            onCancel={() => setMediaUri(null)}
-          />
-        )}
-        {isReplying && (
-          <CustomAttachmentDialog
-            message="Replying"
-            showCancel={true}
-            onCancel={() => setIsReplying(false)}
-          />
-        )}
-        {isReplying && mediaUri && (
-          <CustomAttachmentDialog
-            message="Photo Attached in Reply"
-            showCancel={true}
-            onCancel={() => {
-              setIsReplying(false);
-              setMediaUri(null);
-            }}
-          />
-        )}
-        <View style={styles.inputContainer}>
-          <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor: '#00abd2',
-              width: '85%',
-            }}>
-            <TextInput
-              style={styles.textInput}
-              ref={inputRef}
-              placeholder="Message"
-              placeholderTextColor="#fff"
-              value={commentText}
-              onChangeText={text => setCommentText(text)}
+        <View
+          style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
+          {mediaUri && !isReplying && (
+            <CustomAttachmentDialog
+              message="Photo Attached"
+              showCancel={true}
+              onCancel={() => setMediaUri(null)}
             />
+          )}
+          {isReplying && (
+            <CustomAttachmentDialog
+              message="Replying"
+              showCancel={true}
+              onCancel={() => setIsReplying(false)}
+            />
+          )}
+          {isReplying && mediaUri && (
+            <CustomAttachmentDialog
+              message="Photo Attached in Reply"
+              showCancel={true}
+              onCancel={() => {
+                setIsReplying(false);
+                setMediaUri(null);
+              }}
+            />
+          )}
+          <View style={styles.inputContainer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                backgroundColor: '#00abd2',
+                width: '85%',
+              }}>
+              <TextInput
+                style={styles.textInput}
+                ref={inputRef}
+                placeholder="Message"
+                placeholderTextColor="#fff"
+                value={commentText}
+                onChangeText={text => setCommentText(text)}
+              />
+              <TouchableOpacity
+                style={styles.photoButton}
+                onPress={handlePhotoButtonPress}>
+                <CreatePostCommentSvgIcon />
+              </TouchableOpacity>
+            </View>
+
             <TouchableOpacity
-              style={styles.photoButton}
-              onPress={handlePhotoButtonPress}>
-              <CreatePostCommentSvgIcon />
+              style={styles.commentButton}
+              onPress={handleAddComment}>
+              {isLoading ? (
+                <CustomLoader />
+              ) : (
+                <Image
+                  source={SendIcon}
+                  style={{width: 20, height: 20, tintColor: '#fff'}}
+                />
+              )}
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity
-            style={styles.commentButton}
-            onPress={handleAddComment}>
-            {isLoading ? (
-              <CustomLoader />
-            ) : (
-              <Image
-                source={SendIcon}
-                style={{width: 20, height: 20, tintColor: '#fff'}}
-              />
-            )}
-          </TouchableOpacity>
         </View>
-      </View>
       </ScrollView>
     </View>
   );

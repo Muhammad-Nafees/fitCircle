@@ -21,7 +21,7 @@ const CancelIcon = require('../../../assets/icons/cancel.png');
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import {s3bucketReference} from '../../api';
-import {sharePost} from '../../api/home-module';
+import {addPostToFavorite, sharePost} from '../../api/home-module';
 import Toast from 'react-native-toast-message';
 import {useFocusEffect} from '@react-navigation/native';
 
@@ -34,6 +34,7 @@ interface ReelsProps {
   isProfile?: boolean;
   handleCancelPress?: any;
   handleFavoriteDialog?: any;
+  isFavoriteVideo?: boolean;
   onDeletePost: (id: string) => void;
 }
 
@@ -41,6 +42,7 @@ export const ReelsComponent = ({
   post,
   tabBarHeight,
   isProfile = false,
+  isFavoriteVideo,
   handleCancelPress,
   onDeletePost,
   handleFavoriteDialog,
@@ -77,7 +79,7 @@ export const ReelsComponent = ({
       fetchThumbnail();
     }, [post]),
   );
-  console.log(videoThumbnail,"thum")
+  console.log(videoThumbnail, 'thum');
 
   // useEffect(() => {
   //   const isCurrentUserFavorited = favorites.some(
@@ -109,12 +111,21 @@ export const ReelsComponent = ({
     console.log('onError');
   };
 
-  const handleFavoritePress = () => {
-    // if (isProfile === true) {
-    //   handleFavoriteDialog();
-    // } else {
-    navigation.navigate('FavoriteDialog' as never);
-    // }
+  const handleFavoritePress = async () => {
+    try {
+      const response = await addPostToFavorite(post._id);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+      navigation.navigate('FavoriteDialog' as never);
+    } catch (error: any) {
+      console.log(error?.response, 'from favorite video');
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
+    }
   };
 
   const handleShareVideo = async () => {
@@ -125,7 +136,7 @@ export const ReelsComponent = ({
         text1: `${response?.data?.message}`,
       });
     } catch (error: any) {
-      console.log(error?.response, 'from sharing post');
+      console.log(error?.response, 'from sharing video');
       Toast.show({
         type: 'error',
         text1: `${error?.response?.data?.message}`,
@@ -243,27 +254,29 @@ export const ReelsComponent = ({
 
         <Text style={styles.textContent}>{post?.text}</Text>
       </View>
-      <View style={styles.iconContainer}>
-        <View style={styles.iconItem}>
-          <TouchableOpacity
-            style={styles.iconItemContainer}
-            onPress={handleFavoritePress}>
-            <Image
-              source={FavouritesIcon}
-              style={[styles.icon, isFavorited && {tintColor: '#3EB6E6'}]}
-            />
-            <Text style={styles.iconText}>Favorite</Text>
-          </TouchableOpacity>
+      {isFavoriteVideo && (
+        <View style={styles.iconContainer}>
+          <View style={styles.iconItem}>
+            <TouchableOpacity
+              style={styles.iconItemContainer}
+              onPress={handleFavoritePress}>
+              <Image
+                source={FavouritesIcon}
+                style={[styles.icon, isFavorited && {tintColor: '#3EB6E6'}]}
+              />
+              <Text style={styles.iconText}>Favorite</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.iconItem}>
+            <TouchableOpacity
+              style={styles.iconItemContainer}
+              onPress={handleShareVideo}>
+              <Image source={ShareIcon} style={styles.icon} />
+              <Text style={styles.iconText}>Share</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.iconItem}>
-          <TouchableOpacity
-            style={styles.iconItemContainer}
-            onPress={handleShareVideo}>
-            <Image source={ShareIcon} style={styles.icon} />
-            <Text style={styles.iconText}>Share</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      )}
     </View>
   );
 };
@@ -348,7 +361,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
-    lineHeight: 24,
+    // lineHeight: 24,
     marginRight: horizontalScale(30),
   },
   lockedContainer: {

@@ -67,6 +67,6 @@ const styles = StyleSheet.create({
   termsText: {
     color: 'white',
     fontSize: 14,
-    lineHeight: 20,
+    // lineHeight: 20,
   },
 });

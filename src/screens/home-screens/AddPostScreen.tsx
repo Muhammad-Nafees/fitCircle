@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   Text,
   View,
@@ -21,7 +21,11 @@ import {
 import {openCamera} from 'react-native-image-crop-picker';
 
 import {useSelector} from 'react-redux';
-import {ParamListBase, useNavigation} from '@react-navigation/native';
+import {
+  ParamListBase,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import {Image as ImageCompress} from 'react-native-compressor';
 import LinearGradient from 'react-native-linear-gradient';
@@ -48,6 +52,8 @@ import {
 } from '../../api/home-module';
 import Toast from 'react-native-toast-message';
 import {CreatePostIcon} from '../../components/home-components/CreatePostIcon';
+import {createThumbnail} from 'react-native-create-thumbnail';
+import RNFS from 'react-native-fs';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
@@ -66,6 +72,9 @@ export const AddPostScreen = ({route}: any) => {
   >('transparent');
   const [mediaUri, setMediaUri] = useState<FileData | null>(null);
   const [videoUri, setVideoUri] = useState<FileData | null>();
+  const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(
+    undefined,
+  );
   const [titleInput, setTitleInput] = useState('');
   const [costValue, setCostValue] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -211,12 +220,21 @@ export const AddPostScreen = ({route}: any) => {
     setTextInputBackgroundColor('transparent');
     const options: CameraOptions = {
       mediaType: 'video',
-      videoQuality: 'high',
-      durationLimit: 120,
-      saveToPhotos: true,
+      videoQuality: 'low',
+      saveToPhotos: false,
+      durationLimit: 15,
     };
     await launchCamera(options, (response: ImagePickerResponse) => {
+      console.log(response, 'rrrrrr');
       if (response?.assets) {
+        if (response?.assets && response.assets.length > 0) {
+          const fileSizeInBytes = response.assets[0].fileSize;
+          if (fileSizeInBytes) {
+            const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+            console.log(`Video File Size: ${fileSizeInMB} MB`);
+          }
+        }
         setVideoUri({
           uri: response.assets[0].uri as string,
           name: response.assets[0].fileName as string,
@@ -225,6 +243,33 @@ export const AddPostScreen = ({route}: any) => {
       }
     });
   };
+  const fetchThumbnail = async () => {
+    console.log(videoUri, 'videoUri');
+    if (videoUri) {
+      try {
+        const response = await createThumbnail({
+          url: videoUri?.uri,
+          timeStamp: 1000,
+          format: 'jpeg',
+        });
+        setVideoThumbnail({
+          uri: response.path,
+          name: 'thumbnail',
+          type: 'image/jpeg',
+        });
+      } catch (err) {
+        console.log('err', err);
+      }
+    }
+  };
+  console.log(videoThumbnail, 'videoThumbnail');
+  useFocusEffect(
+    useCallback(() => {
+      if (videoUri) {
+        fetchThumbnail();
+      }
+    }, [videoUri]),
+  );
 
   const handleBackButtonPress = () => {
     setMediaUri(null);
@@ -264,7 +309,7 @@ export const AddPostScreen = ({route}: any) => {
           quality: 0.8,
         });
         compressedImage = {
-          name: mediaUri?.name as string,
+          name: 'Image' as string,
           type: mediaUri?.type as string,
           uri: result,
         };
@@ -523,6 +568,7 @@ export const AddPostScreen = ({route}: any) => {
         <View style={StyleSheet.absoluteFill}>
           <VideoPreviewScreen
             videoUri={videoUri}
+            videoThumbnail={videoThumbnail}
             handleBackButtonPress={handleBackButtonPress}
             username={userData?.username}
             handleNavigation={handleVideoNullify}

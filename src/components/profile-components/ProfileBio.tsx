@@ -62,7 +62,7 @@ export const ProfileBio = ({userData, isTrainerView, handleBioModal}: any) => {
             Social Media Accounts
           </Text>
           {
-            <TouchableOpacity onPress={handleBioModal}>
+            <TouchableOpacity onPress={() => console.log('bioModal')}>
               <Text
                 style={{
                   fontSize: 12,
@@ -110,7 +110,7 @@ export const styles = StyleSheet.create({
   bioText: {
     fontSize: 12,
     color: 'rgba(255, 255, 255, 0.5)',
-    lineHeight: 18.74,
+    // lineHeight: 18.74,
     fontWeight: '500',
   },
   heading: {

@@ -20,7 +20,7 @@ import PhysicalReadinessStackNavigator from './PhysicalReadinessNavigator';
 import ProfileScreen from '../screens/profile-screens';
 import {PackageDetailScreen} from '../screens/profile-screens/PackageDetailScreen';
 import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
-import MessageStackNavigator from './MessageStackNavigator';
+// import MessageStackNavigator from './MessageStackNavigator';
 import SettingsStackNavigator from './SettingsStackNavigator';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
 import HomeStackNavigator from './HomeStackNavigator';
@@ -36,6 +36,7 @@ interface ScreenContentProps {
   title: string;
 }
 
+const MessageStackNavigator = () => <ScreenContent title="Message" />;
 const ScreenContent = ({title}: ScreenContentProps) => (
   <View
     style={{
@@ -203,7 +204,7 @@ const HomeTabNavigator = () => {
               <CustomTabBarIcon focused={focused} icon="Message" />
             </View>
           ),
-          tabBarStyle: {display: 'none'},
+          // tabBarStyle: {display: 'none'},
         }}
       />
       <Tab.Screen
@@ -232,14 +233,14 @@ const HomeTabNavigator = () => {
           tabBarButton: () => null,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Notification"
         component={NotificationScreen}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="PackageDetail"
         component={PackageDetailScreen}
@@ -256,7 +257,7 @@ const HomeTabNavigator = () => {
           tabBarButton: () => null,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="TestDetails"
         component={TestDetailScreen}
         options={{
@@ -271,15 +272,15 @@ const HomeTabNavigator = () => {
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
-      />
-      <Tab.Screen
+      /> */}
+      {/* <Tab.Screen
         name="CreatePackageScreen"
         component={CreatePackage}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="PhysicalReadiness"
         component={PhysicalReadinessStackNavigator}
@@ -288,14 +289,14 @@ const HomeTabNavigator = () => {
           tabBarButton: () => null,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Settings"
         component={SettingsStackNavigator}
         options={{
           tabBarStyle: {display: 'none'},
           tabBarButton: () => null,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="ScheduleScreen"
         component={ScheduleStackNavigator}

@@ -106,7 +106,6 @@ export const ProfileHeaderContainer = ({
       },
     });
   };
-  console.log(isSeachUser, 'isSearch');
 
   return (
     <ImageBackground
@@ -124,13 +123,12 @@ export const ProfileHeaderContainer = ({
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
           {userData?.role !== 'user' && (
-            <TouchableOpacity onPress={navigateToSchedule}>
+            <TouchableOpacity onPress={() => console.log('Schedule')}>
               <TrainerProfileScheduleIcon />
             </TouchableOpacity>
           )}
           {isSeachUser && (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Settings' as never)}>
+            <TouchableOpacity onPress={() => console.log('Settings Pressed')}>
               <ProfileSettingsIcon />
             </TouchableOpacity>
           )}
@@ -189,7 +187,7 @@ export const ProfileHeaderContainer = ({
             //     default: 'community',
             //   })
             // }
-            >
+          >
             <Text style={styles.columnText}>
               {subscriberCount + userData?.subscribers?.length}
             </Text>
@@ -208,7 +206,7 @@ export const ProfileHeaderContainer = ({
           }>
           <Text style={styles.columnText}>
             {isSeachUser
-              ? profilePersonalData?.communitiesList !== undefined
+              ? profilePersonalData?.communitiesList
                 ? profilePersonalData?.communitiesList?.length
                 : 0
               : userData?.communities?.length}
@@ -231,7 +229,7 @@ export const ProfileHeaderContainer = ({
           }>
           <Text style={styles.columnText}>
             {isSeachUser
-              ? profilePersonalData?.followingsList !== undefined
+              ? profilePersonalData?.followingsList
                 ? profilePersonalData?.followingsList?.length
                 : 0
               : userData?.noOfFollowings}
@@ -254,7 +252,7 @@ export const ProfileHeaderContainer = ({
           }>
           <Text style={styles.columnText}>
             {isSeachUser
-              ? profilePersonalData?.followersList !== undefined
+              ? profilePersonalData?.followersList
                 ? profilePersonalData?.followersList?.length
                 : 0
               : userData?.noOfFollowers + count}
@@ -276,7 +274,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: verticalScale(25),
+    height: '62%',
   },
   email: {
     fontSize: 10,

@@ -21,6 +21,7 @@ type Mcq = {
 
 const VerificationSeven = ({navigation, route}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFormSavedModal, setIsFormSavedModal] = useState<boolean>(false);
   const {
     verificationOne,
     verificationTwo,
@@ -44,12 +45,12 @@ const VerificationSeven = ({navigation, route}: any) => {
     setIsLoading(true);
     try {
       const response = await addPhysicalActivity(reqData);
-      Toast.show({
-        type: 'success',
-        text1: `${response?.data?.message}`,
-      });
+      // Toast.show({
+      //   type: 'success',
+      //   text1: `${response?.data?.message}`,
+      // });
       setIsLoading(false);
-      navigation.navigate('Dashboard');
+      navigation.navigate('TdeeFromSavedScreen');
     } catch (error: any) {
       Toast.show({
         type: 'error',

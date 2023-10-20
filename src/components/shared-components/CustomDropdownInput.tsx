@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: verticalScale(8),
     zIndex: 1000,
-    height: verticalScale(47),
+    height: 45,
   },
   textInput: {
     flex: 1,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
-    height: verticalScale(47),
+    height: 45,
     zIndex: 9999,
   },
   dropdownIconContainer: {

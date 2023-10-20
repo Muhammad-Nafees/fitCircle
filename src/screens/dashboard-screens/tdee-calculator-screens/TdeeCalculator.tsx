@@ -251,7 +251,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                       style={{
                         position: 'absolute',
                         right: horizontalScale(12),
-                        top: verticalScale(34),
+                        top: 32,
                       }}
                     />
                     <DateTimePickerModal
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: moderateScale(12),
-    lineHeight: verticalScale(17),
+    // lineHeight: verticalScale(17),
     fontWeight: '700',
     color: '#ffffff',
   },

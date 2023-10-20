@@ -20,7 +20,9 @@ const CustomVideo = ({
   onPressVideo,
   onDeleteVideo,
   video,
+  isFavoriteVideo,
   isTrainerView,
+  isSearchProfile,
 }: any) => {
   const [videoThumbnail, setVideoThumbnail] = useState<any>(null);
   const fetchThumbnail = async () => {
@@ -77,9 +79,12 @@ const CustomVideo = ({
             },
           ]}>
           <TouchableOpacity
+            disabled={isFavoriteVideo || isSearchProfile}
             style={styles.cancelIconContainer}
             onPress={() => handleDeleteVideo(video._id)}>
-            <Image source={CancelIcon} style={styles.cancelIcon} />
+            {!isFavoriteVideo && (
+              <Image source={CancelIcon} style={styles.cancelIcon} />
+            )}
           </TouchableOpacity>
           <View style={{flex: 1}}>
             <View style={styles.playIconBackground}>
