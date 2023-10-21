@@ -74,7 +74,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
       console.log(error, 'From Creating Package!');
     }
     setIsLoading(false);
-
+    navigation.navigate('PackagesScreen');
     console.log(packageDetails, 'from handle CreatePackage!!');
   };
 
@@ -89,7 +89,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
               alignItems: 'center',
             }}>
             <TouchableOpacity
-              style={{paddingTop: 24, paddingBottom: 16}}
+              style={{paddingTop: 24, paddingBottom: 10}}
               onPress={() => navigation.goBack()}>
               <Image
                 source={ArrowBack}
@@ -117,11 +117,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
               </TouchableOpacity>
             )}
           </View>
-          <Text
-            style={[
-              styles.heading,
-              route.params.packageData && {marginBottom: verticalScale(14)},
-            ]}>
+          <Text style={[styles.heading, route.params.packageData]}>
             Details
           </Text>
           <View style={{marginHorizontal: -10}}>
@@ -233,6 +229,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
     color: 'white',
+    paddingBottom: verticalScale(12),
   },
   horizontalLine: {
     borderTopWidth: 1,

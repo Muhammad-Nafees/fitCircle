@@ -149,7 +149,7 @@ export const CustomTrainerPackage = ({
                     styles.ratingCount,
                     hidePriceAndPackage && {fontSize: 12},
                   ]}>
-                  {myPackage?.reviewsCount}
+                  ({myPackage?.reviewsCount})
                 </Text>
               </View>
               <Text
@@ -192,11 +192,13 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     marginRight: 10,
+    borderRadius: 10,
   },
   image: {
     resizeMode: 'cover',
     width: 100,
     height: 86,
+    borderRadius: 10,
   },
   packageInfo: {
     flex: 1,

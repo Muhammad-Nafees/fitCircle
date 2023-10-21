@@ -109,7 +109,7 @@ const PackagesScreen = ({navigation}: any) => {
         style={styles.modal}>
         <CustomConfirmationModal
           onCancel={handleDeleteConfirmed}
-          onConfirm={() => {}}
+          onConfirm={() => setIsModalVisible(false)}
           modalText="Are you sure you want to Delete this?"
           highlightedWord={'Delete'}
           confirmText="Return"
