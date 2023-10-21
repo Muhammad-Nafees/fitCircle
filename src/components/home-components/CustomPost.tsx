@@ -179,7 +179,7 @@ export const CustomPost = ({
         Keyboard.dismiss(); // This will open the keyboard
       }
       setEditableContent(contentToShow);
-    }, [post]),
+    }, [post, showFullContent]),
   );
 
   const newlineCount = post?.text?.split('\n');
@@ -201,7 +201,6 @@ export const CustomPost = ({
     setIsLoading(true);
     try {
       if (post?.media) {
-        console.log(post?.media, 'media');
         const cleanedText = editableContent.replace(/\n{3,}/g, '\n\n').trim();
         const reqData: Partial<IPost> = {
           text: cleanedText,
@@ -211,7 +210,7 @@ export const CustomPost = ({
             type: 'image/jpeg',
           },
           visibility: post?.visibility,
-          ...(post?.title !== '' && {title: post.title}),
+        title: post.title,
           ...(post?.cost !== 0 && {cost: post?.cost}),
         };
         const response = await editPostWithImage(reqData, post?._id);
@@ -390,7 +389,6 @@ export const CustomPost = ({
             {newlineCount?.length > 10 ? (
               <TouchableOpacity onPress={toggleShowMore}>
                 <Text style={{color: 'blue'}}>
-                  {/* See More */}
                   {showFullContent ? 'See Less' : 'See More'}
                 </Text>
               </TouchableOpacity>
