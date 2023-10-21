@@ -77,9 +77,17 @@ export const createProfileSchema = (userRole: any) => {
         return true;
       },
     }),
-    physicalInformation: Yup.string()
-      .required('Physical Information is required!')
-      .matches(/^[A-Za-z][A-Za-z\s]*$/, 'Invalid input'),
+    physicalInformation: Yup.string().test({
+      name: 'physicalInformation',
+      exclusive: true,
+      message: 'Physical Information is required',
+      test: value => {
+        if (userRole === 'user') {
+          return value !== undefined && value !== '';
+        }
+        return true;
+      },
+    }),
     dob: Yup.string()
       .matches(
         /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
@@ -109,12 +117,13 @@ export const createProfileSchema = (userRole: any) => {
 
         return true;
       }),
+
     hourlyRate: Yup.string().test({
       name: 'hourlyRate',
       exclusive: true,
       message: 'Hourly rate is required!',
       test: function (value) {
-        if (userRole === 'trainer') {
+        if (userRole !== 'user') {
           if (value === '0') {
             return this.createError({
               path: 'hourlyRate',

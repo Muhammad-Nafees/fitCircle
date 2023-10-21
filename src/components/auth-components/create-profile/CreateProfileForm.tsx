@@ -245,22 +245,20 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               setFieldError={setFieldError}
               fieldName="bio"
             />
-            {userRole == 'user' && (
-              <CustomPhoneInput
-                disabled={true}
-                value={userData?.phone}
-                error={errors.phone}
-                touched={touched.phone}
-                handleChange={handleChange('phone')}
-                setFieldValue={setFieldValue}
-                phoneInput={phoneInput}
-                setIsError={setIsError}
-                setFieldError={setFieldError}
-                isError={isError}
-                setPhoneCode={setPhoneCode}
-                countryCode={userData?.countryCode}
-              />
-            )}
+            <CustomPhoneInput
+              disabled={true}
+              value={userData?.phone}
+              error={errors.phone}
+              touched={touched.phone}
+              handleChange={handleChange('phone')}
+              setFieldValue={setFieldValue}
+              phoneInput={phoneInput}
+              setIsError={setIsError}
+              setFieldError={setFieldError}
+              isError={isError}
+              setPhoneCode={setPhoneCode}
+              countryCode={userData?.countryCode}
+            />
             <CustomSelect
               label="Country"
               selectedValue={values.country}
@@ -297,17 +295,19 @@ const CreateProfileForm = ({profilePicture}: Props) => {
                 fieldName="gender"
               />
             )}
-            <CustomInput
-              label="Physical Information"
-              placeholder="Enter"
-              value={values.physicalInformation}
-              error={errors.physicalInformation}
-              touched={touched.physicalInformation}
-              initialTouched={true}
-              handleChange={handleChange('physicalInformation')}
-              setFieldError={setFieldError}
-              fieldName="physicalInformation"
-            />
+            {userRole === 'user' && (
+              <CustomInput
+                label="Physical Information"
+                placeholder="Enter"
+                value={values.physicalInformation}
+                error={errors.physicalInformation}
+                touched={touched.physicalInformation}
+                initialTouched={true}
+                handleChange={handleChange('physicalInformation')}
+                setFieldError={setFieldError}
+                fieldName="physicalInformation"
+              />
+            )}
             <TouchableWithoutFeedback
               onPress={() => setDatePickerVisible(true)}>
               <View style={{position: 'relative'}}>
@@ -361,6 +361,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
               />
             )}
           </View>
+
           <View style={styles.button}>
             <CustomButton onPress={handleSubmit}>Continue</CustomButton>
           </View>

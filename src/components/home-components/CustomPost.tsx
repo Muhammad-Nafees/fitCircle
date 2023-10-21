@@ -80,6 +80,7 @@ export const CustomPost = ({
   const navigation = useNavigation();
 
   const [editableContent, setEditableContent] = useState('');
+  const [editableTitle, setEditableTitle] = useState(post?.title);
 
   const isLocked = post?.cost && post?.cost > 0;
   useFocusEffect(
@@ -147,7 +148,7 @@ export const CustomPost = ({
     (post?.hexCode && post.hexCode?.length === 2) || post.hexCode?.length === 3;
 
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownOptions = post?.media ? ['Delete'] : ['Edit', 'Delete'];
+  const dropdownOptions = ['Edit', 'Delete'];
   const dispatch = useDispatch();
   const editInputRef = useRef(null);
 
@@ -179,7 +180,7 @@ export const CustomPost = ({
         Keyboard.dismiss(); // This will open the keyboard
       }
       setEditableContent(contentToShow);
-    }, [post]),
+    }, [post, showFullContent]),
   );
 
   const newlineCount = post?.text?.split('\n');
@@ -190,18 +191,23 @@ export const CustomPost = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleEditPost = async (post: any) => {
-    console.log(post);
     if (editableContent == '') {
       Toast.show({
         type: 'error',
-        text1: `Add text to post a photo!`,
+        text1: `Add text to update a photo!`,
+      });
+      return;
+    }
+    if (editableTitle == '') {
+      Toast.show({
+        type: 'error',
+        text1: `Add title to update a photo!`,
       });
       return;
     }
     setIsLoading(true);
     try {
       if (post?.media) {
-        console.log(post?.media, 'media');
         const cleanedText = editableContent.replace(/\n{3,}/g, '\n\n').trim();
         const reqData: Partial<IPost> = {
           text: cleanedText,
@@ -211,23 +217,22 @@ export const CustomPost = ({
             type: 'image/jpeg',
           },
           visibility: post?.visibility,
-          ...(post?.title !== '' && {title: post.title}),
-          ...(post?.cost !== 0 && {cost: post?.cost}),
+          title: editableTitle,
+          cost: post?.cost,
         };
         const response = await editPostWithImage(reqData, post?._id);
-        console.log(response?.data, 'response!');
         Toast.show({
           type: 'success',
           text1: `${response?.data.message}`,
         });
+        navigation.goBack();
       } else {
         const cleanedText = editableContent.replace(/\n{3,}/g, '\n\n').trim();
         const reqData: Partial<IPost> = {
           text: cleanedText,
           hexCode: post?.hexCode,
-
           visibility: post?.visibility,
-          ...(post?.cost !== 0 && {cost: post?.cost}),
+          cost: post?.cost,
         };
         const response = await editPostWithContent(reqData, post?._id);
         Toast.show({
@@ -377,6 +382,7 @@ export const CustomPost = ({
           <ScrollView scrollEnabled={true} nestedScrollEnabled={true}>
             {isGradient && isEditing ? (
               <TextInput
+                editable={!isLoading}
                 autoFocus={true}
                 ref={editInputRef}
                 style={{color: 'white'}}
@@ -390,7 +396,6 @@ export const CustomPost = ({
             {newlineCount?.length > 10 ? (
               <TouchableOpacity onPress={toggleShowMore}>
                 <Text style={{color: 'blue'}}>
-                  {/* See More */}
                   {showFullContent ? 'See Less' : 'See More'}
                 </Text>
               </TouchableOpacity>
@@ -423,17 +428,28 @@ export const CustomPost = ({
             },
           ]}>
           <View style={styles.content}>
-            {post?.title && (
+            {editableTitle !== null && editableTitle !== null && isEditing ? (
+              <TextInput
+                editable={!isLoading}
+                autoFocus={true}
+                ref={editInputRef}
+                style={{color: 'white'}}
+                onChangeText={text => setEditableTitle(text)}
+                value={editableTitle}
+                multiline={true}
+              />
+            ) : editableTitle !== null && editableTitle !== null ? (
               <Text
                 style={[
                   styles.contentText,
                   {fontWeight: '600', fontSize: 16, paddingBottom: 20},
                 ]}>
-                {post?.title}
+                {editableTitle}
               </Text>
-            )}
+            ) : null}
             {isEditing ? (
               <TextInput
+                editable={!isLoading}
                 autoFocus={true}
                 ref={editInputRef}
                 style={{color: 'white'}}

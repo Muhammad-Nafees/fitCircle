@@ -369,6 +369,7 @@ export const VideoPreviewScreen = ({
         </View>
         <View style={styles.iconsContainer}>
           <TouchableOpacity
+            disabled={isLoading}
             onPress={() => setThumbnailOpen(!thumbnailOpen)}
             style={styles.singleIconContainer}>
             <Text style={[styles.iconText]}>
@@ -378,6 +379,7 @@ export const VideoPreviewScreen = ({
 
           {!thumbnailOpen && (
             <TouchableOpacity
+              disabled={isLoading}
               style={styles.singleIconContainer}
               onPress={handleTextModal}>
               <TextIcon />
@@ -386,27 +388,29 @@ export const VideoPreviewScreen = ({
           )}
           {isBoostAvailable && !thumbnailOpen && (
             <TouchableOpacity
+              disabled={isLoading}
               style={styles.singleIconContainer}
               onPress={handleBoostModal}>
               <BoostIcon color={payment ? '#209BCC' : 'white'} />
             </TouchableOpacity>
           )}
         </View>
-
-        <Modal
-          onBackButtonPress={() => setIsModalVisible(false)}
-          isVisible={isModalVisible}
-          style={styles.bottomModal}
-          backdropOpacity={0.3}>
-          <View style={styles.modal}>
-            <WhoCanSeeThisPost
-              selectedOption={selectedOption}
-              onSelectOption={handleOptionSelect}
-              modalClose={handleAvatarButtonPress}
-              onSelectCost={onSelectCost}
-            />
-          </View>
-        </Modal>
+        {!isLoading && (
+          <Modal
+            onBackButtonPress={() => setIsModalVisible(false)}
+            isVisible={isModalVisible}
+            style={styles.bottomModal}
+            backdropOpacity={0.3}>
+            <View style={styles.modal}>
+              <WhoCanSeeThisPost
+                selectedOption={selectedOption}
+                onSelectOption={handleOptionSelect}
+                modalClose={handleAvatarButtonPress}
+                onSelectCost={onSelectCost}
+              />
+            </View>
+          </Modal>
+        )}
         <Modal
           onBackButtonPress={() => setBoostModalVisible(false)}
           isVisible={isBoostModalVisible}
@@ -435,6 +439,7 @@ export const VideoPreviewScreen = ({
             <View style={styles.textInputModal}>
               <TextInput
                 placeholder="Type here..."
+                value={content}
                 placeholderTextColor="#fff"
                 style={styles.modalInput}
                 multiline={true}
@@ -479,6 +484,7 @@ export const VideoPreviewScreen = ({
                 placeholder="Add title here..."
                 placeholderTextColor="#fff"
                 onChangeText={handleTitleInputChange}
+                editable={!isLoading}
                 multiline
               />
               <TouchableOpacity
