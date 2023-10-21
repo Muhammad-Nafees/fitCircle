@@ -111,7 +111,7 @@ const CreateMealPlan = ({navigation}: any) => {
         />
       </ScrollView>
       <View style={styles.buttonContainer}>
-        <CustomButton onPress={() => console.log('UploadMealPlan')}>
+        <CustomButton onPress={() => navigation.navigate('UploadMealPlan')}>
           Add Meal Plan
         </CustomButton>
       </View>

@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     alignItems: 'center',
     alignSelf: 'center',
-    marginHorizontal: 35,
+    marginHorizontal: horizontalScale(35),
     height: 175,
     width: 290,
     justifyContent: 'space-between',
