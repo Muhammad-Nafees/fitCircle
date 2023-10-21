@@ -232,7 +232,7 @@ const ProfileScreen = ({navigation, route}: any) => {
 
   const fetchUserFavoriteVideos = async () => {
     try {
-      const response = await getUserFavoriteVideos(userSearchId as string);
+      const response = await getUserFavoriteVideos();
       // userSearchId as string,
       // videoPage,
       // limit,
@@ -333,7 +333,9 @@ const ProfileScreen = ({navigation, route}: any) => {
     if (shouldFetchPostsInitially) {
       fetchUserPosts();
       fetchUserVideos();
-      fetchUserFavoriteVideos();
+      if (!searchUserProfile?._id) {
+        fetchUserFavoriteVideos();
+      }
       fetchFollowersList();
       fetchFollowingList();
       fetchCommunityList();
@@ -543,7 +545,7 @@ const ProfileScreen = ({navigation, route}: any) => {
           <View style={{width: '100%'}}>
             {myFavoriteVideos === undefined ? (
               <Text style={{fontSize: 16, color: 'white', padding: 20}}>
-                No Favorites vidoes!
+                No Favorites vidoes found!
               </Text>
             ) : (
               <FlatList
