@@ -194,8 +194,8 @@ export const addPostToFavorite = async (postId: string) => {
   return response;
 };
 
-export const getUserFavoriteVideos = async (userId: string) => {
-  const response = await api.get(`post/favorites?userId=${userId}`);
+export const getUserFavoriteVideos = async () => {
+  const response = await api.get(`post/favorites`);
   return response;
 };
 
