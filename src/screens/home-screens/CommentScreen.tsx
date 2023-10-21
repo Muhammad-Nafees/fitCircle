@@ -47,6 +47,8 @@ const CommentsScreen = ({route, navigation}: any) => {
   );
   const profileScreen = route?.params?.profileScreen;
   const [comments, setComments] = useState<IComment[]>();
+  const [nestedComments, setNestedComments] = useState<IComment[]>();
+
   const [commentsCount, setCommentsCount] = useState<null | number>(0);
   const [loading, setLoading] = useState(false);
   const [commentScreenActive, setCommentScreenActive] = useState(false);
@@ -91,6 +93,7 @@ const CommentsScreen = ({route, navigation}: any) => {
       setPage(1);
     }, [comments]),
   );
+  const [allData, setAllData] = useState<[]>();
 
   useFocusEffect(
     useCallback(() => {
@@ -110,27 +113,47 @@ const CommentsScreen = ({route, navigation}: any) => {
               setNoComments(false);
             }
           }, 2000);
+          console.log(data);
 
-          const sortedData = data?.comments.sort((sortA: any, sortB: any) => {
+          const sortedData = data?.sort((sortA: any, sortB: any) => {
             const dateA: any = new Date(sortA.createdAt);
             const dateB: any = new Date(sortB.createdAt);
-            return dateA - dateB;
+            return dateB - dateA;
           });
+          setAllData(sortedData);
+          const parentComments = sortedData?.filter(comment => comment);
+          const childComments = sortedData?.filter(comment => comment.parent);
+
+          childComments?.forEach(childComment => {
+            const parentComment = parentComments?.find(
+              parent => parent._id === childComment.parent,
+            );
+            if (parentComment.nestedComments?.length > 0) {
+              const previousComments = [
+                ...parentComment.nestedComments,
+                childComment,
+              ];
+              return previousComments;
+            } else {
+              parentComment.nestedComments = parentComment.nestedComments || [];
+              parentComment.nestedComments.push(childComment);
+            }
+          });
+
+          console.log(parentComments);
 
           if (comments && loadMore) {
             setComments((prevComments: any) => {
-              return [...sortedData];
+              return [...prevComments, parentComments];
             });
           } else {
-            setComments(sortedData);
+            setComments(parentComments.slice(0, 2));
           }
-          dispatch(setCommentCount(sortedData?.length));
-          console.log(sortedData.length);
-          setCommentsCount(data?.pagination?.totalItems);
+          setCommentsCount(data?.length);
           setLoadMore(false);
           setHasMoreComments(data?.pagination?.hasNextPage);
         } catch (error: any) {
-          console.log('errorfrom fetching comments', error?.response?.data);
+          console.log('errorfrom fetching comments', error);
         }
         setLoading(false);
       };
@@ -139,11 +162,12 @@ const CommentsScreen = ({route, navigation}: any) => {
   );
 
   const handleLoadMoreComments = () => {
-    if (hasMoreComments) {
-      setLoadMore(true);
-      setPage(prevPage => prevPage + 1);
-      setLimit(prevLimit => prevLimit + 10);
-    }
+    // if (hasMoreComments) {
+    //   setPage(prevPage => prevPage + 1);
+    //   setLimit(prevLimit => prevLimit + 10);
+    // }
+    setLoadMore(true);
+    setComments(allData);
   };
 
   useEffect(() => {
@@ -270,6 +294,7 @@ const CommentsScreen = ({route, navigation}: any) => {
               // ) :
               comments && comments?.length > 0 ? (
                 <Comment
+                isLoadMore={loadMore}
                   allComments={comments}
                   commentsCount={commentsCount}
                   onLoadComments={handleLoadMoreComments}

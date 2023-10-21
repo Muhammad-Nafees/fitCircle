@@ -16,6 +16,7 @@ interface Props {
   hasMoreComments: boolean;
   onReply: (id: string) => void;
   onLoadComments: () => void;
+  isLoadMore?: boolean;
 }
 
 const Comment = ({
@@ -24,10 +25,11 @@ const Comment = ({
   hasMoreComments,
   onReply,
   onLoadComments,
+  isLoadMore,
 }: Props) => {
   return (
     <View style={styles.container}>
-      {hasMoreComments && commentsCount > 2 && (
+      {!isLoadMore && commentsCount > 2 && (
         <TouchableOpacity onPress={onLoadComments}>
           <Text
             style={{

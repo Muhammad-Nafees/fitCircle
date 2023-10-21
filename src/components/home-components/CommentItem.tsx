@@ -68,9 +68,9 @@ const CommentItem = ({comment, onReply, isNested}: Props) => {
             {timeDifference(comment.createdAt)}
           </Text>
 
-          <TouchableOpacity onPress={() => onReply(comment?._id)}>
+          {/* <TouchableOpacity onPress={() => onReply(comment?._id)}>
             <Text style={styles.replyText}>Reply</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
       <ImagePreview
