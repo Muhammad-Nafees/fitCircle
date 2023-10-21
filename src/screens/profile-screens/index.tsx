@@ -346,7 +346,7 @@ const ProfileScreen = ({navigation, route}: any) => {
         fetchMealPlansByNutritionist();
       }
       if (
-        searchUserProfile?.role === 'trainer' ||
+        searchUserProfile?.role === 'trainer'  ||
         profileData?.role === 'trainer'
       ) {
         fetchPackagesByTrainer();
