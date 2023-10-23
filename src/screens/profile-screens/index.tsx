@@ -111,7 +111,6 @@ const ProfileScreen = ({navigation, route}: any) => {
   );
   const profilePersonalData = useSelector((state: RootState) => state.profile);
   const [isSearchProfile, setIsSearchProfile] = useState<boolean>();
-  console.log(isSearchProfile, 'iddddddd');
 
   useEffect(() => {
     if (searchUserProfile && searchUserProfile._id) {
@@ -171,8 +170,7 @@ const ProfileScreen = ({navigation, route}: any) => {
   const handleFavoriteDialog = () => {
     setRemoveModal(!removeModal);
   };
-  console.log(userData?._id, 'user');
-  console.log(searchUserProfile?._id, 'prof');
+
 
   const fetchUserPosts = async () => {
     setIsLoading(true);
@@ -303,7 +301,6 @@ const ProfileScreen = ({navigation, route}: any) => {
       );
       const data = response?.data?.data;
       const mealPlans = data?.mealPlans;
-      console.log(mealPlans, 'mealslsdasjndasjkdkjadjasksnjdnjkasjnk');
       setMealPlans(mealPlans);
     } catch (error: any) {
       console.log(error?.response?.data, 'From Meal plans!');
@@ -311,7 +308,6 @@ const ProfileScreen = ({navigation, route}: any) => {
     setIsLoading(false);
   };
   // if logged in user or search user is trainer
-  console.log(myFavoriteVideos, 'myfavvvv');
 
   const fetchPackagesByTrainer = async () => {
     setIsLoading(true);
@@ -406,7 +402,6 @@ const ProfileScreen = ({navigation, route}: any) => {
       try {
         const response = await deleteFavoritePost(postId);
 
-        console.log(response?.data, 'sss');
         Toast.show({
           type: 'success',
           text1: `${response?.data?.message}`,
@@ -489,7 +484,6 @@ const ProfileScreen = ({navigation, route}: any) => {
               ]}
               onPress={() => {
                 setSelectedOption('Favorites');
-                console.log(userId);
               }}>
               <Text style={styles.optionText}>Favorites</Text>
             </TouchableOpacity>

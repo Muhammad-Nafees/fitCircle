@@ -28,24 +28,30 @@ export const editPostWithImage = async (
   reqData: Partial<IPost>,
   postId: string,
 ) => {
-  let formData = new FormData();
-  formData.append('text', reqData?.text);
-  formData.append('media', reqData?.media);
-  formData.append('visibility', reqData?.visibility);
-  if (reqData?.cost) {
-    formData.append('cost', reqData.cost);
-  }
-  if (reqData?.title) {
-    formData.append('title', reqData.title);
-  }
+  try {
+    let formData = new FormData();
+    formData.append('text', reqData?.text);
+    formData.append('media', reqData?.media);
+    formData.append('visibility', reqData?.visibility);
+    if (reqData?.cost) {
+      formData.append('cost', reqData.cost);
+    }
+    if (reqData?.title) {
+      formData.append('title', reqData.title);
+    }
+    console.log(formData, postId, 'FROM APIII CALLLLLLL');
 
-  const response = await api.put(`/post/update/${postId}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+    const response = await api.put(`post/update/${postId}`, formData, {
+      // headers: {
+      //   'Content-Type': 'multipart/form-data',
+      // },
+    });
+    console.log(response?.data, 'respo from appppppiiiiik');
 
-  return response;
+    return response;
+  } catch (error) {
+    console.error('Error in editPostWithImage: ERROR', error);
+  }
 };
 
 export const createPostWithVideo = async (reqData: Partial<IPost>) => {
@@ -106,6 +112,7 @@ export const editPostWithContent = async (
   reqData: Partial<IPost>,
   postId: string,
 ) => {
+  console.log(postId,"id")
   let formData = new FormData();
   formData.append('text', reqData?.text);
   if (reqData?.cost) {
@@ -114,11 +121,15 @@ export const editPostWithContent = async (
   if (reqData?.visibility) {
     formData.append('visibility', reqData?.visibility);
   }
-  if (reqData?.hexCode?.length == 7) {
-    formData.append('hexCode[]', reqData.hexCode);
+  if (reqData?.hexCode.length === 0) {
+    formData.append('hexCode[]', '#444444');
   } else {
-    for (let i = 0; i < reqData.hexCode.length; i++) {
-      formData.append('hexCode[]', reqData.hexCode[i]);
+    if (reqData?.hexCode?.length == 7) {
+      formData.append('hexCode[]', reqData.hexCode);
+    } else {
+      for (let i = 0; i < reqData.hexCode.length; i++) {
+        formData.append('hexCode[]', reqData.hexCode[i]);
+      }
     }
   }
 

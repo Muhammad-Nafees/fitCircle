@@ -13,7 +13,6 @@ import CommentItem from './CommentItem';
 interface Props {
   allComments: any;
   commentsCount: number | any;
-  hasMoreComments: boolean;
   onReply: (id: string) => void;
   onLoadComments: () => void;
   isLoadMore?: boolean;
@@ -22,14 +21,26 @@ interface Props {
 const Comment = ({
   allComments,
   commentsCount,
-  hasMoreComments,
   onReply,
   onLoadComments,
   isLoadMore,
 }: Props) => {
+  const totalCommentsLength = allComments.length;
+
+  const nestedCommentsLength = allComments.reduce(
+    (count: number, comment: IComment) => {
+      return (
+        count + (comment.nestedComments ? comment.nestedComments.length : 0)
+      );
+    },
+    0,
+  );
+
+  const totalLength = totalCommentsLength + nestedCommentsLength;
+
   return (
     <View style={styles.container}>
-      {!isLoadMore && commentsCount > 2 && (
+      {!isLoadMore && totalLength !== commentsCount && commentsCount > 2 && (
         <TouchableOpacity onPress={onLoadComments}>
           <Text
             style={{
@@ -38,23 +49,30 @@ const Comment = ({
               fontSize: 12,
             }}>
             {' '}
-            View {commentsCount - 2} more comments
+            View {commentsCount - totalLength} more comments
           </Text>
         </TouchableOpacity>
       )}
-      {allComments?.map((comment: any, index: number) => (
-        <View key={comment._id + index} style={{marginTop: 8}}>
-          <CommentItem comment={comment} index={index} onReply={onReply} />
+      {allComments?.map((parentComment: any, index: number) => (
+        <View key={parentComment._id + index} style={{marginTop: 8}}>
+          <CommentItem
+            comment={parentComment}
+            index={index}
+            onReply={onReply}
+          />
 
-          {comment?.nestedComments?.length > 0 &&
-            comment?.nestedComments?.map((comment: any, index: number) => (
-              <CommentItem
-                comment={comment}
-                index={index}
-                onReply={onReply}
-                isNested={true}
-              />
-            ))}
+          {parentComment?.nestedComments?.length > 0 &&
+            parentComment?.nestedComments?.map(
+              (comment: any, index: number) => (
+                <CommentItem
+                  comment={comment}
+                  index={index}
+                  onReply={onReply}
+                  parentComment={parentComment}
+                  isNested={true}
+                />
+              ),
+            )}
         </View>
       ))}
     </View>

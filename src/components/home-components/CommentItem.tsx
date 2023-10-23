@@ -18,10 +18,11 @@ interface Props {
   comment: IComment;
   index: number;
   isNested?: boolean;
-  onReply: (id: string) => void;
+  parentComment?: IComment | any;
+  onReply?: (id: string) => void;
 }
 
-const CommentItem = ({comment, onReply, isNested}: Props) => {
+const CommentItem = ({comment, onReply, isNested, parentComment}: Props) => {
   const width = Dimensions.get('window').width;
 
   const [isImageFullscreen, setImageFullscreen] = useState<boolean>(false);
@@ -68,9 +69,10 @@ const CommentItem = ({comment, onReply, isNested}: Props) => {
             {timeDifference(comment.createdAt)}
           </Text>
 
-          {/* <TouchableOpacity onPress={() => onReply(comment?._id)}>
+          <TouchableOpacity
+            onPress={() => onReply(isNested ? parentComment._id : comment._id)}>
             <Text style={styles.replyText}>Reply</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
       </View>
       <ImagePreview

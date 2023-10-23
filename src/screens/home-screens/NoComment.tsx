@@ -12,7 +12,7 @@ const NoComment = () => {
         height: verticalScale(340),
         paddingBottom: 0,
       }}>
-      <Entypo name="chat" color={'#898c93'} size={120} />
+      <Entypo name="chat" color={'#898c93'} size={100} />
       <Text
         style={{
           fontSize: 14,
