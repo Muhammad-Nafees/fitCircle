@@ -122,7 +122,6 @@ export const CustomPost = ({
     try {
       const response = await sharePost(post._id);
       console.log(response?.data?.message);
-      console.log(response?.data);
       setShareModalVisible(false);
       Toast.show({
         type: 'success',
@@ -168,8 +167,8 @@ export const CustomPost = ({
       const thresholdLines = post?.media
         ? 7
         : route.name == 'CommentsScreen'
-        ? 12
-        : 15; // Set your threshold here
+        ? 10
+        : 10; // Set your threshold here
       const contentToShow = post?.text
         ? showFullContent
           ? post.text
@@ -190,74 +189,119 @@ export const CustomPost = ({
   };
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const editPostWithoutMedia = async (post: any, cleanedText: string) => {
+    try {
+      const reqData: Partial<IPost> = {
+        text: cleanedText,
+        hexCode: post?.hexCode,
+        visibility: post?.visibility,
+        cost: post?.cost,
+      };
+      const response = await editPostWithContent(reqData, post?._id);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+      return response;
+    } catch (error: any) {
+      console.log(error?.response.data);
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data?.message}`,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.message}!`,
+        });
+      }
+    }
+  };
+
+  const editPostWithMedia = async (post: any, cleanedText: string) => {
+    console.log(`${s3bucketReference}/${post?.media}`);
+    const reqData: Partial<IPost> = {
+      text: cleanedText,
+      visibility: post.visibility,
+      title: editableTitle,
+      cost: post.cost,
+    };
+    try {
+      const response = await editPostWithContent(reqData, post?._id);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+      return response;
+    } catch (error: any) {
+      console.log(error, 'EEEEEERRRRORRRRR');
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data?.message}`,
+        });
+      } else {
+        console.log(error, 'EEEEEERRRRORRRRR');
+
+        Toast.show({
+          type: 'error',
+          text1: `${error?.message}`,
+        });
+      }
+    }
+  };
+
   const handleEditPost = async (post: any) => {
     if (editableContent == '') {
       Toast.show({
         type: 'error',
-        text1: `Add text to update a photo!`,
+        text1: `Add text to update!`,
       });
       return;
     }
     if (editableTitle == '') {
       Toast.show({
         type: 'error',
-        text1: `Add title to update a photo!`,
+        text1: `Add title to update!`,
       });
       return;
     }
     setIsLoading(true);
+
     try {
-      if (post?.media) {
-        const cleanedText = editableContent.replace(/\n{3,}/g, '\n\n').trim();
-        const reqData: Partial<IPost> = {
-          text: cleanedText,
-          media: {
-            uri: `${s3bucketReference}/${post?.media}`,
-            name: 'image',
-            type: 'image/jpeg',
-          },
-          visibility: post?.visibility,
-          title: editableTitle,
-          cost: post?.cost,
-        };
-        const response = await editPostWithImage(reqData, post?._id);
-        Toast.show({
-          type: 'success',
-          text1: `${response?.data.message}`,
-        });
-        navigation.goBack();
-      } else {
-        const cleanedText = editableContent.replace(/\n{3,}/g, '\n\n').trim();
-        const reqData: Partial<IPost> = {
-          text: cleanedText,
-          hexCode: post?.hexCode,
-          visibility: post?.visibility,
-          cost: post?.cost,
-        };
-        const response = await editPostWithContent(reqData, post?._id);
-        Toast.show({
-          type: 'success',
-          text1: `${response?.data.message}`,
-        });
-        navigation.goBack();
-      }
+      const cleanedText = editableContent.replace(/\n{3,}/g, '\n\n').trim();
+      const reqData: Partial<IPost> = {
+        text: cleanedText,
+        hexCode: post?.hexCode,
+        visibility: post?.visibility,
+        cost: post?.cost,
+      };
+      console.log(reqData,"REQ")
+      const response = await editPostWithContent(reqData, post?._id);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+      navigation.goBack();
+
       if (editInputRef.current) {
-        editInputRef.current.blur(); // This will remove focus from the TextInput
+        editInputRef.current.blur();
       }
-      setIsLoading(false);
     } catch (error: any) {
       console.log(error?.response.data);
       if (error?.response?.data?.message) {
         Toast.show({
           type: 'error',
-          text1: `${error?.response?.data.message}`,
+          text1: `${error?.response?.data?.message}`,
         });
       } else {
         Toast.show({
           type: 'error',
-          text1: `${error.message}!`,
+          text1: `${error?.message}!`,
         });
       }
+    } finally {
       setIsLoading(false);
     }
   };

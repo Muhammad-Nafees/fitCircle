@@ -47,7 +47,7 @@ const CommentsScreen = ({route, navigation}: any) => {
   );
   const profileScreen = route?.params?.profileScreen;
   const [comments, setComments] = useState<IComment[]>();
-  const [nestedComments, setNestedComments] = useState<IComment[]>();
+  const [allComments, setAllComments] = useState<IComment[]>();
 
   const [commentsCount, setCommentsCount] = useState<null | number>(0);
   const [loading, setLoading] = useState(false);
@@ -64,9 +64,11 @@ const CommentsScreen = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(2);
-  const [hasMoreComments, setHasMoreComments] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState<boolean>(false);
-  const [noComments, setNoComments] = useState<boolean>(true);
+  const [isCommentsLoading, setIsCommentsLoading] = useState<boolean>(false);
+  const [isScrollToBottom, setIsScrollToBottom] = useState<boolean>(false);
+
+  const [noComments, setNoComments] = useState<boolean>(false);
 
   const commentRef = useRef();
 
@@ -90,15 +92,8 @@ const CommentsScreen = ({route, navigation}: any) => {
 
   useFocusEffect(
     useCallback(() => {
-      setPage(1);
-    }, [comments]),
-  );
-  const [allData, setAllData] = useState<[]>();
-
-  useFocusEffect(
-    useCallback(() => {
       const getComments = async () => {
-        setLoading(true);
+        setIsCommentsLoading(true);
         try {
           const response = await getAllCommentsByPosts(
             selectedPost._id as string,
@@ -106,68 +101,58 @@ const CommentsScreen = ({route, navigation}: any) => {
             page,
           );
           const data = response?.data?.data;
-          setTimeout(() => {
-            if (data?.comments?.length === 0) {
-              setNoComments(true);
-            } else {
-              setNoComments(false);
-            }
-          }, 2000);
-          console.log(data);
 
           const sortedData = data?.sort((sortA: any, sortB: any) => {
             const dateA: any = new Date(sortA.createdAt);
             const dateB: any = new Date(sortB.createdAt);
-            return dateB - dateA;
+            return dateA - dateB;
           });
-          setAllData(sortedData);
-          const parentComments = sortedData?.filter(comment => comment);
-          const childComments = sortedData?.filter(comment => comment.parent);
 
-          childComments?.forEach(childComment => {
-            const parentComment = parentComments?.find(
-              parent => parent._id === childComment.parent,
-            );
-            if (parentComment.nestedComments?.length > 0) {
-              const previousComments = [
-                ...parentComment.nestedComments,
-                childComment,
-              ];
-              return previousComments;
+          const organizedComments: any = [];
+
+          sortedData?.forEach((comment, index) => {
+            if (!comment.parent) {
+              // This comment does not have a parent, add it to the organized list
+              comment.nestedComments = [];
+              organizedComments.push(comment);
             } else {
-              parentComment.nestedComments = parentComment.nestedComments || [];
-              parentComment.nestedComments.push(childComment);
+              const parentComment = organizedComments.find(
+                c => c._id === comment.parent,
+              );
+
+              if (parentComment) {
+                parentComment.nestedComments =
+                  parentComment.nestedComments || [];
+                parentComment.nestedComments.push(comment);
+              }
             }
           });
-
-          console.log(parentComments);
-
           if (comments && loadMore) {
-            setComments((prevComments: any) => {
-              return [...prevComments, parentComments];
-            });
+            setLoadMore(true);
+            setComments(organizedComments);
           } else {
-            setComments(parentComments.slice(0, 2));
+            setComments(organizedComments.slice(-2));
           }
+
+          setAllComments(organizedComments);
           setCommentsCount(data?.length);
-          setLoadMore(false);
-          setHasMoreComments(data?.pagination?.hasNextPage);
         } catch (error: any) {
           console.log('errorfrom fetching comments', error);
         }
-        setLoading(false);
+        setIsCommentsLoading(false);
       };
       getComments();
-    }, [isLoading, page]),
+    }, [isLoading]),
   );
 
   const handleLoadMoreComments = () => {
-    // if (hasMoreComments) {
-    //   setPage(prevPage => prevPage + 1);
-    //   setLimit(prevLimit => prevLimit + 10);
-    // }
     setLoadMore(true);
-    setComments(allData);
+    const sortedData = allComments?.sort((sortA: any, sortB: any) => {
+      const dateA: any = new Date(sortA.createdAt);
+      const dateB: any = new Date(sortB.createdAt);
+      return dateA - dateB;
+    });
+    setComments(sortedData);
   };
 
   useEffect(() => {
@@ -184,12 +169,6 @@ const CommentsScreen = ({route, navigation}: any) => {
     return () => backHandler.remove();
   }, [navigation, comments]);
 
-  const handleImageOpen = (imageUri: any) => {
-    console.log(mediaUri, 'media');
-    setMedia(imageUri);
-    setImageFullscreen(true);
-  };
-
   const handleImageClose = () => {
     setImageFullscreen(false);
     setMedia(null);
@@ -201,6 +180,11 @@ const CommentsScreen = ({route, navigation}: any) => {
         text1: `Add a comment message!`,
       });
       return;
+    }
+    if (isReplying) {
+      setIsScrollToBottom(false);
+    } else {
+      setIsScrollToBottom(true);
     }
 
     try {
@@ -225,9 +209,6 @@ const CommentsScreen = ({route, navigation}: any) => {
       const response = await addComment(reqData);
       const data = response?.data.data;
       console.log(data, 'response from add comment');
-      // if (commentRef) {
-      //   commentRef?.current.scrollToEnd({animated: true});
-      // }
     } catch (error: any) {
       console.log(error?.response?.data, 'error from add comment');
     }
@@ -245,18 +226,6 @@ const CommentsScreen = ({route, navigation}: any) => {
     }
     setIsReplying(true);
   };
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
-  // const scrollViewRef = useRef<any>();
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (scrollViewRef.current) {
-  //       scrollViewRef.current.scrollToEnd({animated: true});
-  //     }
-  //   }, [comments]),
-  // );
 
   return (
     <View
@@ -286,25 +255,24 @@ const CommentsScreen = ({route, navigation}: any) => {
             nestedScrollEnabled={true}
             keyboardShouldPersistTaps="always"
             onContentSizeChange={() =>
+              allComments &&
+              allComments?.length > 0 &&
+              isScrollToBottom &&
               commentRef?.current.scrollToEnd({animated: true})
             }>
-            {
-              // isLoading ? (
-              //   <CustomLoader isStyle={true} extraStyles={{marginTop: 80}} />
-              // ) :
-              comments && comments?.length > 0 ? (
-                <Comment
+            {comments && comments?.length > 0 ? (
+              <Comment
                 isLoadMore={loadMore}
-                  allComments={comments}
-                  commentsCount={commentsCount}
-                  onLoadComments={handleLoadMoreComments}
-                  hasMoreComments={hasMoreComments}
-                  onReply={handleReply}
-                />
-              ) : (
-                noComments && <NoComment />
-              )
-            }
+                allComments={comments}
+                commentsCount={commentsCount}
+                onLoadComments={handleLoadMoreComments}
+                onReply={handleReply}
+              />
+            ) : isCommentsLoading ? (
+              <CustomLoader extraStyles={{marginTop: 30}} />
+            ) : (
+              <NoComment />
+            )}
             {/* {comments && comments.length > 0 ? (
               <View
                 style={{
