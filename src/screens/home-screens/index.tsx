@@ -217,7 +217,7 @@ const HomeScreen = () => {
           </View>
           <TouchableOpacity
             style={styles.notificationIcon}
-            onPress={() => console.log('Notification')}>
+            onPress={() => navigation.navigate('Notification')}>
             <NotificationIcon />
           </TouchableOpacity>
         </View>

@@ -70,7 +70,7 @@ export const Slot = ({navigation, route}: any) => {
         currentYear,
         trainerId,
       );
-      
+
       const data = response?.data?.data;
 
       const filterData = data.filter((slot: any) => {
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: horizontalScale(108),
-    height: verticalScale(93),
+    height: 93,
     marginVertical: 5,
     marginHorizontal: 2.5,
     borderRadius: 10,
