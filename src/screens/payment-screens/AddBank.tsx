@@ -18,6 +18,7 @@ import CustomHeader from '../../components/shared-components/CustomHeader';
 export const AddBankScreen = ({route, navigation}: any) => {
   const {dummyData} = route.params || {};
   const handleSubmit = values => {
+    navigation.navigate('Wallet');
     console.log(values);
   };
 
