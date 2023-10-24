@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,6 @@ import Modal from 'react-native-modal';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 // ----------------------------------------------------------------------------------------------//
 import {RootState} from '../../redux/store';
-import {Favorites} from '../../components/profile-components/Favourites';
-import {CustomTrainerPackage} from '../../components/profile-components/CustomTrainerPackage';
 import {setSelectedPost} from '../../redux/postSlice';
 import CustomVideo from '../../components/profile-components/CustomVideo';
 import {ReelsComponent} from '../../components/home-components/Reels';
@@ -141,12 +139,6 @@ const ProfileScreen = ({navigation, route}: any) => {
     }
   };
 
-  // const toggleModal = () => {
-
-  //   setIsModalVisible(false);
-  //   setRemoveModal(!removeModal);
-  // };
-
   const handleBioModal = () => {
     setBioModal(!bioModal);
   };
@@ -170,7 +162,6 @@ const ProfileScreen = ({navigation, route}: any) => {
   const handleFavoriteDialog = () => {
     setRemoveModal(!removeModal);
   };
-
 
   const fetchUserPosts = async () => {
     setIsLoading(true);
@@ -342,7 +333,7 @@ const ProfileScreen = ({navigation, route}: any) => {
         fetchMealPlansByNutritionist();
       }
       if (
-        searchUserProfile?.role === 'trainer'  ||
+        searchUserProfile?.role === 'trainer' ||
         profileData?.role === 'trainer'
       ) {
         fetchPackagesByTrainer();

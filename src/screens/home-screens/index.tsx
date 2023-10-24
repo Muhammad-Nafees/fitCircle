@@ -1,13 +1,11 @@
-import React, {useState, useEffect, useMemo, useCallback} from 'react';
+import React, {useState, useCallback} from 'react';
 import {
   Text,
   View,
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  FlatList,
   Image,
-  ActivityIndicator,
   Animated,
   TouchableWithoutFeedback,
 } from 'react-native';
@@ -38,8 +36,6 @@ import {deletePost, getPosts, getVideoPosts} from '../../api/home-module';
 import CreatorPosts from '../../components/home-components/CreatorPosts';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
-import {getUserProfile, searchProfile} from '../../api/profile-module';
-import {setUserData} from '../../redux/authSlice';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
