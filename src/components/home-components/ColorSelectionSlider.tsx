@@ -12,7 +12,7 @@ import {horizontalScale, verticalScale} from '../../utils/metrics';
 const BackIcon = require('../../../assets/icons/arrow-back.png');
 const RightIcon = require('../../../assets/icons/right-arrow.png');
 
-const ColorSelectionSlider = ({colors, onColorSelected}: any) => {
+const ColorSelectionSlider = ({colors, onColorSelected,isLoading}: any) => {
   const [selectedColor, setSelectedColor] = useState<any>();
 
   const handleColorSelection = (color: string | string[]) => {
@@ -22,6 +22,7 @@ const ColorSelectionSlider = ({colors, onColorSelected}: any) => {
 
   const solidColor = (item: string, index: number) => (
     <TouchableOpacity
+    disabled={isLoading}
       style={[
         styles.colorDot,
         {
@@ -42,6 +43,7 @@ const ColorSelectionSlider = ({colors, onColorSelected}: any) => {
 
   const gradientColor = (item: string[], index: number) => (
     <TouchableOpacity
+    disabled={isLoading}
       style={[
         styles.colorDot,
         index === 0 && styles.firstColorDot,

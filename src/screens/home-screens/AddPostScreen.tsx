@@ -10,6 +10,7 @@ import {
   ScrollView,
   Platform,
   PermissionsAndroid,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -375,6 +376,7 @@ export const AddPostScreen = ({route}: any) => {
         <View style={styles.headerContainer}>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
+              disabled={isLoading}
               style={styles.button}
               onPress={handleBackButtonPress}>
               <Image
@@ -399,6 +401,7 @@ export const AddPostScreen = ({route}: any) => {
             </TouchableOpacity>
           </View>
           <TextInput
+            editable={!isLoading}
             style={styles.textInput}
             value={titleInput}
             onChangeText={text => setTitleInput(text)}
@@ -416,6 +419,7 @@ export const AddPostScreen = ({route}: any) => {
                 username={userData?.username}
               />
               <TouchableOpacity
+                disabled={isLoading}
                 style={styles.avatarButton}
                 onPress={handleAvatarButtonPress}>
                 <Text
@@ -435,6 +439,7 @@ export const AddPostScreen = ({route}: any) => {
                   colors={textInputBackgroundColor}
                   style={styles.coloredInput}>
                   <TextInput
+                    editable={!isLoading}
                     style={[
                       styles.textInputColor,
                       {
@@ -456,6 +461,7 @@ export const AddPostScreen = ({route}: any) => {
                 </LinearGradient>
               ) : (
                 <TextInput
+                  editable={!isLoading}
                   style={[
                     styles.textInputColor,
                     {
@@ -541,6 +547,7 @@ export const AddPostScreen = ({route}: any) => {
         {!mediaUri && (
           <View style={{paddingTop: verticalScale(40)}}>
             <ColorSelectionSlider
+              isLoading={isLoading}
               colors={[
                 '#CC5252',
                 '#88BD91',
@@ -556,13 +563,18 @@ export const AddPostScreen = ({route}: any) => {
             />
           </View>
         )}
-        <View style={styles.minimizedContainer} {...panResponder.panHandlers}>
+
+        <TouchableWithoutFeedback
+          disabled={isLoading}
+          style={styles.minimizedContainer}
+          {...panResponder.panHandlers}>
           <BottomMinimizedContainer
+            isLoading={isLoading}
             handlePhotoButtonPress={handlePhotoButtonPress}
             handleVideoButtonPress={handleVideoButtonPress}
             handleCaptureButtonPress={handleCaptureButtonPress}
           />
-        </View>
+        </TouchableWithoutFeedback>
       </View>
       {videoUri && (
         <View style={StyleSheet.absoluteFill}>

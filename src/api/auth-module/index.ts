@@ -76,7 +76,11 @@ export const updateProfile = async (userData: IUser) => {
   formData.append('bio', userData?.bio);
   formData.append('country', userData?.country);
   formData.append('city', userData?.city);
-  formData.append('physicalInformation', userData?.physicalInformation);
+  if (userData?.physicalInformation == '') {
+    formData.append('physicalInformation', 'Something!');
+  } else {
+    formData.append('physicalInformation', userData?.physicalInformation);
+  }
   formData.append('dob', userData.dob);
   formData.append('age', userData.age);
   formData.append('phone', userData.phone);

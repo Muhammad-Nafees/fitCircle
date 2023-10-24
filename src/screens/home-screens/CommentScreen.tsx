@@ -181,11 +181,6 @@ const CommentsScreen = ({route, navigation}: any) => {
       });
       return;
     }
-    if (isReplying) {
-      setIsScrollToBottom(false);
-    } else {
-      setIsScrollToBottom(true);
-    }
 
     try {
       let compressedImage = null;
@@ -202,15 +197,21 @@ const CommentsScreen = ({route, navigation}: any) => {
       const reqData: Partial<IComment> = {
         post: selectedPost?._id,
         text: commentText,
-        media: mediaUri || compressedImage,
+        media: mediaUri,
         ...(replyId !== '' && {parent: replyId}),
       };
       setIsLoading(true);
+      console.log(reqData, 'REQDATA');
       const response = await addComment(reqData);
       const data = response?.data.data;
       console.log(data, 'response from add comment');
+      if (isReplying) {
+        setIsScrollToBottom(false);
+      } else {
+        setIsScrollToBottom(true);
+      }
     } catch (error: any) {
-      console.log(error?.response?.data, 'error from add comment');
+      console.log(error, 'error from add comment');
     }
     setIsLoading(false);
     setMediaUri(null);

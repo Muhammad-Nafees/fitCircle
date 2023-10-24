@@ -8,25 +8,27 @@ interface BottomMinimizedContainerProps {
   handlePhotoButtonPress: () => void;
   handleVideoButtonPress: () => void;
   handleCaptureButtonPress: () => void;
+  isLoading?: boolean;
 }
 
 export const BottomMinimizedContainer = ({
   handlePhotoButtonPress,
   handleVideoButtonPress,
   handleCaptureButtonPress,
+  isLoading
 }: BottomMinimizedContainerProps) => (
   <View style={styles.bottomMinimizedContainer}>
     <View style={styles.bottomMinimizedTextContainer}>
       <Text style={styles.bottomMinimizedContainerText}>Add to your post</Text>
     </View>
     <View style={styles.bottomMinimizedIconsContainer}>
-      <TouchableOpacity onPress={handlePhotoButtonPress}>
+      <TouchableOpacity onPress={handlePhotoButtonPress} disabled={isLoading}>
         <CreatePostSvgIcon />
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleVideoButtonPress}>
+      <TouchableOpacity onPress={handleVideoButtonPress} disabled={isLoading}>
         <VideoSvgIcon />
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleCaptureButtonPress}>
+      <TouchableOpacity onPress={handleCaptureButtonPress} disabled={isLoading}>
         <Cameraicon />
       </TouchableOpacity>
     </View>

@@ -72,11 +72,15 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
     formData.append('visibility', reqData?.visibility);
   }
 
-  const response = await api.post(`post`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
+  const response = await api.post(
+    `http://128.199.30.51:3016/api/post`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     },
-  });
+  );
 
   return response;
 };
@@ -112,7 +116,7 @@ export const editPostWithContent = async (
   reqData: Partial<IPost>,
   postId: string,
 ) => {
-  console.log(postId,"id")
+  console.log(postId, 'id');
   let formData = new FormData();
   formData.append('text', reqData?.text);
   if (reqData?.cost) {
@@ -183,18 +187,19 @@ export const getAllCommentsByPosts = async (
 
 export const addComment = async (reqData: Partial<IComment>) => {
   let formData = new FormData();
-  formData.append('text', reqData?.text);
-  formData.append('post', reqData?.post);
+  formData.append('text', reqData.text);
+  formData.append('post', reqData.post);
   if (reqData?.parent) {
-    formData.append('parent', reqData?.parent);
+    formData.append('parent', reqData.parent);
   }
   if (reqData?.media) {
-    formData.append('media', reqData?.media);
+    formData.append('media', reqData.media);
   }
 
   const response = await api.post(`post/add-comment`, formData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'content-type': 'multipart/form-data',
+      Accept: 'application/json',
     },
   });
   return response;
