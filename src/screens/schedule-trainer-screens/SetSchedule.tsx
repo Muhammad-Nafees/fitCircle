@@ -254,12 +254,15 @@ const SetSchedule = ({navigation, route}: any) => {
   }, [selectedDate]);
 
   const renderOptionItem = ({item}: any) => {
+    console.log(availableSlots, 'IIIIIIIIIIIIIIII');
     return (
       <TouchableOpacity
         disabled={
           isSearchTrainer &&
           availableSlots &&
           !availableSlots.includes(item._id)
+            ? true
+            : availableSlots === null
             ? true
             : false
         }
@@ -290,12 +293,16 @@ const SetSchedule = ({navigation, route}: any) => {
                   availableSlots &&
                   !availableSlots.includes(item._id)
                     ? '#484849'
+                    : availableSlots === null
+                    ? '#484849'
                     : '#209BCC',
                 backgroundColor: selectedSlotDates?.includes(item._id)
                   ? '#209BCC'
                   : isSearchTrainer &&
                     availableSlots &&
                     !availableSlots.includes(item._id)
+                  ? '#484849'
+                  : availableSlots === null
                   ? '#484849'
                   : 'transparent',
               },
@@ -447,9 +454,7 @@ const SetSchedule = ({navigation, route}: any) => {
         timeSlots.length > 0 && (
           <View style={styles.buttonContainer}>
             <CustomButton
-              isDisabled={
-                isLoading ? true : selectedSlotDates.length < 1 ? true : false
-              }
+              isDisabled={selectedSlotDates.length < 1 ? true : false}
               extraStyles={{paddingHorizontal: 120}}
               onPress={
                 isSearchTrainer ? handleBookTrainerSchedule : handleSetSchedule

@@ -428,6 +428,7 @@ const ProfileScreen = ({navigation, route}: any) => {
         isTrainerView={isTrainerView}
         userData={profileData}
         followers={followers}
+        isSearchProfile={isSearchProfile}
       />
       <View style={styles.selectionContainerParent}>
         <View style={styles.selectionContainer}>

@@ -28,6 +28,7 @@ export const ProfileHeaderContainer = ({
   followers,
   isFollowing,
   profilePersonalData,
+  isSearchProfile,
 }: any) => {
   const [followButtonStyle, setFollowButtonStyle] = useState<any>(
     styles.profileButton,
@@ -45,6 +46,7 @@ export const ProfileHeaderContainer = ({
   const loginUserDataId = useSelector(
     (state: RootState) => state.auth.user?._id,
   );
+  const loginUserData = useSelector((state: RootState) => state.auth.user);
   const [isSeachUser, setIsSearchUser] = useState<boolean>(
     loginUserDataId === userData._id,
   );
@@ -122,11 +124,13 @@ export const ProfileHeaderContainer = ({
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
-          {userData?.role !== 'user' && (
-            <TouchableOpacity onPress={navigateToSchedule}>
-              <TrainerProfileScheduleIcon />
-            </TouchableOpacity>
-          )}
+          {isSearchProfile &&
+            loginUserData?.role === 'user' &&
+            profilePersonalData.role === 'trainer' && (
+              <TouchableOpacity onPress={navigateToSchedule}>
+                <TrainerProfileScheduleIcon />
+              </TouchableOpacity>
+            )}
           {isSeachUser && (
             <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
               <ProfileSettingsIcon />

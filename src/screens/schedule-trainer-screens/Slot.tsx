@@ -22,6 +22,7 @@ import {
 import {useFocusEffect} from '@react-navigation/native';
 import {getCurrentMonth, months} from '../../utils/helper';
 import {STYLES} from '../../styles/globalStyles';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
 export const Slot = ({navigation, route}: any) => {
@@ -39,6 +40,7 @@ export const Slot = ({navigation, route}: any) => {
   const currentMonth = currentDate.getMonth();
 
   const fetchTrainerSlotsByMonth = async () => {
+    setIsLoading(true);
     try {
       const response = await getTrainerSlotList(currentMonth + 1, currentYear);
       const data = response?.data?.data;
@@ -60,17 +62,19 @@ export const Slot = ({navigation, route}: any) => {
         'from fetching trainer slots by monnths!',
       );
     }
+    setIsLoading(false);
   };
 
   // user pov
   const fetchTrainerSlotsByMonthForUser = async () => {
+    setIsLoading(true);
     try {
       const response = await getTrainerSlotsByMonthForUser(
         currentMonth + 1,
         currentYear,
         trainerId,
       );
-      
+
       const data = response?.data?.data;
 
       const filterData = data.filter((slot: any) => {
@@ -93,6 +97,7 @@ export const Slot = ({navigation, route}: any) => {
         'from fetching trainer slots for user by months!',
       );
     }
+    setIsLoading(false);
   };
 
   useFocusEffect(
@@ -175,8 +180,10 @@ export const Slot = ({navigation, route}: any) => {
         </View>
       </TouchableOpacity>
       <ScrollView>
-        {trainerSchedules?.length == 0 ||
-        trainerSchedules?.length == undefined ? (
+        {isLoading ? (
+          <CustomLoader extraStyles={{marginTop: 20}} />
+        ) : trainerSchedules?.length == 0 ||
+          trainerSchedules?.length == undefined ? (
           <Text style={[STYLES.text16, {marginTop: 20}]}>
             No schedules yet!
           </Text>
