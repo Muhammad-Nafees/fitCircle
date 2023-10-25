@@ -91,25 +91,20 @@ export const ChatDetails = ({route, navigation}: any) => {
   };
 
   useEffect(() => {
-    const staticMessages = [
-      {
-        id: 1,
-        text: 'Please wait 24 hours until Jason accepts',
-      },
-      {
-        id: 2,
-        text: 'Requesting for a meal plan',
-      },
-    ];
+    const {messages} = route.params;
 
-    if (route.params.type === 'accepted') {
-      staticMessages.unshift({
-        id: 3,
-        text: 'Jason accepted your request',
+    if (messages && messages.length) {
+      messages.forEach(message => {
+        userMessages.push({
+          id: Date.now(),
+          text: message.text,
+          color: message.color,
+        });
       });
+
+      setUserMessages(userMessages.reverse());
     }
-    setUserMessages(route.params.type ? staticMessages : []);
-  }, [route.params.type]);
+  }, [route.params.messages]);
 
   return (
     <View style={styles.container}>
@@ -117,27 +112,10 @@ export const ChatDetails = ({route, navigation}: any) => {
       <View style={styles.flatlistContainer}>
         <FlatList
           data={userMessages}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           inverted
           renderItem={({item}) =>
-            item.text === 'Please wait 24 hours until Jason accepts' ||
-            item.text === 'Jason accepted your request' ? (
-              <View style={styles.centeredMessageContainer}>
-                <Text
-                  style={
-                    item.text === 'Please wait 24 hours until Jason accepts' &&
-                    route.params.type === 'accepted'
-                      ? styles.whiteText
-                      : styles.blueText
-                  }>
-                  {item.text}
-                </Text>
-              </View>
-            ) : item.text === 'Requesting for a meal plan' ? (
-              <View style={styles.centeredMessageContainer}>
-                <Text style={styles.grayText}>{item.text}</Text>
-              </View>
-            ) : (
+            item.isUser ? (
               <View style={styles.userMessageContainer}>
                 <UserMessage
                   text={item.text}
@@ -145,6 +123,12 @@ export const ChatDetails = ({route, navigation}: any) => {
                   mediaUri={item.mediaUri}
                   handleMessageImagePress={handleMessageImagePress}
                 />
+              </View>
+            ) : (
+              <View style={styles.centeredMessageContainer}>
+                <Text style={[styles.whiteText, {color: item.color}]}>
+                  {item.text}
+                </Text>
               </View>
             )
           }
@@ -265,16 +249,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     marginVertical: 5,
-  },
-  grayText: {
-    color: 'rgba(255, 255, 255, 0.5)',
-    fontWeight: '400',
-    fontSize: 12,
-  },
-  blueText: {
-    color: 'rgba(32, 155, 204, 1)',
-    fontWeight: '400',
-    fontSize: 12,
   },
   whiteText: {
     color: 'white',

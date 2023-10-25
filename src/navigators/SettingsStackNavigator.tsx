@@ -12,13 +12,13 @@ import {PrivacySettingsScreen} from '../screens/settings-screens/PrivacySettings
 import {BlocklistScreen} from '../screens/settings-screens/Blocklist';
 import {SettingsTransactionScreen} from '../screens/settings-screens/SettingsTransaction';
 import {TransactionHistoryScreen} from '../screens/settings-screens/TransactionHistory';
-import CreateProfile from '../screens/auth-screens/create-profile-screens/CreateProfile';
 import SubscriptionScreen from '../screens/settings-screens/Subscription';
 import PaymentStackNavigator from './PaymentStackNavigator';
 import DeleteAccountScreen from '../screens/settings-screens/DeleteAccount';
 import SupportOne from '../screens/settings-screens/Support';
 import SupportMessage from '../screens/settings-screens/SupportMessage';
 import SupportChat from '../screens/settings-screens/SupportChat';
+import {EditProfile} from '../screens/settings-screens/EditProfile';
 
 const Stack = createStackNavigator();
 const SettingsStackNavigator = () => {
@@ -57,13 +57,13 @@ const SettingsStackNavigator = () => {
         component={SettingsTransactionScreen}
       />
       <Stack.Screen
-        name="EditProfile"
-        component={CreateProfile}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
         name="TransactionHistory"
         component={TransactionHistoryScreen}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{headerShown: false}}
       />
       <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
       <Stack.Screen name="Support" component={SupportOne} />

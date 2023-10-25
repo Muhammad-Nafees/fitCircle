@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: horizontalScale(108),
-    height: verticalScale(93),
+    height: 93,
     marginVertical: 5,
     marginHorizontal: 2.5,
     borderRadius: 10,

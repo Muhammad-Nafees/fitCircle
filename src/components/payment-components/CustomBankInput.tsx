@@ -110,7 +110,7 @@ export default CustomBankInput;
 
 const styles = StyleSheet.create({
   input: {
-    height: verticalScale(44),
+    height: 44,
     backgroundColor: 'rgba(68, 68, 68, 1)',
     padding: moderateScale(10),
     color: 'white',

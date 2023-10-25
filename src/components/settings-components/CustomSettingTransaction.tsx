@@ -1,8 +1,10 @@
 import {View, Text, StyleSheet} from 'react-native';
 import {Avatar} from 'react-native-paper';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 
 const CustomSettingTransaction = ({transaction}: any) => {
-  const isTransactionPositive = transaction.transactionType === 'positive';
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
   return (
     <View style={styles.rowContainer}>
       <View style={styles.avatarTextContainer}>
@@ -17,10 +19,23 @@ const CustomSettingTransaction = ({transaction}: any) => {
         </View>
       </View>
       <View style={{alignItems: 'flex-end', gap: 3}}>
-        <Text style={styles.price}>
-          {isTransactionPositive ? '+' : '-'} {transaction.amount}
+        <Text
+          style={[
+            styles.price,
+            userRole !== 'user' && {
+              fontSize: 16,
+              color: 'rgba(48, 210, 152, 1)',
+            },
+          ]}>
+          {userRole !== 'user' ? '+' : '-'} {transaction.amount}
         </Text>
-        <Text style={styles.subscription}>{transaction.type}</Text>
+        <Text
+          style={[
+            styles.subscription,
+            userRole !== 'user' && {color: 'rgba(255, 255, 255, 0.5)'},
+          ]}>
+          {transaction.type}
+        </Text>
       </View>
     </View>
   );

@@ -317,10 +317,7 @@ export const socialMediaSchema = Yup.object().shape({
 
 export const cardSchema = Yup.object().shape({
   number: Yup.string()
-    .matches(
-      /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
-      'Invalid credit card number',
-    )
+    .matches(/^(?:\d{4}[-\s]?){3}\d{4}$/, 'Invalid credit card number')
     .required('Number is Required'),
   expiry: Yup.string()
     .matches(
@@ -393,3 +390,107 @@ export const uploadPlanSchema = Yup.object().shape({
     .notRequired()
     .matches(/^@[\w]+$/, 'Username must start with @'),
 });
+
+export const editProfileSchema = (userRole: any) => {
+  return Yup.object().shape({
+    facebook: Yup.string().matches(
+      /^(https?:\/\/)?(www\.)?facebook\.com(\/\S*)?$/i,
+      'Invalid Facebook URL format',
+    ),
+    twitter: Yup.string().matches(
+      /^(https?:\/\/)?(www\.)?twitter\.com(\/\S*)?$/i,
+      'Invalid Twitter URL format',
+    ),
+    instagram: Yup.string().matches(
+      /^(https?:\/\/)?(www\.)?instagram\.com(\/\S*)?$/i,
+      'Invalid Instagram URL format',
+    ),
+    tiktok: Yup.string().matches(
+      /^(https?:\/\/)?(www\.)?tiktok\.com(\/\S*)?$/i,
+      'Invalid TikTok URL format',
+    ),
+    firstName: Yup.string()
+      .required('First Name is required')
+      .matches(/^[A-Za-z]+$/, 'Invalid input') // Ensures no spaces in the name
+      .min(3, 'First name must be at least 3 characters'),
+    lastName: Yup.string()
+      .required('Last Name is required')
+      .matches(/^[A-Za-z]+$/, 'Invalid input') // Ensures no spaces in the name
+      .min(3, 'Last name must be at least 3 characters'),
+    username: Yup.string()
+      .required('Username is required')
+      .matches(/^[A-Za-z0-9]+$/, 'Invalid input: No spaces allowed')
+      .min(3, 'Username must be at least 3 characters')
+      .max(10, 'Username must be at most 10 characters'),
+    bio: Yup.string()
+      .required('Bio is required')
+      .matches(/^[A-Za-z][A-Za-z.\s]*$/, 'Invalid input')
+      .min(10, 'Bio must be at least 10 characters'),
+
+    phone: Yup.string().required('Phone number is required'),
+    country: Yup.string().required('Select country'),
+    city: Yup.string().required('Select city'),
+    gender: Yup.string().test({
+      name: 'gender',
+      exclusive: true,
+      message: 'Gender is required',
+      test: value => {
+        if (userRole !== 'user') {
+          return value !== undefined && value !== '';
+        }
+        return true;
+      },
+    }),
+    physicalInformation: Yup.string()
+      .trim()
+      .required('Physical Information is required')
+      .matches(/\S/, 'Physical Information is required'),
+    dob: Yup.string()
+      .matches(
+        /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19|20)\d\d$/,
+        'Invalid date format. Must be dd/mm/yyyy',
+      )
+      .required()
+      .test('date-of-birth', 'Invalid date of birth', function (value) {
+        if (!value) {
+          return true;
+        }
+        const dateOfBirth = moment(value, 'DD/MM/YYYY');
+
+        if (!dateOfBirth.isValid()) {
+          return this.createError({
+            path: 'dob',
+            message: 'Invalid date format.',
+          });
+        }
+
+        const age = currentDate.diff(dateOfBirth, 'years');
+        if (age < ageLimit) {
+          return this.createError({
+            path: 'dob',
+            message: `Age must be greater than ${ageLimit} years.`,
+          });
+        }
+
+        return true;
+      }),
+
+    hourlyRate: Yup.string().test({
+      name: 'hourlyRate',
+      exclusive: true,
+      message: 'Hourly rate is required!',
+      test: function (value) {
+        if (userRole !== 'user') {
+          if (value === '0') {
+            return this.createError({
+              path: 'hourlyRate',
+              message: 'Rate should be greater than 0',
+            });
+          }
+          return value !== undefined;
+        }
+        return true;
+      },
+    }),
+  });
+};

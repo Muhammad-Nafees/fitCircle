@@ -43,6 +43,7 @@ const CustomInput = ({...props}: Props) => {
   const [characterCount, setCharacterCount] = useState(50);
   const route = useRoute();
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [formattedCardNumber, setFormattedCardNumber] = useState(props.value);
   const [isFocused, setIsFocused] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -66,8 +67,19 @@ const CustomInput = ({...props}: Props) => {
     if (props.label === 'Number' && route.name === 'AddCard') {
       const cleanedText = text.replace(/[^0-9]/g, '');
       const limitedText = cleanedText.slice(0, 16);
-      const formattedText = limitedText.replace(/(.{4})/g, '$1 ');
-      props.handleChange(formattedText);
+
+      let formattedText = '';
+      for (let i = 0; i < limitedText.length; i++) {
+        if (i > 0 && i % 4 === 0) {
+          formattedText += ' ';
+        }
+        formattedText += limitedText[i];
+      }
+
+      props.handleChange(limitedText);
+      props.setFieldError(props.fieldName, '');
+
+      setFormattedCardNumber(formattedText);
     } else {
       if (props.label === 'Description ' && route.name === 'UploadMealPlan') {
         const newCharacterCount = 50 - text.length;
@@ -108,7 +120,7 @@ const CustomInput = ({...props}: Props) => {
             props.extraStyles,
           ]}
           placeholder={isFocused ? '' : props.placeholder}
-          value={props.value}
+          value={props.label === 'Number' ? formattedCardNumber : props.value}
           onChangeText={handleChangeText}
           underlineColorAndroid="transparent"
           placeholderTextColor="gray"

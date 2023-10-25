@@ -1,8 +1,12 @@
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 
 const CustomTransactionReceipt = ({settingsView, transaction}: any) => {
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
+  const isNotUser = userRole !== 'user';
   return (
     <View style={{alignItems: 'center', justifyContent: 'center'}}>
       <View style={styles.contentContainer}>
@@ -84,12 +88,19 @@ const CustomTransactionReceipt = ({settingsView, transaction}: any) => {
               flex: 1,
             }}>
             <Text
-              style={{
-                fontSize: 22,
-                fontWeight: '600',
-                color: 'rgba(255, 123, 131, 1)',
-              }}>
-              {transaction ? `-${transaction.amount}` : '- $20.00'}
+              style={[
+                {
+                  fontSize: 22,
+                  fontWeight: '600',
+                  color: 'rgba(255, 123, 131, 1)',
+                },
+                isNotUser && {color: 'rgba(48, 210, 152, 1)'},
+              ]}>
+              {transaction
+                ? isNotUser
+                  ? `+${transaction.amount}`
+                  : `-${transaction.amount}`
+                : '- $20.00'}
             </Text>
           </View>
         </View>

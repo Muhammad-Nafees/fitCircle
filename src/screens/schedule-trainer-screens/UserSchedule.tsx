@@ -131,7 +131,7 @@ const SetSchedule = ({route, navigation}: any) => {
           />
         </View>
       </View>
-      <ScrollView contentContainerStyle={{minHeight: 300}}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <View style={styles.bottomContainer}>
           <Text style={styles.selectedDateText}>{formattedSelectedDate}</Text>
           {isLoading ? (
