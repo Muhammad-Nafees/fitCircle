@@ -5,7 +5,7 @@ export const searchProfile = async (search: string) => {
   return response;
 };
 
-export const searchTrainerProfile = async (role: string, search: string) => {
+export const searchProfileByRole = async (role: string, search: string) => {
   const response = await api.get(
     `user/search-by-role?role=${role}&search=${search}`,
   );

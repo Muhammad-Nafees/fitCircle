@@ -55,6 +55,10 @@ const PackagesScreen = ({navigation}: any) => {
     }
   };
 
+  const handleEditPackage = (myPackage: IPackage) => {
+    navigation.navigate('CreatePackageScreen', {myPackage});
+  };
+
   const fetchPackagesByTrainer = async () => {
     setIsLoading(true);
     try {
@@ -94,6 +98,7 @@ const PackagesScreen = ({navigation}: any) => {
           isLoading={isLoading}
           packages={packages}
           handleDeletePackage={handleDeletePackage}
+          handleEditPackage={handleEditPackage}
         />
       </ScrollView>
       <View style={{margin: 20}}>

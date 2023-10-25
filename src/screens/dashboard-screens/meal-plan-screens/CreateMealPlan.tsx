@@ -57,16 +57,10 @@ const CreateMealPlan = ({navigation}: any) => {
     }
   };
 
-  const handleEditPlan = (planId: number) => {
-    // const selectedPlan = data.find(plan => plan.id === planId);
-    // navigation.navigate('UploadMealPlan', {
-    //   dummyData: {
-    //     title: selectedPlan?.planName,
-    //     cost: selectedPlan?.price,
-    //     description: selectedPlan?.description,
-    //     username: '@testingUser',
-    //   },
-    // });
+  const handleEditMealPlan = (myMealPlan: IMealPlan) => {
+    navigation.navigate('UploadMealPlan', {
+      myMealPlan: myMealPlan,
+    });
   };
 
   const fetchMealPlansByNutritionist = async () => {
@@ -94,7 +88,7 @@ const CreateMealPlan = ({navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity
           style={{paddingTop: 24, paddingBottom: 16}}
           onPress={() => navigation.goBack()}>
@@ -108,6 +102,7 @@ const CreateMealPlan = ({navigation}: any) => {
           isLoading={isLoading}
           mealPlans={mealPlans}
           handleDeleteMealPlan={handleDeleteMealPlan}
+          handleEditMealPlan={handleEditMealPlan}
         />
       </ScrollView>
       <View style={styles.buttonContainer}>

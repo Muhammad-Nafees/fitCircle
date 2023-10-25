@@ -23,6 +23,8 @@ import {Image as ImageCompress} from 'react-native-compressor';
 import {createPackage} from '../../api/packages-module';
 import {IPackage} from '../../interfaces/package.interface';
 import Toast from 'react-native-toast-message';
+import {useSelector} from 'react-redux';
+import {RootState} from 'redux/store';
 
 const reviewData = Array.from({length: 5});
 
@@ -30,6 +32,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
   const [videoVisible, setVideoVisible] = useState(false);
   const {packageDetails} = route?.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const userData = useSelector((state: RootState) => state.auth.user);
 
   const renderCustomPackageReview = () => {
     return <CustomPackageReview />;
@@ -77,6 +80,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
     navigation.navigate('PackagesScreen');
     console.log(packageDetails, 'from handle CreatePackage!!');
   };
+  console.log(packageDetails.media, 'FROM PACKAGE DETAILS');
 
   return (
     <View style={styles.container}>
@@ -96,7 +100,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                 style={{width: 24, height: 24, tintColor: 'white'}}
               />
             </TouchableOpacity>
-            {!route?.params?.isCreatingPackage && (
+            {userData?.role === 'user' && (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('ScheduleScreen', {
@@ -184,7 +188,13 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
       {route?.params?.isCreatingPackage && (
         <View style={styles.buttonContainer}>
           <CustomButton isDisabled={isLoading} onPress={handleCreatePackage}>
-            {isLoading ? <CustomLoader /> : 'Create'}
+            {isLoading ? (
+              <CustomLoader />
+            ) : route?.params?.isEditingPackage ? (
+              'Update'
+            ) : (
+              'Create'
+            )}
           </CustomButton>
         </View>
       )}
@@ -201,7 +211,8 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
           <Video
             source={{
               uri: route?.params?.isCreatingPackage
-                ? packageDetails?.media?.uri
+                ? packageDetails?.media?.uri ||
+                  `${s3bucketReference}/${packageDetails?.media}`
                 : `${s3bucketReference}/${packageDetails?.media}`,
             }}
             style={styles.video}

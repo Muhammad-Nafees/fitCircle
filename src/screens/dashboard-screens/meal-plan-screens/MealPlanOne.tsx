@@ -16,15 +16,9 @@ export const MealPlanOne = ({navigation}: any) => {
           style={{width: 24, height: 24, tintColor: 'white'}}
         />
       </TouchableOpacity>
-      <Text style={styles.text1}>Meal Plan Coming Soon!</Text>
-      <View style={{margin: 30, marginTop: 150}}>
-        <CustomButton onPress={() => navigation.navigate('Dashboard')}>
-          Navigate to Dashboard
-        </CustomButton>
-      </View>
 
-      {/* <Text style={styles.text1}>My Meal Plan</Text> */}
-      {/* <View
+      <Text style={styles.text1}>My Meal Plan</Text>
+      <View
         style={{
           justifyContent: 'center',
           alignItems: 'center',
@@ -39,7 +33,7 @@ export const MealPlanOne = ({navigation}: any) => {
         <CustomButton onPress={() => navigation.navigate('MealPlanThree')}>
           Request a Meal Plan
         </CustomButton>
-      </View> */}
+      </View>
     </View>
   );
 };

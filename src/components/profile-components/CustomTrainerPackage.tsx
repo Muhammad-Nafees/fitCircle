@@ -26,6 +26,7 @@ interface Props {
   myPackage?: IPackage;
   hidePriceAndPackage?: any;
   onDeletePackage?: (id: string) => void;
+  onEditPackage?: (myPackage: IPackage) => void;
   hidePackageButton?: any;
   videoEnabled?: any;
   isCreatingPackage?: boolean;
@@ -36,6 +37,7 @@ export const CustomTrainerPackage = ({
   myPackage,
   hidePriceAndPackage,
   onDeletePackage,
+  onEditPackage,
   hidePackageButton = false,
   videoEnabled,
   isCreatingPackage,
@@ -55,6 +57,12 @@ export const CustomTrainerPackage = ({
     swipeableRef.current.close();
     if (onDeletePackage) {
       onDeletePackage(id);
+    }
+  };
+  const handleEditPackage = (myPackage: IPackage) => {
+    swipeableRef.current.close();
+    if (onEditPackage) {
+      onEditPackage(myPackage);
     }
   };
 
@@ -79,10 +87,7 @@ export const CustomTrainerPackage = ({
               styles.rightAction,
               {backgroundColor: 'rgba(32, 155, 204, 1)'},
             ]}
-            onPress={() => {
-              swipeableRef.current.close();
-              handleEditButton();
-            }}>
+            onPress={() => handleEditPackage(myPackage as IPackage)}>
             <Icon name="edit-3" color={'white'} />
           </TouchableOpacity>
         </View>

@@ -40,7 +40,9 @@ interface Props {
 }
 
 const CustomInput = ({...props}: Props) => {
-  const [characterCount, setCharacterCount] = useState(50);
+  const [characterCount, setCharacterCount] = useState(
+    50 - props.value?.length,
+  );
   const route = useRoute();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formattedCardNumber, setFormattedCardNumber] = useState(props.value);

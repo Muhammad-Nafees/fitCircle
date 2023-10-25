@@ -7,12 +7,14 @@ interface Props {
   isLoading: boolean;
   packages: any;
   handleDeletePackage?: any;
+  handleEditPackage?: any;
 }
 
 const TrainerPackagesContainer = ({
   isLoading,
   packages,
   handleDeletePackage,
+  handleEditPackage,
 }: Props) => {
   return isLoading ? (
     <CustomLoader extraStyles={{marginTop: 30}} />
@@ -25,6 +27,7 @@ const TrainerPackagesContainer = ({
           myPackage={myPackage}
           hidePackageButton={true}
           onDeletePackage={handleDeletePackage}
+          onEditPackage={handleEditPackage}
         />
       </View>
     ))

@@ -125,15 +125,12 @@ export const editPostWithContent = async (
   if (reqData?.visibility) {
     formData.append('visibility', reqData?.visibility);
   }
-  if (reqData?.hexCode.length === 0) {
-    formData.append('hexCode[]', '#444444');
+
+  if (reqData?.hexCode?.length == 7) {
+    formData.append('hexCode[]', reqData.hexCode);
   } else {
-    if (reqData?.hexCode?.length == 7) {
-      formData.append('hexCode[]', reqData.hexCode);
-    } else {
-      for (let i = 0; i < reqData.hexCode.length; i++) {
-        formData.append('hexCode[]', reqData.hexCode[i]);
-      }
+    for (let i = 0; i < reqData.hexCode.length; i++) {
+      formData.append('hexCode[]', reqData.hexCode[i]);
     }
   }
 

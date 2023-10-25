@@ -28,6 +28,7 @@ export const ProfileHeaderContainer = ({
   followers,
   isFollowing,
   profilePersonalData,
+  isSearchProfile,
 }: any) => {
   const [followButtonStyle, setFollowButtonStyle] = useState<any>(
     styles.profileButton,
@@ -45,6 +46,7 @@ export const ProfileHeaderContainer = ({
   const loginUserDataId = useSelector(
     (state: RootState) => state.auth.user?._id,
   );
+  const loginUserData = useSelector((state: RootState) => state.auth.user);
   const [isSeachUser, setIsSearchUser] = useState<boolean>(
     loginUserDataId === userData._id,
   );
@@ -96,6 +98,7 @@ export const ProfileHeaderContainer = ({
       console.log(error?.response?.data, 'from follow subscribe on search!');
     }
   };
+  console.log(userData?.role, 'DD');
 
   const navigateToSchedule = () => {
     navigation.navigate('ScheduleScreen', {
@@ -106,6 +109,7 @@ export const ProfileHeaderContainer = ({
       },
     });
   };
+  console.log(isSeachUser, loginUserData?.role, userData?.role, 'EVERTGFG');
 
   return (
     <ImageBackground
@@ -122,11 +126,13 @@ export const ProfileHeaderContainer = ({
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
-          {userData?.role !== 'user' && isTrainerView && (
-            <TouchableOpacity onPress={navigateToSchedule}>
-              <TrainerProfileScheduleIcon />
-            </TouchableOpacity>
-          )}
+          {!isSeachUser &&
+            loginUserData?.role === 'user' &&
+            userData?.role === 'trainer' && (
+              <TouchableOpacity onPress={navigateToSchedule}>
+                <TrainerProfileScheduleIcon />
+              </TouchableOpacity>
+            )}
           {isSeachUser && (
             <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
               <ProfileSettingsIcon />
