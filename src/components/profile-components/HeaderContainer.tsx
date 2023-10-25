@@ -122,7 +122,7 @@ export const ProfileHeaderContainer = ({
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
-          {userData?.role !== 'user' && (
+          {userData?.role !== 'user' && isTrainerView && (
             <TouchableOpacity onPress={navigateToSchedule}>
               <TrainerProfileScheduleIcon />
             </TouchableOpacity>
