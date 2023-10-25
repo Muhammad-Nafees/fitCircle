@@ -18,9 +18,13 @@ const ArrowBack = require('../../../../assets/icons/arrow-back.png');
 import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
 import CustomButton from '../../../components/shared-components/CustomButton';
 import {nutritionistInfo2 as nutritionistInfo} from '../../dummyData';
-import {getAllMealPlans} from '../../../api/mealPlan-module';
+import {
+  getAllMealPlans,
+  searchNutritionist,
+} from '../../../api/mealPlan-module';
 import {IAllMealPlans, IMealPlan} from '../../../interfaces/mealPlan.interface';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+import {IUser} from '../../../interfaces/user.interface';
 
 export const MealPlanThree = ({navigation}: any) => {
   const [planModal, setPlanModal] = useState(false);
@@ -30,6 +34,7 @@ export const MealPlanThree = ({navigation}: any) => {
   const [limit, setLimit] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [allMealPlans, setAllMealPlans] = useState<IAllMealPlans[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleModalOpen = (text: string, price: string) => {
     setModalPrice(price);
@@ -50,7 +55,6 @@ export const MealPlanThree = ({navigation}: any) => {
     try {
       const response = await getAllMealPlans(page, limit);
       const data = response?.data?.data;
-      console.log(data.mealPlans, 'from mealplansss');
       setAllMealPlans(data?.mealPlans);
     } catch (error: any) {
       console.log(error?.response?.data, 'From fetching All meal plans!');
@@ -60,7 +64,41 @@ export const MealPlanThree = ({navigation}: any) => {
 
   useEffect(() => {
     fetchAllMealPlans();
-  }, []);
+  }, [searchQuery]);
+
+  const handleSearchNutritionist = async (search: string) => {
+    setSearchQuery(search);
+    if (searchQuery == '') {
+      setAllMealPlans(allMealPlans);
+      return;
+    }
+    setIsLoading(false);
+    try {
+      const response = await searchNutritionist('nutritionist', search);
+      const searchUsers = response?.data?.data?.users;
+      const searchUserNames = searchUsers.map((user: IUser) => user.username);
+      console.log(searchUserNames, 'NAMES');
+      const nutritionistNames = allMealPlans.map((plan: IAllMealPlans) => {
+        console.log(plan.nutritionist.username, 'allnut');
+        return plan.nutritionist.username; // Add a return statement here
+      });
+      const commonNames = nutritionistNames.filter(name =>
+        searchUserNames.includes(name),
+      );
+      if (commonNames.length > 0) {
+        setAllMealPlans(
+          allMealPlans.filter(plan =>
+            commonNames.includes(plan.nutritionist.username as string),
+          ),
+        );
+      } else {
+        setAllMealPlans([]);
+      }
+    } catch (error: any) {
+      console.log(error?.response?.data, 'FROM SEARCHING NUTRITIONIST!!');
+      setAllMealPlans([]);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -82,6 +120,7 @@ export const MealPlanThree = ({navigation}: any) => {
             <TextInput
               placeholder="Search ..."
               style={styles.input}
+              onChangeText={(value: string) => handleSearchNutritionist(value)}
               placeholderTextColor="#fff"
             />
           </View>
@@ -157,6 +196,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292A2C',
+    paddingBottom: 20,
   },
   searchIcon: {
     width: horizontalScale(20),
@@ -182,6 +222,7 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     marginHorizontal: horizontalScale(5),
+    color: '#ffffff',
   },
   bottomModal: {
     justifyContent: 'flex-end',

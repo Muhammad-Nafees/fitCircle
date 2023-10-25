@@ -6,13 +6,15 @@ import {IMealPlan} from '../../interfaces/mealPlan.interface';
 interface Props {
   isLoading: boolean;
   mealPlans: any;
-  handleDeleteMealPlan?: any;
+  handleDeleteMealPlan: (id: string) => void;
+  handleEditMealPlan: (mealPlan: IMealPlan) => void;
 }
 
 const NutritionisitPlanContainer = ({
   isLoading,
   mealPlans,
   handleDeleteMealPlan,
+  handleEditMealPlan,
 }: Props) => {
   return isLoading ? (
     <CustomLoader extraStyles={{marginTop: 30}} />
@@ -24,6 +26,7 @@ const NutritionisitPlanContainer = ({
         key={plan._id}
         plan={plan}
         handleDeleteButton={() => handleDeleteMealPlan(plan._id)}
+        handleEditButton={() => handleEditMealPlan(plan)}
       />
     ))
   );

@@ -13,7 +13,7 @@ export interface IMealPlan {
   title: string;
   description: string;
   pdf: string;
-  cost: number;
+  cost: number | string;
   username: string;
   paidBy: [];
   isDeleted: boolean;

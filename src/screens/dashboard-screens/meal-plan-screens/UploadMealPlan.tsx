@@ -16,68 +16,91 @@ import DocumentPicker, {
   DirectoryPickerResponse,
   DocumentPickerResponse,
   isCancel,
-  isInProgress,
   types,
 } from 'react-native-document-picker';
 import MealPlanPdf from '../../../../assets/icons/MealPlanPdf';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {uploadPlanSchema} from '../../../validations';
 import Toast from 'react-native-toast-message';
-import {createMealPlan} from '../../../api/mealPlan-module';
+import {createMealPlan, editMealPlan} from '../../../api/mealPlan-module';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
+import {s3bucketReference} from '../../../api';
 
-const initialValues = {
-  title: '',
-  description: '',
-  preview: '',
-  cost: '',
-  username: '',
-};
-
-const UploadMealPlan = ({navigation}: any) => {
+const UploadMealPlan = ({navigation, route}: any) => {
+  const myMealPlan = route?.params?.myMealPlan;
   const [pdfFile, setpdfFile] = useState<
     Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
-  >();
-  const [fileName, setFileName] = useState<any>('');
+  >(null);
+  const [fileName, setFileName] = useState<any>(myMealPlan?.pdf);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [mealPlanId, setMealPlanId] = useState<string | null>(myMealPlan?._id);
+
+  const initialValues = {
+    title: myMealPlan?.title || '',
+    description: myMealPlan?.description || '',
+    cost: myMealPlan?.cost ? String(myMealPlan?.cost) : '',
+    username: myMealPlan?.username || '',
+  };
 
   const handleSubmit = async (values: any) => {
-    if (pdfFile === null || pdfFile === undefined) {
+    if (!myMealPlan && pdfFile === null || pdfFile === undefined) {
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2: 'You need to attach a Meal Plan PDF',
       });
     } else {
+      setIsLoading(true);
+
       const reqData = {
         title: values.title,
         description: values.description,
         cost: values.cost,
-        pdf: pdfFile,
+        pdf:
+          pdfFile === null
+            ? {
+                uri: `${s3bucketReference}/${myMealPlan?.pdf}`,
+                type: 'application/pdf',
+                name: 'Filename.pdf',
+              }
+            : pdfFile,
         ...(values.username !== '' && {username: values.username}),
       };
-      setIsLoading(true);
+      console.log(reqData, 'REQQQQQ');
       try {
-        const response = await createMealPlan(reqData);
-        console.log(response?.data, 'response');
+        if (myMealPlan) {
+          const response = await editMealPlan(reqData, mealPlanId as string);
+          Toast.show({
+            type: 'success',
+            text1: `${response?.data?.message}`,
+          });
+          navigation.navigate('CreateMealPlan');
+        } else {
+          const response = await createMealPlan(reqData);
+          Toast.show({
+            type: 'success',
+            text1: `${response?.data?.message}`,
+          });
+          navigation.navigate('CreateMealPlan');
+        }
+      } catch (error: any) {
         Toast.show({
           type: 'success',
-          text1: `${response?.data?.message}`,
+          text1: `${error?.response?.data?.message}`,
         });
-      } catch (error: any) {
-        console.log('ERROR FROM CREAING MEAL PLAN', error?.response?.data);
+        console.log('ERROR FROM CREAING OR EDITING MEAL PLAN', error);
       }
       setIsLoading(false);
-      if (values.username && values.username.startsWith('@')) {
-        navigation.navigate('CreateMealPlan');
-        const cleanedUsername = values.username.substring(1);
-        navigation.navigate('Message', {
-          screen: 'ChatDetails',
-          params: {username: cleanedUsername},
-        });
-      } else {
-        navigation.navigate('CreateMealPlan');
-      }
+      // if (values.username && values.username.startsWith('@')) {
+      //   navigation.navigate('CreateMealPlan');
+      //   const cleanedUsername = values.username.substring(1);
+      //   navigation.navigate('Message', {
+      //     screen: 'ChatDetails',
+      //     params: {username: cleanedUsername},
+      //   });
+      // } else {
+      // navigation.navigate('CreateMealPlan');
+      // }
     }
   };
 
@@ -86,10 +109,10 @@ const UploadMealPlan = ({navigation}: any) => {
       const res: any = await DocumentPicker.pickSingle({
         type: types.pdf,
       });
-      console.log(res);
       if (!isCancel(res)) {
         const nameWithoutExtension = res.name.replace('.pdf', '');
         setpdfFile(res);
+        console.log(res, 'RES');
         setFileName(nameWithoutExtension);
       }
     } catch (e) {
@@ -122,107 +145,118 @@ const UploadMealPlan = ({navigation}: any) => {
             touched,
             setFieldValue,
             setFieldError,
-          }) => (
-            <>
-              <View style={{alignItems: 'center'}}>
-                <CustomInput
-                  label="Title"
-                  placeholder="Enter here"
-                  value={values.title}
-                  error={errors.title}
-                  touched={touched.title}
-                  initialTouched={true}
-                  labelStyles={styles.label}
-                  extraStyles={styles.textInput}
-                  handleChange={handleChange('title')}
-                  setFieldError={setFieldError}
-                  fieldName="title"
-                />
-                <CustomInput
-                  label="Description "
-                  secondLabel={true}
-                  placeholder="Description here"
-                  value={values.description}
-                  error={errors.description}
-                  touched={touched.description}
-                  initialTouched={true}
-                  labelStyles={styles.label}
-                  multiline
-                  handleChange={handleChange('description')}
-                  textAlignVertical="top"
-                  extraStyles={[styles.textInput, {height: verticalScale(100)}]}
-                  setFieldError={setFieldError}
-                  fieldName="description"
-                />
-                <TouchableOpacity
-                  onPress={openDocument}
-                  style={styles.document}>
-                  {fileName ? (
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        gap: 5,
-                        alignItems: 'center',
-                      }}>
-                      <MealPlanPdf width={33} height={43} />
-                      <Text
+          }) => {
+            return (
+              <>
+                <View style={{alignItems: 'center'}}>
+                  <CustomInput
+                    label="Title"
+                    placeholder="Enter here"
+                    value={values.title}
+                    error={errors.title as string}
+                    touched={touched.title as boolean}
+                    initialTouched={true}
+                    labelStyles={styles.label}
+                    extraStyles={styles.textInput}
+                    handleChange={handleChange('title')}
+                    setFieldError={setFieldError}
+                    fieldName="title"
+                  />
+                  <CustomInput
+                    label="Description "
+                    secondLabel={true}
+                    placeholder="Description here"
+                    value={values.description}
+                    error={errors.description as string}
+                    touched={touched.description as boolean}
+                    initialTouched={true}
+                    labelStyles={styles.label}
+                    multiline
+                    handleChange={handleChange('description')}
+                    textAlignVertical="top"
+                    extraStyles={[
+                      styles.textInput,
+                      {height: verticalScale(100)},
+                    ]}
+                    setFieldError={setFieldError}
+                    fieldName="description"
+                  />
+                  <TouchableOpacity
+                    onPress={openDocument}
+                    style={styles.document}>
+                    {fileName ? (
+                      <View
                         style={{
-                          fontSize: 12,
-                          fontWeight: '500',
-                          color: 'rgba(255, 255, 255, 1)',
+                          flexDirection: 'row',
+                          gap: 5,
+                          alignItems: 'center',
                         }}>
-                        {fileName.length > 27
-                          ? fileName.substring(0, 27 - 3) + '...'
-                          : fileName}
-                      </Text>
-                    </View>
-                  ) : (
-                    <UploadMealPdf />
-                  )}
-                  <Text
-                    style={{
-                      fontWeight: '400',
-                      fontSize: 10,
-                      color: 'rgba(255, 255, 255, 0.5)',
-                    }}>
-                    Uploaded File
-                  </Text>
-                </TouchableOpacity>
-                <CustomInput
-                  label="Cost"
-                  placeholder=" $0.00"
-                  value={values.cost}
-                  error={errors.cost}
-                  labelStyles={styles.label}
-                  touched={touched.cost}
-                  initialTouched={true}
-                  extraStyles={styles.textInput}
-                  setFieldError={setFieldError}
-                  fieldName="cost"
-                  handleChange={handleChange('cost')}
-                  keyboardType="numeric"
-                />
-                <CustomInput
-                  label="Username  (only the username listed will see this Meal plan)"
-                  placeholder=" @linconsmith"
-                  value={values.username}
-                  error={errors.username}
-                  touched={touched.username}
-                  labelStyles={[styles.label, {width: horizontalScale(320)}]}
-                  initialTouched={true}
-                  extraStyles={styles.textInput}
-                  setFieldError={setFieldError}
-                  fieldName="username"
-                  handleChange={handleChange('username')}
-                />
-              </View>
-              <View style={styles.button}>
-                <CustomButton onPress={handleSubmit} isDisabled={isLoading}>
-                  {isLoading ? <CustomLoader /> : 'Create'}{' '}
-                </CustomButton>
-              </View>
-            </>
-          )}
+                        <MealPlanPdf width={33} height={43} />
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            fontWeight: '500',
+                            color: 'rgba(255, 255, 255, 1)',
+                          }}>
+                          {fileName.length > 27
+                            ? fileName.substring(0, 27 - 3) + '...'
+                            : fileName}
+                        </Text>
+                      </View>
+                    ) : (
+                      <UploadMealPdf />
+                    )}
+                    <Text
+                      style={{
+                        fontWeight: '400',
+                        fontSize: 10,
+                        color: 'rgba(255, 255, 255, 0.5)',
+                      }}>
+                      Uploaded File
+                    </Text>
+                  </TouchableOpacity>
+                  <CustomInput
+                    label="Cost"
+                    placeholder=" $0.00"
+                    value={values.cost}
+                    error={errors.cost as string}
+                    labelStyles={styles.label}
+                    touched={touched.cost as boolean}
+                    initialTouched={true}
+                    extraStyles={styles.textInput}
+                    setFieldError={setFieldError}
+                    fieldName="cost"
+                    handleChange={handleChange('cost')}
+                    keyboardType="numeric"
+                  />
+                  <CustomInput
+                    label="Username  (only the username listed will see this Meal plan)"
+                    placeholder=" @linconsmith"
+                    value={values.username}
+                    error={errors.username as string}
+                    touched={touched.username as boolean}
+                    labelStyles={[styles.label, {width: horizontalScale(320)}]}
+                    initialTouched={true}
+                    extraStyles={styles.textInput}
+                    setFieldError={setFieldError}
+                    fieldName="username"
+                    handleChange={handleChange('username')}
+                  />
+                </View>
+                <View style={styles.button}>
+                  <CustomButton onPress={handleSubmit} isDisabled={isLoading}>
+                    {isLoading ? (
+                      <CustomLoader />
+                    ) : myMealPlan ? (
+                      'Edit'
+                    ) : (
+                      'Create'
+                    )}{' '}
+                  </CustomButton>
+                </View>
+              </>
+            );
+          }}
         </Formik>
       </ScrollView>
     </View>

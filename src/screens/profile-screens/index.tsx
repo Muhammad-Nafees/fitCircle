@@ -108,7 +108,7 @@ const ProfileScreen = ({navigation, route}: any) => {
     userData?._id,
   );
   const profilePersonalData = useSelector((state: RootState) => state.profile);
-  const [isSearchProfile, setIsSearchProfile] = useState<boolean>();
+  const [isSearchProfile, setIsSearchProfile] = useState<boolean>(false);
 
   useEffect(() => {
     if (searchUserProfile && searchUserProfile._id) {

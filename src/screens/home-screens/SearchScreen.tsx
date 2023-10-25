@@ -19,7 +19,7 @@ import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/shared-components/CustomButton';
 import {STYLES} from '../../styles/globalStyles';
-import {searchProfile, searchTrainerProfile} from '../../api/profile-module';
+import {searchProfile, searchProfileByRole} from '../../api/profile-module';
 import {useDispatch, useSelector} from 'react-redux';
 import {setUserProfile} from '../../redux/authSlice';
 import CustomLoader from '../../components/shared-components/CustomLoader';
@@ -94,7 +94,7 @@ export const SearchScreen = () => {
         setSearchData(users);
         setMessage('No users Found!');
       } else {
-        const response = await searchTrainerProfile(selectedFilter,searchQuery);
+        const response = await searchProfileByRole(selectedFilter, searchQuery);
         const users = response?.data?.data?.users;
         setSearchData(users);
         setMessage(`No ${selectedFilter} Found!`);

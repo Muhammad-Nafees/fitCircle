@@ -19,39 +19,32 @@ import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import Video from 'react-native-video';
 import {createPackageSchema} from '../../validations';
 import {IPackage} from '../../interfaces/package.interface';
 import {FileData} from '../../interfaces/user.interface';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import {useFocusEffect} from '@react-navigation/native';
+import {s3bucketReference} from '../../api';
 
-const initialValues = {
-  packageTitle: '',
-  packageDescription: '',
-  preview: '',
-  cost: '',
-  hours: '',
-  username: '',
-};
-
-const CreatePackage = ({navigation}: any) => {
+const CreatePackage = ({navigation, route}: any) => {
+  const myPackage = route?.params?.myPackage;
   const [selectedVideoUri, setSelectedVideoUri] = useState<
-    FileData | undefined
+    FileData | undefined | any
   >(undefined);
   const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(
     undefined,
   );
   const [videoVisible, setVideoVisible] = useState(false);
-  const [playIconVisible, setPlayIconVisible] = useState(false);
-  // const dummyData = route.params.dummyData || {};
+  const [isEditingPackage, setIsEditingPackage] = useState<boolean>(false);
+  console.log(myPackage, 'MYPACKAGE!');
 
   const fetchThumbnail = async () => {
     if (selectedVideoUri) {
       try {
         const response = await createThumbnail({
-          url: selectedVideoUri?.uri,
+          url: selectedVideoUri?.uri || selectedVideoUri,
           timeStamp: 1000,
           format: 'jpeg',
         });
@@ -65,7 +58,6 @@ const CreatePackage = ({navigation}: any) => {
       }
     }
   };
-  console.log(videoThumbnail,"videoThumbnail")
 
   useFocusEffect(
     useCallback(() => {
@@ -75,6 +67,14 @@ const CreatePackage = ({navigation}: any) => {
     }, [selectedVideoUri]),
   );
 
+  useEffect(() => {
+    if (myPackage) {
+      const video = `${s3bucketReference}/${myPackage.media}`;
+      setSelectedVideoUri(video);
+      setIsEditingPackage(true);
+    }
+  }, []);
+
   const handleSubmit = (values: any) => {
     console.log(values, 'valuess');
     const myPackage: Partial<IPackage> = {
@@ -82,13 +82,13 @@ const CreatePackage = ({navigation}: any) => {
       description: values.packageDescription,
       cost: values.cost,
       hours: values.hours,
-      media: selectedVideoUri,
+      media: selectedVideoUri as FileData,
       thumbnail: videoThumbnail,
     };
-    console.log(videoThumbnail, 'videooo');
     navigation.navigate('PackageDetail', {
       packageDetails: myPackage,
       isCreatingPackage: true,
+      isEditingPackage: isEditingPackage,
     });
   };
 
@@ -108,14 +108,13 @@ const CreatePackage = ({navigation}: any) => {
     });
   };
 
-  // const initialValues = {
-  //   packageTitle: dummyData.packageTitle || '',
-  //   packageDescription: dummyData.packageDescription || '',
-  //   preview: dummyData.preview || '',
-  //   cost: dummyData.cost || '',
-  //   hours: dummyData.hours || '',
-  //   username: dummyData.username || '',
-  // };
+  const initialValues = {
+    packageTitle: myPackage.title || '',
+    packageDescription: myPackage.description || '',
+    cost: myPackage?.cost ? String(myPackage?.cost) : '',
+    hours: myPackage?.hours ? String(myPackage?.hours) : '',
+    username: myPackage.username || '',
+  };
 
   const handlePlayIconPress = () => {
     setVideoVisible(true);
@@ -153,8 +152,8 @@ const CreatePackage = ({navigation}: any) => {
                   label="Package Title"
                   placeholder="Enter here"
                   value={values.packageTitle}
-                  error={errors.packageTitle}
-                  touched={touched.packageTitle}
+                  error={errors.packageTitle as string}
+                  touched={touched.packageTitle as boolean}
                   initialTouched={true}
                   labelStyles={styles.label}
                   extraStyles={styles.textInput}
@@ -166,8 +165,8 @@ const CreatePackage = ({navigation}: any) => {
                   label="Package Description"
                   placeholder="Description here"
                   value={values.packageDescription}
-                  error={errors.packageDescription}
-                  touched={touched.packageDescription}
+                  error={errors.packageDescription as string}
+                  touched={touched.packageDescription as boolean}
                   initialTouched={true}
                   labelStyles={styles.label}
                   multiline
@@ -220,9 +219,9 @@ const CreatePackage = ({navigation}: any) => {
                   label="Cost"
                   placeholder="  $0.00"
                   value={values.cost}
-                  error={errors.cost}
+                  error={errors.cost as string}
                   labelStyles={styles.label}
-                  touched={touched.cost}
+                  touched={touched.cost as boolean}
                   initialTouched={true}
                   extraStyles={styles.textInput}
                   setFieldError={setFieldError}
@@ -234,8 +233,8 @@ const CreatePackage = ({navigation}: any) => {
                   label="Hours"
                   placeholder="  1"
                   value={values.hours}
-                  error={errors.hours}
-                  touched={touched.hours}
+                  error={errors.hours as string}
+                  touched={touched.hours as boolean}
                   labelStyles={styles.label}
                   initialTouched={true}
                   extraStyles={styles.textInput}
@@ -248,8 +247,8 @@ const CreatePackage = ({navigation}: any) => {
                   label="Username  (only the username listed will see this Meal plan)"
                   placeholder="  @linconsmith"
                   value={values.username}
-                  error={errors.username}
-                  touched={touched.username}
+                  error={errors.username as string}
+                  touched={touched.username as boolean}
                   labelStyles={[styles.label, {width: horizontalScale(320)}]}
                   initialTouched={true}
                   extraStyles={styles.textInput}
@@ -259,7 +258,9 @@ const CreatePackage = ({navigation}: any) => {
                 />
               </View>
               <View style={styles.button}>
-                <CustomButton onPress={handleSubmit}>Create</CustomButton>
+                <CustomButton onPress={handleSubmit}>
+                  {myPackage ? 'Edit' : 'Create'}
+                </CustomButton>
               </View>
             </>
           )}
@@ -276,7 +277,11 @@ const CreatePackage = ({navigation}: any) => {
         }}>
         <View style={styles.videoContainer}>
           <Video
-            source={{uri: selectedVideoUri?.uri}}
+            source={{
+              uri:
+                selectedVideoUri?.uri ||
+                `${s3bucketReference}/${myPackage.media}`,
+            }}
             style={styles.video}
             resizeMode="contain"
             onEnd={() => setVideoVisible(false)}

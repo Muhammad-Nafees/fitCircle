@@ -254,7 +254,6 @@ const SetSchedule = ({navigation, route}: any) => {
   }, [selectedDate]);
 
   const renderOptionItem = ({item}: any) => {
-    console.log(availableSlots, 'IIIIIIIIIIIIIIII');
     return (
       <TouchableOpacity
         disabled={
@@ -323,49 +322,48 @@ const SetSchedule = ({navigation, route}: any) => {
     : format(currentttDate, 'yyyy-MM-dd');
 
   return (
-    <ScrollView style={{flex: 1}}>
-      <View style={styles.container}>
-        <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image source={ArrowBackIcon} style={styles.arrowBack} />
-          </TouchableOpacity>
-          <Text style={styles.heading}>My Schedule</Text>
-          <View style={styles.calendarContainer}>
-            <Calendar
-              theme={{
-                backgroundColor: '#212223',
-                calendarBackground: '#212223',
-                arrowColor: '#fff',
-                textDayFontWeight: '400',
-                textMonthFontWeight: 'bold',
-                textDayHeaderFontWeight: '500',
-                selectedDayBackgroundColor: '#fff',
-                selectedDayTextColor: '#209BBC',
-                textDisabledColor: '#666',
-                dayTextColor: '#fff',
-                monthTextColor: '#fff',
-              }}
-              markingType="custom"
-              // markedDates={customDatesStyles}
-              markedDates={{
-                [today]: {
-                  selected: true,
-                  selectedColor: '#209BCC',
-                  selectedTextColor: '#FFF',
-                },
-                [selectedDate as any]: {
-                  selected: true,
-                  selectedColor: '#209BCC',
-                  selectedTextColor: '#FFF',
-                },
-              }}
-              onDayPress={handleDayPress}
-              hideExtraDays={true}
-              // current={formattedCurrentDate}
-            />
-          </View>
+    <View style={styles.container}>
+      <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image source={ArrowBackIcon} style={styles.arrowBack} />
+        </TouchableOpacity>
+        <Text style={styles.heading}>My Schedule</Text>
+        <View style={styles.calendarContainer}>
+          <Calendar
+            theme={{
+              backgroundColor: '#212223',
+              calendarBackground: '#212223',
+              arrowColor: '#fff',
+              textDayFontWeight: '400',
+              textMonthFontWeight: 'bold',
+              textDayHeaderFontWeight: '500',
+              selectedDayBackgroundColor: '#fff',
+              selectedDayTextColor: '#209BBC',
+              textDisabledColor: '#666',
+              dayTextColor: '#fff',
+              monthTextColor: '#fff',
+            }}
+            markingType="custom"
+            // markedDates={customDatesStyles}
+            markedDates={{
+              [today]: {
+                selected: true,
+                selectedColor: '#209BCC',
+                selectedTextColor: '#FFF',
+              },
+              [selectedDate as any]: {
+                selected: true,
+                selectedColor: '#209BCC',
+                selectedTextColor: '#FFF',
+              },
+            }}
+            onDayPress={handleDayPress}
+            hideExtraDays={true}
+            // current={formattedCurrentDate}
+          />
         </View>
-        {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View
           style={[
             styles.bottomContainer,
@@ -393,81 +391,17 @@ const SetSchedule = ({navigation, route}: any) => {
             </>
           )}
         </View>
-        {/* </ScrollView> */}
-        <View style={styles.buttonContainer}>
-          <CustomButton
-            extraStyles={{paddingHorizontal: 110}}
-            onPress={handleButtonPress}>
-            {route.params.hourlyRate
-              ? 'Continue'
-              : route.params.packageView
-              ? 'Pay Via Wallet Card'
-              : 'Set Schedule'}
-          </CustomButton>
-        </View>
-        <Modal
-          isVisible={isModalVisible}
-          onBackButtonPress={() => setIsModalVisible(false)}
-          onBackdropPress={() => setIsModalVisible(false)}
-          style={styles.modal}>
-          <CustomConfirmationModal
-            modalHeading="Please Confirm"
-            modalText={
-              route.params.packageView
-                ? `Are you sure you want to purchase this package for ${route.params?.userData?.hourlyRate} ?`
-                : `Are you sure you want to schedule for $${route.params?.userData?.hourlyRate.toFixed(
-                    2,
-                  )} ?`
-            }
-            onCancel={() => handlePayment('failed')}
-            onConfirm={() => handlePayment('success')}
-            confirmText="Yes"
-            isLoading={isLoading}
-            cancelText="No"
-            cancelColor={'rgba(220, 77, 77, 1)'}
-            confirmColor={'rgba(32, 128, 183, 1)'}
-          />
-        </Modal>
-        <Modal
-          isVisible={paymentModal}
-          onBackButtonPress={() => setPaymentModal(false)}
-          onBackdropPress={() => setPaymentModal(false)}
-          style={styles.modal}>
-          <CustomOutputModal
-            type={paymentType}
-            onPress={() => {
-              setPaymentModal(false),
-                Toast.show({
-                  type: 'success',
-                  text1: `Slot booked Successfully!`,
-                });
-              navigation.navigate('UserSchedule');
-            }}
-            modalText={
-              paymentType === 'success'
-                ? 'Payment Successful'
-                : 'Payment Unsuccessful'
-            }
-          />
-        </Modal>
-        {!route.params.hourlyRate &&
-          !route.params.packageView &&
-          timeSlots.length > 0 && (
-            <View style={styles.buttonContainer}>
-              <CustomButton
-                isDisabled={
-                  isLoading ? true : selectedSlotDates.length < 1 ? true : false
-                }
-                extraStyles={{paddingHorizontal: 120}}
-                onPress={
-                  isSearchTrainer
-                    ? handleBookTrainerSchedule
-                    : handleSetSchedule
-                }>
-                {isLoading ? <CustomLoader /> : 'Set Schedule'}
-              </CustomButton>
-            </View>
-          )}
+      </ScrollView>
+      <View style={styles.buttonContainer}>
+        <CustomButton
+          extraStyles={{paddingHorizontal: 110}}
+          onPress={handleButtonPress}>
+          {route.params.hourlyRate
+            ? 'Continue'
+            : route.params.packageView
+            ? 'Pay Via Wallet Card'
+            : 'Set Schedule'}
+        </CustomButton>
       </View>
       <Modal
         isVisible={isModalVisible}
@@ -519,7 +453,9 @@ const SetSchedule = ({navigation, route}: any) => {
         timeSlots.length > 0 && (
           <View style={styles.buttonContainer}>
             <CustomButton
-              isDisabled={selectedSlotDates.length < 1 ? true : false}
+              isDisabled={
+                isLoading ? true : selectedSlotDates.length < 1 ? true : false
+              }
               extraStyles={{paddingHorizontal: 120}}
               onPress={
                 isSearchTrainer ? handleBookTrainerSchedule : handleSetSchedule
@@ -528,7 +464,7 @@ const SetSchedule = ({navigation, route}: any) => {
             </CustomButton>
           </View>
         )}
-    </ScrollView>
+    </View>
   );
 };
 
@@ -564,7 +500,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     width: '100%',
     paddingBottom: 100,
-    height: 450,
   },
   selectedDateText: {
     fontSize: 16,

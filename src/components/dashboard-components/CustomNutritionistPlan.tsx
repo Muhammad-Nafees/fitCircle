@@ -38,7 +38,7 @@ export const CustomPlanDescription = ({
             ]}
             onPress={() => {
               swipeableRef.current.close();
-              handleDeleteButton();
+              handleDeleteButton && handleDeleteButton();
             }}>
             <DeleteMessageIcon />
           </TouchableOpacity>
@@ -49,7 +49,7 @@ export const CustomPlanDescription = ({
             ]}
             onPress={() => {
               swipeableRef.current.close();
-              handleEditButton();
+              handleEditButton && handleEditButton();
             }}>
             <Icon name="edit-3" color={'white'} />
           </TouchableOpacity>
@@ -128,7 +128,7 @@ export const CustomNutritionistPlan = ({
           </Text>
         </View>
       </View>
-      {plans.map((plan: any, index: any) => (
+      {plans?.map((plan: any, index: any) => (
         <TouchableOpacity
           onPress={() => handleModalOpen(plan.planName, plan.price)}>
           <CustomPlanDescription plan={plan} />

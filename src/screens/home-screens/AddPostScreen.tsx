@@ -486,6 +486,7 @@ export const AddPostScreen = ({route}: any) => {
                 <View style={styles.mediaContainer}>
                   <Image source={{uri: mediaUri.uri}} style={styles.media} />
                   <TouchableOpacity
+                    disabled={isLoading}
                     style={styles.cancelIconContainer}
                     onPress={handleCancelImage}>
                     <Image source={CancelIcon} style={styles.cancelIcon} />

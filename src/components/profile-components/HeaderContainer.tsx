@@ -98,6 +98,7 @@ export const ProfileHeaderContainer = ({
       console.log(error?.response?.data, 'from follow subscribe on search!');
     }
   };
+  console.log(userData?.role, 'DD');
 
   const navigateToSchedule = () => {
     navigation.navigate('ScheduleScreen', {
@@ -108,6 +109,7 @@ export const ProfileHeaderContainer = ({
       },
     });
   };
+  console.log(isSeachUser, loginUserData?.role, userData?.role, 'EVERTGFG');
 
   return (
     <ImageBackground
@@ -124,9 +126,9 @@ export const ProfileHeaderContainer = ({
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <View style={{flexDirection: 'row', gap: 6}}>
-          {isSearchProfile &&
+          {!isSeachUser &&
             loginUserData?.role === 'user' &&
-            profilePersonalData.role === 'trainer' && (
+            userData?.role === 'trainer' && (
               <TouchableOpacity onPress={navigateToSchedule}>
                 <TrainerProfileScheduleIcon />
               </TouchableOpacity>
