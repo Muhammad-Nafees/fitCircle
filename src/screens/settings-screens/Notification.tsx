@@ -1,18 +1,17 @@
 import CustomToggleButton from '../../components/settings-components/CustomToggleButton';
-import {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {horizontalScale} from '../../utils/metrics';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
 
 export const NotificationScreen = () => {
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headingContainer}>
         <Text style={styles.heading}>Notifications</Text>
       </View>
       <View style={styles.contentContainer}>
         <View>
           <Text style={styles.text}>
-            Control your notifications depending on your prefereces.
+            Control your notifications depending on your preferences.
           </Text>
           <Text style={styles.text}>
             If you disable this notification, you will not get notify when
@@ -30,13 +29,13 @@ export const NotificationScreen = () => {
           />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#292a2c',
     paddingHorizontal: horizontalScale(16),
   },
@@ -49,15 +48,15 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   contentContainer: {
-    marginHorizontal: 10,
+    marginHorizontal: horizontalScale(10),
   },
   text: {
     fontSize: 14,
     color: 'white',
     fontWeight: '400',
-    paddingTop: 30,
+    paddingTop: verticalScale(30),
   },
   toggleButtonContainer: {
-    marginTop: 45,
+    marginTop: verticalScale(45),
   },
 });

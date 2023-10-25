@@ -67,7 +67,7 @@ const DeleteAccountScreen = ({navigation}: any) => {
           confirmColor="rgba(32, 128, 183, 1)"
           cancelColor="rgba(220, 77, 77, 1)"
           textInput={true}
-          extraModalStyles={{height: verticalScale(206)}}
+          extraModalStyles={{height: 206}}
         />
       </Modal>
       <Modal

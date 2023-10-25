@@ -13,17 +13,18 @@ export const PaymentMethodScreen = ({navigation, route}: any) => {
   const userRole = useSelector((state: RootState) => state.auth.userRole);
   const sufficient = route?.params?.amount <= '50' || null;
 
-  let modalText = 'Insufficient Wallet Funds';
+  let modalText = 'Insufficient wallet funds';
+  let buttonText = userRole !== 'user' ? 'Return' : 'Top Up';
   if (userRole !== 'user' && sufficient) {
     modalText = 'Successfully transferred to your bank!';
+    buttonText = 'Return';
   } else if (userRole === 'user' && sufficient) {
     modalText = 'Successfully Paid!';
+    buttonText = 'Return';
   }
 
   const handleAmountPayment = () => {
-    if (sufficient !== null) {
-      setIsModalVisible(true);
-    }
+    setIsModalVisible(true);
     return;
   };
 
@@ -72,9 +73,10 @@ export const PaymentMethodScreen = ({navigation, route}: any) => {
         style={styles.modal}>
         <CustomOutputModal
           type={sufficient ? 'success' : 'failed'}
+          buttonText={buttonText}
           modalText={modalText}
           extraTextStyles={[
-            modalText === 'Insufficient Wallet Funds'
+            modalText === 'Insufficient wallet funds'
               ? {
                   fontWeight: '600',
                   fontSize: 16,
@@ -88,7 +90,7 @@ export const PaymentMethodScreen = ({navigation, route}: any) => {
                   textAlign: 'center',
                 },
           ]}
-          onPress={() => setIsModalVisible(false)}
+          onPress={() => navigation.navigate('Wallet')}
         />
       </Modal>
     </View>

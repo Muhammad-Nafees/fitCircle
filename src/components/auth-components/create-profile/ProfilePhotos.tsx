@@ -20,6 +20,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import {setUserData} from '../../../redux/authSlice';
 import {IUser} from '../../../interfaces/user.interface';
+import {useRoute} from '@react-navigation/native';
 
 interface Props {
   onSelectProfilePicture: (picture: any) => void;
@@ -34,6 +35,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
   );
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
+  const route = useRoute();
 
   useEffect(() => {
     requestCameraPermission();
@@ -153,6 +155,29 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
   return (
     <>
       <View style={styles.coverPhotoContainer}>
+        {route.name === 'EditProfile' && (
+          <View
+            style={[
+              {
+                alignSelf: 'flex-start',
+                paddingHorizontal: horizontalScale(16),
+              },
+              selectedCoverImage && {
+                position: 'absolute',
+                top: verticalScale(78),
+                zIndex: 99,
+              },
+            ]}>
+            <Text
+              style={{
+                fontWeight: '700',
+                fontSize: 16,
+                color: 'rgba(255, 255, 255, 1)',
+              }}>
+              Edit Profile
+            </Text>
+          </View>
+        )}
         {selectedCoverImage ? (
           <>
             <Image

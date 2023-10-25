@@ -1,12 +1,12 @@
-import {CustomOutputModal} from '../../components/shared-components/CustomModals';
 import CustomNotification from '../../components/profile-components/CustomNotification';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
-import Modal from 'react-native-modal';
 import {useState} from 'react';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 
 const NotificationScreen = ({navigation}: any) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -19,7 +19,7 @@ const NotificationScreen = ({navigation}: any) => {
       id: 2,
       username: 'John',
       dateTime: '02/12/2023 - 09:30 AM',
-      requestText: 'Requesting for a pakacage training schedule.',
+      requestText: 'Requesting for a package training schedule.',
       responseTime: 'You have until 24hrs to respond',
     },
     {
@@ -31,13 +31,25 @@ const NotificationScreen = ({navigation}: any) => {
     },
   ]);
 
-  const handleModal = () => {
-    setIsModalVisible(!isModalVisible);
-  };
-
   const handleConfirmPress = (notificationText: string, username: string) => {
-    if (notificationText === 'Requesting for a training schedule.') {
-      handleModal();
+    console.log(notificationText);
+    if (
+      notificationText === 'Requesting for a training schedule.' ||
+      notificationText === 'Requesting for a package training schedule.'
+    ) {
+      navigation.navigate('Message', {
+        screen: 'ChatDetails',
+        params: {
+          messages: [
+            {
+              id: 1,
+              text: `Accepted ${username} request`,
+              color: 'rgba(32, 155, 204, 1)',
+            },
+          ],
+          username,
+        },
+      });
     } else {
       navigation.navigate('Message', {
         screen: 'ChatDetails',
@@ -64,70 +76,103 @@ const NotificationScreen = ({navigation}: any) => {
         />
       </TouchableOpacity>
       <Text style={styles.heading}>Notification</Text>
-      {notifications.map(notification => (
-        <CustomNotification
-          key={notification.id}
-          username={notification.username}
-          dateTime={notification.dateTime}
-          requestText={notification.requestText}
-          responseTime={notification.responseTime}
-          handleDeclinePress={() => handleDeclinePress(notification.id)}
-          handleConfirmPress={() =>
-            handleConfirmPress(notification.requestText, notification.username)
-          }
-        />
-      ))}
-      <CustomNotification
-        username={'Jason Smith'}
-        dateTime={'02/15/2023 - 03:45 PM'}
-        requestText={'Requesting for a meal plan'}
-        responseTime={'Please wait until 24 hours to respond'}
-        buttonVisible={false}
-        containerPress={() =>
-          navigation.navigate('Message', {
-            screen: 'ChatDetails',
-            params: {
-              type: 'pending',
-              username: 'Jason Smith',
-            },
-          })
-        }
-      />
-      <CustomNotification
-        username={'Jason Smith'}
-        dateTime={'02/15/2023 - 03:45 PM'}
-        requestText={'Requesting for a meal plan'}
-        responseTime={'Accepted your meal plan request'}
-        buttonVisible={false}
-        extraResponseStyles={{color: 'rgba(32, 155, 204, 1)'}}
-        containerPress={() =>
-          navigation.navigate('Message', {
-            screen: 'ChatDetails',
-            params: {
-              type: 'accepted',
-              username: 'Jason Smith',
-            },
-          })
-        }
-      />
-      <Modal
-        isVisible={isModalVisible}
-        onBackButtonPress={handleModal}
-        onBackdropPress={handleModal}
-        style={styles.modal}>
-        <CustomOutputModal
-          type="success"
-          modalText="Package Training Schedule Accepted"
-          onPress={handleModal}
-          buttonText="Back"
-          extraTextStyles={{
-            marginHorizontal: 40,
-            textAlign: 'center',
-            // lineHeight: 24,
-            marginBottom: -7,
-          }}
-        />
-      </Modal>
+      {userRole !== 'user' ? (
+        <View>
+          <CustomNotification
+            username={'Jason Smith'}
+            dateTime={'02/15/2023 - 03:45 PM'}
+            requestText={'Requesting for a meal plan.'}
+            responseTime={'Please wait until 24 hours to respond'}
+            buttonVisible={false}
+            containerPress={() =>
+              navigation.navigate('Message', {
+                screen: 'ChatDetails',
+                params: {
+                  messages: [
+                    {
+                      id: 1,
+                      text: 'Requesting for a meal plan.',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                    },
+                    {
+                      id: 2,
+                      text: 'Please wait 24hours until Lindsey accept',
+                      color: 'rgba(32, 155, 204, 1)',
+                    },
+                  ],
+                  username: 'Jason Smith',
+                },
+              })
+            }
+          />
+          <CustomNotification
+            username={'Jason Smith'}
+            dateTime={'02/15/2023 - 03:45 PM'}
+            requestText={'Requesting for a meal plan.'}
+            responseTime={'Accepted your meal plan request'}
+            buttonVisible={false}
+            extraResponseStyles={{color: 'rgba(32, 155, 204, 1)'}}
+            containerPress={() =>
+              navigation.navigate('Message', {
+                screen: 'ChatDetails',
+                params: {
+                  messages: [
+                    {
+                      id: 1,
+                      text: 'Requesting for a meal plan.',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                    },
+                    {
+                      id: 2,
+                      text: 'Please wait 24hours until Lindsey accept',
+                      color: 'rgba(255, 255, 255, 1)',
+                    },
+                    {
+                      id: 3,
+                      text: 'Lindsey accepted your request',
+                      color: 'rgba(32, 155, 204, 1)',
+                    },
+                  ],
+                  username: 'Jason Smith',
+                },
+              })
+            }
+          />
+          <CustomNotification
+            username={'Jason Smith'}
+            dateTime={'02/15/2023 - 03:45 PM'}
+            requestText={'Requesting for a meal plan.'}
+            responseTime={'Uploaded a meal plan for you, check profile!'}
+            buttonVisible={false}
+            extraResponseStyles={{color: 'rgba(32, 155, 204, 1)'}}
+            containerPress={() =>
+              navigation.navigate('Profile', {
+                isTrainerView: true,
+                isFollowing: true,
+              })
+            }
+          />
+        </View>
+      ) : (
+        <>
+          {notifications.map(notification => (
+            <CustomNotification
+              key={notification.id}
+              username={notification.username}
+              dateTime={notification.dateTime}
+              requestText={notification.requestText}
+              responseTime={notification.responseTime}
+              handleDeclinePress={() => handleDeclinePress(notification.id)}
+              handleConfirmPress={() =>
+                handleConfirmPress(
+                  notification.requestText,
+                  notification.username,
+                )
+              }
+            />
+          ))}
+        </>
+      )}
     </View>
   );
 };

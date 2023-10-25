@@ -18,7 +18,7 @@ import CardPayment from '../../components/payment-components/CardPayment';
 import {CustomConfirmationModal} from '../../components/shared-components/CustomModals';
 import {cardSchema} from '../../validations';
 
-const AddCardScreen = ({route}: any) => {
+const AddCardScreen = ({navigation, route}: any) => {
   const [allData, setAllData] = useState<any | null>([]);
   const [allCountries, setAllCountries] = useState<any | null>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -51,6 +51,7 @@ const AddCardScreen = ({route}: any) => {
   };
 
   const handleSubmit = values => {
+    navigation.navigate('Wallet');
     console.log(values);
   };
 
