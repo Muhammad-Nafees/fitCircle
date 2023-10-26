@@ -86,6 +86,10 @@ const DashboardScreen = ({navigation}: any) => {
         ]
       : userBasedItems;
 
+  if (userData.role === 'nutritionist') {
+    roleBasedItems.pop();
+  }
+
   const renderItem = ({item}: any) => {
     return (
       <DashboardCarouselItem
@@ -140,7 +144,15 @@ const DashboardScreen = ({navigation}: any) => {
           //   ]}>
           //   Coming soon
           // </Text>
-          <CustomSchedule />
+          // <CustomSchedule />
+          <CustomTransaction
+            profileImageUrl={profileImageUrl}
+            username="Sam"
+            name="Sameer Ather"
+            date={'May 4'}
+            amount="+ $50"
+            listText="Subscription"
+          />
         ) : (
           <TouchableOpacity
             onPress={() => navigation.navigate('TransactionScreen')}>

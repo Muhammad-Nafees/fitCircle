@@ -18,6 +18,26 @@ export const createPackage = async (reqData: Partial<IPackage>) => {
   return response;
 };
 
+export const updatePackage = async (
+  reqData: Partial<IPackage>,
+  packageId: string,
+) => {
+  let formData = new FormData();
+  formData.append('title', reqData?.title);
+  formData.append('description', reqData?.description);
+  formData.append('cost', reqData?.cost);
+  formData.append('hours', reqData?.hours);
+  // formData.append('media', reqData?.media);
+  // formData.append('thumbnail', reqData?.thumbnail);
+
+  const response = await api.put(`package/${packageId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response;
+};
+
 export const getTrainerPackages = async (
   page: number,
   limit: number,

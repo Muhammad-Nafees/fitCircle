@@ -118,7 +118,8 @@ export const CustomTrainerPackage = ({
             <Image
               source={{
                 uri: isCreatingPackage
-                  ? myPackage?.thumbnail && myPackage?.thumbnail.uri
+                  ? (myPackage?.thumbnail && myPackage?.thumbnail.uri) ||
+                    `${s3bucketReference}/${myPackage?.thumbnail}`
                   : `${s3bucketReference}/${myPackage?.thumbnail}`,
               }}
               style={styles.image}

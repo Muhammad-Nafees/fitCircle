@@ -67,37 +67,37 @@ export const MealPlanThree = ({navigation}: any) => {
   }, [searchQuery]);
 
   const handleSearchNutritionist = async (search: string) => {
-    setSearchQuery(search);
-    if (searchQuery == '') {
-      setAllMealPlans(allMealPlans);
-      return;
-    }
-    setIsLoading(false);
-    try {
-      const response = await searchNutritionist('nutritionist', search);
-      const searchUsers = response?.data?.data?.users;
-      const searchUserNames = searchUsers.map((user: IUser) => user.username);
-      console.log(searchUserNames, 'NAMES');
-      const nutritionistNames = allMealPlans.map((plan: IAllMealPlans) => {
-        console.log(plan.nutritionist.username, 'allnut');
-        return plan.nutritionist.username; // Add a return statement here
-      });
-      const commonNames = nutritionistNames.filter(name =>
-        searchUserNames.includes(name),
-      );
-      if (commonNames.length > 0) {
-        setAllMealPlans(
-          allMealPlans.filter(plan =>
-            commonNames.includes(plan.nutritionist.username as string),
-          ),
-        );
-      } else {
-        setAllMealPlans([]);
-      }
-    } catch (error: any) {
-      console.log(error?.response?.data, 'FROM SEARCHING NUTRITIONIST!!');
-      setAllMealPlans([]);
-    }
+    // setSearchQuery(search);
+    // if (searchQuery == '') {
+    //   setAllMealPlans(allMealPlans);
+    //   return;
+    // }
+    // setIsLoading(false);
+    // try {
+    //   const response = await searchNutritionist('nutritionist', search);
+    //   const searchUsers = response?.data?.data?.users;
+    //   const searchUserNames = searchUsers.map((user: IUser) => user.username);
+    //   console.log(searchUserNames, 'NAMES');
+    //   const nutritionistNames = allMealPlans.map((plan: IAllMealPlans) => {
+    //     console.log(plan.nutritionist.username, 'allnut');
+    //     return plan.nutritionist.username; // Add a return statement here
+    //   });
+    //   const commonNames = nutritionistNames.filter(name =>
+    //     searchUserNames.includes(name),
+    //   );
+    //   if (commonNames.length > 0) {
+    //     setAllMealPlans(
+    //       allMealPlans.filter(plan =>
+    //         commonNames.includes(plan.nutritionist.username as string),
+    //       ),
+    //     );
+    //   } else {
+    //     setAllMealPlans([]);
+    //   }
+    // } catch (error: any) {
+    //   console.log(error?.response?.data, 'FROM SEARCHING NUTRITIONIST!!');
+    //   setAllMealPlans([]);
+    // }
   };
 
   return (

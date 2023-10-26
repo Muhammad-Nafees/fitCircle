@@ -58,7 +58,7 @@ const SetSchedule = ({navigation, route}: any) => {
   // for user viewing trainer profile!
   const [availableSlots, setAvailableSlots] = useState<any>([]);
   const isSearchTrainer = route?.params?.userData;
-  const searchTrainerId = route?.params?.userData?._id;
+  const searchTrainerId = route?.params?.trainerId;
   const [bookTrainerScheduleId, setBookTrainerScheduleId] =
     useState<string>('');
 
@@ -209,6 +209,9 @@ const SetSchedule = ({navigation, route}: any) => {
         trainer: searchTrainerId,
         date: selectedDate == null ? currentDate : selectedDate,
         slot: bookTrainerScheduleId,
+        ...(route.params?.packageView && {
+          package: route?.params?.packageDetails?.id,
+        }),
       };
       const response = await bookTrainerSchedule(reqData);
       console.log(response?.data);
@@ -396,9 +399,9 @@ const SetSchedule = ({navigation, route}: any) => {
         <CustomButton
           extraStyles={{paddingHorizontal: 110}}
           onPress={handleButtonPress}>
-          {route.params.hourlyRate
+          {route?.params?.hourlyRate
             ? 'Continue'
-            : route.params.packageView
+            : route?.params?.packageView
             ? 'Pay Via Wallet Card'
             : 'Set Schedule'}
         </CustomButton>
@@ -411,9 +414,9 @@ const SetSchedule = ({navigation, route}: any) => {
         <CustomConfirmationModal
           modalHeading="Please Confirm"
           modalText={
-            route.params.packageView
-              ? `Are you sure you want to purchase this package for ${route.params?.userData?.hourlyRate} ?`
-              : `Are you sure you want to schedule for $${route.params?.userData?.hourlyRate.toFixed(
+            route?.params?.packageView
+              ? `Are you sure you want to purchase this package for $${route.params?.packageDetails?.cost} ?`
+              : `Are you sure you want to schedule for $${route.params?.userData?.hourlyRate?.toFixed(
                   2,
                 )} ?`
           }
@@ -453,9 +456,7 @@ const SetSchedule = ({navigation, route}: any) => {
         timeSlots.length > 0 && (
           <View style={styles.buttonContainer}>
             <CustomButton
-              isDisabled={
-                isLoading ? true : selectedSlotDates.length < 1 ? true : false
-              }
+              isDisabled={selectedSlotDates.length < 1 ? true : false}
               extraStyles={{paddingHorizontal: 120}}
               onPress={
                 isSearchTrainer ? handleBookTrainerSchedule : handleSetSchedule
