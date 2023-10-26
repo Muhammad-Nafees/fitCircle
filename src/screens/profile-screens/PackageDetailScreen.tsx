@@ -20,7 +20,7 @@ import CustomLoader from '../../components/shared-components/CustomLoader';
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 import {Image as ImageCompress} from 'react-native-compressor';
-import {createPackage} from '../../api/packages-module';
+import {createPackage, updatePackage} from '../../api/packages-module';
 import {IPackage} from '../../interfaces/package.interface';
 import Toast from 'react-native-toast-message';
 import {useSelector} from 'react-redux';
@@ -30,7 +30,7 @@ const reviewData = Array.from({length: 5});
 
 export const PackageDetailScreen = ({navigation, route}: any) => {
   const [videoVisible, setVideoVisible] = useState(false);
-  const {packageDetails} = route?.params;
+  const packageDetails = route?.params?.packageDetails;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userData = useSelector((state: RootState) => state.auth.user);
 
@@ -80,7 +80,36 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
     navigation.navigate('PackagesScreen');
     console.log(packageDetails, 'from handle CreatePackage!!');
   };
-  console.log(packageDetails.media, 'FROM PACKAGE DETAILS');
+  const handleUpdatePackage = async () => {
+    setIsLoading(true);
+    try {
+      const {media, thumbnail, ...dataToSend} = packageDetails;
+      const hours = Number(packageDetails?.hours);
+      const cost = Number(packageDetails?.cost);
+
+      const reqData: any = {
+        title: packageDetails.title,
+        description: packageDetails?.description,
+        hours: hours,
+        cost: cost,
+      };
+      const response = await updatePackage(reqData, route?.params?.packageId);
+      console.log(response?.data);
+      Toast.show({
+        type: 'success',
+        text1: `${response?.data?.message}`,
+      });
+      navigation.navigate('PackagesScreen');
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
+      console.log(error, 'From Updating Package!');
+    }
+    setIsLoading(false);
+  };
+  console.log(packageDetails, 'PACKAGEDETTTTAILLLLLSSSS');
 
   return (
     <View style={styles.container}>
@@ -107,6 +136,8 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                     screen: 'Slot',
                     params: {
                       packageView: true,
+                      packageDetails: packageDetails,
+                      userData: userData,
                     },
                   })
                 }>
@@ -187,7 +218,13 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
       </ScrollView>
       {route?.params?.isCreatingPackage && (
         <View style={styles.buttonContainer}>
-          <CustomButton isDisabled={isLoading} onPress={handleCreatePackage}>
+          <CustomButton
+            isDisabled={isLoading}
+            onPress={
+              route?.params?.isEditingPackage
+                ? handleUpdatePackage
+                : handleCreatePackage
+            }>
             {isLoading ? (
               <CustomLoader />
             ) : route?.params?.isEditingPackage ? (
@@ -211,8 +248,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
           <Video
             source={{
               uri: route?.params?.isCreatingPackage
-                ? packageDetails?.media?.uri ||
-                  `${s3bucketReference}/${packageDetails?.media}`
+                ? packageDetails?.media?.uri || `${packageDetails?.media}`
                 : `${s3bucketReference}/${packageDetails?.media}`,
             }}
             style={styles.video}

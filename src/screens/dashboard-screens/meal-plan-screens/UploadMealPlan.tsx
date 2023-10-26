@@ -43,7 +43,7 @@ const UploadMealPlan = ({navigation, route}: any) => {
   };
 
   const handleSubmit = async (values: any) => {
-    if (!myMealPlan && pdfFile === null || pdfFile === undefined) {
+    if ((!myMealPlan && pdfFile === null) || pdfFile === undefined) {
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -56,17 +56,9 @@ const UploadMealPlan = ({navigation, route}: any) => {
         title: values.title,
         description: values.description,
         cost: values.cost,
-        pdf:
-          pdfFile === null
-            ? {
-                uri: `${s3bucketReference}/${myMealPlan?.pdf}`,
-                type: 'application/pdf',
-                name: 'Filename.pdf',
-              }
-            : pdfFile,
+        ...(pdfFile !== null && {pdf: pdfFile}),
         ...(values.username !== '' && {username: values.username}),
       };
-      console.log(reqData, 'REQQQQQ');
       try {
         if (myMealPlan) {
           const response = await editMealPlan(reqData, mealPlanId as string);
@@ -88,7 +80,7 @@ const UploadMealPlan = ({navigation, route}: any) => {
           type: 'success',
           text1: `${error?.response?.data?.message}`,
         });
-        console.log('ERROR FROM CREAING OR EDITING MEAL PLAN', error);
+        console.log('ERROR FROM CREAING OR EDITING MEAL PLAN', error.response.data);
       }
       setIsLoading(false);
       // if (values.username && values.username.startsWith('@')) {
@@ -248,7 +240,7 @@ const UploadMealPlan = ({navigation, route}: any) => {
                     {isLoading ? (
                       <CustomLoader />
                     ) : myMealPlan ? (
-                      'Edit'
+                      'Update'
                     ) : (
                       'Create'
                     )}{' '}

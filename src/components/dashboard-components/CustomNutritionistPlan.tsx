@@ -111,12 +111,28 @@ export const CustomNutritionistPlan = ({
   return (
     <View style={styles.container} key={key}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Image
-          source={{
-            uri: `${s3bucketReference}/${nutritionistInfo?.profileImage}`,
-          }}
-          style={{width: 78, height: 80, borderRadius: 10}}
-        />
+        {nutritionistInfo?.profileImage ? (
+          <Image
+            source={{
+              uri: `${s3bucketReference}/${nutritionistInfo?.profileImage}`,
+            }}
+            style={{width: 78, height: 80, borderRadius: 10}}
+          />
+        ) : (
+          <View
+            style={{
+              width: 78,
+              height: 80,
+              borderRadius: 10,
+              backgroundColor: 'white',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: 40, color: 'black'}}>
+              {nutritionistInfo?.username[0].toUpperCase()}
+            </Text>
+          </View>
+        )}
         <View style={{justifyContent: 'flex-start', marginHorizontal: 10}}>
           <Text style={{fontSize: 14, fontWeight: '600', color: 'white'}}>
             {nutritionistInfo?.firstName} {nutritionistInfo?.lastName}

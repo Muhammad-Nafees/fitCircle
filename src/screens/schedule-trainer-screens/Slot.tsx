@@ -28,7 +28,8 @@ const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 export const Slot = ({navigation, route}: any) => {
   const hourlyRate = route?.params?.hourlyRate || false;
   const packageView = route?.params?.packageView || false;
-  const trainerId = route?.params?.userData?._id;
+  const packageDetails = route?.params?.packageDetails;
+  const [trainerId, setTrainerId] = useState<string>('');
 
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [trainerSchedules, setTrainerSchedules] = useState([]);
@@ -38,6 +39,21 @@ export const Slot = ({navigation, route}: any) => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
+  const todayDateString = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSX");
+
+  const todaysDate = parse(
+    todayDateString,
+    "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+    new Date(),
+  );
+
+  useEffect(() => {
+    if (packageDetails) {
+      setTrainerId(packageDetails?.user);
+    } else {
+      setTrainerId(route?.params?.userData?._id);
+    }
+  }, [trainerId]);
 
   const fetchTrainerSlotsByMonth = async () => {
     setIsLoading(true);
@@ -67,15 +83,22 @@ export const Slot = ({navigation, route}: any) => {
 
   // user pov
   const fetchTrainerSlotsByMonthForUser = async () => {
+    let trainerID;
+    if (packageDetails) {
+      trainerID = packageDetails?.user;
+    } else {
+      trainerID = route?.params?.userData?._id;
+    }
     setIsLoading(true);
     try {
       const response = await getTrainerSlotsByMonthForUser(
         currentMonth + 1,
         currentYear,
-        trainerId,
+        trainerID,
       );
 
       const data = response?.data?.data;
+      console.log(response?.data, 'RESPONESS');
 
       const filterData = data.filter((slot: any) => {
         currentDate.setHours(0, 0, 0, 0);
@@ -92,10 +115,7 @@ export const Slot = ({navigation, route}: any) => {
 
       setTrainerSchedules(sortedData);
     } catch (error: any) {
-      console.log(
-        error?.response?.data,
-        'from fetching trainer slots for user by months!',
-      );
+      console.log(error, 'from fetching trainer slots for user by months!');
     }
     setIsLoading(false);
   };
@@ -137,6 +157,9 @@ export const Slot = ({navigation, route}: any) => {
           navigation.navigate('SetSchedule', {
             date: parsedDate,
             userData: userData,
+            trainerId,
+            packageView,
+            packageDetails,
           })
         }
         style={styles.carouselItem}>
@@ -164,14 +187,21 @@ export const Slot = ({navigation, route}: any) => {
         <Text style={styles.heading}>Schedule</Text>
       </View>
       {hourlyRate !== false && <TrainerHourlyRate trainerData={userData} />}
-      {packageView && <CustomTrainerPackage hidePackageButton={true} />}
+      {packageView && (
+        <CustomTrainerPackage
+          hidePackageButton={true}
+          myPackage={packageDetails}
+        />
+      )}
       <TouchableOpacity
         style={styles.calenderButton}
         onPress={() =>
           navigation.navigate('SetSchedule', {
-            selectedMonth,
-            hourlyRate,
+            date: todaysDate,
+            userData: userData,
+            trainerId,
             packageView,
+            packageDetails,
           })
         }>
         <View style={styles.buttonContent}>

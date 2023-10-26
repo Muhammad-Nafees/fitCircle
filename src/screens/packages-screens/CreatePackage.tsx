@@ -33,18 +33,18 @@ const CreatePackage = ({navigation, route}: any) => {
   const [selectedVideoUri, setSelectedVideoUri] = useState<
     FileData | undefined | any
   >(undefined);
+  const [video, setVideo] = useState<FileData | undefined | any>(undefined);
   const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(
     undefined,
   );
   const [videoVisible, setVideoVisible] = useState(false);
   const [isEditingPackage, setIsEditingPackage] = useState<boolean>(false);
-  console.log(myPackage, 'MYPACKAGE!');
 
   const fetchThumbnail = async () => {
     if (selectedVideoUri) {
       try {
         const response = await createThumbnail({
-          url: selectedVideoUri?.uri || selectedVideoUri,
+          url: selectedVideoUri.uri,
           timeStamp: 1000,
           format: 'jpeg',
         });
@@ -69,26 +69,27 @@ const CreatePackage = ({navigation, route}: any) => {
 
   useEffect(() => {
     if (myPackage) {
-      const video = `${s3bucketReference}/${myPackage.media}`;
-      setSelectedVideoUri(video);
+      const video = `${s3bucketReference}/${myPackage?.media}`;
+      setVideo(video);
       setIsEditingPackage(true);
     }
   }, []);
 
   const handleSubmit = (values: any) => {
     console.log(values, 'valuess');
-    const myPackage: Partial<IPackage> = {
+    const myPackageData: Partial<IPackage> = {
       title: values.packageTitle,
       description: values.packageDescription,
       cost: values.cost,
       hours: values.hours,
-      media: selectedVideoUri as FileData,
-      thumbnail: videoThumbnail,
+      media: (selectedVideoUri as FileData) || video,
+      thumbnail: videoThumbnail || myPackage?.thumbnail,
     };
     navigation.navigate('PackageDetail', {
-      packageDetails: myPackage,
+      packageDetails: myPackageData,
       isCreatingPackage: true,
       isEditingPackage: isEditingPackage,
+      packageId: myPackage?._id,
     });
   };
 
@@ -109,11 +110,11 @@ const CreatePackage = ({navigation, route}: any) => {
   };
 
   const initialValues = {
-    packageTitle: myPackage.title || '',
-    packageDescription: myPackage.description || '',
+    packageTitle: myPackage?.title || '',
+    packageDescription: myPackage?.description || '',
     cost: myPackage?.cost ? String(myPackage?.cost) : '',
     hours: myPackage?.hours ? String(myPackage?.hours) : '',
-    username: myPackage.username || '',
+    username: myPackage?.username || '',
   };
 
   const handlePlayIconPress = () => {
@@ -178,7 +179,7 @@ const CreatePackage = ({navigation, route}: any) => {
                 />
                 <View>
                   <Text style={styles.label}>Preview</Text>
-                  {selectedVideoUri ? ( // Render the play icon if a video is selected
+                  {selectedVideoUri || video ? ( // Render the play icon if a video is selected
                     <TouchableOpacity
                       style={styles.uploadContainer}
                       onPress={handlePlayIconPress}>
@@ -280,7 +281,8 @@ const CreatePackage = ({navigation, route}: any) => {
             source={{
               uri:
                 selectedVideoUri?.uri ||
-                `${s3bucketReference}/${myPackage.media}`,
+                video ||
+                `${s3bucketReference}/${myPackage?.media}`,
             }}
             style={styles.video}
             resizeMode="contain"

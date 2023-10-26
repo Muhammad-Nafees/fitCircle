@@ -4,7 +4,9 @@ export const createMealPlan = async (reqData: any) => {
   let formData = new FormData();
   formData.append('title', reqData?.title);
   formData.append('description', reqData?.description);
-  formData.append('pdf', reqData?.pdf);
+
+  formData.append('pdf', reqData.pdf);
+
   formData.append('cost', reqData?.cost);
   if (reqData?.username) {
     formData.append('username', reqData?.username);
@@ -20,7 +22,9 @@ export const editMealPlan = async (reqData: any, mealPlanId: string) => {
   let formData = new FormData();
   formData.append('title', reqData?.title);
   formData.append('description', reqData?.description);
-  formData.append('pdf', reqData?.pdf);
+  if (reqData?.pdf) {
+    formData.append('pdf', reqData.pdf);
+  }
   formData.append('cost', reqData?.cost);
   if (reqData?.username) {
     formData.append('username', reqData?.username);
