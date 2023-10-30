@@ -79,9 +79,14 @@ export const bookTrainerSchedule = async (reqData: any) => {
 };
 
 export const getUserBookings = async (scheduleDate: string) => {
-  console.log(scheduleDate,"from booking apiii")
+  console.log(scheduleDate, 'from booking apiii');
   const response = await api.get(
     `schedule/bookings?scheduleDate=${scheduleDate}`,
   );
+  return response;
+};
+
+export const getUserPhysicalReadiness = async (userId: string) => {
+  const response = await api.get(`readings/physical?userId=${userId}`);
   return response;
 };

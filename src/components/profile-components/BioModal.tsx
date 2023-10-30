@@ -2,16 +2,28 @@ import {BlurView} from '@react-native-community/blur';
 import CustomButton from '../../components/shared-components/CustomButton';
 import {Text, View, StyleSheet, ScrollView} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {IUser} from 'interfaces/user.interface';
 
-const BioModal = () => {
+interface Props {
+  userData: IUser | null;
+}
+
+const BioModal = ({userData}: Props) => {
+  console.log(userData, 'UUUUU');
   const navigation: any = useNavigation();
   const data = [
-    {label: 'Gender', value: 'Male'},
-    {label: 'Age', value: '27'},
-    {label: 'Height', value: '5.5ft'},
-    {label: 'Weight', value: '80kg'},
-    {label: 'Body Type', value: 'Mesomorph'},
-    {label: 'Activity', value: 'Physical Activity'},
+    {label: 'Gender', value: userData?.gender},
+    {label: 'Age', value: userData?.age},
+    {
+      label: 'Height',
+      value: `${userData?.height?.value} ${userData?.height?.unit}`,
+    },
+    {
+      label: 'Weight',
+      value: `${userData?.weight?.value} ${userData?.weight?.unit}`,
+    },
+    {label: 'Body Type', value: userData?.bodyType},
+    {label: 'Activity', value: userData?.activity},
   ];
 
   return (
@@ -28,16 +40,18 @@ const BioModal = () => {
               Details
             </Text>
             <View>
-              <Text style={styles.mainText}>Lincoln Smith</Text>
+              <Text style={styles.mainText}>
+                {userData?.firstName} {userData?.lastName}
+              </Text>
               <Text style={[styles.text1, {color: 'rgba(32, 155, 204, 1)'}]}>
-                lincolnsmith@gmail.com
+                {userData?.email}
               </Text>
             </View>
             <View>
               {data.map((item, index) => (
                 <View key={index} style={styles.attributeContainer}>
-                  <Text style={styles.text2}>{item.label}</Text>
-                  <Text style={styles.text1}>{item.value}</Text>
+                  <Text style={styles.text2}>{item?.label}</Text>
+                  <Text style={styles.text1}>{item?.value}</Text>
                 </View>
               ))}
             </View>

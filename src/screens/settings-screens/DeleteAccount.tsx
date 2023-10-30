@@ -7,14 +7,31 @@ import {
 } from '../../components/shared-components/CustomModals';
 import Modal from 'react-native-modal';
 import {useState} from 'react';
+import {deleteAccount} from '../../api/profile-module';
+import {useDispatch} from 'react-redux';
+import {authenticate, setUserData} from '../../redux/authSlice';
 
 const DeleteAccountScreen = ({navigation}: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [outputModal, setOutputModal] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
-  const handleOutputModal = () => {
-    setIsModalVisible(false);
-    setOutputModal(true);
+  const handleOutputModal = async () => {
+    setIsLoading(true);
+    try {
+      const response = await deleteAccount();
+      console.log(response?.data?.data);
+      setIsModalVisible(false);
+      setOutputModal(true);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From Delete Account!');
+    }
+    setIsLoading(false);
+  };
+  const handleAccountDeleted = () => {
+    dispatch(authenticate(false));
+    dispatch(setUserData(null));
   };
 
   return (
@@ -62,6 +79,7 @@ const DeleteAccountScreen = ({navigation}: any) => {
           modalHeading="Confirmation"
           confirmText="OK"
           cancelText="Cancel"
+          isLoading={isLoading}
           onConfirm={handleOutputModal}
           onCancel={() => setIsModalVisible(false)}
           confirmColor="rgba(32, 128, 183, 1)"
@@ -79,7 +97,7 @@ const DeleteAccountScreen = ({navigation}: any) => {
           type="failed"
           modalText="Account deleted"
           buttonText="Back"
-          onPress={() => setOutputModal(false)}
+          onPress={handleAccountDeleted}
           extraTextStyles={{
             color: 'rgba(255, 101, 101, 1)',
             fontWeight: '600',

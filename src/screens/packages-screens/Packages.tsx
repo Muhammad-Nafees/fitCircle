@@ -109,7 +109,7 @@ const PackagesScreen = ({navigation}: any) => {
       </View>
       <Modal
         isVisible={isModalVisible}
-        onBackButtonPress={() => {}}
+        onBackButtonPress={() => setIsModalVisible(false)}
         onBackdropPress={() => setIsModalVisible(false)}
         style={styles.modal}>
         <CustomConfirmationModal
@@ -131,7 +131,7 @@ const PackagesScreen = ({navigation}: any) => {
         <CustomOutputModal
           type="failed"
           modalText="Deleted"
-          onPress={handleDeleteConfirmed}
+          onPress={() => setOutputModal(false)}
         />
       </Modal>
     </View>

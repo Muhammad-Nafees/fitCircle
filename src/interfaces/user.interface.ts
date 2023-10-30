@@ -26,8 +26,8 @@ export interface IUser {
   role: IUserRole;
   isProfileCompleted: boolean;
   isActive: boolean;
-  profileImage: FileData | null;
-  coverImage: FileData | null;
+  profileImage: FileData | null | string | any;
+  coverImage: FileData | null | string | any;
   firstName: string;
   lastName: string;
   username: string;
@@ -40,6 +40,7 @@ export interface IUser {
   dob: Date | string;
   hourlyRate: string | null;
   activity: string;
+  bodyType: string;
   bodytype: string;
   interests: string[];
   communities: string[];
@@ -54,6 +55,9 @@ export interface IUser {
   noOfFollowers: 0;
   noOfFollowings: 0;
   noOfCommunities: 0;
+  showAge: boolean;
+  showEmailAddress: boolean;
+  showName: boolean;
 }
 
 export type IPostVisibility = 'Public' | 'Followers' | 'Subscribers';
@@ -125,8 +129,9 @@ export interface IPhysicalActivity {
   cellPhone: string;
   height: IUnit;
   weight: IUnit;
+  age: string;
 
-  isHighCholestero: boolean;
+  isHighCholesterol: boolean;
   isHeartTrouble: boolean;
   isBoneTrouble: boolean;
   isHighBloodPressure: boolean;

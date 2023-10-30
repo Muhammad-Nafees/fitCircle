@@ -22,35 +22,35 @@ import {editProfileSchema} from '../../validations';
 import PhoneInput from 'react-native-phone-number-input';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {format} from 'date-fns';
-import {getCities, getCountries} from '../../api/auth-module';
+import {
+  checkUsername,
+  getCities,
+  getCountries,
+  updateProfile,
+} from '../../api/auth-module';
 import Toast from 'react-native-toast-message';
+import {IUser} from '../../interfaces/user.interface';
+import {Image as ImageCompress} from 'react-native-compressor';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 export const EditProfile = ({navigation}: any) => {
   const [profilePicture, setProfilePicture] = useState<any>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
   const userData = useSelector((state: RootState) => state.auth.user);
   const phoneInput = useRef<PhoneInput>(null);
-  console.log(userData);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [allCountries, setAllCountries] = useState<any | null>([]);
   const [allCities, setAllCities] = useState([]);
   const [country, setCountry] = useState();
   const [isError, setIsError] = useState('');
-  const [phoneCode, setPhoneCode] = useState('1');
   const [usernameError, setUsernameError] = useState<string>('');
-  const [userPhone, setUserPhone] = useState<string>('');
+  const [phoneCode, setPhoneCode] = useState('1');
   const [countryCode, setCountryCode] = useState();
   const [allData, setAllData] = useState<any | null>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // const isoDate = userData?.dob;
-  // const date = new Date(isoDate);
-  // const day = date.getDate();
-  // const month = date.getMonth() + 1;
-  // const year = date.getFullYear();
-
-  // const formattedDate = `${day.toString().padStart(2, '0')}/${month
-  //   .toString()
-  //   .padStart(2, '0')}/${year}`;
+  const originalDate = new Date('1990-09-21T00:00:00.000Z');
+  const formattedDate = format(originalDate, 'dd/MM/yyyy');
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -108,22 +108,66 @@ export const EditProfile = ({navigation}: any) => {
     setProfilePicture(image);
   };
 
-  const handleSubmit = values => {
-    navigation.navigate('SettingsOne');
-    console.log(values);
+  const handleSubmit = async (values: IUser) => {
+    setIsLoading(true);
+
+    try {
+      let compressedProfileImage = null;
+      let compressedCoverImage = null;
+
+      if (
+        userData?.profileImage &&
+        !userData?.profileImage.includes('uploads')
+      ) {
+        const result = await ImageCompress.compress(userData.profileImage.uri, {
+          quality: 0.8,
+        });
+        compressedProfileImage = {
+          name: userData?.profileImage?.name as string,
+          type: userData?.profileImage?.type as string,
+          uri: result,
+        };
+      }
+
+      if (userData?.coverImage && !userData?.coverImage.includes('uploads')) {
+        const result = await ImageCompress.compress(userData.coverImage.uri, {
+          quality: 0.8,
+        });
+        compressedCoverImage = {
+          name: userData?.coverImage?.name as string,
+          type: userData?.coverImage?.type as string,
+          uri: result,
+        };
+        const filteredLinks = userData?.socialMediaLinks.filter(
+          linkData => linkData.link,
+        );
+        // const reqUserData: Partial<IUser> = {
+        //   ...values,
+        //   profileImage: compressedProfileImage || userData?.profileImage,
+        //   coverImage: compressedCoverImage || userData?.coverImage,
+        //   socialMediaLinks: filteredLinks,
+        // };
+        const response = await updateProfile(values as IUser);
+        console.log(response?.data, 'RESPONSE');
+      }
+    } catch (error: any) {
+      console.log(error?.response?.data, 'FROM UPDATE PROFILE IN SETTINGS!');
+    }
+    setIsLoading(false);
+    // navigation.navigate('SettingsOne');
   };
 
   const initialValues: any = {
-    firstName: '',
-    lastName: '',
-    username: '',
-    bio: '',
-    phone: '',
-    country: '',
-    city: '',
-    physicalInformation: '',
-    dob: '',
-    hourlyRate: '',
+    firstName: userData?.firstName || '',
+    lastName: userData?.lastName || '',
+    username: userData?.username || '',
+    bio: userData?.bio || '',
+    phone: userData?.phone || '',
+    country: userData?.country || '',
+    city: userData?.city || '',
+    physicalInformation: userData?.physicalInformation || '',
+    dob: formattedDate || '',
+    hourlyRate: userData?.hourlyRate || '',
     profileImage: null,
     coverImage: null,
     facebook: '',
@@ -132,10 +176,22 @@ export const EditProfile = ({navigation}: any) => {
     tiktok: '',
   };
 
-  // For settings the social media links
-  // userData?.socialMediaLinks.forEach(linkItem => {
-  //   initialValues[linkItem.name] = linkItem.link;
-  // });
+  const handleChangeUserName = async (text: string, setFieldValue: any) => {
+    setFieldValue('username', text);
+    try {
+      const response = await checkUsername({username: text});
+      console.log(response.data);
+      setUsernameError('');
+    } catch (error: any) {
+      console.log(error.response.data);
+      if (error?.response.status == 409) {
+        if (userData?.username == text) {
+          return;
+        }
+        setUsernameError(error?.response.data.message);
+      }
+    }
+  };
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
@@ -166,223 +222,230 @@ export const EditProfile = ({navigation}: any) => {
             touched,
             setFieldValue,
             setFieldError,
-          }) => (
-            <View style={styles.formContainer}>
-              <CustomInput
-                label="First Name"
-                placeholder="Enter your first name"
-                value={values.firstName}
-                error={errors.firstName}
-                touched={touched.firstName}
-                handleChange={handleChange('firstName')}
-                setFieldError={setFieldError}
-                fieldName="firstName"
-              />
-              <CustomInput
-                label="Last Name"
-                placeholder="Enter your last name"
-                value={values.lastName}
-                error={errors.lastName}
-                touched={touched.lastName}
-                handleChange={handleChange('lastName')}
-                setFieldError={setFieldError}
-                fieldName="lastName"
-              />
-              <CustomInput
-                label="Username"
-                placeholder="Enter your username"
-                value={values.username}
-                error={errors.username}
-                touched={touched.username}
-                setFieldError={setFieldError}
-                fieldName="username"
-                handleChange={handleChange('username')}
-              />
-              <CustomInput
-                label="Add bio"
-                placeholder="Type here..."
-                value={values.bio}
-                error={errors.bio}
-                touched={touched.bio}
-                multiline
-                handleChange={handleChange('bio')}
-                textAlignVertical="top"
-                extraStyles={{height: verticalScale(130)}}
-                setFieldError={setFieldError}
-                fieldName="bio"
-              />
-
-              <CustomPhoneInput
-                disabled={false}
-                value={values.phone}
-                label="Phone Number"
-                error={errors.phone}
-                touched={touched.phone}
-                handleChange={handleChange('phone')}
-                setFieldValue={setFieldValue}
-                phoneInput={phoneInput}
-                setIsError={setIsError}
-                setFieldError={setFieldError}
-                isError={isError}
-                setPhoneCode={setPhoneCode}
-                countryCode={userData?.countryCode}
-              />
-
-              <CustomSelect
-                label="Country"
-                selectedValue={values.country}
-                values={allCountries}
-                error={errors.country}
-                setCountry={setCountry}
-                touched={touched.country}
-                setFieldValue={setFieldValue}
-                setFieldError={setFieldError}
-                placeholder="Select"
-                fieldName="country"
-              />
-              <CustomSelect
-                label="City"
-                selectedValue={values.city}
-                values={allCities}
-                error={errors.city}
-                touched={touched.city}
-                setFieldValue={setFieldValue}
-                setFieldError={setFieldError}
-                placeholder="Select"
-                fieldName="city"
-              />
-              <CustomInput
-                label="Physical Information"
-                placeholder="Enter"
-                value={values.physicalInformation}
-                error={errors.physicalInformation}
-                touched={touched.physicalInformation}
-                handleChange={handleChange('physicalInformation')}
-                setFieldError={setFieldError}
-                fieldName="physicalInformation"
-              />
-              <TouchableWithoutFeedback
-                onPress={() => setDatePickerVisible(true)}>
-                <View style={{position: 'relative'}}>
-                  <CustomInput
-                    label="Date of birth"
-                    placeholder="01/01/2023"
-                    value={values.dob}
-                    error={errors.dob}
-                    touched={touched.dob}
-                    handleChange={handleChange('dob')}
-                    setFieldError={setFieldError}
-                    fieldName="dob"
-                    editable={false}
-                  />
-                  <Icon
-                    name="calendar-outline"
-                    size={23}
-                    color="black"
-                    style={{
-                      position: 'absolute',
-                      right: horizontalScale(12),
-                      top: verticalScale(34),
-                    }}
-                  />
-                  <DateTimePickerModal
-                    isVisible={isDatePickerVisible}
-                    mode="date"
-                    onConfirm={(e: any) => {
-                      const formattedDate = format(e, 'dd/MM/yyyy');
-                      setFieldValue('dob', formattedDate);
-                      setFieldError('dob', '');
-                      setDatePickerVisible(false);
-                    }}
-                    onCancel={() => setDatePickerVisible(false)}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-              {userRole !== 'user' && (
+          }) => {
+            return (
+              <View style={styles.formContainer}>
                 <CustomInput
-                  label="Hourly Rate"
-                  placeholder="$20.00"
-                  value={values.hourlyRate}
-                  error={errors.hourlyRate}
-                  touched={touched.hourlyRate}
-                  keyboardType="numeric"
-                  handleChange={handleChange('hourlyRate')}
+                  label="First Name"
+                  placeholder="Enter your first name"
+                  value={values.firstName}
+                  error={errors.firstName as string}
+                  touched={touched.firstName as boolean}
+                  handleChange={handleChange('firstName')}
                   setFieldError={setFieldError}
-                  fieldName="hourlyRate"
+                  fieldName="firstName"
                 />
-              )}
-              <View style={{right: horizontalScale(100), paddingBottom: 20}}>
-                <Text
-                  style={{
-                    fontWeight: '700',
-                    fontSize: 16,
-                    color: 'rgba(255, 255, 255, 1)',
+                <CustomInput
+                  label="Last Name"
+                  placeholder="Enter your last name"
+                  value={values.lastName}
+                  error={errors.lastName as string}
+                  touched={touched.lastName as boolean}
+                  handleChange={handleChange('lastName')}
+                  setFieldError={setFieldError}
+                  fieldName="lastName"
+                />
+                <CustomInput
+                  label="Username"
+                  placeholder="Enter your username"
+                  value={values.username as string}
+                  error={errors.username || (usernameError as any)}
+                  touched={touched.username as boolean}
+                  setFieldError={setFieldError}
+                  fieldName="username"
+                  handleChange={text =>
+                    handleChangeUserName(text, setFieldValue)
+                  }
+                />
+                <CustomInput
+                  label="Add bio"
+                  placeholder="Type here..."
+                  value={values.bio as string}
+                  error={errors.bio as string}
+                  touched={touched.bio as boolean}
+                  multiline
+                  handleChange={handleChange('bio')}
+                  textAlignVertical="top"
+                  extraStyles={{height: verticalScale(130)}}
+                  setFieldError={setFieldError}
+                  fieldName="bio"
+                />
+
+                <CustomPhoneInput
+                  disabled={false}
+                  value={values.phone}
+                  label="Phone Number"
+                  error={errors.phone as string}
+                  touched={touched.phone as boolean}
+                  handleChange={handleChange('phone')}
+                  setFieldValue={setFieldValue}
+                  phoneInput={phoneInput}
+                  setIsError={setIsError}
+                  setFieldError={setFieldError}
+                  isError={isError}
+                  setPhoneCode={setPhoneCode}
+                  countryCode={userData?.countryCode}
+                />
+
+                <CustomSelect
+                  label="Country"
+                  selectedValue={values?.country}
+                  values={allCountries}
+                  error={errors.country as string}
+                  setCountry={setCountry}
+                  touched={touched.country as boolean}
+                  setFieldValue={setFieldValue}
+                  setFieldError={setFieldError}
+                  placeholder={values?.country}
+                  placeholderColor="#000"
+                  fieldName="country"
+                />
+                <CustomSelect
+                  label="City"
+                  selectedValue={values.city}
+                  values={allCities}
+                  error={errors.city as string}
+                  touched={touched.city as boolean}
+                  setFieldValue={setFieldValue}
+                  setFieldError={setFieldError}
+                  placeholder={values?.city}
+                  placeholderColor="#000"
+                  fieldName="city"
+                />
+                <CustomInput
+                  label="Physical Information"
+                  placeholder="Enter"
+                  value={values.physicalInformation}
+                  error={errors.physicalInformation as string}
+                  touched={touched.physicalInformation as boolean}
+                  handleChange={handleChange('physicalInformation')}
+                  setFieldError={setFieldError}
+                  fieldName="physicalInformation"
+                />
+                <TouchableWithoutFeedback
+                  onPress={() => setDatePickerVisible(true)}>
+                  <View style={{position: 'relative'}}>
+                    <CustomInput
+                      label="Date of birth"
+                      placeholder="01/01/2023"
+                      value={values.dob}
+                      error={errors.dob as string}
+                      touched={touched.dob as boolean}
+                      handleChange={handleChange('dob')}
+                      setFieldError={setFieldError}
+                      fieldName="dob"
+                      editable={false}
+                    />
+                    <Icon
+                      name="calendar-outline"
+                      size={23}
+                      color="black"
+                      style={{
+                        position: 'absolute',
+                        right: horizontalScale(12),
+                        top: verticalScale(34),
+                      }}
+                    />
+                    <DateTimePickerModal
+                      isVisible={isDatePickerVisible}
+                      mode="date"
+                      onConfirm={(e: any) => {
+                        const formattedDate = format(e, 'dd/MM/yyyy');
+                        setFieldValue('dob', formattedDate);
+                        setFieldError('dob', '');
+                        setDatePickerVisible(false);
+                      }}
+                      onCancel={() => setDatePickerVisible(false)}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                {userRole !== 'user' && (
+                  <CustomInput
+                    label="Hourly Rate"
+                    placeholder="$20.00"
+                    value={values.hourlyRate}
+                    error={errors.hourlyRate as string}
+                    touched={touched.hourlyRate as boolean}
+                    keyboardType="numeric"
+                    handleChange={handleChange('hourlyRate')}
+                    setFieldError={setFieldError}
+                    fieldName="hourlyRate"
+                  />
+                )}
+                <View style={{right: horizontalScale(100), paddingBottom: 20}}>
+                  <Text
+                    style={{
+                      fontWeight: '700',
+                      fontSize: 16,
+                      color: 'rgba(255, 255, 255, 1)',
+                    }}>
+                    Social media Account
+                  </Text>
+                </View>
+                <CustomInput
+                  label="Facebook"
+                  placeholder="Enter link here"
+                  value={values.facebook as string}
+                  error={errors.facebook as string}
+                  touched={touched.facebook as boolean}
+                  initialTouched={true}
+                  autoCapitalize="none"
+                  handleChange={handleChange('facebook')}
+                  isFirstLetterLowercase={true}
+                  setFieldError={setFieldError}
+                  fieldName="facebook"
+                />
+                <CustomInput
+                  label="Instagram"
+                  placeholder="Enter link here"
+                  value={values.instagram}
+                  error={errors.instagram as string}
+                  touched={touched.instagram as boolean}
+                  initialTouched={true}
+                  autoCapitalize="none"
+                  handleChange={handleChange('instagram')}
+                  isFirstLetterLowercase={true}
+                  setFieldError={setFieldError}
+                  fieldName="instagram"
+                />
+                <CustomInput
+                  label="Twitter"
+                  placeholder="Enter link here"
+                  value={values.twitter}
+                  error={errors.twitter as string}
+                  touched={touched.twitter as boolean}
+                  initialTouched={true}
+                  autoCapitalize="none"
+                  handleChange={handleChange('twitter')}
+                  isFirstLetterLowercase={true}
+                  setFieldError={setFieldError}
+                  fieldName="twitter"
+                />
+                <CustomInput
+                  label="Tiktok"
+                  placeholder="Enter link here"
+                  value={values.tiktok}
+                  error={errors.tiktok as string}
+                  touched={touched.tiktok as boolean}
+                  initialTouched={true}
+                  autoCapitalize="none"
+                  handleChange={handleChange('tiktok')}
+                  isFirstLetterLowercase={true}
+                  setFieldError={setFieldError}
+                  fieldName="tiktok"
+                />
+                <CustomButton
+                  onPress={handleSubmit}
+                  isDisabled={isLoading}
+                  extraStyles={{
+                    width: horizontalScale(320),
+                    marginBottom: verticalScale(55),
                   }}>
-                  Social media Account
-                </Text>
+                  {isLoading ? <CustomLoader /> : 'Continue'}
+                </CustomButton>
               </View>
-              <CustomInput
-                label="Facebook"
-                placeholder="Enter link here"
-                value={values.facebook}
-                error={errors.facebook}
-                touched={touched.facebook}
-                initialTouched={true}
-                autoCapitalize="none"
-                handleChange={handleChange('facebook')}
-                isFirstLetterLowercase={true}
-                setFieldError={setFieldError}
-                fieldName="facebook"
-              />
-              <CustomInput
-                label="Instagram"
-                placeholder="Enter link here"
-                value={values.instagram}
-                error={errors.instagram}
-                touched={touched.instagram}
-                initialTouched={true}
-                autoCapitalize="none"
-                handleChange={handleChange('instagram')}
-                isFirstLetterLowercase={true}
-                setFieldError={setFieldError}
-                fieldName="instagram"
-              />
-              <CustomInput
-                label="Twitter"
-                placeholder="Enter link here"
-                value={values.twitter}
-                error={errors.twitter}
-                touched={touched.twitter}
-                initialTouched={true}
-                autoCapitalize="none"
-                handleChange={handleChange('twitter')}
-                isFirstLetterLowercase={true}
-                setFieldError={setFieldError}
-                fieldName="twitter"
-              />
-              <CustomInput
-                label="Tiktok"
-                placeholder="Enter link here"
-                value={values.tiktok}
-                error={errors.tiktok}
-                touched={touched.tiktok}
-                initialTouched={true}
-                autoCapitalize="none"
-                handleChange={handleChange('tiktok')}
-                isFirstLetterLowercase={true}
-                setFieldError={setFieldError}
-                fieldName="tiktok"
-              />
-              <CustomButton
-                onPress={handleSubmit}
-                extraStyles={{
-                  width: horizontalScale(320),
-                  marginBottom: verticalScale(55),
-                }}>
-                Continue
-              </CustomButton>
-            </View>
-          )}
+            );
+          }}
         </Formik>
       </ScrollView>
     </View>

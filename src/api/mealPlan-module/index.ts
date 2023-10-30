@@ -58,9 +58,8 @@ export const deleteMealPlanById = async (mealPlanId: string) => {
   return response;
 };
 
-export const searchNutritionist = async (role: string, search: string) => {
-  const response = await api.get(
-    `user/search-by-role?role=${role}&search=${search}`,
-  );
+export const searchMealPlan = async (search: string) => {
+  const response = await api.get(`meal-plans/all?search=${search}`);
+
   return response;
 };

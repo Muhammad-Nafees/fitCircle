@@ -180,7 +180,6 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       }
     }
   };
-  console.log(allCities, 'Asdajdajdlaskjdljasdl');
   return (
     <Formik
       initialValues={initialValues}

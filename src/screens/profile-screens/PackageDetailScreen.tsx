@@ -69,16 +69,22 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
         type: 'success',
         text1: `${response?.data?.message}`,
       });
+      navigation.navigate('PackagesScreen');
     } catch (error: any) {
-      Toast.show({
-        type: 'error',
-        text1: `${error?.response?.data?.message}`,
-      });
+      if (error?.response?.status === "413") {
+        Toast.show({
+          type: 'error',
+          text1: `Video file too Large!`,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.message}`,
+        });
+      }
       console.log(error, 'From Creating Package!');
     }
     setIsLoading(false);
-    navigation.navigate('PackagesScreen');
-    console.log(packageDetails, 'from handle CreatePackage!!');
   };
   const handleUpdatePackage = async () => {
     setIsLoading(true);
@@ -109,7 +115,6 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
     }
     setIsLoading(false);
   };
-  console.log(packageDetails, 'PACKAGEDETTTTAILLLLLSSSS');
 
   return (
     <View style={styles.container}>

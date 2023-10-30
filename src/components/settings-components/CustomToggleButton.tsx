@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Toggle from 'react-native-toggle-element';
 
@@ -6,12 +6,17 @@ const CustomToggleButton = ({
   text,
   disableHorizontalLine = false,
   text2,
+  isEnabled,
+  setIsEnabled,
+  onChangeToggle,
 }: any) => {
-  const [isEnabled, setIsEnabled] = useState(false);
-
   const onToggle = () => {
     setIsEnabled(!isEnabled);
   };
+
+  useEffect(() => {
+    onChangeToggle();
+  }, [isEnabled]);
 
   return (
     <View style={styles.container}>
