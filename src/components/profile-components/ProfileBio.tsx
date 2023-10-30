@@ -61,7 +61,7 @@ export const ProfileBio = ({userData, isTrainerView, handleBioModal}: any) => {
           <Text style={{fontSize: 12, fontWeight: '600', color: 'white'}}>
             Social Media Accounts
           </Text>
-          {
+          {userData?.role === 'user' && (
             <TouchableOpacity onPress={handleBioModal}>
               <Text
                 style={{
@@ -72,7 +72,7 @@ export const ProfileBio = ({userData, isTrainerView, handleBioModal}: any) => {
                 More Details
               </Text>
             </TouchableOpacity>
-          }
+          )}
         </View>
         <View style={{flexDirection: 'row', gap: 6, paddingBottom: 18}}>
           <TouchableOpacity

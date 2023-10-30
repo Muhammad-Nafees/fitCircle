@@ -89,8 +89,8 @@ export const updateProfile = async (userData: IUser) => {
     formData.append('hourlyRate', userData?.hourlyRate);
   }
   formData.append('activity', userData?.activity);
-  if (userData.bodytype) {
-    formData.append('bodyType', userData?.bodytype);
+  if (userData.bodyType) {
+    formData.append('bodyType', userData?.bodyType);
   }
   formData.append('height[value]', userData?.height.value);
   formData.append('height[unit]', userData?.height.unit);

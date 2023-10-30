@@ -657,7 +657,7 @@ const ProfileScreen = ({navigation, route}: any) => {
         onBackButtonPress={() => setBioModal(false)}
         onBackdropPress={() => setBioModal(false)}
         backdropOpacity={0.1}>
-        <BioModal />
+        <BioModal userData={userData} />
       </Modal>
     </View>
   );

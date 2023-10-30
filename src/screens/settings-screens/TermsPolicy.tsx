@@ -1,34 +1,52 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {horizontalScale} from '../../utils/metrics';
+import {
+  getPolicy,
+  getTerms,
+} from '../../api/auth-module/profileSettings-module';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 export const TermsPolicyScreen = ({route}: any) => {
+  const [content, setContent] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const isTermsConditionsRoute = route.name === 'TermsConditions';
-  const termsAndConditionsText = `
-Welcome to Fit Circle!
 
-These terms and conditions outline the rules and regulations for the use of Fit Circle's Website, located at Fit Circle.
+  const fetchPolicy = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getPolicy();
+      const data = response?.data?.data?.policy;
+      const responseData = data?.content;
+      setContent(responseData);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From getting policy!');
+    }
+    setIsLoading(false);
+  };
 
-By accessing this website we assume you accept these terms and conditions. Do not continue to use Fit Circle if you do not agree to take all of the terms and conditions stated on this page.
+  const fetchTerms = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getTerms();
+      const data = response?.data?.data?.terms;
+      const responseData = data?.content;
+      console.log(responseData, 'fromtemss');
+      setContent(responseData);
+    } catch (error: any) {
+      console.log(error?.response, 'From getting temrs!');
+    }
+    setIsLoading(false);
+  };
 
-The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice and all Agreements: "Client", "You" and "Your" refers to you, the person log on this website and compliant to the Company’s terms and conditions. "The Company", "Ourselves", "We", "Our" and "Us", refers to our Company. "Party", "Parties", or "Us", refers to both the Client and ourselves. All terms refer to the offer, acceptance and consideration of payment necessary to undertake the process of our assistance to the Client in the most appropriate manner for the express purpose of meeting the Client’s needs in respect of provision of the Company’s stated services, in accordance with and subject to, prevailing law of Netherlands. Any use of the above terminology or other words in the singular, plural, capitalization and/or he/she or they, are taken as interchangeable and therefore as referring to same.
-Cookies
-  `;
-
-  const privacyPolicyText = `
-Please read Privacy Policy
-
-Reservation of Rights
-We reserve the right to request that you remove all links or any particular link to our Website. You approve to immediately remove all links to our Website upon request. We also reserve the right to amen these terms and conditions and it’s linking policy at any time. By continuously linking to our Website, you agree to be bound to and follow these linking terms and conditions.
-  
-Removal of links from our website
-If you find any link on our Website that is offensive for any reason, you are free to contact and inform us any moment. We will consider requests to remove links but we are not obligated to or so or to respond to you directly.
-  
-We do not ensure that the information on this website is correct, we do not warrant its completeness or accuracy; nor do we promise to ensure that the website remains available or that the material on the website is kept up to date.
-  
-Disclaimer
-To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website. Nothing in this disclaimer will:
-  `;
+  useEffect(() => {
+    if (route?.name === 'TermsConditions') {
+      fetchTerms();
+    } else {
+      fetchPolicy();
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -39,11 +57,11 @@ To the maximum extent permitted by applicable law, we exclude all representation
           </Text>
         </View>
         <View style={styles.contentContainer}>
-          <Text style={styles.termsText}>
-            {isTermsConditionsRoute
-              ? termsAndConditionsText
-              : privacyPolicyText}
-          </Text>
+          {isLoading ? (
+            <CustomLoader extraStyles={{marginTop: 20}} />
+          ) : (
+            <Text style={styles.termsText}>{content}</Text>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -67,6 +85,7 @@ const styles = StyleSheet.create({
   termsText: {
     color: 'white',
     fontSize: 14,
+    marginTop: 20,
     // lineHeight: 20,
   },
 });

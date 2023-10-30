@@ -109,7 +109,6 @@ export const ProfileHeaderContainer = ({
       },
     });
   };
-  console.log(isSeachUser, loginUserData?.role, userData?.role, 'EVERTGFG');
 
   return (
     <ImageBackground

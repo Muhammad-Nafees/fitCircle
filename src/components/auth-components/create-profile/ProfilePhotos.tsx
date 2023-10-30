@@ -21,6 +21,7 @@ import {RootState} from '../../../redux/store';
 import {setUserData} from '../../../redux/authSlice';
 import {IUser} from '../../../interfaces/user.interface';
 import {useRoute} from '@react-navigation/native';
+import {s3bucketReference} from '../../../api';
 
 interface Props {
   onSelectProfilePicture: (picture: any) => void;
@@ -65,7 +66,10 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
   };
 
   const handleUploadPhoto = async (type: string) => {
-    if (type === 'profile' && selectedProfileImage) {
+    if (
+      type === 'profile' &&
+      (selectedProfileImage || previousUserData?.profileImage)
+    ) {
       setSelectedProfileImage(null);
       onSelectProfilePicture(null);
       const partialUserData: Partial<IUser> = {
@@ -75,8 +79,12 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
       dispatch(setUserData({...partialUserData} as IUser));
       return;
     }
-    if (type === 'cover' && selectedCoverImage) {
+    if (
+      type === 'cover' &&
+      (selectedCoverImage || previousUserData?.coverImage)
+    ) {
       setSelectedCoverImage(null);
+
       const partialUserData: Partial<IUser> = {
         ...previousUserData,
         coverImage: null,
@@ -178,11 +186,13 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
             </Text>
           </View>
         )}
-        {selectedCoverImage ? (
+        {selectedCoverImage || previousUserData?.coverImage ? (
           <>
             <Image
               source={{
-                uri: selectedCoverImage.resourcePath,
+                uri:
+                  selectedCoverImage?.resourcePath ||
+                  `${s3bucketReference}/${previousUserData?.coverImage}`,
               }}
               resizeMode="cover"
               style={{width: 375, height: 182}}
@@ -214,20 +224,22 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
         style={styles.profilePhotoContainer}
         activeOpacity={0.7}
         onPress={handleProfilePhotoContainerPress}>
-        {selectedProfileImage && (
-          <Image
-            source={{
-              uri: selectedProfileImage.resourcePath,
-            }}
-            resizeMode="cover"
-            style={{width: 142, height: 142, borderRadius: 71}}
-          />
-        )}
+        {/* {selectedProfileImage && ( */}
+        <Image
+          source={{
+            uri:
+              selectedProfileImage?.resourcePath ||
+              `${s3bucketReference}/${previousUserData?.profileImage}`,
+          }}
+          resizeMode="cover"
+          style={{width: 142, height: 142, borderRadius: 71}}
+        />
+        {/* )} */}
         <TouchableOpacity
           style={styles.profileCamera}
           activeOpacity={0.7}
           onPress={() => handleUploadPhoto('profile')}>
-          {selectedProfileImage ? (
+          {selectedProfileImage || previousUserData?.profileImage ? (
             <Icon name="trash-outline" color="white" size={20} />
           ) : (
             <CameraIconForm />

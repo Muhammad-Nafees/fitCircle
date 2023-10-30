@@ -46,7 +46,7 @@ const GenderForm = () => {
     age: '',
     height: '' as any,
     weight: '' as any,
-    bodytype: '',
+    bodyType: '',
     activity: '',
   };
   const handleSubmit = (values: Partial<IUser>) => {
@@ -62,7 +62,7 @@ const GenderForm = () => {
         value: values.weight as any,
         unit: weightUnit,
       },
-      bodytype: values.bodytype,
+      bodyType: values.bodytype,
       activity: values.activity,
     };
     dispatch(setUserData({...partialUserData} as IUser));

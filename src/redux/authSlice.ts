@@ -35,7 +35,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.userRole = undefined;
     },
-    setUserData: (state, action: PayloadAction<IUser>) => {
+    setUserData: (state, action: PayloadAction<IUser | null>) => {
       state.user = action.payload;
     },
     setUserProfile: (state, action: PayloadAction<IUser>) => {

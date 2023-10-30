@@ -24,6 +24,7 @@ const SettingsOne = ({navigation}: any) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const userRole = useSelector((state: RootState) => state.auth.userRole);
   const [textInputValue, setTextInputValue] = useState('');
+  const userData = useSelector((state: RootState) => state.auth.user);
 
   const onToggle = () => {
     setIsEnabled(!isEnabled);
@@ -104,13 +105,17 @@ const SettingsOne = ({navigation}: any) => {
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.avatarContainer}>
-            <CustomProfileAvatar username={'Lincoln'} size={60} />
+            <CustomProfileAvatar
+              profileImage={userData?.profileImage as any}
+              username={userData?.username}
+              size={60}
+            />
             <View>
               <Text style={{fontSize: 20, color: 'white', fontWeight: '700'}}>
-                Lincoln Smith
+                {userData?.firstName} {userData?.lastName}
               </Text>
               <Text style={{fontSize: 14, fontWeight: '500', color: 'white'}}>
-                lincolnsmith@gmail.com
+                {userData?.email}
               </Text>
             </View>
           </View>
