@@ -5,12 +5,11 @@ import HeaderBackArrow from '../../../components/shared-components/HeaderBackArr
 import {horizontalScale, verticalScale} from '../../../utils/metrics';
 import ProfilePhotos from '../../../components/auth-components/create-profile/ProfilePhotos';
 import CreateProfileForm from '../../../components/auth-components/create-profile/CreateProfileForm';
+import {FileData} from '../../../interfaces/user.interface';
 
 const CreateProfile = ({navigation, route}: any) => {
-  const [profilePicture, setProfilePicture] = useState<any>();
-  const handleSelectProfilePicture = (image: any) => {
-    setProfilePicture(image);
-  };
+  const [profilePicture, setProfilePicture] = useState<FileData | null>(null);
+  const [coverPicture, setCoverPicture] = useState<FileData | null>(null);
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
@@ -25,9 +24,17 @@ const CreateProfile = ({navigation, route}: any) => {
             }}
             onPress={() => navigation.goBack()}
           />
-          <ProfilePhotos onSelectProfilePicture={handleSelectProfilePicture} />
+          <ProfilePhotos
+            profile={profilePicture}
+            setProfile={setProfilePicture}
+            cover={coverPicture}
+            setCover={setCoverPicture}
+          />
         </View>
-        <CreateProfileForm profilePicture={profilePicture} />
+        <CreateProfileForm
+          profilePicture={profilePicture}
+          coverPicture={coverPicture}
+        />
       </ScrollView>
     </View>
   );

@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import {createProfileSchema} from '../../../validations';
 import {setUserData} from '../../../redux/authSlice';
-import {IUser} from '../../../interfaces/user.interface';
+import {FileData, IUser} from '../../../interfaces/user.interface';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {format} from 'date-fns';
@@ -22,7 +22,8 @@ import PhoneInput from 'react-native-phone-number-input';
 import Toast from 'react-native-toast-message';
 
 interface Props {
-  profilePicture: any;
+  profilePicture: FileData | null;
+  coverPicture: FileData | null;
 }
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -30,7 +31,7 @@ type NavigationProp = NativeStackNavigationProp<
   'UploadCertificate'
 >;
 
-const CreateProfileForm = ({profilePicture}: Props) => {
+const CreateProfileForm = ({profilePicture, coverPicture}: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const userRole = useSelector((state: RootState) => state.auth.userRole);
   const userData = useSelector((state: RootState) => state.auth.user);
@@ -129,6 +130,7 @@ const CreateProfileForm = ({profilePicture}: Props) => {
     if (isError) {
       return;
     }
+    console.log(userData,"from create profile")
 
     const partialUserData: Partial<IUser> = {
       ...userData,
@@ -143,8 +145,8 @@ const CreateProfileForm = ({profilePicture}: Props) => {
       physicalInformation: values.physicalInformation,
       dob: values.dob,
       hourlyRate: values.hourlyRate,
-      profileImage: userData?.profileImage,
-      coverImage: userData?.coverImage,
+      profileImage: profilePicture,
+      coverImage: coverPicture,
       height: {
         value: 0,
         unit: 'ft',

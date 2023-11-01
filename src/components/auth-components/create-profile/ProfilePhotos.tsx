@@ -19,21 +19,18 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import {setUserData} from '../../../redux/authSlice';
-import {IUser} from '../../../interfaces/user.interface';
+import {FileData, IUser} from '../../../interfaces/user.interface';
 import {useRoute} from '@react-navigation/native';
 import {s3bucketReference} from '../../../api';
 
 interface Props {
-  onSelectProfilePicture: (picture: any) => void;
+  profile: FileData | null | string | any;
+  setProfile: any;
+  cover: FileData | null | string | any;
+  setCover: any;
 }
 
-const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
-  const [selectedCoverImage, setSelectedCoverImage] = useState<any | null>(
-    null,
-  );
-  const [selectedProfileImage, setSelectedProfileImage] = useState<any | null>(
-    null,
-  );
+const ProfilePhotos = ({profile, setProfile, cover, setCover}: Props) => {
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const route = useRoute();
@@ -66,30 +63,23 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
   };
 
   const handleUploadPhoto = async (type: string) => {
-    if (
-      type === 'profile' &&
-      (selectedProfileImage || previousUserData?.profileImage)
-    ) {
-      setSelectedProfileImage(null);
-      onSelectProfilePicture(null);
-      const partialUserData: Partial<IUser> = {
-        ...previousUserData,
-        profileImage: null,
-      };
-      dispatch(setUserData({...partialUserData} as IUser));
+    if (type === 'profile' && profile) {
+      setProfile(null);
+      // const partialUserData: Partial<IUser> = {
+      //   ...previousUserData,
+      //   profileImage: null,
+      // };
+      // dispatch(setUserData({...partialUserData} as IUser));
       return;
     }
-    if (
-      type === 'cover' &&
-      (selectedCoverImage || previousUserData?.coverImage)
-    ) {
-      setSelectedCoverImage(null);
+    if (type === 'cover' && cover) {
+      setCover(null);
 
-      const partialUserData: Partial<IUser> = {
-        ...previousUserData,
-        coverImage: null,
-      };
-      dispatch(setUserData({...partialUserData} as IUser));
+      // const partialUserData: Partial<IUser> = {
+      //   ...previousUserData,
+      //   coverImage: null,
+      // };
+      // dispatch(setUserData({...partialUserData} as IUser));
       return;
     }
     const options: ImageLibraryOptions = {
@@ -103,36 +93,44 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
     if (type === 'profile') {
       await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
-          const partialUserData: Partial<IUser> = {
-            ...previousUserData,
-            profileImage: {
-              uri: response.assets[0].uri,
-              name: response.assets[0].fileName,
-              type: response.assets[0].type,
-            },
-          };
-          dispatch(setUserData({...partialUserData} as IUser));
-          setSelectedProfileImage({resourcePath: response.assets[0].uri});
-          onSelectProfilePicture({resourcePath: response.assets[0].uri});
+          // const partialUserData: Partial<IUser> = {
+          //   ...previousUserData,
+          //   profileImage: {
+          //     uri: response.assets[0].uri,
+          //     name: response.assets[0].fileName,
+          //     type: response.assets[0].type,
+          //   },
+          // };
+          // dispatch(setUserData({...partialUserData} as IUser));
+          setProfile({
+            uri: response.assets[0].uri,
+            name: response.assets[0].fileName,
+            type: response.assets[0].type,
+          });
         }
       });
     } else if (type === 'cover') {
       await launchImageLibrary(options, (response: any) => {
         if (response.assets) {
-          setSelectedCoverImage({resourcePath: response.assets[0].uri});
-          const partialUserData: Partial<IUser> = {
-            ...previousUserData,
-            coverImage: {
-              uri: response.assets[0].uri,
-              name: response.assets[0].fileName,
-              type: response.assets[0].type,
-            },
-          };
-          dispatch(setUserData({...partialUserData} as IUser));
+          setCover({
+            uri: response.assets[0].uri,
+            name: response.assets[0].fileName,
+            type: response.assets[0].type,
+          });
+          // const partialUserData: Partial<IUser> = {
+          //   ...previousUserData,
+          //   coverImage: {
+          //     uri: response.assets[0].uri,
+          //     name: response.assets[0].fileName,
+          //     type: response.assets[0].type,
+          //   },
+          // };
+          // dispatch(setUserData({...partialUserData} as IUser));
         }
       });
     }
   };
+  console.log(profile, 'PRFOILE PICTURE!!');
 
   const handleProfilePhotoContainerPress = async () => {
     const options: ImageLibraryOptions = {
@@ -145,17 +143,20 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
 
     await launchCamera(options, (response: any) => {
       if (response.assets) {
-        const partialUserData: Partial<IUser> = {
-          ...previousUserData,
-          profileImage: {
-            uri: response.assets[0].uri,
-            name: response.assets[0].fileName,
-            type: response.assets[0].type,
-          },
-        };
-        dispatch(setUserData({...partialUserData} as IUser));
-        setSelectedProfileImage({resourcePath: response.assets[0].uri});
-        onSelectProfilePicture({resourcePath: response.assets[0].uri});
+        // const partialUserData: Partial<IUser> = {
+        //   ...previousUserData,
+        //   profileImage: {
+        //     uri: response.assets[0].uri,
+        //     name: response.assets[0].fileName,
+        //     type: response.assets[0].type,
+        //   },
+        // };
+        // dispatch(setUserData({...partialUserData} as IUser));
+        setProfile({
+          uri: response.assets[0].uri,
+          name: response.assets[0].fileName,
+          type: response.assets[0].type,
+        });
       }
     });
   };
@@ -170,7 +171,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
                 alignSelf: 'flex-start',
                 paddingHorizontal: horizontalScale(16),
               },
-              selectedCoverImage && {
+              cover && {
                 position: 'absolute',
                 top: verticalScale(78),
                 zIndex: 99,
@@ -186,13 +187,15 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
             </Text>
           </View>
         )}
-        {selectedCoverImage || previousUserData?.coverImage ? (
+        {cover ? (
           <>
             <Image
               source={{
-                uri:
-                  selectedCoverImage?.resourcePath ||
-                  `${s3bucketReference}/${previousUserData?.coverImage}`,
+                uri: cover?.uri
+                  ? cover?.uri
+                  : cover
+                  ? `${s3bucketReference}/${cover}`
+                  : undefined,
               }}
               resizeMode="cover"
               style={{width: 375, height: 182}}
@@ -227,9 +230,11 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
         {/* {selectedProfileImage && ( */}
         <Image
           source={{
-            uri:
-              selectedProfileImage?.resourcePath ||
-              `${s3bucketReference}/${previousUserData?.profileImage}`,
+            uri: profile?.uri
+              ? profile?.uri
+              : profile
+              ? `${s3bucketReference}/${profile}`
+              : undefined,
           }}
           resizeMode="cover"
           style={{width: 142, height: 142, borderRadius: 71}}
@@ -239,7 +244,7 @@ const ProfilePhotos = ({onSelectProfilePicture}: Props) => {
           style={styles.profileCamera}
           activeOpacity={0.7}
           onPress={() => handleUploadPhoto('profile')}>
-          {selectedProfileImage || previousUserData?.profileImage ? (
+          {profile ? (
             <Icon name="trash-outline" color="white" size={20} />
           ) : (
             <CameraIconForm />

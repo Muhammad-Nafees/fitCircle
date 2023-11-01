@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -14,16 +14,43 @@ import {
   moderateScale,
   verticalScale,
 } from '../../utils/metrics';
+import {getFaqs} from '../../api/auth-module/profileSettings-module';
+import CustomLoader from '../../components/shared-components/CustomLoader';
+
+interface IFaq {
+  _id: string;
+  type: string;
+  content: string;
+}
 
 export const FaqScreen = () => {
-  const [showAnswers, setShowAnswers] = useState({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [faqs, setFaqs] = useState<IFaq[]>([]);
+  const [showAnswers, setShowAnswers] = useState<string>('');
 
-  const toggleAnswer = question => {
-    setShowAnswers(prevState => ({
-      ...prevState,
-      [question]: !prevState[question],
-    }));
+  const toggleAnswer = (id: string) => {
+    if (showAnswers == id) {
+      setShowAnswers('');
+    } else {
+      setShowAnswers(id);
+    }
   };
+
+  const fetchFaqs = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getFaqs();
+      const faqs = response?.data?.data?.faqs;
+      setFaqs(faqs);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'From getting FAQS!');
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchFaqs();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -32,33 +59,37 @@ export const FaqScreen = () => {
           <Text style={styles.heading}>FAQ</Text>
         </View>
         <View style={styles.contentContainer}>
-          {questionsAndAnswers.map(qa => (
-            <TouchableOpacity
-              key={qa.id}
-              onPress={() => toggleAnswer(qa.question)}>
-              <View style={styles.row}>
-                <View style={styles.questionContainer}>
-                  <Text style={styles.question}>{qa.question}</Text>
+          {isLoading ? (
+            <CustomLoader extraStyles={{marginTop: 20}} />
+          ) : (
+            faqs?.map(faq => (
+              <TouchableOpacity
+                key={faq._id}
+                onPress={() => toggleAnswer(faq?._id)}>
+                <View style={styles.row}>
+                  <View style={styles.questionContainer}>
+                    <Text style={styles.question}>{faq?.type}</Text>
+                  </View>
+                  <View style={styles.iconBackground}>
+                    <Icon
+                      name={
+                        showAnswers?.includes(faq._id)
+                          ? 'keyboard-arrow-up'
+                          : 'keyboard-arrow-down'
+                      }
+                      color={'white'}
+                      size={24}
+                    />
+                  </View>
                 </View>
-                <View style={styles.iconBackground}>
-                  <Icon
-                    name={
-                      showAnswers[qa.question]
-                        ? 'keyboard-arrow-up'
-                        : 'keyboard-arrow-down'
-                    }
-                    color={'white'}
-                    size={24}
-                  />
-                </View>
-              </View>
-              {showAnswers[qa.question] && (
-                <View style={styles.answerContainer}>
-                  <Text style={styles.answerText}>{qa.answer}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
+                {showAnswers.includes(faq?._id) && (
+                  <View style={styles.answerContainer}>
+                    <Text style={styles.answerText}>{faq?.content}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))
+          )}
         </View>
       </ScrollView>
     </View>
