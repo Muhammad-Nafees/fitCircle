@@ -12,7 +12,7 @@ const GenderScreen = ({route}: any) => {
           ) : (
             <Image
               source={{
-                uri: route.params.profilePicture.resourcePath,
+                uri: route.params.profilePicture.uri,
               }}
               resizeMode="cover"
               style={{width: 142, height: 142, borderRadius: 71}}

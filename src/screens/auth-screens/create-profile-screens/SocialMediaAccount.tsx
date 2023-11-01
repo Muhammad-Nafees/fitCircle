@@ -11,7 +11,6 @@ import {ISocial, IUser} from '../../../interfaces/user.interface';
 import {setUserData} from '../../../redux/authSlice';
 import {socialMediaSchema} from '../../../validations/index';
 import CustomLoader from '../../../components/shared-components/CustomLoader';
-import Toast from 'react-native-toast-message';
 
 interface FormValues {
   facebook: string;
@@ -31,7 +30,7 @@ const SocialMediaAccount = ({navigation}: any) => {
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>();
-  console.log(previousUserData,"from social media")
+  console.log(previousUserData, 'from social media');
 
   const handleSubmit = async (values: FormValues) => {
     const socialMediaLinks: ISocial[] = [
@@ -44,7 +43,7 @@ const SocialMediaAccount = ({navigation}: any) => {
         link: values.instagram,
       },
       {
-        name: 'ticktock',
+        name: 'tiktok',
         link: values.tiktok,
       },
       {

@@ -16,7 +16,7 @@ import CustomInput from '../../components/shared-components/CustomInput';
 import {Formik} from 'formik';
 import CustomButton from '../../components/shared-components/CustomButton';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {editProfileSchema} from '../../validations';
 import PhoneInput from 'react-native-phone-number-input';
@@ -29,9 +29,10 @@ import {
   updateProfile,
 } from '../../api/auth-module';
 import Toast from 'react-native-toast-message';
-import {IUser} from '../../interfaces/user.interface';
+import {FileData, ISocial, IUser} from '../../interfaces/user.interface';
 import {Image as ImageCompress} from 'react-native-compressor';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import {setUserData} from '../../redux/authSlice';
 
 export const EditProfile = ({navigation}: any) => {
   const [profilePicture, setProfilePicture] = useState<any>();
@@ -44,13 +45,48 @@ export const EditProfile = ({navigation}: any) => {
   const [country, setCountry] = useState();
   const [isError, setIsError] = useState('');
   const [usernameError, setUsernameError] = useState<string>('');
-  const [phoneCode, setPhoneCode] = useState('1');
+  const [phoneCode, setPhoneCode] = useState(userData?.phoneCode);
   const [countryCode, setCountryCode] = useState();
   const [allData, setAllData] = useState<any | null>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [profileImage, setProfileImage] = useState<
+    FileData | string | null | any
+  >(userData?.profileImage);
+  const [coverImage, setCoverImage] = useState<FileData | string | null | any>(
+    userData?.coverImage,
+  );
 
-  const originalDate = new Date('1990-09-21T00:00:00.000Z');
+  const dispatch = useDispatch();
+
+  const originalDate = new Date(userData?.dob as any);
   const formattedDate = format(originalDate, 'dd/MM/yyyy');
+
+  const initialValues: any = {
+    firstName: userData?.firstName || '',
+    lastName: userData?.lastName || '',
+    username: userData?.username || '',
+    bio: userData?.bio || '',
+    phone: userData?.phone || '',
+    country: userData?.country || '',
+    city: userData?.city || '',
+    physicalInformation: userData?.physicalInformation || '',
+    dob: formattedDate || '',
+    hourlyRate: userData?.hourlyRate || '',
+    profileImage: null,
+    coverImage: null,
+    facebook: '',
+    instagram: '',
+    tiktok: '',
+    twitter: '',
+  };
+  userData?.socialMediaLinks?.forEach(item => {
+    const fieldName = item.name.toLowerCase(); // Convert to lowercase for consistency
+    
+    if (initialValues.hasOwnProperty(fieldName)) {
+      initialValues[fieldName] = item.link;
+    }
+  });
+  console.log(userData, 'userDatra');
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -104,78 +140,6 @@ export const EditProfile = ({navigation}: any) => {
     }
   }, [countryCode]);
 
-  const handleSelectProfilePicture = (image: any) => {
-    setProfilePicture(image);
-  };
-
-  const handleSubmit = async (values: IUser) => {
-    setIsLoading(true);
-
-    try {
-      let compressedProfileImage = null;
-      let compressedCoverImage = null;
-
-      if (
-        userData?.profileImage &&
-        !userData?.profileImage.includes('uploads')
-      ) {
-        const result = await ImageCompress.compress(userData.profileImage.uri, {
-          quality: 0.8,
-        });
-        compressedProfileImage = {
-          name: userData?.profileImage?.name as string,
-          type: userData?.profileImage?.type as string,
-          uri: result,
-        };
-      }
-
-      if (userData?.coverImage && !userData?.coverImage.includes('uploads')) {
-        const result = await ImageCompress.compress(userData.coverImage.uri, {
-          quality: 0.8,
-        });
-        compressedCoverImage = {
-          name: userData?.coverImage?.name as string,
-          type: userData?.coverImage?.type as string,
-          uri: result,
-        };
-        const filteredLinks = userData?.socialMediaLinks.filter(
-          linkData => linkData.link,
-        );
-        // const reqUserData: Partial<IUser> = {
-        //   ...values,
-        //   profileImage: compressedProfileImage || userData?.profileImage,
-        //   coverImage: compressedCoverImage || userData?.coverImage,
-        //   socialMediaLinks: filteredLinks,
-        // };
-        const response = await updateProfile(values as IUser);
-        console.log(response?.data, 'RESPONSE');
-      }
-    } catch (error: any) {
-      console.log(error?.response?.data, 'FROM UPDATE PROFILE IN SETTINGS!');
-    }
-    setIsLoading(false);
-    // navigation.navigate('SettingsOne');
-  };
-
-  const initialValues: any = {
-    firstName: userData?.firstName || '',
-    lastName: userData?.lastName || '',
-    username: userData?.username || '',
-    bio: userData?.bio || '',
-    phone: userData?.phone || '',
-    country: userData?.country || '',
-    city: userData?.city || '',
-    physicalInformation: userData?.physicalInformation || '',
-    dob: formattedDate || '',
-    hourlyRate: userData?.hourlyRate || '',
-    profileImage: null,
-    coverImage: null,
-    facebook: '',
-    twitter: '',
-    instagaram: '',
-    tiktok: '',
-  };
-
   const handleChangeUserName = async (text: string, setFieldValue: any) => {
     setFieldValue('username', text);
     try {
@@ -193,6 +157,78 @@ export const EditProfile = ({navigation}: any) => {
     }
   };
 
+  const handleSubmit = async (values: any) => {
+    setIsLoading(true);
+    const socialMediaLinks: ISocial[] = [
+      {
+        name: 'facebook',
+        link: values.facebook,
+      },
+      {
+        name: 'instagram',
+        link: values.instagram,
+      },
+      {
+        name: 'tiktok',
+        link: values.tiktok,
+      },
+      {
+        name: 'twitter',
+        link: values.twitter,
+      },
+    ];
+    const filteredLinks = socialMediaLinks.filter(linkData => linkData.link);
+
+    try {
+      let compressedProfileImage = null;
+      let compressedCoverImage = null;
+      if (profileImage !== null && profileImage?.uri) {
+        const result = await ImageCompress.compress(profileImage.uri, {
+          quality: 0.8,
+        });
+        compressedProfileImage = {
+          name: profileImage?.name as string,
+          type: profileImage?.type as string,
+          uri: result,
+        };
+      }
+      if (coverImage !== null && coverImage?.uri) {
+        const result = await ImageCompress.compress(coverImage.uri, {
+          quality: 0.8,
+        });
+        compressedCoverImage = {
+          name: coverImage?.name as string,
+          type: coverImage?.type as string,
+          uri: result,
+        };
+      }
+      const originalDate = new Date(userData?.dob as any);
+      const formattedDate = format(originalDate, 'yyyy-MM-dd');
+      const reqUserData: Partial<IUser> = {
+        ...values,
+        dob: formattedDate,
+        countryCode: userData?.countryCode,
+        phoneCode: userData?.phoneCode,
+        socialMediaLinks: filteredLinks,
+        profileImage: compressedProfileImage,
+        coverImage: compressedCoverImage,
+      };
+      console.log(reqUserData, 'REQDATA');
+      const response = await updateProfile(reqUserData as IUser);
+      const updatedData = response?.data?.data;
+      console.log(updatedData, 'UPDATED DATA!');
+      dispatch(setUserData(updatedData));
+
+      Toast.show({
+        text1: `${response?.data?.message}`,
+      });
+    } catch (error: any) {
+      console.log(error, 'FROM UPDATE PROFILE IN SETTINGS!');
+    }
+    setIsLoading(false);
+    // navigation.navigate('SettingsOne');
+  };
+
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <ScrollView keyboardShouldPersistTaps="always">
@@ -206,7 +242,12 @@ export const EditProfile = ({navigation}: any) => {
             }}
             onPress={() => navigation.goBack()}
           />
-          <ProfilePhotos onSelectProfilePicture={handleSelectProfilePicture} />
+          <ProfilePhotos
+            profile={profileImage}
+            setProfile={setProfileImage}
+            cover={coverImage}
+            setCover={setCoverImage}
+          />
         </View>
         <Formik
           initialValues={initialValues}

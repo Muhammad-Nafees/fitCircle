@@ -57,7 +57,6 @@ export const getCities = async (country: string) => {
 };
 
 export const updateProfile = async (userData: IUser) => {
-  console.log(userData, 'from updateeeeeeeeeee');
   let formData = new FormData();
   if (userData?.profileImage) {
     formData.append('profileImage', userData.profileImage);
@@ -80,7 +79,9 @@ export const updateProfile = async (userData: IUser) => {
     formData.append('physicalInformation', userData?.physicalInformation);
   }
   formData.append('dob', userData.dob);
-  formData.append('age', userData.age);
+  if (userData?.age) {
+    formData.append('age', userData.age);
+  }
   formData.append('phone', userData.phone);
   formData.append('phoneCode', userData.phoneCode);
   formData.append('countryCode', userData.countryCode);
@@ -88,14 +89,20 @@ export const updateProfile = async (userData: IUser) => {
   if (userData?.hourlyRate) {
     formData.append('hourlyRate', userData?.hourlyRate);
   }
-  formData.append('activity', userData?.activity);
+  if (userData?.activity) {
+    formData.append('activity', userData?.activity);
+  }
   if (userData.bodyType) {
     formData.append('bodyType', userData?.bodyType);
   }
-  formData.append('height[value]', userData?.height.value);
-  formData.append('height[unit]', userData?.height.unit);
-  formData.append('weight[value]', userData?.weight.value);
-  formData.append('weight[unit]', userData?.weight.unit);
+  if (userData?.height) {
+    formData.append('height[value]', userData?.height.value);
+    formData.append('height[unit]', userData?.height.unit);
+  }
+  if (userData?.height) {
+    formData.append('weight[value]', userData?.weight.value);
+    formData.append('weight[unit]', userData?.weight.unit);
+  }
 
   if (userData?.interests) {
     for (let i = 0; i < userData.interests.length; i++) {
