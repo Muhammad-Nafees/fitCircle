@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-export const generateTimeSlots = (forNextDay:boolean) => {
-    console.log(forNextDay,"fornextdayy")
+export const generateTimeSlots = (forNextDay: boolean) => {
+  console.log(forNextDay, 'fornextdayy');
   if (forNextDay) {
     const startTime = moment().add(1, 'day').startOf('day');
     const endTime = moment(startTime).add(1, 'day');
@@ -59,6 +59,12 @@ export const timeDifference = (createdAt: any) => {
   }
 };
 
+export const getRandomNumber = () => {
+  const timestamp = new Date().getTime(); // Get the current timestamp in milliseconds
+  const randomString = Math.random().toString(36).substring(2, 8); // Generate a random string
+
+  return `${timestamp}_${randomString}`;
+};
 
 export const months = [
   'JAN',
@@ -81,4 +87,3 @@ export const getCurrentMonth = () => {
 };
 
 export const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-

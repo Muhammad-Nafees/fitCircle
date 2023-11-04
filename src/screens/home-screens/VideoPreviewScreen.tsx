@@ -53,6 +53,7 @@ import {
   Image as ImageCompress,
 } from 'react-native-compressor';
 import {createPostWithVideo} from '../../api/home-module';
+import {getRandomNumber} from '../../utils/helper';
 
 interface VideoPreviewScreenProps {
   videoUri: FileData;
@@ -64,6 +65,7 @@ interface VideoPreviewScreenProps {
   costValue?: number;
   visibility?: IPostVisibility;
   videoThumbnail: FileData | undefined;
+  thumbnails: string[];
 }
 
 export const VideoPreviewScreen = ({
@@ -74,6 +76,7 @@ export const VideoPreviewScreen = ({
   setIsComponentMounted,
   handleBackButtonPress,
   videoThumbnail,
+  thumbnails,
 }: VideoPreviewScreenProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const options = [
@@ -108,6 +111,7 @@ export const VideoPreviewScreen = ({
   const [thumbnailOpen, setThumbnailOpen] = useState(false);
   const [isPlay, setIsPlay] = useState<boolean>(false);
   const [showPlayIcon, setShowPlayIcon] = useState<boolean>(true);
+  const [imageIndex, setImageIndex] = useState<number | null>(null);
   const PlayIcon = require('../../../assets/icons/playIcon.png');
   const PauseIcon = require('../../../assets/icons/pauseIcon.png');
 
@@ -322,6 +326,16 @@ export const VideoPreviewScreen = ({
       setIsLoading(false);
     }
   };
+
+  const selectThumbnail = (index: number) => {
+    setImageIndex(index);
+    setThumbnail({
+      uri: thumbnails[index],
+      name: getRandomNumber() + '_thumbnail.jpg',
+      type: 'image/jpeg',
+    });
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -457,23 +471,46 @@ export const VideoPreviewScreen = ({
           />
         )}
         {thumbnailOpen ? (
-          <View
-            style={[
-              styles.bottomContainer,
-              {paddingVertical: verticalScale(15)},
-            ]}>
-            <View style={styles.iconRow}>
-              <TouchableOpacity onPress={handlePhotoButtonPress}>
-                <CreatePostSvgIcon />
-              </TouchableOpacity>
-            </View>
-            <View>
-              <CustomButton
-                extraStyles={{paddingHorizontal: 30}}
-                isDisabled={thumbnail == null}
-                onPress={handleThumbnailSelect}>
-                Select as thumbnail
-              </CustomButton>
+          <View style={{zIndex: 999}}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.bottomWrapper}>
+              {thumbnails.map((item: string, index: number) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => selectThumbnail(index)}>
+                  <Image
+                    style={
+                      index === imageIndex
+                        ? styles.selectedBottomImage
+                        : styles.bottomImage
+                    }
+                    source={{
+                      uri: item,
+                    }}
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <View
+              style={[
+                styles.bottomContainer,
+                {paddingVertical: verticalScale(15)},
+              ]}>
+              <View style={styles.iconRow}>
+                <TouchableOpacity onPress={handlePhotoButtonPress}>
+                  <CreatePostSvgIcon />
+                </TouchableOpacity>
+              </View>
+              <View>
+                <CustomButton
+                  extraStyles={{paddingHorizontal: 30}}
+                  isDisabled={thumbnail == null}
+                  onPress={handleThumbnailSelect}>
+                  Select as thumbnail
+                </CustomButton>
+              </View>
             </View>
           </View>
         ) : (
@@ -579,6 +616,22 @@ const styles = StyleSheet.create({
   textInputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+  },
+  bottomWrapper: {
+    backgroundColor: 'black',
+    paddingHorizontal: verticalScale(8),
+  },
+  bottomImage: {
+    width: 50,
+    height: 60,
+    marginHorizontal: 10,
+  },
+  selectedBottomImage: {
+    width: 50,
+    height: 60,
+    marginHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#fff',
   },
   bottomContainer: {
     zIndex: 999,
