@@ -80,6 +80,7 @@ export const AddPostScreen = ({route}: any) => {
   const [costValue, setCostValue] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState<any>();
+  const [thumbnails, setThumbnails] = useState<string[]>([]);
 
   const onSelectCost = (value: number) => {
     setCostValue(value);
@@ -240,36 +241,49 @@ export const AddPostScreen = ({route}: any) => {
           uri: response.assets[0].uri as string,
           name: response.assets[0].fileName as string,
           type: response.assets[0].type as string,
+          duration: response.assets[0].duration as number,
         });
       }
     });
   };
+
   const fetchThumbnail = async () => {
-    console.log(videoUri, 'videoUri');
-    if (videoUri) {
+    if (videoUri && videoUri?.duration) {
+      let thumbnailsarr: string[] = [];
       try {
-        const response = await createThumbnail({
-          url: videoUri?.uri,
-          timeStamp: 1000,
-          format: 'jpeg',
-        });
-        setVideoThumbnail({
-          uri: response.path,
-          name: 'thumbnail',
-          type: 'image/jpeg',
-        });
+        if (videoUri?.duration < 10) {
+          for (let i = 0; i < videoUri?.duration; i++) {
+            let response = await createThumbnail({
+              url: videoUri?.uri,
+              timeStamp: i * 1000,
+              format: 'jpeg',
+            });
+            thumbnailsarr.push(response.path);
+          }
+        } else {
+          let iteration = Math.floor(videoUri?.duration / 5);
+          for (let i = 1; i <= iteration; i++) {
+            let response = await createThumbnail({
+              url: videoUri?.uri,
+              timeStamp: i * 5 * 1000,
+              format: 'jpeg',
+            });
+            thumbnailsarr.push(response.path);
+          }
+        }
+        setThumbnails(thumbnailsarr);
       } catch (err) {
         console.log('err', err);
       }
     }
   };
-  console.log(videoThumbnail, 'videoThumbnail');
+
   useFocusEffect(
     useCallback(() => {
       if (videoUri) {
         fetchThumbnail();
       }
-    }, [videoUri]),
+    }, [videoUri?.uri]),
   );
 
   const handleBackButtonPress = () => {
@@ -577,7 +591,7 @@ export const AddPostScreen = ({route}: any) => {
           />
         </TouchableWithoutFeedback>
       </View>
-      {videoUri && (
+      {videoUri && thumbnails?.length ? (
         <View style={StyleSheet.absoluteFill}>
           <VideoPreviewScreen
             videoUri={videoUri}
@@ -588,9 +602,10 @@ export const AddPostScreen = ({route}: any) => {
             costValue={costValue}
             visibility={visibility}
             setIsComponentMounted={setIsComponentMounted}
+            thumbnails={thumbnails}
           />
         </View>
-      )}
+      ) : null}
     </View>
   );
 };
