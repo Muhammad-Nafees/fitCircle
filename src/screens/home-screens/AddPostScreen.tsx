@@ -261,11 +261,12 @@ export const AddPostScreen = ({route}: any) => {
             thumbnailsarr.push(response.path);
           }
         } else {
-          let iteration = Math.floor(videoUri?.duration / 5);
+          let noOfSecondsForThumnails = 3;
+          let iteration = Math.floor(videoUri?.duration / noOfSecondsForThumnails);
           for (let i = 1; i <= iteration; i++) {
             let response = await createThumbnail({
               url: videoUri?.uri,
-              timeStamp: i * 5 * 1000,
+              timeStamp: i * noOfSecondsForThumnails * 1000,
               format: 'jpeg',
             });
             thumbnailsarr.push(response.path);
