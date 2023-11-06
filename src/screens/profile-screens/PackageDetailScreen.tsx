@@ -31,7 +31,9 @@ const reviewData = Array.from({length: 5});
 export const PackageDetailScreen = ({navigation, route}: any) => {
   const [videoVisible, setVideoVisible] = useState(false);
   const packageDetails = route?.params?.packageDetails;
+  const {isCreatingPackage, isEditingPackage} = route?.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  console.log(route.params, 'qdhoishohsoih');
   const userData = useSelector((state: RootState) => state.auth.user);
 
   const renderCustomPackageReview = () => {
@@ -134,29 +136,34 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                 style={{width: 24, height: 24, tintColor: 'white'}}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                userData._id !== packageDetails.user &&
-                navigation.navigate('ScheduleScreen', {
-                  screen: 'Slot',
-                  params: {
-                    packageView: true,
-                    packageDetails: packageDetails,
-                    userData: userData,
-                  },
-                })
-              }>
-              <Text
-                style={{
-                  fontWeight: '500',
-                  fontSize: 10,
-                  color: 'rgba(32, 155, 204, 1)',
-                }}>
-                {userData._id === packageDetails.user
-                  ? 'Edit this package'
-                  : 'Get this package'}
-              </Text>
-            </TouchableOpacity>
+            {!isCreatingPackage && !isEditingPackage && (
+              <TouchableOpacity
+                onPress={() =>
+                  userData._id !== packageDetails.user
+                    ? navigation.navigate('ScheduleScreen', {
+                        screen: 'Slot',
+                        params: {
+                          packageView: true,
+                          packageDetails: packageDetails,
+                          userData: userData,
+                        },
+                      })
+                    : navigation.navigate('CreatePackageScreen', {
+                        myPackage: packageDetails,
+                      })
+                }>
+                <Text
+                  style={{
+                    fontWeight: '500',
+                    fontSize: 10,
+                    color: 'rgba(32, 155, 204, 1)',
+                  }}>
+                  {userData._id === packageDetails.user
+                    ? 'Edit this package'
+                    : 'Get this package'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
           <Text style={[styles.heading, route.params.packageData]}>
             Details

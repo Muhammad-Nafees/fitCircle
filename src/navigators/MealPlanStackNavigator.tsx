@@ -37,16 +37,6 @@ const MealPlanStackNavigator = () => {
         component={RequestMealPlan}
         options={{headerShown: false}}
       />
-      <Stack.Screen
-        name="DashboardScreen"
-        component={HomeTabNavigator}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Message"
-        component={MessageStackNavigator}
-        options={{headerShown: false}}
-      />
     </Stack.Navigator>
   );
 };

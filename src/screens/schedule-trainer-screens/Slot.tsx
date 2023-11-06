@@ -181,10 +181,7 @@ export const Slot = ({navigation, route}: any) => {
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
-          }>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image source={ArrowBackIcon} style={styles.arrowBack} />
         </TouchableOpacity>
         <Text style={styles.heading}>Schedule</Text>

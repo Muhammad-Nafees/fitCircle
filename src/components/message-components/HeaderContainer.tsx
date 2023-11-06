@@ -14,6 +14,7 @@ const Option = require('../../../assets/icons/customPostOption.png');
 import {dummyDataProfile} from '../../screens/dummyData';
 import {setUserProfile} from '../../redux/authSlice';
 import {useDispatch} from 'react-redux';
+import {setTrainerView} from '../../redux/profileSlice';
 
 export const MessageHeaderContainer = ({username}: any) => {
   const navigation = useNavigation();
@@ -21,9 +22,8 @@ export const MessageHeaderContainer = ({username}: any) => {
   const handleSeeUserProfile = () => {
     dispatch(setUserProfile(dummyDataProfile));
     dispatch(setTrainerView(true));
-    navigation.navigate('HomeTabNav', {
-      screen: 'Profile',
-      params: {isFollowing: true},
+    navigation.navigate('Profile', {
+      isFollowing: true,
     });
   };
 
