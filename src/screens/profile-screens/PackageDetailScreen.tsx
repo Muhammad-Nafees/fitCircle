@@ -71,7 +71,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
       });
       navigation.navigate('PackagesScreen');
     } catch (error: any) {
-      if (error?.response?.status === "413") {
+      if (error?.response?.status === '413') {
         Toast.show({
           type: 'error',
           text1: `Video file too Large!`,
@@ -134,28 +134,29 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                 style={{width: 24, height: 24, tintColor: 'white'}}
               />
             </TouchableOpacity>
-            {userData?.role === 'user' && (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('ScheduleScreen', {
-                    screen: 'Slot',
-                    params: {
-                      packageView: true,
-                      packageDetails: packageDetails,
-                      userData: userData,
-                    },
-                  })
-                }>
-                <Text
-                  style={{
-                    fontWeight: '500',
-                    fontSize: 10,
-                    color: 'rgba(32, 155, 204, 1)',
-                  }}>
-                  Get this package
-                </Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              onPress={() =>
+                userData._id !== packageDetails.user &&
+                navigation.navigate('ScheduleScreen', {
+                  screen: 'Slot',
+                  params: {
+                    packageView: true,
+                    packageDetails: packageDetails,
+                    userData: userData,
+                  },
+                })
+              }>
+              <Text
+                style={{
+                  fontWeight: '500',
+                  fontSize: 10,
+                  color: 'rgba(32, 155, 204, 1)',
+                }}>
+                {userData._id === packageDetails.user
+                  ? 'Edit this package'
+                  : 'Get this package'}
+              </Text>
+            </TouchableOpacity>
           </View>
           <Text style={[styles.heading, route.params.packageData]}>
             Details

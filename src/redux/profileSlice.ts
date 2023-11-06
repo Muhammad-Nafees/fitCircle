@@ -5,12 +5,14 @@ interface IProfile {
   followersList: IUser[] | null;
   followingsList: IUser[] | null;
   communitiesList: any[] | null;
+  trainerView: boolean;
 }
 
 const initialState: IProfile = {
   followersList: [],
   followingsList: [],
   communitiesList: [],
+  trainerView: false,
 };
 
 const profileSlice = createSlice({
@@ -50,6 +52,9 @@ const profileSlice = createSlice({
         );
       }
     },
+    setTrainerView: (state, action: PayloadAction<boolean>) => {
+      state.trainerView = action.payload;
+    },
   },
 });
 
@@ -60,6 +65,7 @@ export const {
   removeFollower,
   unFollowUser,
   deleteCommunity,
+  setTrainerView,
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

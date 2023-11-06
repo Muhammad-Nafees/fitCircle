@@ -95,7 +95,7 @@ const SetSchedule = ({route, navigation}: any) => {
   }, [selectedDate]);
   console.log(userBookedSchedules, 'boookkkkk');
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image source={ArrowBackIcon} style={styles.arrowBack} />
@@ -158,13 +158,13 @@ const SetSchedule = ({route, navigation}: any) => {
           )}
         </View>
       </ScrollView>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingTop: 32,
     backgroundColor: '#292A2C',
   },

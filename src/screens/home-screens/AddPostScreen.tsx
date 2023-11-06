@@ -395,7 +395,7 @@ export const AddPostScreen = ({route}: any) => {
                   width: 56,
                   height: 31,
                 }}
-                isDisabled={isLoading}>
+                isDisabled={isLoading || textInputValue === ''}>
                 {isLoading ? <CustomLoader /> : 'Post'}
               </CustomButton>
             </TouchableOpacity>

@@ -2,11 +2,13 @@ import CustomNotification from '../../components/profile-components/CustomNotifi
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 const ArrowBack = require('../../../assets/icons/arrow-back.png');
 import {useState} from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import {setTrainerView} from '../../redux/profileSlice';
 
 const NotificationScreen = ({navigation}: any) => {
   const userRole = useSelector((state: RootState) => state.auth.userRole);
+  const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -145,12 +147,12 @@ const NotificationScreen = ({navigation}: any) => {
             responseTime={'Uploaded a meal plan for you, check profile!'}
             buttonVisible={false}
             extraResponseStyles={{color: 'rgba(32, 155, 204, 1)'}}
-            containerPress={() =>
+            containerPress={() => {
+              dispatch(setTrainerView(true));
               navigation.navigate('Profile', {
-                isTrainerView: true,
                 isFollowing: true,
-              })
-            }
+              });
+            }}
           />
         </View>
       ) : (

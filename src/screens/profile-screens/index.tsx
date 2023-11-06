@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
@@ -37,6 +38,7 @@ import {
   setCommunitiesList,
   setFollowersList,
   setFollowingsList,
+  setTrainerView,
 } from '../../redux/profileSlice';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import {
@@ -59,7 +61,6 @@ const ProfileScreen = ({navigation, route}: any) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const [userId, setUserId] = useState<string | undefined>(undefined);
   const tabBarHeight = useBottomTabBarHeight();
-  let isTrainerView = route.params?.isTrainerView || false;
   const [followers, setFollowers] = useState(followersData);
   const [selectedOption, setSelectedOption] = useState<string>('Feed');
   const [reelsModal, setReelsModal] = useState(false);
@@ -269,6 +270,22 @@ const ProfileScreen = ({navigation, route}: any) => {
     }
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      dispatch(setTrainerView(false));
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   const fetchCommunityList = async () => {
     setIsLoading(true);
     console.log('fetching cmommunities');
@@ -378,10 +395,6 @@ const ProfileScreen = ({navigation, route}: any) => {
           setIsDeleteVideo(true);
         }
         console.log(response?.data, 'sss');
-        Toast.show({
-          type: 'success',
-          text1: `${response?.data?.message}`,
-        });
       } catch (error: any) {
         Toast.show({
           type: 'error',
@@ -392,11 +405,6 @@ const ProfileScreen = ({navigation, route}: any) => {
     } else {
       try {
         const response = await deleteFavoritePost(postId);
-
-        Toast.show({
-          type: 'success',
-          text1: `${response?.data?.message}`,
-        });
       } catch (error: any) {
         Toast.show({
           type: 'error',
@@ -425,7 +433,6 @@ const ProfileScreen = ({navigation, route}: any) => {
       <ProfileHeaderContainer
         profilePersonalData={profilePersonalData}
         isFollowing={route?.params?.isFollowing}
-        isTrainerView={isTrainerView}
         userData={profileData}
         followers={followers}
         isSearchProfile={isSearchProfile}
@@ -545,7 +552,6 @@ const ProfileScreen = ({navigation, route}: any) => {
                     userId={userId}
                     video={item?.post}
                     onDeleteVideo={handleDeleteFavoriteVideo}
-                    isTrainerView={isTrainerView}
                     handleCancelButtonPress={handleCancelButton}
                     onPressVideo={handleVideoPress}
                     style={{marginRight: index % 2 === 0 ? 8 : 0}}
@@ -575,11 +581,7 @@ const ProfileScreen = ({navigation, route}: any) => {
           </ScrollView>
         )}
         {selectedOption === 'Bio' && (
-          <ProfileBio
-            isTrainerView
-            handleBioModal={handleBioModal}
-            userData={profileData}
-          />
+          <ProfileBio handleBioModal={handleBioModal} userData={profileData} />
         )}
         {selectedOption === 'Videos' && (
           <View style={{width: '100%'}}>
@@ -598,7 +600,6 @@ const ProfileScreen = ({navigation, route}: any) => {
                     userId={userId}
                     video={item}
                     onDeleteVideo={handleDeleteVideo}
-                    isTrainerView={isTrainerView}
                     handleCancelButtonPress={handleCancelButton}
                     onPressVideo={handleFavoriteVideoPress}
                     style={{marginRight: index % 2 === 0 ? 8 : 0}}

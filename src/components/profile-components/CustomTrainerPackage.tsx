@@ -4,7 +4,7 @@ import {MealPlanStarIcon} from '../../../assets/icons/MealPlanStar';
 import {useNavigation} from '@react-navigation/core';
 import {Swipeable} from 'react-native-gesture-handler';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import DeleteMessageIcon from '../../../assets/icons/DeleteMessage';
 const PlayIcon = require('../../../assets/icons/playIcon.png');
@@ -16,6 +16,7 @@ import {IPackage} from '../../interfaces/package.interface';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from 'interfaces/navigation.type';
 import {s3bucketReference} from '../../api';
+import {setTrainerView} from '../../redux/profileSlice';
 
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -35,13 +36,15 @@ interface Props {
 
 export const CustomTrainerPackage = ({
   myPackage,
-  hidePriceAndPackage,
+  hidePriceAndPackage = false,
   onDeletePackage,
   onEditPackage,
   hidePackageButton = false,
   videoEnabled,
   isCreatingPackage,
 }: Props) => {
+  console.log(myPackage, 'hcoihewoihoewhoi');
+  const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.auth.user);
   const [isSwiped, setIsSwiped] = useState(false);
   const swipeableRef: any = useRef(null);
@@ -50,6 +53,7 @@ export const CustomTrainerPackage = ({
 
   const onPressHandler = () => {
     // if (userData?.role !== 'trainer' || isTrainerView) {
+    dispatch(setTrainerView(false));
     navigation.navigate('PackageDetail', {packageDetails: myPackage});
     // }
   };
@@ -172,7 +176,7 @@ export const CustomTrainerPackage = ({
                 <Text style={styles.price}>${myPackage?.cost}</Text>
                 {!hidePackageButton && (
                   <View>
-                    {userData?.role !== 'user' ? (
+                    {myPackage.user === userData._id ? (
                       <Text style={styles.getPackage}>Edit this package</Text>
                     ) : (
                       <Text style={styles.getPackage}>Get this package</Text>

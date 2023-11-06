@@ -20,9 +20,10 @@ export const MessageHeaderContainer = ({username}: any) => {
   const dispatch = useDispatch();
   const handleSeeUserProfile = () => {
     dispatch(setUserProfile(dummyDataProfile));
+    dispatch(setTrainerView(true));
     navigation.navigate('HomeTabNav', {
       screen: 'Profile',
-      params: {isTrainerView: true, isFollowing: true},
+      params: {isFollowing: true},
     });
   };
 

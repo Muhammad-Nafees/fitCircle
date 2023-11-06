@@ -114,10 +114,6 @@ export const ReelsComponent = ({
   const handleFavoritePress = async () => {
     try {
       const response = await addPostToFavorite(post._id);
-      Toast.show({
-        type: 'success',
-        text1: `${response?.data?.message}`,
-      });
       navigation.navigate('FavoriteDialog' as never);
     } catch (error: any) {
       console.log(error?.response, 'from favorite video');
