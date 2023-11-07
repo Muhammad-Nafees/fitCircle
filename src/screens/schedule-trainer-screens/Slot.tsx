@@ -23,6 +23,8 @@ import {useFocusEffect} from '@react-navigation/native';
 import {getCurrentMonth, months} from '../../utils/helper';
 import {STYLES} from '../../styles/globalStyles';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import {useDispatch} from 'react-redux';
+import {setTrainerView} from '../../redux/profileSlice';
 const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 
 export const Slot = ({navigation, route}: any) => {
@@ -30,7 +32,7 @@ export const Slot = ({navigation, route}: any) => {
   const packageView = route?.params?.packageView || false;
   const packageDetails = route?.params?.packageDetails;
   const [trainerId, setTrainerId] = useState<string>('');
-
+  const dispatch = useDispatch();
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [trainerSchedules, setTrainerSchedules] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -153,15 +155,16 @@ export const Slot = ({navigation, route}: any) => {
 
     return (
       <TouchableOpacity
-        onPress={() =>
+        onPress={() => {
+          (packageView || hourlyRate) && dispatch(setTrainerView(true));
           navigation.navigate('SetSchedule', {
             date: parsedDate,
             userData: userData,
             trainerId,
             packageView,
             packageDetails,
-          })
-        }
+          });
+        }}
         style={styles.carouselItem}>
         <Text style={styles.carouselItemText1}>{day}</Text>
         <View style={styles.dateMonthRow}>
@@ -178,10 +181,7 @@ export const Slot = ({navigation, route}: any) => {
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
-          }>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image source={ArrowBackIcon} style={styles.arrowBack} />
         </TouchableOpacity>
         <Text style={styles.heading}>Schedule</Text>
@@ -195,15 +195,16 @@ export const Slot = ({navigation, route}: any) => {
       )}
       <TouchableOpacity
         style={styles.calenderButton}
-        onPress={() =>
+        onPress={() => {
+          (packageView || hourlyRate) && dispatch(setTrainerView(true));
           navigation.navigate('SetSchedule', {
             date: todaysDate,
             userData: userData,
             trainerId,
             packageView,
             packageDetails,
-          })
-        }>
+          });
+        }}>
         <View style={styles.buttonContent}>
           <Text style={styles.buttonText}>{selectedMonth}</Text>
           <ArrowForward />

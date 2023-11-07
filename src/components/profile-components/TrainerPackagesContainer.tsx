@@ -2,6 +2,7 @@ import {IPackage} from '../../interfaces/package.interface';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import {View, Text} from 'react-native';
 import {CustomTrainerPackage} from './CustomTrainerPackage';
+import {useRoute} from '@react-navigation/native';
 
 interface Props {
   isLoading: boolean;
@@ -16,6 +17,7 @@ const TrainerPackagesContainer = ({
   handleDeletePackage,
   handleEditPackage,
 }: Props) => {
+  const route = useRoute();
   return isLoading ? (
     <CustomLoader extraStyles={{marginTop: 30}} />
   ) : !packages ? (
@@ -25,7 +27,7 @@ const TrainerPackagesContainer = ({
       <View key={myPackage?._id}>
         <CustomTrainerPackage
           myPackage={myPackage}
-          hidePackageButton={true}
+          hidePackageButton={route.name === 'PackagesScreen'}
           onDeletePackage={handleDeletePackage}
           onEditPackage={handleEditPackage}
         />

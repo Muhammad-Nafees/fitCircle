@@ -61,7 +61,7 @@ export const MessagesOne = ({navigation}: any) => {
 
   useFocusEffect(() => {
     const backAction = () => {
-      navigation.navigate('HomeTabNav');
+      navigation.navigate('Home');
       return true;
     };
     const backHandler = BackHandler.addEventListener(

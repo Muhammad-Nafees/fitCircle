@@ -7,7 +7,7 @@ import CustomButton from '../../../components/shared-components/CustomButton';
 
 const RequestMealPlan = ({navigation}: any) => {
   const handleNavigation = () => {
-    navigation.navigate('DashboardScreen', {screen: 'Dashboard'});
+    navigation.navigate('Dashboard');
   };
   return (
     <View style={styles.container}>

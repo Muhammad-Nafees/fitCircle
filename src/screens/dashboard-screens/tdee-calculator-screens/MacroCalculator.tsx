@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
   },
   textNote: {
-    color: 'white',
+    color: 'rgba(239, 239, 239, 0.7)',
     fontSize: 12,
     fontStyle: 'italic',
     marginTop: -18,

@@ -24,7 +24,7 @@ export const PostOptionsIcon = ({
 
   const handleScheduleRoute = () => {
     if (userRole !== 'user') {
-      navigation.navigate('Schedule');
+      navigation.navigate('ScheduleScreen');
     } else {
       navigation.navigate('UserSchedule');
     }
@@ -49,16 +49,14 @@ export const PostOptionsIcon = ({
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.bottomContainerButtons}
-        onPress={() => navigation.navigate('HomeTab', {screen: 'Profile'})}>
+        onPress={() => navigation.navigate('Profile')}>
         <ProfileSvgIcon />
         <Text style={styles.options}>My Profile</Text>
       </TouchableOpacity>
       {userRole !== 'user' && userRole !== 'nutritionist' && (
         <TouchableOpacity
           style={styles.bottomContainerButtons}
-          onPress={() =>
-            navigation.navigate('HomeTab', {screen: 'PackagesScreen'})
-          }>
+          onPress={() => navigation.navigate('PackagesScreen')}>
           <PackageIcon />
           <Text style={styles.options}>My Package</Text>
         </TouchableOpacity>
@@ -66,7 +64,7 @@ export const PostOptionsIcon = ({
       {userRole === 'nutritionist' && (
         <TouchableOpacity
           style={styles.bottomContainerButtons}
-          onPress={() => navigation.navigate('MealPlan')}>
+          onPress={() => navigation.navigate('MealPlanScreen')}>
           <MealPlanSvgIcon />
           <Text style={styles.options}>My Meal Plan</Text>
         </TouchableOpacity>
@@ -81,13 +79,13 @@ export const PostOptionsIcon = ({
         <View>
           <TouchableOpacity
             style={styles.bottomContainerButtons}
-            onPress={() => navigation.navigate('Tdee')}>
+            onPress={() => navigation.navigate('TdeeCalculatorScreen')}>
             <CalculatorSvgIcon />
             <Text style={styles.options}>My TDEE Calculator</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.bottomContainerButtons}
-            onPress={() => navigation.navigate('Physical')}>
+            onPress={() => navigation.navigate('PhysicalReadiness')}>
             <PhysicalSvgIcon />
             <Text style={styles.options}>My Physical Readiness Test</Text>
           </TouchableOpacity>
@@ -95,7 +93,7 @@ export const PostOptionsIcon = ({
       )}
       <TouchableOpacity
         style={styles.bottomContainerButtons}
-        onPress={() => navigation.navigate('Payment')}>
+        onPress={() => navigation.navigate('Settings', {screen: 'Payment'})}>
         <WalletSvgIcon />
         <Text style={styles.options}>My Wallet</Text>
       </TouchableOpacity>

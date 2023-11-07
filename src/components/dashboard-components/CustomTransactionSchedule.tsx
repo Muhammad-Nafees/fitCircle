@@ -9,6 +9,7 @@ export const CustomTransaction = ({
   date,
   amount,
   listText,
+  extraAmountStyles,
 }: any) => {
   return (
     <View style={styles.container}>
@@ -24,7 +25,7 @@ export const CustomTransaction = ({
         </View>
       </View>
       <View style={styles.amountList}>
-        <Text style={styles.amount}>{amount}</Text>
+        <Text style={[styles.amount, extraAmountStyles]}>{amount}</Text>
         <Text style={{color: '#30D298', fontSize: 12.54}}>{listText}</Text>
       </View>
     </View>

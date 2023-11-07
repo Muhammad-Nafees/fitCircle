@@ -23,9 +23,9 @@ import SearchProfileScreen from '../screens/profile-screens/SearchProfile';
 import MessageStackNavigator from './MessageStackNavigator';
 import SettingsStackNavigator from './SettingsStackNavigator';
 import {SearchScreen} from '../screens/home-screens/SearchScreen';
-import HomeStackNavigator from './HomeStackNavigator';
 import HomeScreen from '../screens/home-screens';
 import CommentScreen from '../screens/home-screens/CommentScreen';
+import {AddPostScreen} from '../screens/home-screens/AddPostScreen';
 
 const Post = require('../../assets/icons/post.png');
 const Wave = require('../../assets/wave.png');
@@ -178,7 +178,7 @@ const HomeTabNavigator = () => {
       />
       <Tab.Screen
         name="Post"
-        component={HomeStackNavigator}
+        component={AddPostScreen}
         options={{
           tabBarIcon: ({focused}) => (
             <Image

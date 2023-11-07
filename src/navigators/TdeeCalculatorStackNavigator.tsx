@@ -40,11 +40,6 @@ const TdeeCalculatorStackNavigator = () => {
         component={MealPlanStackNavigator}
         options={{headerShown: false}}
       />
-      <Stack.Screen
-        name="DashboardScreen"
-        component={HomeTabNavigator}
-        options={{headerShown: false}}
-      />
     </Stack.Navigator>
   );
 };
