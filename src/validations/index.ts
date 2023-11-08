@@ -430,17 +430,17 @@ export const editProfileSchema = (userRole: any) => {
     phone: Yup.string().required('Phone number is required'),
     country: Yup.string().required('Select country'),
     city: Yup.string().required('Select city'),
-    gender: Yup.string().test({
-      name: 'gender',
-      exclusive: true,
-      message: 'Gender is required',
-      test: value => {
-        if (userRole !== 'user') {
-          return value !== undefined && value !== '';
-        }
-        return true;
-      },
-    }),
+    // gender: Yup.string().test({
+    //   name: 'gender',
+    //   exclusive: true,
+    //   message: 'Gender is required',
+    //   test: value => {
+    //     if (userRole !== 'user') {
+    //       return value !== undefined && value !== '';
+    //     }
+    //     return true;
+    //   },
+    // }),
     physicalInformation: Yup.string()
       .trim()
       .required('Physical Information is required')
