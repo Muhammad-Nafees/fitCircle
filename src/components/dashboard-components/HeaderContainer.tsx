@@ -1,7 +1,8 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import NotificationIcon from '../../../assets/icons/NotificationIcon';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
+import {useNavigation} from '@react-navigation/native';
 
 export const HeaderContainer = ({
   userData,
@@ -10,6 +11,7 @@ export const HeaderContainer = ({
 }: any) => {
   const options: any = {weekday: 'short', day: 'numeric', month: 'short'};
   const currentDate = new Date().toLocaleDateString(undefined, options);
+  const navigation = useNavigation();
   return (
     <View>
       <Text style={styles.dateText}>{currentDate}</Text>
@@ -30,7 +32,10 @@ export const HeaderContainer = ({
             <Text style={{fontSize: 16, fontWeight: '600', color: '#ffff'}}>
               Earnings
             </Text>
-            <NotificationIcon />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Notification')}>
+              <NotificationIcon />
+            </TouchableOpacity>
           </View>
           <View style={styles.walletContainer}>
             <Text

@@ -212,6 +212,9 @@ export const EditProfile = ({navigation}: any) => {
         socialMediaLinks: filteredLinks,
         profileImage: compressedProfileImage,
         coverImage: compressedCoverImage,
+        ...(values.hourlyRate !== null && {
+          hourlyRate: Number(values.hourlyRate),
+        }),
       };
       console.log(reqUserData, 'REQDATA');
       const response = await updateProfile(reqUserData as IUser);
@@ -225,10 +228,14 @@ export const EditProfile = ({navigation}: any) => {
       });
     } catch (error: any) {
       console.log(error?.response?.data, 'FROM UPDATE PROFILE IN SETTINGS!');
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
     }
     setIsLoading(false);
   };
-  console.log(userData,"USERDATA")
+  console.log(userData, 'USERDATA');
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>

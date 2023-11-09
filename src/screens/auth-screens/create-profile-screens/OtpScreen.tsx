@@ -78,7 +78,8 @@ const OtpScreen = ({navigation, route}: any) => {
     let interval = setInterval(() => {
       setSecondsRemaining(secondsRemaining => {
         secondsRemaining <= 1 && clearInterval(interval);
-        return secondsRemaining - 1;otp
+        return secondsRemaining - 1;
+        otp;
       });
     }, 1000);
     return () => clearInterval(interval);
@@ -178,11 +179,7 @@ const OtpScreen = ({navigation, route}: any) => {
                 marginTop: verticalScale(50),
               }}>
               <CustomButton
-                isDisabled={
-                  secondsRemaining == 0 || isLoading
-                    ? true
-                    : false || otp.length < 6
-                }
+                isDisabled={isLoading ? true : false || otp.length < 6}
                 onPress={handleSubmit}>
                 {isLoading ? <CustomLoader /> : 'Verify'}
               </CustomButton>

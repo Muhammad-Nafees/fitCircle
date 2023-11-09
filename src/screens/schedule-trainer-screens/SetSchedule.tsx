@@ -404,6 +404,7 @@ const SetSchedule = ({navigation, route}: any) => {
           <View style={styles.buttonContainer}>
             <CustomButton
               extraStyles={{paddingHorizontal: 110}}
+              isDisabled={selectedSlotDates?.length > 1 ? false : true}
               onPress={handleButtonPress}>
               {route?.params?.hourlyRate
                 ? 'Continue'
@@ -462,7 +463,6 @@ const SetSchedule = ({navigation, route}: any) => {
       {!isTrainerView && timeSlots.length > 0 && (
         <View style={styles.buttonContainer}>
           <CustomButton
-            isDisabled={selectedSlotDates.length < 1 ? true : false}
             extraStyles={{paddingHorizontal: 120}}
             onPress={
               isSearchTrainer ? handleBookTrainerSchedule : handleSetSchedule

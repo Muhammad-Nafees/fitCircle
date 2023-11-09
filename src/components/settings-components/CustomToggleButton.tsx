@@ -15,7 +15,9 @@ const CustomToggleButton = ({
   };
 
   useEffect(() => {
-    onChangeToggle();
+    if (onChangeToggle) {
+      onChangeToggle();
+    }
   }, [isEnabled]);
 
   return (

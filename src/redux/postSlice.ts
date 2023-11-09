@@ -12,13 +12,15 @@ interface IPostState {
   pagination: IPagination | null;
   selectedPost: any | null;
   commentsCount: number | any;
+  editPost: IPost | null;
 }
 
 const initialState: IPostState = {
   posts: null,
   pagination: null,
   selectedPost: null,
-  commentsCount: null
+  commentsCount: null,
+  editPost: null,
 };
 
 const postSlice = createSlice({
@@ -37,9 +39,13 @@ const postSlice = createSlice({
     setCommentCount: (state, action: PayloadAction<any>) => {
       state.commentsCount = action.payload;
     },
+    setEditPost: (state, action: PayloadAction<IPost | null>) => {
+      state.editPost = action.payload;
+    },
   },
 });
 
-export const {setAllPosts, setPagination, setSelectedPost,setCommentCount} = postSlice.actions;
+export const {setAllPosts, setPagination, setSelectedPost, setCommentCount,setEditPost} =
+  postSlice.actions;
 
 export default postSlice.reducer;

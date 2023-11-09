@@ -35,7 +35,7 @@ import {
   likePost,
   sharePost,
 } from '../../api/home-module';
-import {setSelectedPost} from '../../redux/postSlice';
+import {setEditPost, setSelectedPost} from '../../redux/postSlice';
 import ImagePreview from './ImagePreview';
 import {timeDifference} from '../../utils/helper';
 import {useDispatch, useSelector} from 'react-redux';
@@ -157,7 +157,9 @@ export const CustomPost = ({
     setDropdownVisible(false);
     if (option === 'Edit') {
       dispatch(setSelectedPost(post));
-      navigation.navigate('CommentsScreen', {isEdit: true, id: id});
+      // navigation.navigate('CommentsScreen', {isEdit: true, id: id});
+      dispatch(setEditPost(post));
+      navigation.navigate('Post');
     } else if (onEditDeletePost) {
       onEditDeletePost(option, id);
     }

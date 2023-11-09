@@ -144,7 +144,13 @@ export const ProfileHeaderContainer = ({
             </TouchableOpacity>
           )}
           {isFollowed && loginUserData !== userData._id && (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('Message', {
+                  screen: 'ChatDetails',
+                  params: {username: userData?.username},
+                })
+              }>
               <TrainerProfileMsgIcon />
             </TouchableOpacity>
           )}
