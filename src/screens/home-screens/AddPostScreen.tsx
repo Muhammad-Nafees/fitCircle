@@ -432,19 +432,10 @@ export const AddPostScreen = ({route}: any) => {
           ...(titleInput !== '' && {title: titleInput}),
           ...(costValue !== 0 && {cost: costValue}),
         };
-<<<<<<< HEAD
-        console.log(reqData, 'req');
-        onPause();
-        const response = await createPostWithContent(reqData);
-        handleBackButtonPress();
-        Toast.show({
-          type: 'success',
-          text1: `${response?.data.message}`,
-        });
-=======
         if (editPost) {
           console.log('edit post with content');
           const response = await editPostWithContent(reqData, editPost?._id);
+          onPause();
           handleBackButtonPress();
           Toast.show({
             type: 'success',
@@ -452,15 +443,14 @@ export const AddPostScreen = ({route}: any) => {
           });
         } else {
           console.log('create post with content');
-
           const response = await createPostWithContent(reqData);
+          onPause();
           handleBackButtonPress();
           Toast.show({
             type: 'success',
             text1: `${response?.data.message}`,
           });
         }
->>>>>>> dev
       }
       setIsLoading(false);
     } catch (error: any) {
@@ -748,7 +738,6 @@ export const AddPostScreen = ({route}: any) => {
             costValue={costValue}
             visibility={visibility}
             setIsComponentMounted={setIsComponentMounted}
-<<<<<<< HEAD
             onPlayPause={onPlayPause}
             onPause={onPause}
             isPlay={isPlay}
@@ -758,9 +747,7 @@ export const AddPostScreen = ({route}: any) => {
             setSelectedMusicUrl={setSelectedMusicUrl}
             selectedMusicTitle={selectedMusicTitle}
             setSelectedMusicTitle={setSelectedMusicTitle}
-=======
             thumbnails={thumbnails}
->>>>>>> dev
           />
         </View>
       ) : null}
