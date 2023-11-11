@@ -71,7 +71,7 @@ export const EditProfile = ({navigation}: any) => {
     city: userData?.city || '',
     physicalInformation: userData?.physicalInformation || '',
     dob: formattedDate || '',
-    hourlyRate: userData?.hourlyRate || '',
+    hourlyRate: String(userData?.hourlyRate) || '',
     profileImage: null,
     coverImage: null,
     facebook: '',
@@ -81,12 +81,12 @@ export const EditProfile = ({navigation}: any) => {
   };
   userData?.socialMediaLinks?.forEach(item => {
     const fieldName = item.name.toLowerCase(); // Convert to lowercase for consistency
-    
+
     if (initialValues.hasOwnProperty(fieldName)) {
       initialValues[fieldName] = item.link;
     }
   });
-  console.log(userData, 'userDatra');
+  console.log(userData?.hourlyRate, 'userDatra');
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -212,22 +212,30 @@ export const EditProfile = ({navigation}: any) => {
         socialMediaLinks: filteredLinks,
         profileImage: compressedProfileImage,
         coverImage: compressedCoverImage,
+        ...(values.hourlyRate !== null && {
+          hourlyRate: Number(values.hourlyRate),
+        }),
       };
       console.log(reqUserData, 'REQDATA');
       const response = await updateProfile(reqUserData as IUser);
       const updatedData = response?.data?.data;
       console.log(updatedData, 'UPDATED DATA!');
       dispatch(setUserData(updatedData));
+      navigation.navigate('SettingsOne');
 
       Toast.show({
         text1: `${response?.data?.message}`,
       });
     } catch (error: any) {
-      console.log(error, 'FROM UPDATE PROFILE IN SETTINGS!');
+      console.log(error?.response?.data, 'FROM UPDATE PROFILE IN SETTINGS!');
+      Toast.show({
+        type: 'error',
+        text1: `${error?.response?.data?.message}`,
+      });
     }
     setIsLoading(false);
-    // navigation.navigate('SettingsOne');
   };
+  console.log(userData, 'USERDATA');
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
@@ -251,7 +259,7 @@ export const EditProfile = ({navigation}: any) => {
         </View>
         <Formik
           initialValues={initialValues}
-          validationSchema={editProfileSchema(userRole)}
+          validationSchema={editProfileSchema(userData?.role)}
           validationContext={{userRole: userRole}}
           validateOnChange={false}
           onSubmit={handleSubmit}>
@@ -400,7 +408,7 @@ export const EditProfile = ({navigation}: any) => {
                     />
                   </View>
                 </TouchableWithoutFeedback>
-                {userRole !== 'user' && (
+                {userData?.role !== 'user' && (
                   <CustomInput
                     label="Hourly Rate"
                     placeholder="$20.00"

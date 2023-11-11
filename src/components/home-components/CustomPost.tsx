@@ -35,12 +35,13 @@ import {
   likePost,
   sharePost,
 } from '../../api/home-module';
-import {setSelectedPost} from '../../redux/postSlice';
+import {setEditPost, setSelectedPost} from '../../redux/postSlice';
 import ImagePreview from './ImagePreview';
 import {timeDifference} from '../../utils/helper';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {IPost} from 'interfaces/user.interface';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import {RootState} from '../../redux/store';
 
 const Dot = require('../../../assets/icons/dot.png');
 
@@ -78,7 +79,8 @@ export const CustomPost = ({
   const [isLiked, setIsLiked] = useState(post?.likedByMe);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
   const navigation = useNavigation();
-
+  const userData: any = useSelector((state: RootState) => state.auth.user);
+  const isOwner = userData._id === post.user._id;
   const [editableContent, setEditableContent] = useState('');
   const [editableTitle, setEditableTitle] = useState(post?.title);
 
@@ -147,7 +149,7 @@ export const CustomPost = ({
     (post?.hexCode && post.hexCode?.length === 2) || post.hexCode?.length === 3;
 
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownOptions = ['Edit', 'Delete'];
+  const dropdownOptions = isOwner ? ['Edit', 'Delete'] : ['Flag'];
   const dispatch = useDispatch();
   const editInputRef = useRef(null);
 
@@ -155,7 +157,9 @@ export const CustomPost = ({
     setDropdownVisible(false);
     if (option === 'Edit') {
       dispatch(setSelectedPost(post));
-      navigation.navigate('CommentsScreen', {isEdit: true, id: id});
+      // navigation.navigate('CommentsScreen', {isEdit: true, id: id});
+      dispatch(setEditPost(post));
+      navigation.navigate('Post');
     } else if (onEditDeletePost) {
       onEditDeletePost(option, id);
     }
@@ -277,7 +281,7 @@ export const CustomPost = ({
         visibility: post?.visibility,
         cost: post?.cost,
       };
-      console.log(reqData,"REQ")
+      console.log(reqData, 'REQ');
       const response = await editPostWithContent(reqData, post?._id);
       Toast.show({
         type: 'success',
@@ -335,7 +339,7 @@ export const CustomPost = ({
             </View>
           </View>
         </View>
-        {isPersonalProfile && !isSearchProfile && (
+        {
           <TouchableOpacity
             onPress={() => setDropdownVisible(!isDropdownVisible)}>
             <Image
@@ -351,7 +355,7 @@ export const CustomPost = ({
               }}
             />
           </TouchableOpacity>
-        )}
+        }
         {isDropdownVisible && (
           <TouchableOpacity
             style={styles.dropdown}
@@ -667,8 +671,8 @@ const styles = StyleSheet.create({
     marginHorizontal: horizontalScale(16),
   },
   image: {
-    width: horizontalScale(370),
-    height: verticalScale(250),
+    width: horizontalScale(355),
+    height: verticalScale(270),
     alignSelf: 'center',
     zIndex: -1,
   },

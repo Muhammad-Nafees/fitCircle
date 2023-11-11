@@ -16,7 +16,7 @@ import {RootState} from '../../redux/store';
 import Toast from 'react-native-toast-message';
 const Instagram = require('../../../assets/icons/Instagram.png');
 
-export const ProfileBio = ({userData, isTrainerView, handleBioModal}: any) => {
+export const ProfileBio = ({userData, handleBioModal}: any) => {
   const {socialMediaLinks} = userData;
   const [twitterLink, setTwitterLink] = useState<string>('');
   const [facebookLink, setFacebookLink] = useState<string>('');

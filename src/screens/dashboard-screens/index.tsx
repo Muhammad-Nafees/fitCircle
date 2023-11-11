@@ -55,7 +55,7 @@ const DashboardScreen = ({navigation}: any) => {
   const withNavigationAction = (routeName: string) => {
     return () => {
       if (routeName === 'Wallet') {
-        console.log('Wallet');
+        navigation.navigate('Settings', {screen: 'Payment'});
       } else {
         navigation.navigate(routeName);
       }
@@ -149,8 +149,9 @@ const DashboardScreen = ({navigation}: any) => {
             profileImageUrl={profileImageUrl}
             username="Sam"
             name="Sameer Ather"
-            date={'May 4'}
-            amount="+ $50"
+            date={'May 4, 2023'}
+            extraAmountStyles={{color: 'rgba(48, 210, 152, 1)'}}
+            amount="+ $50.00"
             listText="Subscription"
           />
         ) : (
@@ -161,7 +162,7 @@ const DashboardScreen = ({navigation}: any) => {
               username="Sam"
               name="Sameer Ather"
               date={'May 4'}
-              amount="- $50"
+              amount="- $50.00"
               listText="Unlocked Content"
             />
           </TouchableOpacity>

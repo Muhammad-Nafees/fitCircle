@@ -112,7 +112,6 @@ export const editPostWithContent = async (
   reqData: Partial<IPost>,
   postId: string,
 ) => {
-  console.log(postId, 'id');
   let formData = new FormData();
   formData.append('text', reqData?.text);
   if (reqData?.cost) {
@@ -120,6 +119,9 @@ export const editPostWithContent = async (
   }
   if (reqData?.visibility) {
     formData.append('visibility', reqData?.visibility);
+  }
+  if (reqData?.title) {
+    formData.append('title', reqData?.title);
   }
 
   if (reqData?.hexCode?.length == 7) {

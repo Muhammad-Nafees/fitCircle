@@ -19,11 +19,6 @@ const ScheduleStackNavigator = () => {
       initialRouteName="Slot">
       <Stack.Screen name="Slot" component={Slot} />
       <Stack.Screen name="SetSchedule" component={SetSchedule} />
-      <Stack.Screen
-        name="DashboardScreen"
-        component={HomeTabNavigator}
-        options={{headerShown: false}}
-      />
     </Stack.Navigator>
   );
 };

@@ -9,6 +9,7 @@ export interface FileData {
   uri: string;
   name: string;
   type: string;
+  duration?: number;
 }
 
 export interface IUnit {

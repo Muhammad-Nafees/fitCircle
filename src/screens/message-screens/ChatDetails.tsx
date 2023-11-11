@@ -54,7 +54,7 @@ export const ChatDetails = ({route, navigation}: any) => {
 
   useFocusEffect(() => {
     const backAction = () => {
-      navigation.navigate('MessagesOne');
+      navigation.goBack();
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -85,7 +85,7 @@ export const ChatDetails = ({route, navigation}: any) => {
 
     launchImageLibrary(options, (response: any) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
+        setMediaUri(response?.assets[0].uri);
       }
     });
   };
@@ -104,11 +104,11 @@ export const ChatDetails = ({route, navigation}: any) => {
 
       setUserMessages(userMessages.reverse());
     }
-  }, [route.params.messages]);
+  }, [route?.params?.messages]);
 
   return (
     <View style={styles.container}>
-      <MessageHeaderContainer username={route.params.username} />
+      <MessageHeaderContainer username={route?.params?.username} />
       <View style={styles.flatlistContainer}>
         <FlatList
           data={userMessages}

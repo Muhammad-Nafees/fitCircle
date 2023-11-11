@@ -17,13 +17,13 @@ import {useNavigation} from '@react-navigation/native';
 import {s3bucketReference} from '../../api';
 import {SearchProfileNavigationProp} from '../../interfaces/navigation.type';
 import {followToggle, toggleSubscribe} from '../../api/profile-module';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
+import {setTrainerView} from '../../redux/profileSlice';
 const Image1 = require('../../../assets/images/backgroundImage.jpg');
 const BackArrowIcon = require('../../../assets/icons/arrow-back.png');
 
 export const ProfileHeaderContainer = ({
-  isTrainerView,
   userData,
   followers,
   isFollowing,
@@ -36,6 +36,11 @@ export const ProfileHeaderContainer = ({
   const [subscribeButtonStyle, setSubscribeButtonStyle] = useState<any>(
     styles.profileButton,
   );
+  const isTrainerView = useSelector(
+    (state: RootState) => state.profile.trainerView,
+  );
+  const dispatch = useDispatch();
+  console.log(userData, 'chwohohe');
   const [isFollowed, setIsFollowed] = useState(isFollowing);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const navigation = useNavigation<SearchProfileNavigationProp>();
@@ -46,6 +51,7 @@ export const ProfileHeaderContainer = ({
   const loginUserDataId = useSelector(
     (state: RootState) => state.auth.user?._id,
   );
+  console.log(loginUserDataId, userData._id, 'shdohosdhohoash');
   const loginUserData = useSelector((state: RootState) => state.auth.user);
   const [isSeachUser, setIsSearchUser] = useState<boolean>(
     loginUserDataId === userData._id,
@@ -101,6 +107,7 @@ export const ProfileHeaderContainer = ({
   console.log(userData?.role, 'DD');
 
   const navigateToSchedule = () => {
+    dispatch(setTrainerView(false));
     navigation.navigate('ScheduleScreen', {
       screen: 'Slot',
       params: {
@@ -118,9 +125,8 @@ export const ProfileHeaderContainer = ({
       <View style={styles.topContentContainer}>
         <TouchableOpacity
           onPress={() => {
-            isTrainerView
-              ? navigation.navigate('Search' as never)
-              : navigation.goBack();
+            navigation.goBack();
+            dispatch(setTrainerView(false));
           }}>
           <Image source={BackArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
@@ -137,8 +143,14 @@ export const ProfileHeaderContainer = ({
               <ProfileSettingsIcon />
             </TouchableOpacity>
           )}
-          {isFollowed && (
-            <TouchableOpacity>
+          {isFollowed && loginUserData !== userData._id && (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('Message', {
+                  screen: 'ChatDetails',
+                  params: {username: userData?.username},
+                })
+              }>
               <TrainerProfileMsgIcon />
             </TouchableOpacity>
           )}
@@ -184,15 +196,7 @@ export const ProfileHeaderContainer = ({
       </View>
       <View style={styles.rowContainer}>
         {userData?.role !== 'user' ? (
-          <TouchableOpacity
-            style={styles.column}
-            // onPress={() =>
-            //   isSeachUser &&
-            //   navigation.navigate('SearchProfile', {
-            //     default: 'community',
-            //   })
-            // }
-          >
+          <TouchableOpacity style={styles.column}>
             <Text style={styles.columnText}>
               {subscriberCount + userData?.subscribers?.length}
             </Text>

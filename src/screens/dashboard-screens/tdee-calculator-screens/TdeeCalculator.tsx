@@ -104,11 +104,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>
       <View style={{paddingBottom: 10}}>
-        <CustomHeader
-          onPress={() =>
-            navigation.navigate('DashboardScreen', {screen: 'Dashboard'})
-          }
-        />
+        <CustomHeader onPress={() => navigation.goBack()} />
       </View>
       <ScrollView keyboardShouldPersistTaps="always">
         <Formik

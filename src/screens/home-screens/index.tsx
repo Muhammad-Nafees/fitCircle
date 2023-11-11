@@ -36,6 +36,7 @@ import {deletePost, getPosts, getVideoPosts} from '../../api/home-module';
 import CreatorPosts from '../../components/home-components/CreatorPosts';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
+import {setTrainerView} from '../../redux/profileSlice';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -102,6 +103,7 @@ const HomeScreen = () => {
         }
         setIsLoading(false);
       };
+      dispatch(setTrainerView(false));
       fetchMyCirclePosts();
     }, [page, isRefreshing, isFocused, creatorPage]),
   );

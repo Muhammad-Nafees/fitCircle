@@ -41,7 +41,6 @@ const MessageStackNavigator = () => {
       <Stack.Screen name="VoiceCall" component={VoiceCall} />
       <Stack.Screen name="VideoCall" component={VideoCall} />
       <Stack.Screen name="Rating" component={Rating} />
-      <Stack.Screen name="HomeTabNav" component={HomeTabNavigator} />
     </Stack.Navigator>
   );
 };

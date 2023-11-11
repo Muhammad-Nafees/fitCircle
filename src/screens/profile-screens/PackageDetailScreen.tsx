@@ -31,7 +31,9 @@ const reviewData = Array.from({length: 5});
 export const PackageDetailScreen = ({navigation, route}: any) => {
   const [videoVisible, setVideoVisible] = useState(false);
   const packageDetails = route?.params?.packageDetails;
+  const {isCreatingPackage, isEditingPackage} = route?.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  console.log(route.params, 'qdhoishohsoih');
   const userData = useSelector((state: RootState) => state.auth.user);
 
   const renderCustomPackageReview = () => {
@@ -71,7 +73,7 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
       });
       navigation.navigate('PackagesScreen');
     } catch (error: any) {
-      if (error?.response?.status === "413") {
+      if (error?.response?.status === '413') {
         Toast.show({
           type: 'error',
           text1: `Video file too Large!`,
@@ -134,17 +136,21 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                 style={{width: 24, height: 24, tintColor: 'white'}}
               />
             </TouchableOpacity>
-            {userData?.role === 'user' && (
+            {!isCreatingPackage && !isEditingPackage && (
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('ScheduleScreen', {
-                    screen: 'Slot',
-                    params: {
-                      packageView: true,
-                      packageDetails: packageDetails,
-                      userData: userData,
-                    },
-                  })
+                  userData._id !== packageDetails.user
+                    ? navigation.navigate('ScheduleScreen', {
+                        screen: 'Slot',
+                        params: {
+                          packageView: true,
+                          packageDetails: packageDetails,
+                          userData: userData,
+                        },
+                      })
+                    : navigation.navigate('CreatePackageScreen', {
+                        myPackage: packageDetails,
+                      })
                 }>
                 <Text
                   style={{
@@ -152,7 +158,9 @@ export const PackageDetailScreen = ({navigation, route}: any) => {
                     fontSize: 10,
                     color: 'rgba(32, 155, 204, 1)',
                   }}>
-                  Get this package
+                  {userData._id === packageDetails.user
+                    ? 'Edit this package'
+                    : 'Get this package'}
                 </Text>
               </TouchableOpacity>
             )}

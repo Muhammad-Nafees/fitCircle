@@ -130,7 +130,7 @@ const CreateProfileForm = ({profilePicture, coverPicture}: Props) => {
     if (isError) {
       return;
     }
-    console.log(userData,"from create profile")
+    console.log(userData, 'from create profile');
 
     const partialUserData: Partial<IUser> = {
       ...userData,
@@ -198,7 +198,7 @@ const CreateProfileForm = ({profilePicture, coverPicture}: Props) => {
         setFieldError,
       }) => (
         <>
-          <View style={[styles.formContainer, {marginTop: verticalScale(0)}]}>
+          <View style={[styles.formContainer, {marginTop: verticalScale(40)}]}>
             <CustomInput
               label="First Name"
               placeholder="Enter your first name"
@@ -246,20 +246,22 @@ const CreateProfileForm = ({profilePicture, coverPicture}: Props) => {
               setFieldError={setFieldError}
               fieldName="bio"
             />
-            <CustomPhoneInput
-              disabled={true}
-              value={userData?.phone}
-              error={errors.phone}
-              touched={touched.phone}
-              handleChange={handleChange('phone')}
-              setFieldValue={setFieldValue}
-              phoneInput={phoneInput}
-              setIsError={setIsError}
-              setFieldError={setFieldError}
-              isError={isError}
-              setPhoneCode={setPhoneCode}
-              countryCode={userData?.countryCode}
-            />
+            <View pointerEvents="none">
+              <CustomPhoneInput
+                disabled={false}
+                value={userData?.phone}
+                error={errors.phone}
+                touched={touched.phone}
+                handleChange={handleChange('phone')}
+                setFieldValue={setFieldValue}
+                phoneInput={phoneInput}
+                setIsError={setIsError}
+                setFieldError={setFieldError}
+                isError={isError}
+                setPhoneCode={setPhoneCode}
+                countryCode={userData?.countryCode}
+              />
+            </View>
             <CustomSelect
               label="Country"
               selectedValue={values.country}
@@ -379,7 +381,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    marginTop: verticalScale(35),
+    marginTop: verticalScale(20),
     marginHorizontal: verticalScale(41),
     marginBottom: verticalScale(35),
   },

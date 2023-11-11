@@ -61,7 +61,7 @@ export const MessagesOne = ({navigation}: any) => {
 
   useFocusEffect(() => {
     const backAction = () => {
-      navigation.navigate('HomeTabNav');
+      navigation.navigate('Home');
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -75,7 +75,7 @@ export const MessagesOne = ({navigation}: any) => {
     <View style={styles.container}>
       <TouchableOpacity
         style={{paddingTop: 24, paddingBottom: 16, paddingHorizontal: 12}}
-        onPress={() => navigation.navigate('HomeTabNav')}>
+        onPress={() => navigation.goBack()}>
         <Image
           source={ArrowBack}
           style={{width: 24, height: 24, tintColor: 'white'}}

@@ -12,6 +12,7 @@ import {
   getFollowingList,
 } from '../../api/profile-module';
 import {RootState} from '../../redux/store';
+import {setTrainerView} from '../../redux/profileSlice';
 
 export const UserSearch = ({
   searchProfileData,
@@ -62,8 +63,8 @@ export const UserSearch = ({
   const handleSeeUserProfile = () => {
     console.log(searchProfileData, '1111');
     dispatch(setUserProfile(searchProfileData));
+    dispatch(setTrainerView(true));
     navigation.navigate('Profile', {
-      isTrainerView: true,
       isFollowing: isFollowing,
     });
   };
