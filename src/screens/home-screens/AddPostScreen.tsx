@@ -202,11 +202,20 @@ export const AddPostScreen = ({route}: any) => {
       mediaType: 'video',
     };
     await launchImageLibrary(options, (response: any) => {
-      if (response.assets) {
+      if (response?.assets) {
+        if (response?.assets && response.assets.length > 0) {
+          const fileSizeInBytes = response.assets[0].fileSize;
+          if (fileSizeInBytes) {
+            const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+            console.log(`Video File Size: ${fileSizeInMB} MB`);
+          }
+        }
         setVideoUri({
-          uri: response.assets[0].uri,
-          name: response.assets[0].fileName,
-          type: response.assets[0].type,
+          uri: response.assets[0].uri as string,
+          name: response.assets[0].fileName as string,
+          type: response.assets[0].type as string,
+          duration: response.assets[0].duration as number,
         });
         setIsCreatePostIconModalVisible(false);
       }
