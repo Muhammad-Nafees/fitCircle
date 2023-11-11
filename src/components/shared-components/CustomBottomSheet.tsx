@@ -3,190 +3,265 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   TextInput,
   Image,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import {
-  BottomSheetModal,
-  BottomSheetModalProvider,
-  BottomSheetFlatList,
-} from '@gorhom/bottom-sheet';
-import BookmarkIcon from '../../../assets/icons/BookmarkIcon';
-import MusicRemoveIcon from '../../../assets/icons/MusicRemoveIcon';
-import MusicPlayIcon from '../../../assets/icons/MusicPlayIcon';
-import {MUSIC_LIST} from '../../../data/data';
-import {BlurView} from '@react-native-community/blur';
+import Modal from 'react-native-modal';
+import Sound from 'react-native-sound';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-toast-message';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from 'redux/store';
 
-const CustomBottomSheet = ({setMusicModalVisible, setMusic}: any) => {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+import CustomLoader from './CustomLoader';
+import MusicRemoveIcon from '../../../assets/icons/MusicRemoveIcon';
+import MusicBookmarkRemoveIcon from '../../../assets/icons/MusicBookmarkRemoveIcon';
+import MusicPlayIcon from '../../../assets/icons/MusicPlayIcon';
+import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {addRemoveMusic} from '../../api/home-module';
+import {setUserData} from '../../redux/authSlice';
+import {IUser} from '../../interfaces/user.interface';
+
+const CustomBottomSheet = ({
+  musicModal,
+  setMusicModal,
+  musicList,
+  onMusicSelect,
+  title,
+  setTitle,
+  loader,
+}: any) => {
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
   const [isMusicPlay, setIsMusicPlay] = useState(false);
-  const [musicId, setMusicId] = useState('');
-
-  // variables
-  const snapPoints = useMemo(() => ['60%', '60%'], []);
-
-  useEffect(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
-
-  const musicFile = require('../../../assets/audio/the-best-jazz-club-in-new-orleans-164472.mp3');
+  const [musicIndex, setMusicIndex] = useState<number | null>(null);
   const [sound, setSound] = useState<any>();
 
-  const handleStopMusic = () => {
-    setIsMusicPlay(false);
+  const playMusic = (index: number, id: number) => {
+    handleStopMusic();
+    setSound(null);
+    let whoosh = new Sound(
+      musicList[index]?.preview,
+      Sound.MAIN_BUNDLE,
+      error => {
+        if (error) {
+          console.log('failed to load the sound', error);
+          return;
+        }
+        setMusicIndex(index);
+        setIsMusicPlay(true);
+        whoosh.play();
+        whoosh.setNumberOfLoops(-1);
+        setSound(whoosh);
+      },
+    );
+  };
 
+  const handleStopMusic = () => {
     if (sound) {
       sound.stop(() => {
-        console.log('Sound stopped');
         setIsMusicPlay(false);
-        setMusicId('');
+        setMusicIndex(null);
         setSound('');
       });
     }
   };
-  console.log(isMusicPlay, 'Ss');i
 
-  const renderItem = useCallback(({item}) => {
-    console.log(item.file, 'item');
+  const musicHandler = (id: number, title: string, url: string) => {
+    handleStopMusic();
+    onMusicSelect(id, title, url);
+  };
+
+  const onAddRemoveMusic = async (id: number, title: string) => {
+    try {
+      const musicResponse = await addRemoveMusic(id, title);
+      console.log(musicResponse?.data?.data, 'FROM VIDEO POST');
+
+      Toast.show({
+        type: 'success',
+        text1: `${musicResponse?.data?.message}`,
+      });
+      dispatch(setUserData({...musicResponse?.data?.data} as IUser));
+    } catch (error: any) {
+      console.log(error?.response.data, 'FROM VIDEO POST');
+      if (error?.response?.data?.message) {
+        Toast.show({
+          type: 'error',
+          text1: `${error?.response?.data.message}`,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `${error.message}!`,
+        });
+      }
+    }
+  };
+
+  const RenderItem = ({index, item}: any) => {
     return (
       <TouchableOpacity
-        style={{
-          marginTop: 10,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 6,
-          }}>
+        key={item?.id}
+        style={styles.musicListWrapper}
+        onPress={() => musicHandler(item?.id, item?.title, item.preview)}>
+        <View style={styles.musicListLeft}>
           <Image
-            source={require('../../../assets/images/backgroundImage.jpg')}
+            source={{uri: item?.artist?.picture_small}}
             alt="img"
-            style={{width: 70, height: 55}}
+            style={styles.musicListImage}
           />
-          <View style={{flexDirection: 'column', gap: 1}}>
-            <Text style={{fontSize: 15, fontWeight: '700', color: '#fff'}}>
-              Orb
+          <View style={styles.musicListTitleWrapper}>
+            <Text style={styles.musicListTitle} numberOfLines={1}>
+              {item?.title}
             </Text>
-            <Text style={{fontSize: 13, fontWeight: '400', color: '#fff'}}>
-              Ichika Nito
-            </Text>
+            <Text style={styles.musicListArtist}>{item?.artist?.name}</Text>
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-          }}>
-          <TouchableOpacity>
-            <MusicRemoveIcon />
+        <View style={styles.musicListRight}>
+          <TouchableOpacity
+            onPress={() => onAddRemoveMusic(item?.id, item?.title)}>
+            {userData?.musics?.find(music => music?.musicId === item?.id) ? (
+              <MusicBookmarkRemoveIcon />
+            ) : (
+              <MusicRemoveIcon />
+            )}
           </TouchableOpacity>
-          {isMusicPlay ? (
+          {isMusicPlay && index === musicIndex ? (
             <TouchableOpacity onPress={handleStopMusic}>
               <Icon name="pause-circle-outline" size={24} color="white" />
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity onPress={() => handlePlayMusic(item.id)}>
+            <TouchableOpacity onPress={() => playMusic(index, item.id)}>
               <MusicPlayIcon />
             </TouchableOpacity>
           )}
         </View>
       </TouchableOpacity>
     );
-  }, []);
+  };
+
   return (
-    <BottomSheetModalProvider>
-      <View style={styles.container}>
-        <BottomSheetModal
-          backgroundStyle={{
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          }}
-          ref={bottomSheetModalRef}
-          snapPoints={snapPoints}
-          handleIndicatorStyle={{
-            backgroundColor: '#ffffff',
-            width: 50,
-            height: 4,
-            borderRadius: 2,
-          }}
-          onChange={handleSheetChanges}>
-          <View
-            style={{
-              paddingLeft: 10,
-              paddingBottom: 10,
-
-              alignItems: 'center',
-              gap: 4,
-              flexDirection: 'row',
-              width: '100%',
-            }}>
+    <Modal
+      onBackButtonPress={() => setMusicModal(false)}
+      isVisible={musicModal}
+      style={styles.bottomModal}
+      backdropOpacity={0.3}>
+      <View style={styles.modal}>
+        <View style={styles.bottomOptions}>
+          <TouchableOpacity style={styles.topLine}></TouchableOpacity>
+          <View>
             <TextInput
-              placeholder="Search Music"
-              style={{
-                backgroundColor: '#ffffff',
-                width: 280,
-                height: 40,
-                color: 'white',
-              }}
+              placeholder="Search music..."
+              value={title}
+              placeholderTextColor="#fff"
+              style={styles.searchInput}
+              multiline={true}
+              onChangeText={setTitle}
             />
-
-            <View
-              style={{
-                backgroundColor: '#fff',
-                width: 40,
-                height: 40,
-                borderRadius: 100,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <BookmarkIcon />
-            </View>
           </View>
-
-          <BottomSheetFlatList
-            data={MUSIC_LIST}
-            keyExtractor={(item: any) => item.id}
-            renderItem={renderItem}
-            contentContainerStyle={styles.contentContainer}
-          />
-        </BottomSheetModal>
+          <View style={{height: verticalScale(270)}}>
+            <ScrollView>
+              {!loader && !musicList.length ? (
+                <Text style={styles.notFoundText}>No music found</Text>
+              ) : null}
+              {loader ? (
+                <CustomLoader />
+              ) : musicList.length ? (
+                musicList.map((item: any, index: number) => (
+                  <RenderItem key={item?.id} index={index} item={item} />
+                ))
+              ) : null}
+            </ScrollView>
+          </View>
+        </View>
       </View>
-    </BottomSheetModalProvider>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    position: 'absolute',
-    bottom: 0,
+  bottomModal: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  modal: {
+    backgroundColor: 'rgba(0, 0, 0, 0.87)',
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
     width: '100%',
-    paddingTop: 500,
   },
-  contentContainer: {
+  bottomOptions: {
+    paddingHorizontal: horizontalScale(16),
+    paddingVertical: verticalScale(30),
+    paddingTop: verticalScale(15),
+    height: '45%',
+  },
+  topLine: {
+    height: verticalScale(5),
+    width: horizontalScale(48),
     backgroundColor: 'white',
-    paddingHorizontal: 10,
-    paddingRight: 30,
-    paddingBottom: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    marginBottom: verticalScale(20),
+    alignSelf: 'center',
+    borderRadius: 3,
   },
-  itemContainer: {
-    padding: 6,
-    margin: 6,
-    backgroundColor: '#eee',
+  searchInput: {
+    color: '#fff',
+  },
+  bottomContainerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: verticalScale(5),
+    marginHorizontal: horizontalScale(8),
+  },
+  options: {
+    color: 'white',
+    fontSize: 14,
+    marginHorizontal: horizontalScale(8),
+  },
+  musicListWrapper: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  musicListLeft: {
+    width: '80%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  musicListImage: {
+    width: 60,
+    height: 50,
+  },
+  musicListTitleWrapper: {
+    flexDirection: 'column',
+    gap: 1,
+  },
+  musicListTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#fff',
+    width: horizontalScale(220),
+  },
+  musicListArtist: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#fff',
+  },
+  musicListRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  notFoundText: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#fff',
+    textAlign: 'center',
   },
 });
 

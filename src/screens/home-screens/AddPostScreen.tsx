@@ -31,6 +31,7 @@ import Modal from 'react-native-modal';
 import {Image as ImageCompress} from 'react-native-compressor';
 import LinearGradient from 'react-native-linear-gradient';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import Sound from 'react-native-sound';
 // ------------------------------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
 import {PostOptionsIcon} from '../../components/home-components/PostOptionsIcon';
@@ -50,6 +51,7 @@ import {FileData, IPost, IPostVisibility} from 'interfaces/user.interface';
 import {
   createPostWithContent,
   createPostWithImage,
+  getMusic,
 } from '../../api/home-module';
 import Toast from 'react-native-toast-message';
 import {CreatePostIcon} from '../../components/home-components/CreatePostIcon';
@@ -73,6 +75,10 @@ export const AddPostScreen = ({route}: any) => {
   >('transparent');
   const [mediaUri, setMediaUri] = useState<FileData | null>(null);
   const [videoUri, setVideoUri] = useState<FileData | null>();
+  const [selectedMusicTitle, setSelectedMusicTitle] = useState<string>('');
+  const [selectedMusicUrl, setSelectedMusicUrl] = useState<string>('');
+  const [isPlay, setIsPlay] = useState<boolean>(false);
+  const [sound, setSound] = useState<any>();
   const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(
     undefined,
   );
@@ -263,7 +269,7 @@ export const AddPostScreen = ({route}: any) => {
       }
     }
   };
-  console.log(videoThumbnail, 'videoThumbnail');
+
   useFocusEffect(
     useCallback(() => {
       if (videoUri) {
@@ -278,6 +284,8 @@ export const AddPostScreen = ({route}: any) => {
     setVideoUri(null);
     setTextInputBackgroundColor('transparent');
     setTitleInput('');
+    sound?.stop();
+    sound?.release();
     navigation.navigate('Home');
   };
 
@@ -321,12 +329,15 @@ export const AddPostScreen = ({route}: any) => {
           media: compressedImage,
           mediaType: 'image',
           visibility: visibility,
+          musicTitle: selectedMusicTitle,
+          musicUrl: selectedMusicUrl,
           ...(titleInput !== '' && {title: titleInput}),
           ...(costValue !== 0 && {cost: costValue}),
         };
         console.log(reqData, 'req');
         const response = await createPostWithImage(reqData);
         console.log(response?.data, 'response!');
+        onPause();
         handleBackButtonPress();
         Toast.show({
           type: 'success',
@@ -336,6 +347,8 @@ export const AddPostScreen = ({route}: any) => {
         const cleanedText = textInputValue.replace(/\n{3,}/g, '\n\n').trim();
         const reqData: Partial<IPost> = {
           text: cleanedText,
+          musicTitle: selectedMusicTitle,
+          musicUrl: selectedMusicUrl,
           hexCode:
             textInputBackgroundColor === 'transparent'
               ? ['#292A2C']
@@ -345,6 +358,7 @@ export const AddPostScreen = ({route}: any) => {
           ...(costValue !== 0 && {cost: costValue}),
         };
         console.log(reqData, 'req');
+        onPause();
         const response = await createPostWithContent(reqData);
         handleBackButtonPress();
         Toast.show({
@@ -368,6 +382,51 @@ export const AddPostScreen = ({route}: any) => {
       }
       setIsLoading(false);
     }
+  };
+
+  const onMusicSelect = async (id: number) => {
+    try {
+      const musicResponse = await getMusic(id);
+      if (sound) {
+        sound.stop();
+        sound.release();
+      }
+      let music = new Sound(
+        musicResponse.data.preview,
+        Sound.MAIN_BUNDLE,
+        error => {
+          if (error) {
+            console.log('failed to load the sound', error);
+            return;
+          }
+          music.setNumberOfLoops(-1);
+          music.play();
+          setSound(music);
+          setIsPlay(false);
+        },
+      );
+    } catch (error: any) {
+      console.log(error?.response, 'Error fetching music list!');
+    }
+  };
+
+  const onPlayPause = () => {
+    if (isPlay) {
+      setIsPlay(false);
+      sound?.play();
+    } else {
+      setIsPlay(true);
+      sound?.pause();
+    }
+  };
+
+  const onPause = () => {
+    setIsPlay(true);
+    sound?.pause();
+  };
+
+  const onVideoEnd = () => {
+    sound?.setCurrentTime(0);
   };
 
   return (
@@ -588,6 +647,15 @@ export const AddPostScreen = ({route}: any) => {
             costValue={costValue}
             visibility={visibility}
             setIsComponentMounted={setIsComponentMounted}
+            onPlayPause={onPlayPause}
+            onPause={onPause}
+            isPlay={isPlay}
+            onMusicSelect={onMusicSelect}
+            onVideoEnd={onVideoEnd}
+            selectedMusicUrl={selectedMusicUrl}
+            setSelectedMusicUrl={setSelectedMusicUrl}
+            selectedMusicTitle={selectedMusicTitle}
+            setSelectedMusicTitle={setSelectedMusicTitle}
           />
         </View>
       )}
