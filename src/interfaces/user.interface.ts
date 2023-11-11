@@ -59,12 +59,21 @@ export interface IUser {
   showAge: boolean;
   showEmailAddress: boolean;
   showName: boolean;
+  musics: Music[];
+}
+
+export interface Music {
+  _id: string;
+  title: string;
+  musicId: number;
 }
 
 export type IPostVisibility = 'Public' | 'Followers' | 'Subscribers';
 
 export interface IPost {
   user: string;
+  musicTitle?: string;
+  musicUrl?: string;
   text: string;
   title: string;
   media: FileData;

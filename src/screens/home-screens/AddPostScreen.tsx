@@ -31,6 +31,7 @@ import Modal from 'react-native-modal';
 import {Image as ImageCompress} from 'react-native-compressor';
 import LinearGradient from 'react-native-linear-gradient';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import Sound from 'react-native-sound';
 // ------------------------------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
 import {PostOptionsIcon} from '../../components/home-components/PostOptionsIcon';
@@ -54,6 +55,7 @@ import {
 import {
   createPostWithContent,
   createPostWithImage,
+  getMusic,
   editPostWithContent,
   editPostWithImage,
 } from '../../api/home-module';
@@ -83,6 +85,10 @@ export const AddPostScreen = ({route}: any) => {
     null,
   );
   const [videoUri, setVideoUri] = useState<FileData | null>();
+  const [selectedMusicTitle, setSelectedMusicTitle] = useState<string>('');
+  const [selectedMusicUrl, setSelectedMusicUrl] = useState<string>('');
+  const [isPlay, setIsPlay] = useState<boolean>(false);
+  const [sound, setSound] = useState<any>();
   const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(
     undefined,
   );
@@ -334,6 +340,9 @@ export const AddPostScreen = ({route}: any) => {
     setVideoUri(null);
     setTextInputBackgroundColor('transparent');
     setTitleInput('');
+    sound?.stop();
+    sound?.release();
+    navigation.navigate('Home');
     if (editPost) {
       navigation.navigate('Profile');
       dispatch(setEditPost(null));
@@ -384,12 +393,15 @@ export const AddPostScreen = ({route}: any) => {
           media: compressedImage,
           mediaType: 'image',
           visibility: visibility,
+          musicTitle: selectedMusicTitle,
+          musicUrl: selectedMusicUrl,
           ...(titleInput !== '' && {title: titleInput}),
           ...(costValue !== 0 && {cost: costValue}),
         };
         if (editPost) {
           const response = await editPostWithImage(reqData, editPost?._id);
           console.log(response?.data, 'response!');
+          onPause();
           handleBackButtonPress();
           Toast.show({
             type: 'success',
@@ -398,6 +410,7 @@ export const AddPostScreen = ({route}: any) => {
         } else {
           const response = await createPostWithImage(reqData);
           console.log(response?.data, 'response!');
+          onPause();
           handleBackButtonPress();
           Toast.show({
             type: 'success',
@@ -408,6 +421,8 @@ export const AddPostScreen = ({route}: any) => {
         const cleanedText = textInputValue.replace(/\n{3,}/g, '\n\n').trim();
         const reqData: Partial<IPost> = {
           text: cleanedText,
+          musicTitle: selectedMusicTitle,
+          musicUrl: selectedMusicUrl,
           hexCode:
             textInputBackgroundColor === 'transparent'
               ? ['#292A2C']
@@ -417,6 +432,16 @@ export const AddPostScreen = ({route}: any) => {
           ...(titleInput !== '' && {title: titleInput}),
           ...(costValue !== 0 && {cost: costValue}),
         };
+<<<<<<< HEAD
+        console.log(reqData, 'req');
+        onPause();
+        const response = await createPostWithContent(reqData);
+        handleBackButtonPress();
+        Toast.show({
+          type: 'success',
+          text1: `${response?.data.message}`,
+        });
+=======
         if (editPost) {
           console.log('edit post with content');
           const response = await editPostWithContent(reqData, editPost?._id);
@@ -435,6 +460,7 @@ export const AddPostScreen = ({route}: any) => {
             text1: `${response?.data.message}`,
           });
         }
+>>>>>>> dev
       }
       setIsLoading(false);
     } catch (error: any) {
@@ -452,6 +478,51 @@ export const AddPostScreen = ({route}: any) => {
       }
       setIsLoading(false);
     }
+  };
+
+  const onMusicSelect = async (id: number) => {
+    try {
+      const musicResponse = await getMusic(id);
+      if (sound) {
+        sound.stop();
+        sound.release();
+      }
+      let music = new Sound(
+        musicResponse.data.preview,
+        Sound.MAIN_BUNDLE,
+        error => {
+          if (error) {
+            console.log('failed to load the sound', error);
+            return;
+          }
+          music.setNumberOfLoops(-1);
+          music.play();
+          setSound(music);
+          setIsPlay(false);
+        },
+      );
+    } catch (error: any) {
+      console.log(error?.response, 'Error fetching music list!');
+    }
+  };
+
+  const onPlayPause = () => {
+    if (isPlay) {
+      setIsPlay(false);
+      sound?.play();
+    } else {
+      setIsPlay(true);
+      sound?.pause();
+    }
+  };
+
+  const onPause = () => {
+    setIsPlay(true);
+    sound?.pause();
+  };
+
+  const onVideoEnd = () => {
+    sound?.setCurrentTime(0);
   };
 
   return (
@@ -677,7 +748,19 @@ export const AddPostScreen = ({route}: any) => {
             costValue={costValue}
             visibility={visibility}
             setIsComponentMounted={setIsComponentMounted}
+<<<<<<< HEAD
+            onPlayPause={onPlayPause}
+            onPause={onPause}
+            isPlay={isPlay}
+            onMusicSelect={onMusicSelect}
+            onVideoEnd={onVideoEnd}
+            selectedMusicUrl={selectedMusicUrl}
+            setSelectedMusicUrl={setSelectedMusicUrl}
+            selectedMusicTitle={selectedMusicTitle}
+            setSelectedMusicTitle={setSelectedMusicTitle}
+=======
             thumbnails={thumbnails}
+>>>>>>> dev
           />
         </View>
       ) : null}

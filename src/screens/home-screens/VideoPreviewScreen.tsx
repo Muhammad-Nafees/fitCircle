@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -27,7 +27,6 @@ import {
   ImagePickerResponse,
 } from 'react-native-image-picker';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import BottomSheet, {BottomSheetSectionList} from '@gorhom/bottom-sheet';
 //-------------------------------------------------------------------------------//
 import CustomButton from '../../components/shared-components/CustomButton';
 import {
@@ -40,6 +39,9 @@ import {Boost} from '../../components/home-components/Boost';
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 import BoostIcon from '../../../assets/icons/BoostIcon';
 import TextIcon from '../../../assets/icons/TextIcon';
+import DiscIcon from '../../../assets/icons/DiscIcon';
+import MusicIcon from '../../../assets/icons/MusicIcon';
+import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
 import {RootState} from '../../redux/store';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import CreatePostSvgIcon from '../../../assets/icons/CreatePostIcon';
@@ -47,12 +49,13 @@ import Cameraicon from '../../../assets/icons/Cameraicon';
 import BoostPriceDialog from '../../components/home-components/BoostPriceDialog';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
+import CustomBottomSheet from '../../components/shared-components/CustomBottomSheet';
 import {FileData, IPost, IPostVisibility} from 'interfaces/user.interface';
 import {
   Video as VideoCompress,
   Image as ImageCompress,
 } from 'react-native-compressor';
-import {createPostWithVideo} from '../../api/home-module';
+import {createPostWithVideo, getMusicList} from '../../api/home-module';
 import {getRandomNumber} from '../../utils/helper';
 
 interface VideoPreviewScreenProps {
@@ -61,10 +64,19 @@ interface VideoPreviewScreenProps {
   email?: string;
   handleNavigation: () => void;
   setIsComponentMounted: (value: boolean) => void;
-  handleBackButtonPress: () => void;
+  handleBackButtonPress: any;
   costValue?: number;
   visibility?: IPostVisibility;
   videoThumbnail: FileData | undefined;
+  isPlay: boolean;
+  onPlayPause: () => void;
+  onPause: () => void;
+  onMusicSelect: (id: number) => void;
+  onVideoEnd: () => void;
+  selectedMusicUrl: string;
+  setSelectedMusicUrl: (selectedMusicUrl: string) => void;
+  selectedMusicTitle: string;
+  setSelectedMusicTitle: (selectedMusicTitle: string) => void;
   thumbnails: string[];
 }
 
@@ -76,6 +88,15 @@ export const VideoPreviewScreen = ({
   setIsComponentMounted,
   handleBackButtonPress,
   videoThumbnail,
+  isPlay,
+  onPlayPause,
+  onPause,
+  onMusicSelect,
+  onVideoEnd,
+  selectedMusicUrl,
+  setSelectedMusicUrl,
+  selectedMusicTitle,
+  setSelectedMusicTitle,
   thumbnails,
 }: VideoPreviewScreenProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
@@ -109,8 +130,13 @@ export const VideoPreviewScreen = ({
   const [showDialog, setShowDialog] = useState(false);
   const [thumbnail, setThumbnail] = useState<FileData | null>(null);
   const [thumbnailOpen, setThumbnailOpen] = useState(false);
-  const [isPlay, setIsPlay] = useState<boolean>(false);
   const [showPlayIcon, setShowPlayIcon] = useState<boolean>(true);
+  const [musicModal, setMusicModal] = useState<boolean>(false);
+  const [musicList, setMusicList] = useState([]);
+  const [music, setMusic] = useState<number | null>(null);
+  const [title, setTitle] = useState<string>('');
+  const [debouncedValue, setDebouncedValue] = useState<string>('');
+  const [loader, setLoader] = useState<boolean>(false);
   const [imageIndex, setImageIndex] = useState<number | null>(null);
   const PlayIcon = require('../../../assets/icons/playIcon.png');
   const PauseIcon = require('../../../assets/icons/pauseIcon.png');
@@ -125,6 +151,34 @@ export const VideoPreviewScreen = ({
       clearTimeout(hideButtonTimer);
     };
   }, [isPlay]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchMusicList = async () => {
+        try {
+          setLoader(true);
+          const musicListResponse = await getMusicList(debouncedValue);
+          setMusicList(musicListResponse?.data?.data);
+          setLoader(false);
+        } catch (error: any) {
+          setLoader(false);
+          console.log(error?.response, 'Error fetching music list!');
+        }
+      };
+      fetchMusicList();
+    }, [debouncedValue]),
+  );
+
+  useEffect(() => {
+    setLoader(true);
+    const timer = setTimeout(() => {
+      setDebouncedValue(title);
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [title]);
 
   const handleBoostOptionSelect = (optionLabel: any) => {
     setSelectedOptionInternal(optionLabel);
@@ -171,6 +225,12 @@ export const VideoPreviewScreen = ({
 
   const handleBoostModal = () => {
     setBoostModalVisible(!isBoostModalVisible);
+  };
+
+  const handleMusicPress = () => {
+    setMusicModal(true);
+    videoRef.current.seek(0);
+    onPause();
   };
 
   const handleTextModal = () => {
@@ -253,7 +313,6 @@ export const VideoPreviewScreen = ({
   };
 
   // api call
-
   const handleShareVideo = async () => {
     if (content == '') {
       Toast.show({
@@ -295,6 +354,8 @@ export const VideoPreviewScreen = ({
           text: content,
           media: videoUri,
           mediaType: 'video',
+          musicTitle: selectedMusicTitle,
+          musicUrl: selectedMusicUrl,
           title: titleInputValue,
           visibility: visibility,
           ...(costValue !== 0 && {cost: costValue}),
@@ -303,6 +364,7 @@ export const VideoPreviewScreen = ({
         console.log(reqData, 'video req data');
         const response = await createPostWithVideo(reqData);
         console.log(response?.data, 'from video!');
+        onPause();
         navigation.navigate('Home');
         Toast.show({
           type: 'success',
@@ -325,6 +387,15 @@ export const VideoPreviewScreen = ({
       }
       setIsLoading(false);
     }
+  };
+
+  const musicSelectHandler = (id: number, title: string, url: string) => {
+    videoRef.current.seek(0);
+    setMusic(id);
+    setSelectedMusicTitle(title);
+    setSelectedMusicUrl(url);
+    setMusicModal(false);
+    onMusicSelect(id);
   };
 
   const selectThumbnail = (index: number) => {
@@ -359,7 +430,9 @@ export const VideoPreviewScreen = ({
           paused={isPlay}
           source={{uri: videoUri.uri}}
           onTouchStart={() => setShowPlayIcon(true)}
+          onEnd={onVideoEnd}
           style={styles.video}
+          muted={!!music}
         />
         {showPlayIcon && (
           <TouchableOpacity
@@ -371,7 +444,7 @@ export const VideoPreviewScreen = ({
                 left: '42%',
               },
             ]}
-            onPress={() => setIsPlay(!isPlay)}>
+            onPress={onPlayPause}>
             <Image
               style={{tintColor: '#fff', width: 40, height: 30}}
               source={isPlay ? PlayIcon : PauseIcon}
@@ -394,7 +467,16 @@ export const VideoPreviewScreen = ({
           {!thumbnailOpen && (
             <TouchableOpacity
               disabled={isLoading}
-              style={styles.singleIconContainer}
+              style={[styles.singleIconContainer, {alignItems: 'center'}]}
+              onPress={handleMusicPress}>
+              <MusicIcon />
+              <Text style={styles.iconText}>Music</Text>
+            </TouchableOpacity>
+          )}
+          {!thumbnailOpen && (
+            <TouchableOpacity
+              disabled={isLoading}
+              style={{marginTop: -5, marginRight: 4}}
               onPress={handleTextModal}>
               <TextIcon />
               <Text style={styles.iconText}>Text</Text>
@@ -403,7 +485,7 @@ export const VideoPreviewScreen = ({
           {isBoostAvailable && !thumbnailOpen && (
             <TouchableOpacity
               disabled={isLoading}
-              style={styles.singleIconContainer}
+              style={[styles.singleIconContainer, {marginRight: 4}]}
               onPress={handleBoostModal}>
               <BoostIcon color={payment ? '#209BCC' : 'white'} />
             </TouchableOpacity>
@@ -514,34 +596,57 @@ export const VideoPreviewScreen = ({
             </View>
           </View>
         ) : (
-          <View style={styles.bottomContainer}>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Add title here..."
-                placeholderTextColor="#fff"
-                onChangeText={handleTitleInputChange}
-                editable={!isLoading}
-                multiline
-              />
-              <TouchableOpacity
-                style={styles.avatarButton}
-                onPress={handleAvatarButtonPress}>
-                <Text
-                  style={{color: 'white', textAlign: 'center', fontSize: 10}}>
-                  {selectedOption}
-                </Text>
-                <Image source={ArrowDownIcon} style={styles.arrowDown} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.buttonContainer}>
-              <CustomButton onPress={handleShareVideo} isDisabled={isLoading}>
-                {isLoading ? <CustomLoader /> : 'Share'}
-              </CustomButton>
+          <View>
+            {selectedMusicTitle ? (
+              <View style={styles.musicWrapper}>
+                <View style={styles.musicContainer}>
+                  <MusicIconTwo />
+                  <Text style={styles.musicName} numberOfLines={2}>
+                    {selectedMusicTitle}
+                  </Text>
+                </View>
+                <DiscIcon />
+              </View>
+            ) : null}
+            <View style={styles.bottomContainer}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Add title here..."
+                  placeholderTextColor="#fff"
+                  onChangeText={handleTitleInputChange}
+                  editable={!isLoading}
+                  multiline
+                />
+                <TouchableOpacity
+                  style={styles.avatarButton}
+                  onPress={handleAvatarButtonPress}>
+                  <Text
+                    style={{color: 'white', textAlign: 'center', fontSize: 10}}>
+                    {selectedOption}
+                  </Text>
+                  <Image source={ArrowDownIcon} style={styles.arrowDown} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.buttonContainer}>
+                <CustomButton onPress={handleShareVideo} isDisabled={isLoading}>
+                  {isLoading ? <CustomLoader /> : 'Share'}
+                </CustomButton>
+              </View>
             </View>
           </View>
         )}
       </View>
+
+      <CustomBottomSheet
+        setMusicModal={setMusicModal}
+        musicModal={musicModal}
+        musicList={musicList}
+        onMusicSelect={musicSelectHandler}
+        title={title}
+        setTitle={setTitle}
+        loader={loader}
+      />
       {/* {showDialog && (
         <>
           <BoostPriceDialog
@@ -616,6 +721,20 @@ const styles = StyleSheet.create({
   textInputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+  },
+  musicWrapper: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: horizontalScale(16),
+    position: 'absolute',
+    bottom: 110,
+  },
+  musicName: {
+    color: '#fff',
+    fontSize: 16,
+    width: '85%',
   },
   bottomWrapper: {
     backgroundColor: 'black',
@@ -731,17 +850,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 2,
   },
-  musicModal: {
+  musicContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '74%',
-  },
-  musicContainer: {
-    position: 'absolute',
-    zIndex: 99,
-    bottom: 110,
-    left: 32,
   },
   playIconBackground: {
     backgroundColor: 'rgba(141, 156, 152, 0.8)',

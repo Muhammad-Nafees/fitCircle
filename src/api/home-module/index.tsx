@@ -72,15 +72,11 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
     formData.append('visibility', reqData?.visibility);
   }
 
-  const response = await api.post(
-    `http://128.199.30.51:3016/api/post`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+  const response = await api.post(`post`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
     },
-  );
+  });
 
   return response;
 };
@@ -216,5 +212,27 @@ export const getUserFavoriteVideos = async () => {
 
 export const deleteFavoritePost = async (favoritePostId: string) => {
   const response = await api.delete(`post/remove-favorite/${favoritePostId}`);
+  return response;
+};
+
+export const addRemoveMusic = async (id: number, title: string) => {
+  let data = {
+    musicId: id,
+    title,
+  };
+
+  const response = await api.put(`user/add-remove-music`, data);
+  return response;
+};
+
+export const getMusicList = async (title: string) => {
+  const response = await api.get(
+    `https://api.deezer.com/search?q=track:${title || 'gym'}&limit=10`,
+  );
+  return response;
+};
+
+export const getMusic = async (id: number) => {
+  const response = await api.get(`https://api.deezer.com/track/${id}`);
   return response;
 };

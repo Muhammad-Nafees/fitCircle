@@ -3,11 +3,7 @@ import {Path, Svg} from 'react-native-svg';
 
 const MusicIconTwo = () => {
   return (
-    <Svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none">
+    <Svg width="21" height="21" viewBox="0 0 19 10" fill="none">
       <Path
         fill-rule="evenodd"
         clip-rule="evenodd"
