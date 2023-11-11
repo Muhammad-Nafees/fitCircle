@@ -32,7 +32,7 @@ export const MessageHeaderContainer = ({username}: any) => {
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
         <TouchableOpacity
           style={styles.arrowBack}
-          onPress={() => navigation.navigate('MessagesOne')}>
+          onPress={() => navigation.goBack()}>
           <Image
             source={ArrowBack}
             style={{width: 24, height: 24, tintColor: 'white'}}

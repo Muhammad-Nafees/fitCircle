@@ -38,9 +38,7 @@ const ArrowBackIcon = require('../../../assets/icons/arrow-back.png');
 const SetSchedule = ({navigation, route}: any) => {
   const [timeSlots, setTimeSlots] = useState<ITimeSlot[]>([]); // after generating timeSlots data will be stored
   const [selectedSlotDates, setSelectedSlotDates] = useState<string[]>([]); // for selecting slots
-  const isTrainerView = useSelector(
-    (state: RootState) => state.profile.trainerView,
-  );
+
   // date states
   const today = format(new Date(), 'yyyy-MM-dd');
   const [currentDate, setCurrentDate] = useState<Date | string>(today);
@@ -318,6 +316,13 @@ const SetSchedule = ({navigation, route}: any) => {
   };
 
   const handleButtonPress = () => {
+    if (!bookTrainerScheduleId) {
+      Toast.show({
+        type: 'error',
+        text1: 'Kindly select a slot!',
+      });
+      return;
+    }
     setIsModalVisible(true);
   };
 
@@ -327,8 +332,8 @@ const SetSchedule = ({navigation, route}: any) => {
     : format(currentttDate, 'yyyy-MM-dd');
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
+    <ScrollView>
+      <View style={styles.container}>
         <View style={{paddingHorizontal: 10, paddingBottom: 10}}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image source={ArrowBackIcon} style={styles.arrowBack} />
@@ -369,38 +374,34 @@ const SetSchedule = ({navigation, route}: any) => {
             />
           </View>
         </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{flexGrow: 1}}>
-          <View
-            style={[
-              styles.bottomContainer,
-              timeSlots.length == 0
-                ? {justifyContent: 'center', alignItems: 'center'}
-                : undefined,
-            ]}>
-            {isListLoading ? (
-              <CustomLoader extraStyles={{marginTop: 30}} />
-            ) : timeSlots.length == 0 ? (
-              <Text style={[STYLES.text16]}>No slots available for today!</Text>
-            ) : (
-              <>
-                <Text style={styles.selectedDateText}>
-                  {formattedSelectedDate}
-                </Text>
+        <View
+          style={[
+            styles.bottomContainer,
+            timeSlots.length == 0
+              ? {justifyContent: 'center', alignItems: 'center'}
+              : undefined,
+          ]}>
+          {isListLoading ? (
+            <CustomLoader extraStyles={{marginTop: 30}} />
+          ) : timeSlots.length == 0 ? (
+            <Text style={[STYLES.text16]}>No slots available for today!</Text>
+          ) : (
+            <>
+              <Text style={styles.selectedDateText}>
+                {formattedSelectedDate}
+              </Text>
 
-                <FlatList
-                  data={timeSlots}
-                  keyExtractor={(item, index) => item._id + index.toString()}
-                  renderItem={renderOptionItem}
-                  contentContainerStyle={styles.optionsContainer}
-                  showsVerticalScrollIndicator={false}
-                />
-              </>
-            )}
-          </View>
-        </ScrollView>
-        {isTrainerView && (
+              <FlatList
+                data={timeSlots}
+                keyExtractor={(item, index) => item._id + index.toString()}
+                renderItem={renderOptionItem}
+                contentContainerStyle={styles.optionsContainer}
+                showsVerticalScrollIndicator={false}
+              />
+            </>
+          )}
+        </View>
+        {route.params.packageView && (
           <View style={styles.buttonContainer}>
             <CustomButton
               extraStyles={{paddingHorizontal: 110}}
@@ -413,65 +414,69 @@ const SetSchedule = ({navigation, route}: any) => {
             </CustomButton>
           </View>
         )}
-      </ScrollView>
-      <Modal
-        isVisible={isModalVisible}
-        onBackButtonPress={() => setIsModalVisible(false)}
-        onBackdropPress={() => setIsModalVisible(false)}
-        style={styles.modal}>
-        <CustomConfirmationModal
-          modalHeading="Please Confirm"
-          modalText={
-            route?.params?.packageView
-              ? `Are you sure you want to purchase this package for $${route.params?.packageDetails?.cost} ?`
-              : `Are you sure you want to schedule for $${route.params?.userData?.hourlyRate?.toFixed(
-                  2,
-                )} ?`
-          }
-          onCancel={() => handlePayment('failed')}
-          onConfirm={() => handlePayment('success')}
-          confirmText="Yes"
-          isLoading={isLoading}
-          cancelText="No"
-          cancelColor={'rgba(220, 77, 77, 1)'}
-          confirmColor={'rgba(32, 128, 183, 1)'}
-        />
-      </Modal>
-      <Modal
-        isVisible={paymentModal}
-        onBackButtonPress={() => setPaymentModal(false)}
-        onBackdropPress={() => setPaymentModal(false)}
-        style={styles.modal}>
-        <CustomOutputModal
-          type={paymentType}
-          onPress={() => {
-            setPaymentModal(false),
-              Toast.show({
-                type: 'success',
-                text1: `Slot booked Successfully!`,
-              });
-            navigation.navigate('UserSchedule');
-          }}
-          modalText={
-            paymentType === 'success'
-              ? 'Payment Successful'
-              : 'Payment Unsuccessful'
-          }
-        />
-      </Modal>
-      {!isTrainerView && timeSlots.length > 0 && (
-        <View style={styles.buttonContainer}>
-          <CustomButton
-            isDisabled={selectedSlotDates.length < 1 ? true : false}
-            extraStyles={{paddingHorizontal: 120}}
-            onPress={
-              isSearchTrainer ? handleBookTrainerSchedule : handleSetSchedule
-            }>
-            {isLoading ? <CustomLoader /> : 'Set Schedule'}
-          </CustomButton>
-        </View>
-      )}
-    </View>
+        <Modal
+          isVisible={isModalVisible}
+          onBackButtonPress={() => setIsModalVisible(false)}
+          onBackdropPress={() => setIsModalVisible(false)}
+          style={styles.modal}>
+          <CustomConfirmationModal
+            modalHeading="Please Confirm"
+            modalText={
+              route?.params?.packageView
+                ? `Are you sure you want to purchase this package for $${route.params?.packageDetails?.cost} ?`
+                : `Are you sure you want to schedule for $${route.params?.userData?.hourlyRate?.toFixed(
+                    2,
+                  )} ?`
+            }
+            onCancel={() => handlePayment('failed')}
+            onConfirm={() => handlePayment('success')}
+            confirmText="Yes"
+            isLoading={isLoading}
+            cancelText="No"
+            cancelColor={'rgba(220, 77, 77, 1)'}
+            confirmColor={'rgba(32, 128, 183, 1)'}
+          />
+        </Modal>
+        <Modal
+          isVisible={paymentModal}
+          onBackButtonPress={() => setPaymentModal(false)}
+          onBackdropPress={() => setPaymentModal(false)}
+          style={styles.modal}>
+          <CustomOutputModal
+            type={paymentType}
+            onPress={() => {
+              setPaymentModal(false),
+                Toast.show({
+                  type: 'success',
+                  text1: `Slot booked Successfully!`,
+                });
+              navigation.navigate('UserSchedule');
+            }}
+            modalText={
+              paymentType === 'success'
+                ? 'Payment Successful'
+                : 'Payment Unsuccessful'
+            }
+          />
+        </Modal>
+        {!route.params.hourlyRate &&
+          !route.params.packageView &&
+          timeSlots.length > 0 && (
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                isDisabled={selectedSlotDates.length < 1 ? true : false}
+                extraStyles={{paddingHorizontal: 120}}
+                onPress={
+                  isSearchTrainer
+                    ? handleBookTrainerSchedule
+                    : handleSetSchedule
+                }>
+                {isLoading ? <CustomLoader /> : 'Set Schedule'}
+              </CustomButton>
+            </View>
+          )}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -507,6 +512,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     width: '100%',
     paddingBottom: 100,
+    // flex: 1
   },
   selectedDateText: {
     fontSize: 16,

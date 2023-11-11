@@ -21,7 +21,7 @@ import {
 } from 'react-native-image-picker';
 import {openCamera} from 'react-native-image-crop-picker';
 
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   ParamListBase,
   useFocusEffect,
@@ -46,15 +46,23 @@ import {RootState} from '../../redux/store';
 import VideoPreviewScreen from './VideoPreviewScreen';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
-import {FileData, IPost, IPostVisibility} from 'interfaces/user.interface';
+import {
+  FileData,
+  IPost,
+  IPostVisibility,
+} from '../../interfaces/user.interface';
 import {
   createPostWithContent,
   createPostWithImage,
+  editPostWithContent,
+  editPostWithImage,
 } from '../../api/home-module';
 import Toast from 'react-native-toast-message';
 import {CreatePostIcon} from '../../components/home-components/CreatePostIcon';
 import {createThumbnail} from 'react-native-create-thumbnail';
 import RNFS from 'react-native-fs';
+import {s3bucketReference} from '../../api';
+import {setEditPost} from '../../redux/postSlice';
 
 const CancelIcon = require('../../../assets/icons/cancel.png');
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
@@ -64,14 +72,16 @@ export const AddPostScreen = ({route}: any) => {
   const userData: any = useSelector((state: RootState) => state.auth.user);
   const [visibility, setVisibility] = useState<IPostVisibility>('Public');
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isComponentMounted, setIsComponentMounted] = useState(true);
+  const [isComponentMounted, setIsComponentMounted] = useState(false);
   const [isCreatePostIconModalVisible, setIsCreatePostIconModalVisible] =
     useState(false);
   const [textInputValue, setTextInputValue] = useState('');
   const [textInputBackgroundColor, setTextInputBackgroundColor] = useState<
     string | string[]
   >('transparent');
-  const [mediaUri, setMediaUri] = useState<FileData | null>(null);
+  const [mediaUri, setMediaUri] = useState<FileData | null | string | any>(
+    null,
+  );
   const [videoUri, setVideoUri] = useState<FileData | null>();
   const [videoThumbnail, setVideoThumbnail] = useState<FileData | undefined>(
     undefined,
@@ -81,6 +91,26 @@ export const AddPostScreen = ({route}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState<any>();
   const [thumbnails, setThumbnails] = useState<string[]>([]);
+
+  //edit post
+  const editPost = useSelector((state: RootState) => state.post.editPost);
+  const dispatch = useDispatch();
+  console.log(editPost, 'ISEDITPOST');
+
+  useEffect(() => {
+    if (editPost) {
+      if (editPost?.media) {
+        setMediaUri(`${s3bucketReference}/${editPost?.media}`);
+      }
+      if (editPost?.title) {
+        setTitleInput(editPost?.title);
+      }
+      setTextInputValue(editPost?.text);
+      setVisibility(editPost?.visibility);
+    } else {
+      setIsComponentMounted(true);
+    }
+  }, []);
 
   const onSelectCost = (value: number) => {
     setCostValue(value);
@@ -172,11 +202,20 @@ export const AddPostScreen = ({route}: any) => {
       mediaType: 'video',
     };
     await launchImageLibrary(options, (response: any) => {
-      if (response.assets) {
+      if (response?.assets) {
+        if (response?.assets && response.assets.length > 0) {
+          const fileSizeInBytes = response.assets[0].fileSize;
+          if (fileSizeInBytes) {
+            const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+            console.log(`Video File Size: ${fileSizeInMB} MB`);
+          }
+        }
         setVideoUri({
-          uri: response.assets[0].uri,
-          name: response.assets[0].fileName,
-          type: response.assets[0].type,
+          uri: response.assets[0].uri as string,
+          name: response.assets[0].fileName as string,
+          type: response.assets[0].type as string,
+          duration: response.assets[0].duration as number,
         });
         setIsCreatePostIconModalVisible(false);
       }
@@ -262,7 +301,9 @@ export const AddPostScreen = ({route}: any) => {
           }
         } else {
           let noOfSecondsForThumnails = 3;
-          let iteration = Math.floor(videoUri?.duration / noOfSecondsForThumnails);
+          let iteration = Math.floor(
+            videoUri?.duration / noOfSecondsForThumnails,
+          );
           for (let i = 1; i <= iteration; i++) {
             let response = await createThumbnail({
               url: videoUri?.uri,
@@ -293,7 +334,12 @@ export const AddPostScreen = ({route}: any) => {
     setVideoUri(null);
     setTextInputBackgroundColor('transparent');
     setTitleInput('');
-    navigation.navigate('Home');
+    if (editPost) {
+      navigation.navigate('Profile');
+      dispatch(setEditPost(null));
+    } else {
+      navigation.navigate('Home');
+    }
   };
 
   const handleCancelImage = () => {
@@ -319,7 +365,8 @@ export const AddPostScreen = ({route}: any) => {
     }
     setIsLoading(true);
     try {
-      if (mediaUri) {
+      if (mediaUri?.uri) {
+        console.log('media is there');
         let compressedImage = null;
         const result = await ImageCompress.compress(mediaUri.uri, {
           quality: 0.8,
@@ -329,6 +376,7 @@ export const AddPostScreen = ({route}: any) => {
           type: mediaUri?.type as string,
           uri: result,
         };
+
         const cleanedText = textInputValue.replace(/\n{3,}/g, '\n\n').trim();
 
         const reqData: Partial<IPost> = {
@@ -339,14 +387,23 @@ export const AddPostScreen = ({route}: any) => {
           ...(titleInput !== '' && {title: titleInput}),
           ...(costValue !== 0 && {cost: costValue}),
         };
-        console.log(reqData, 'req');
-        const response = await createPostWithImage(reqData);
-        console.log(response?.data, 'response!');
-        handleBackButtonPress();
-        Toast.show({
-          type: 'success',
-          text1: `${response?.data.message}`,
-        });
+        if (editPost) {
+          const response = await editPostWithImage(reqData, editPost?._id);
+          console.log(response?.data, 'response!');
+          handleBackButtonPress();
+          Toast.show({
+            type: 'success',
+            text1: `${response?.data.message}`,
+          });
+        } else {
+          const response = await createPostWithImage(reqData);
+          console.log(response?.data, 'response!');
+          handleBackButtonPress();
+          Toast.show({
+            type: 'success',
+            text1: `${response?.data.message}`,
+          });
+        }
       } else {
         const cleanedText = textInputValue.replace(/\n{3,}/g, '\n\n').trim();
         const reqData: Partial<IPost> = {
@@ -357,15 +414,27 @@ export const AddPostScreen = ({route}: any) => {
               : textInputBackgroundColor,
 
           visibility: visibility,
+          ...(titleInput !== '' && {title: titleInput}),
           ...(costValue !== 0 && {cost: costValue}),
         };
-        console.log(reqData, 'req');
-        const response = await createPostWithContent(reqData);
-        handleBackButtonPress();
-        Toast.show({
-          type: 'success',
-          text1: `${response?.data.message}`,
-        });
+        if (editPost) {
+          console.log('edit post with content');
+          const response = await editPostWithContent(reqData, editPost?._id);
+          handleBackButtonPress();
+          Toast.show({
+            type: 'success',
+            text1: `${response?.data.message}`,
+          });
+        } else {
+          console.log('create post with content');
+
+          const response = await createPostWithContent(reqData);
+          handleBackButtonPress();
+          Toast.show({
+            type: 'success',
+            text1: `${response?.data.message}`,
+          });
+        }
       }
       setIsLoading(false);
     } catch (error: any) {
@@ -411,7 +480,7 @@ export const AddPostScreen = ({route}: any) => {
                   height: 31,
                 }}
                 isDisabled={isLoading || textInputValue === ''}>
-                {isLoading ? <CustomLoader /> : 'Post'}
+                {isLoading ? <CustomLoader /> : editPost ? 'Edit' : 'Post'}
               </CustomButton>
             </TouchableOpacity>
           </View>
@@ -499,7 +568,12 @@ export const AddPostScreen = ({route}: any) => {
             <View style={styles.postContainer}>
               {mediaUri && !videoUri && (
                 <View style={styles.mediaContainer}>
-                  <Image source={{uri: mediaUri.uri}} style={styles.media} />
+                  <Image
+                    source={{
+                      uri: mediaUri?.uri ? mediaUri?.uri : mediaUri,
+                    }}
+                    style={styles.media}
+                  />
                   <TouchableOpacity
                     disabled={isLoading}
                     style={styles.cancelIconContainer}
