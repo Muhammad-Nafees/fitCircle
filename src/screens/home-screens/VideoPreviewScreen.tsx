@@ -598,7 +598,12 @@ export const VideoPreviewScreen = ({
         ) : (
           <View>
             {selectedMusicTitle ? (
-              <View style={styles.musicWrapper}>
+              <View
+                style={
+                  !thumbnail
+                    ? styles.musicWrapper
+                    : [styles.musicWrapper, {bottom: 140}]
+                }>
                 <View style={styles.musicContainer}>
                   <MusicIconTwo />
                   <Text style={styles.musicName} numberOfLines={2}>

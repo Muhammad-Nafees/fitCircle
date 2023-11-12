@@ -8,6 +8,8 @@ export const createPostWithImage = async (reqData: Partial<IPost>) => {
   formData.append('media', reqData?.media);
   formData.append('mediaType', reqData?.mediaType);
   formData.append('visibility', reqData?.visibility);
+  formData.append('musicTitle', reqData?.musicTitle);
+  formData.append('musicUrl', reqData?.musicUrl);
   if (reqData?.cost) {
     formData.append('cost', reqData.cost);
   }
@@ -59,6 +61,8 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
   formData.append('text', reqData?.text);
   formData.append('media', reqData?.media);
   formData.append('mediaType', reqData?.mediaType);
+  formData.append('musicTitle', reqData?.musicTitle);
+  formData.append('musicUrl', reqData?.musicUrl);
   if (reqData?.title) {
     formData.append('title', reqData.title);
   }
@@ -84,7 +88,8 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
 export const createPostWithContent = async (reqData: Partial<IPost>) => {
   let formData = new FormData();
   formData.append('text', reqData?.text);
-
+  formData.append('musicTitle', reqData?.musicTitle);
+  formData.append('musicUrl', reqData?.musicUrl);
   if (reqData?.cost) {
     formData.append('cost', reqData.cost);
   }
