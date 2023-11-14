@@ -16,11 +16,15 @@ const CancelIcon = require('../../../assets/icons/cancel.png');
 import CustomButton from '../../components/shared-components/CustomButton';
 import CameraSupportIcon from '../../../assets/icons/CameraSupportIcon';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import {createChatSupport, socket} from '../../socket';
 
 const SupportMessage = ({navigation}: any) => {
   const [mediaUri, setMediaUri] = useState(null);
   const [messageInput, setMessageInput] = useState('');
-
+  const userId = useSelector((state: RootState) => state.auth.user?._id);
+  console.log(userId,"userID")
   const handlePhotoButtonPress = () => {
     setMediaUri(null);
     const options: ImageLibraryOptions = {
@@ -46,7 +50,12 @@ const SupportMessage = ({navigation}: any) => {
       message: messageInput,
       imageUri: mediaUri,
     };
-    navigation.navigate('SupportChat', dataToSend);
+    createChatSupport(userId as string);
+    socket.on(`createChatForSupport/${userId}`, data => {
+      console.log('chatSupport created');
+      console.log(data);
+    });
+    // navigation.navigate('SupportChat', dataToSend);
   };
 
   return (
@@ -111,7 +120,9 @@ const SupportMessage = ({navigation}: any) => {
           paddingBottom: verticalScale(30),
           marginHorizontal: horizontalScale(24),
         }}>
-        <CustomButton onPress={handleMessageSend}>
+        <CustomButton
+          isDisabled={messageInput !== '' || mediaUri !== null ? false : true}
+          onPress={handleMessageSend}>
           Send New Message
         </CustomButton>
       </View>

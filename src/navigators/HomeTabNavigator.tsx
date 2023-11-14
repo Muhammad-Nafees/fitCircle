@@ -95,9 +95,9 @@ const CustomTabBarIcon = ({focused, icon}: any) => {
           style={{
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: focused ? 'rgba(168, 213, 229, 0.35)' : null,
-            borderRadius: focused ? 30 : null,
-            padding: focused ? 12 : null,
+            backgroundColor: focused ? 'rgba(168, 213, 229, 0.35)' : undefined,
+            borderRadius: focused ? 30 : undefined,
+            padding: focused ? 12 : undefined,
           }}>
           {icon === 'Home' ? (
             <HomeSvgIcon color={iconColor} />

@@ -1,26 +1,36 @@
+import {format} from 'date-fns';
+import {ISupportChats} from '../../interfaces/chat.interface';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {SupportChatNavigationProp} from '../../interfaces/navigation.type';
 
-const CustomSupport = () => {
+interface Props {
+  chat: ISupportChats;
+}
+
+const CustomSupport = ({chat}: Props) => {
+  const navigation = useNavigation<SupportChatNavigationProp>();
+  const date = new Date(chat?.lastMessage?.createdAt);
+  const formattedLastMessageDate = format(date, 'dd/MM/yyyy');
   return (
-    <View style={styles.container}>
-      <CustomProfileAvatar username="Sameer" size={50} />
+    <TouchableOpacity
+      style={styles.container}
+    onPress={() => navigation.navigate('SupportChat', {chatId: chat?._id})}>
+      <CustomProfileAvatar profileImage="" username="Sameer" size={50} />
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={[styles.text, {color: 'rgba(255, 255, 255, 0.5)'}]}>
-            02/10/2023
+            {formattedLastMessageDate}
           </Text>
           <Text style={[styles.text, {color: 'rgba(234, 68, 68, 1)'}]}>
             Pending
           </Text>
         </View>
         <Text style={styles.id}>HFYEU38FGHS</Text>
-        <Text style={styles.description}>
-          I would like to report some issues that the app is facing right now.
-          These issues are related to logging and ...
-        </Text>
+        <Text style={styles.description}>{chat?.lastMessage?.body}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
