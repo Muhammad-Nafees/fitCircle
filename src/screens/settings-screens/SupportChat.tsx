@@ -16,12 +16,37 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import {openCamera} from 'react-native-image-crop-picker';
+import {
+  getSupportChatMessages,
+  sendMessageToSupport,
+  socket,
+} from '../../socket';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import {FileData} from '../../interfaces/user.interface';
 
 const SupportChat = ({route}: any) => {
-  const [mediaUri, setMediaUri] = useState(null);
+  const userId = useSelector((state: RootState) => state.auth.user?._id);
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const chatId = route?.params?.chatId;
+  const [mediaUri, setMediaUri] = useState<FileData | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([]);
-  const {message, imageUri} = route.params;
+  const message = route.params?.message;
+  const imageUri = route?.params?.imageUri;
+  console.log(chatId);
+
+  useEffect(() => {
+    getSupportChatMessages(userId as string, chatId);
+    socket.on(`getChatSupportMessages/${userId}`, data => {
+      console.log('CHAT MESSAGES');
+      console.log(data);
+    });
+    return () => {
+      socket.off(`getChatSupportMessages/${userId}`);
+    };
+  }, [chatId]);
 
   useEffect(() => {
     if (message || imageUri) {
@@ -73,35 +98,42 @@ const SupportChat = ({route}: any) => {
 
     launchImageLibrary(options, response => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
+        setMediaUri({
+          uri: response.assets[0].uri as string,
+          name: response.assets[0].fileName as any,
+          type: response.assets[0].type as any,
+        });
       }
     });
   };
 
+
   const handleSend = () => {
-    if (mediaUri) {
-      const newMessage = {
-        username: 'Sameer',
-        dateTime: '02/10/2023 | 6:00 AM',
-        messageId: 'KGNV83JNFG8',
-        message: '',
-        imageUri: mediaUri,
-      };
+    const name = `${user?.firstName} ${user?.lastName}`;
+    sendMessageToSupport(userId as string, chatId, messageInput, name);
+    // if (mediaUri) {
+    //   const newMessage = {
+    //     username: 'Sameer',
+    //     dateTime: '02/10/2023 | 6:00 AM',
+    //     messageId: 'KGNV83JNFG8',
+    //     message: '',
+    //     imageUri: mediaUri,
+    //   };
 
-      setMessages([...messages, newMessage]);
-      setMediaUri(null); // Clear the mediaUri
-    } else if (messageInput) {
-      const newMessage = {
-        username: 'Sameer',
-        dateTime: '02/10/2023 | 6:00 AM',
-        messageId: 'KGNV83JNFG8',
-        message: messageInput,
-        imageUri: null,
-      };
+    //   setMessages([...messages, newMessage]);
+    //   setMediaUri(null); // Clear the mediaUri
+    // } else if (messageInput) {
+    //   const newMessage = {
+    //     username: 'Sameer',
+    //     dateTime: '02/10/2023 | 6:00 AM',
+    //     messageId: 'KGNV83JNFG8',
+    //     message: messageInput,
+    //     imageUri: null,
+    //   };
 
-      setMessages([...messages, newMessage]);
-      setMessageInput(''); // Clear the message input
-    }
+    //   setMessages([...messages, newMessage]);
+    //   setMessageInput(''); // Clear the message input
+    // }
   };
 
   return (

@@ -64,6 +64,7 @@ const OtpScreen = ({navigation, route}: any) => {
         text1: `${response?.data.message}`,
       });
     } catch (error: any) {
+      console.log(error?.response?.data,"ERROR FROM SENDING OTP!")
       Toast.show({
         type: 'error',
         text1: `${error?.response.data.message}`,

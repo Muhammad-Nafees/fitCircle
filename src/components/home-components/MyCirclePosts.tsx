@@ -3,6 +3,7 @@ import {FlatList} from 'react-native';
 import {CustomPost} from './CustomPost';
 import CustomLoader from '../../components/shared-components/CustomLoader';
 import {View} from 'react-native';
+import CustomSkeleton from './CustomSkeleton';
 
 interface MyCirclePostsProps {
   data: any;
@@ -51,7 +52,8 @@ const MyCirclePosts = ({
       ListFooterComponent={
         isLoading ? (
           <CustomLoader extraStyles={{marginVertical: 20}} isStyle={true} />
-        ) : null
+        ) : // <CustomSkeleton />
+        null
       }
       onEndReached={loadMoreItems}
       onEndReachedThreshold={0}

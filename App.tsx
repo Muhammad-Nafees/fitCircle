@@ -5,10 +5,15 @@ import {PersistGate} from 'redux-persist/integration/react';
 import store from './src/redux/store';
 import {persistStore} from 'redux-persist';
 import StackNavigator from './src/navigators/StackNavigator';
+import {useEffect} from 'react';
+import {socket} from './src/socket';
 
 let persistor = persistStore(store);
 
 const App = () => {
+  useEffect(() => {
+    socket.connect();
+  }, []);
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

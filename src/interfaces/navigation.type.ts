@@ -16,6 +16,7 @@ export type AuthStackParamList = {
   commentsScreen: any;
   SearchProfile: any;
   PackageDetail: {packageDetails: IPackage | undefined};
+  SupportChat: any;
 
   // Add other routes here...
 };
@@ -33,4 +34,8 @@ export type CommunitiesScreenNavigationProp = NativeStackNavigationProp<
 export type SearchProfileNavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
   'SearchProfile'
+>;
+export type SupportChatNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'SupportChat'
 >;

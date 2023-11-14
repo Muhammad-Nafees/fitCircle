@@ -56,7 +56,7 @@ const LoginForm = () => {
           type: 'success',
           text1: `${response?.data.message}`,
         });
-        navigation.navigate('Home');
+        navigation.navigate('HomeScreen');
       } else {
         Toast.show({
           type: 'success',
