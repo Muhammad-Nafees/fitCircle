@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Dimensions} from 'react-native';
+import Sound from 'react-native-sound';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import ReelsComponent from './Reels';
 
@@ -20,6 +21,59 @@ const CreatorPosts = ({
   handleRefresh,
   onDeletePost,
 }: CreatorPostsProps) => {
+  const [play, setPlay] = useState<boolean>(false);
+  const [id, setId] = useState<string | null>(null);
+  const [sound, setSound] = useState<any>();
+
+  const getMusic = (postId: string) => {
+    try {
+      if (sound) {
+        sound.stop();
+        sound.release();
+      }
+      let post = data?.find((item: never) => item?._id == postId);
+      if (post?.musicUrl) {
+        let music = new Sound(post?.musicUrl, Sound.MAIN_BUNDLE, error => {
+          if (error) {
+            console.log('failed to load the music', error);
+            return;
+          }
+          music.setNumberOfLoops(-1);
+          setSound(music);
+          music?.play();
+        });
+      }
+    } catch (error: any) {
+      console.log(error?.response, 'Error fetching music list!');
+    }
+  };
+
+  const onPlayPause = (vid: string) => {
+    if (play) {
+      if (!vid || id == vid) {
+        setPlay(false);
+        sound?.pause();
+      } else {
+        getMusic(vid);
+        setId(vid);
+      }
+    } else {
+      if (id == vid) {
+        console.log('3');
+        setPlay(true);
+        sound?.play();
+      } else {
+        getMusic(vid);
+        setId(vid);
+        setPlay(true);
+      }
+    }
+  };
+
+  const onVideoEnd = () => {
+    sound?.setCurrentTime(0);
+  };
+
   return (
     <View
       style={{
@@ -27,13 +81,12 @@ const CreatorPosts = ({
         height: Dimensions.get('window').height - 120 - tabBarHeight,
       }}>
       <SwiperFlatList
-        // vertical={true}
+        vertical={true}
         data={data}
         keyExtractor={(item, index) => item._id + index + 1}
         refreshing={false}
         onRefresh={handleRefresh}
         onEndReachedThreshold={0}
-        onChangeIndex={i => console.log(i)}
         renderItem={({item, index}) => (
           <ReelsComponent
             isFavoriteVideo={true}
@@ -43,6 +96,10 @@ const CreatorPosts = ({
             tabBarHeight={tabBarHeight}
             isProfile={isProfile}
             onDeletePost={onDeletePost}
+            onPlayPause={onPlayPause}
+            play={play}
+            id={id}
+            onVideoEnd={onVideoEnd}
           />
         )}
       />

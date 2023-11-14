@@ -1,7 +1,7 @@
 import React from 'react';
 import {Defs, Ellipse, Svg, RadialGradient, Stop} from 'react-native-svg';
 
-const DiscIcon = () => {
+const DiskIcon = () => {
   return (
     <Svg width="30" height="30" viewBox="0 0 30 30" fill="none">
       <Ellipse
@@ -36,4 +36,4 @@ const DiscIcon = () => {
   );
 };
 
-export default DiscIcon;
+export default DiskIcon;

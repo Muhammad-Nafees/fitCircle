@@ -18,6 +18,9 @@ const PlayIcon = require('../../../assets/icons/playIcon.png');
 const PauseIcon = require('../../../assets/icons/pauseIcon.png');
 const LockOpenIcon = require('../../../assets/icons/lock-open.png');
 const CancelIcon = require('../../../assets/icons/cancel.png');
+import DiskIcon from '../../../assets/icons/DiskIcon';
+import DiscMusicIcon from '../../../assets/icons/DiskMusicIcon';
+import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import {s3bucketReference} from '../../api';
@@ -36,6 +39,10 @@ interface ReelsProps {
   handleFavoriteDialog?: any;
   isFavoriteVideo?: boolean;
   onDeletePost: (id: string) => void;
+  onPlayPause: (id: string) => void;
+  onVideoEnd: () => void;
+  play: boolean;
+  id: string | null;
 }
 
 export const ReelsComponent = ({
@@ -46,14 +53,17 @@ export const ReelsComponent = ({
   handleCancelPress,
   onDeletePost,
   handleFavoriteDialog,
+  onPlayPause,
+  play,
+  id,
+  onVideoEnd,
 }: ReelsProps) => {
   const videoRef = useRef<any>(null);
+  const navigation = useNavigation();
   const isLocked = post?.cost && post?.cost > 0;
   const [showPlayIcon, setShowPlayIcon] = useState(true);
-  const [play, setPlay] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showThumbnail, setShowThumbnail] = useState(post?.thumbnail !== null);
-  const navigation = useNavigation();
   const [videoThumbnail, setVideoThumbnail] = useState<any>();
 
   const fetchThumbnail = async () => {
@@ -79,7 +89,6 @@ export const ReelsComponent = ({
       fetchThumbnail();
     }, [post]),
   );
-  console.log(videoThumbnail, 'thum');
 
   // useEffect(() => {
   //   const isCurrentUserFavorited = favorites.some(
@@ -140,8 +149,8 @@ export const ReelsComponent = ({
     }
   };
 
-  const handleDeletePost = (id: string) => {
-    onDeletePost(id);
+  const handleDeletePost = (postiId: string) => {
+    onDeletePost(postiId);
   };
 
   return (
@@ -197,10 +206,10 @@ export const ReelsComponent = ({
       ) : null}
       <View style={styles.playIconContainer}>
         {showPlayIcon && (
-          <TouchableOpacity onPress={() => setPlay(!play)}>
+          <TouchableOpacity onPress={() => onPlayPause(post?._id)}>
             <View style={styles.playIconBackground}>
               <Image
-                source={play ? PauseIcon : PlayIcon}
+                source={play && id == post?._id ? PauseIcon : PlayIcon}
                 style={styles.playIcon}
               />
             </View>
@@ -214,19 +223,20 @@ export const ReelsComponent = ({
       )}
       <Video
         ref={videoRef}
-        onBuffer={onBuffer}
-        onError={onError}
+        // onBuffer={onBuffer}
+        // onError={onError}
         resizeMode="cover"
         repeat={true}
         source={{
           uri: `${s3bucketReference}/${post.media}`,
         }}
         style={styles.video}
-        paused={!play}
+        paused={play && id == post?._id ? false : true}
         onTouchStart={() => setShowPlayIcon(true)}
         onLoad={() => {
           videoRef.current.seek(0);
         }}
+        onEnd={onVideoEnd}
         playInBackground={false}
         playWhenInactive={false}
         useTextureView={true}
@@ -251,7 +261,12 @@ export const ReelsComponent = ({
         <Text style={styles.textContent}>{post?.text}</Text>
       </View>
       {isFavoriteVideo && (
-        <View style={styles.iconContainer}>
+        <View
+          style={
+            post?.musicTitle
+              ? [styles.iconContainer, {bottom: verticalScale(55)}]
+              : styles.iconContainer
+          }>
           <View style={styles.iconItem}>
             <TouchableOpacity
               style={styles.iconItemContainer}
@@ -273,6 +288,22 @@ export const ReelsComponent = ({
           </View>
         </View>
       )}
+      {post?.musicTitle ? (
+        <View style={styles.musicWrapper}>
+          <View style={styles.musicContainer}>
+            <MusicIconTwo />
+            <Text style={styles.musicName} numberOfLines={2}>
+              {post?.musicTitle}
+            </Text>
+          </View>
+          <View style={styles.diskIconWrapper}>
+            <View style={styles.diskMusicIcon}>
+              <DiscMusicIcon />
+            </View>
+            <DiskIcon />
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -479,6 +510,31 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   cost: {color: '#30D298', fontWeight: '600', fontSize: 16},
+  musicWrapper: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: horizontalScale(16),
+    position: 'absolute',
+    bottom: 15,
+  },
+  musicContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  musicName: {
+    color: '#fff',
+    fontSize: 16,
+    width: '85%',
+  },
+  diskIconWrapper: {
+    flexDirection: 'row',
+  },
+  diskMusicIcon: {
+    position: 'absolute',
+    right: 18,
+  },
 });
 
 export default ReelsComponent;
