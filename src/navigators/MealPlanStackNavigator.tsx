@@ -13,6 +13,7 @@ import {RootState} from '../redux/store';
 import {useSelector} from 'react-redux';
 import UploadMealPlan from '../screens/dashboard-screens/meal-plan-screens/UploadMealPlan';
 import MessageStackNavigator from './MessageStackNavigator';
+import MealPlanSubscriptionScreen from '../screens/subscription-screens/MealPlanSubscriptionScreen';
 
 const Stack = createStackNavigator();
 const MealPlanStackNavigator = () => {
@@ -25,7 +26,14 @@ const MealPlanStackNavigator = () => {
         title: '',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName={userRole !== 'user' ? 'CreateMealPlan' : 'MealPlanOne'}>
+      initialRouteName={
+        userRole !== 'user' ? 'CreateMealPlan' : 'MealPlanSubscription'
+      }>
+      <Stack.Screen
+        name="MealPlanSubscription"
+        component={MealPlanSubscriptionScreen}
+      />
+
       <Stack.Screen name="CreateMealPlan" component={CreateMealPlan} />
       <Stack.Screen name="UploadMealPlan" component={UploadMealPlan} />
       <Stack.Screen name="MealPlanOne" component={MealPlanOne} />

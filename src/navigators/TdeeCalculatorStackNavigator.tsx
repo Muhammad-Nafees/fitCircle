@@ -10,6 +10,7 @@ import {MacroCalculator} from '../screens/dashboard-screens/tdee-calculator-scre
 import {ChartScreen} from '../screens/dashboard-screens/tdee-calculator-screens/Chart';
 import HomeTabNavigator from './HomeTabNavigator';
 import MealPlanStackNavigator from './MealPlanStackNavigator';
+import SubscriptionPlan from '../screens/subscription-screens';
 
 const Stack = createStackNavigator();
 const TdeeCalculatorStackNavigator = () => {
@@ -26,7 +27,12 @@ const TdeeCalculatorStackNavigator = () => {
         headerLeft: () => <CustomHeader />,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-      initialRouteName="TdeeCalculator">
+      initialRouteName="SubscriptionPlan">
+      <Stack.Screen
+        name="SubscriptionPlan"
+        component={SubscriptionPlan}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="TdeeCalculator"
         component={TdeeCalculator}
