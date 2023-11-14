@@ -39,7 +39,8 @@ import {Boost} from '../../components/home-components/Boost';
 const ArrowDownIcon = require('../../../assets/icons/arrow-down.png');
 import BoostIcon from '../../../assets/icons/BoostIcon';
 import TextIcon from '../../../assets/icons/TextIcon';
-import DiscIcon from '../../../assets/icons/DiscIcon';
+import DiskIcon from '../../../assets/icons/DiskIcon';
+import DiscMusicIcon from '../../../assets/icons/DiskMusicIcon';
 import MusicIcon from '../../../assets/icons/MusicIcon';
 import MusicIconTwo from '../../../assets/icons/MusicIconTwo';
 import {RootState} from '../../redux/store';
@@ -598,14 +599,24 @@ export const VideoPreviewScreen = ({
         ) : (
           <View>
             {selectedMusicTitle ? (
-              <View style={styles.musicWrapper}>
+              <View
+                style={
+                  !thumbnail
+                    ? styles.musicWrapper
+                    : [styles.musicWrapper, {bottom: 140}]
+                }>
                 <View style={styles.musicContainer}>
                   <MusicIconTwo />
                   <Text style={styles.musicName} numberOfLines={2}>
                     {selectedMusicTitle}
                   </Text>
                 </View>
-                <DiscIcon />
+                <View style={styles.diskIconWrapper}>
+                  <View style={styles.diskMusicIcon}>
+                    <DiscMusicIcon />
+                  </View>
+                  <DiskIcon />
+                </View>
               </View>
             ) : null}
             <View style={styles.bottomContainer}>
@@ -735,6 +746,13 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     width: '85%',
+  },
+  diskIconWrapper: {
+    flexDirection: 'row',
+  },
+  diskMusicIcon: {
+    position: 'absolute',
+    right: 18,
   },
   bottomWrapper: {
     backgroundColor: 'black',
