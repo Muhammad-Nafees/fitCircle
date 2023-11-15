@@ -282,7 +282,7 @@ export const ReelsComponent = ({
             <TouchableOpacity
               style={styles.iconItemContainer}
               onPress={handleShareVideo}>
-              <Image source={ShareIcon} style={styles.icon} />
+              <Image source={ShareIcon} style={[styles.icon, {width: horizontalScale(40)}]} />
               <Text style={styles.iconText}>Share</Text>
             </TouchableOpacity>
           </View>
@@ -367,15 +367,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    width: horizontalScale(38),
-    height: verticalScale(41),
+    width: horizontalScale(30),
+    height: verticalScale(30),
     tintColor: '#fff',
     justifyContent: 'center',
   },
   iconText: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: 12,
     justifyContent: 'center',
+    marginTop: 7
   },
   lockedOverlay: {
     ...StyleSheet.absoluteFillObject,
