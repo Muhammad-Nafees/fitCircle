@@ -38,10 +38,12 @@ const SupportChat = ({route}: any) => {
   console.log(chatId);
 
   useEffect(() => {
+    console.log('SUPPORT CHAT MESSAGESS!!!');
+    console.log(userId, chatId);
     getSupportChatMessages(userId as string, chatId);
     socket.on(`getChatSupportMessages/${userId}`, data => {
       console.log('CHAT MESSAGES');
-      console.log(data);
+      console.log(data,"DATA");
     });
     return () => {
       socket.off(`getChatSupportMessages/${userId}`);
@@ -106,7 +108,6 @@ const SupportChat = ({route}: any) => {
       }
     });
   };
-
 
   const handleSend = () => {
     const name = `${user?.firstName} ${user?.lastName}`;

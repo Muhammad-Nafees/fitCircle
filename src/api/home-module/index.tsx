@@ -8,8 +8,8 @@ export const createPostWithImage = async (reqData: Partial<IPost>) => {
   formData.append('media', reqData?.media);
   formData.append('mediaType', reqData?.mediaType);
   formData.append('visibility', reqData?.visibility);
-  formData.append('musicTitle', reqData?.musicTitle);
-  formData.append('musicUrl', reqData?.musicUrl);
+  // formData.append('musicTitle', reqData?.musicTitle);
+  // formData.append('musicUrl', reqData?.musicUrl);
   if (reqData?.cost) {
     formData.append('cost', reqData.cost);
   }
@@ -88,8 +88,8 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
 export const createPostWithContent = async (reqData: Partial<IPost>) => {
   let formData = new FormData();
   formData.append('text', reqData?.text);
-  formData.append('musicTitle', reqData?.musicTitle);
-  formData.append('musicUrl', reqData?.musicUrl);
+  // formData.append('musicTitle', reqData?.musicTitle);
+  // formData.append('musicUrl', reqData?.musicUrl);
   if (reqData?.cost) {
     formData.append('cost', reqData.cost);
   }
@@ -143,6 +143,11 @@ export const editPostWithContent = async (
     },
   });
 
+  return response;
+};
+
+export const boostPost = async (values: any) => {
+  const response = await api.put(`post/boost`, values);
   return response;
 };
 
