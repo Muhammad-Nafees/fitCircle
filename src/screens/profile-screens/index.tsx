@@ -288,7 +288,6 @@ const ProfileScreen = ({navigation, route}: any) => {
 
   const fetchCommunityList = async () => {
     setIsLoading(true);
-    console.log('fetching cmommunities');
     try {
       const response = await getSubscribedCommunities();
       const communities = response?.data?.data?.communities;
@@ -394,7 +393,6 @@ const ProfileScreen = ({navigation, route}: any) => {
         } else if (type == 'DeleteVideo') {
           setIsDeleteVideo(true);
         }
-        console.log(response?.data, 'sss');
       } catch (error: any) {
         Toast.show({
           type: 'error',

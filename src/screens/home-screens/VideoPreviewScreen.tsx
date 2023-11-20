@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Video from 'react-native-video';
 import Modal from 'react-native-modal';
-import {format} from 'date-fns';
+import {format, isBefore, startOfDay} from 'date-fns';
 import {
   ParamListBase,
   useFocusEffect,
@@ -56,8 +56,20 @@ import {
   Video as VideoCompress,
   Image as ImageCompress,
 } from 'react-native-compressor';
-import {createPostWithVideo, getMusicList} from '../../api/home-module';
+import {
+  boostPost,
+  createPostWithVideo,
+  getMusicList,
+} from '../../api/home-module';
 import {getRandomNumber} from '../../utils/helper';
+
+type IDuration = '24-hrs' | '72-hrs' | '7-days';
+
+interface IBoost {
+  post: string;
+  duration: IDuration | string;
+  boostStartDate: string | Date;
+}
 
 interface VideoPreviewScreenProps {
   videoUri: FileData;
@@ -102,9 +114,9 @@ export const VideoPreviewScreen = ({
 }: VideoPreviewScreenProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const options = [
-    {label: '24hrs', price: '$5'},
-    {label: '72hrs', price: '$10'},
-    {label: '7 Days', price: '$15'},
+    {label: '24hrs', price: '$5', value: '24-hrs'},
+    {label: '72hrs', price: '$10', value: '72-hrs'},
+    {label: '7 Days', price: '$15', value: '7-days'},
   ];
   const frontendToBackendMapping = {
     '24hrs': '24hours',
@@ -141,6 +153,8 @@ export const VideoPreviewScreen = ({
   const [imageIndex, setImageIndex] = useState<number | null>(null);
   const PlayIcon = require('../../../assets/icons/playIcon.png');
   const PauseIcon = require('../../../assets/icons/pauseIcon.png');
+  const [boostData, setBoostData] = useState<IBoost | null>(null);
+  const [isBoostPost, setIsBoostPost] = useState<boolean>(false);
 
   useEffect(() => {
     let hideButtonTimer: any;
@@ -196,7 +210,7 @@ export const VideoPreviewScreen = ({
     setCostValue(value);
   };
   const handleDateConfirm = (date: Date) => {
-    const formattedDate = format(date, 'dd/MM/yyyy');
+    const formattedDate = format(date, 'yyyy-MM-dd');
     setSelectedDate(formattedDate);
     setDatePickerVisible(false);
   };
@@ -257,6 +271,10 @@ export const VideoPreviewScreen = ({
   const handleDialog = () => {
     setBoostModalVisible(false);
     setShowDialog(!showDialog);
+    if (selectedDate !== '' && selectedOptionInternal) {
+      console.log('BOOSTING POST');
+      setIsBoostPost(true);
+    }
   };
   const successfulCompletion = () => {
     setPayment(true);
@@ -314,13 +332,33 @@ export const VideoPreviewScreen = ({
   };
 
   // api call
-  const handleShareVideo = async () => {
-    if (content == '') {
-      Toast.show({
-        type: 'error',
-        text1: `Add text to post a video!`,
-      });
-      return;
+
+  /// boosting
+    useEffect(() => {
+      if (boostData?.post) {
+        handleBoostPost();
+      }
+    }, [boostPost, boostData]);
+
+    const handleBoostPost = async () => {
+      console.log(boostData, 'BOOOOOSTDATA!!');
+      try {
+        const response = await boostPost(boostData);
+        console.log(response?.data?.data, 'FROM BOOST POST!');
+        setBoostData(null);
+        setIsBoostPost(false);
+      } catch (error: any) {
+        console.log(error?.response?.data, 'FROM BOOST POST!');
+      }
+    };
+    // adding video
+    const handleShareVideo = async () => {
+      if (content == '') {
+        Toast.show({
+          type: 'error',
+          text1: `Add text to post a video!`,
+        });
+        return;
     }
     setIsLoading(true);
     try {
@@ -364,6 +402,14 @@ export const VideoPreviewScreen = ({
         };
         console.log(reqData, 'video req data');
         const response = await createPostWithVideo(reqData);
+        const postId = response?.data?.data?._id;
+        if (isBoostPost) {
+          setBoostData({
+            post: postId,
+            boostStartDate: selectedDate,
+            duration: selectedOptionInternal.value,
+          });
+        }
         console.log(response?.data, 'from video!');
         onPause();
         navigation.navigate('Home');

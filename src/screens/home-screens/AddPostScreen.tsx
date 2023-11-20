@@ -101,7 +101,6 @@ export const AddPostScreen = ({route}: any) => {
   //edit post
   const editPost = useSelector((state: RootState) => state.post.editPost);
   const dispatch = useDispatch();
-  console.log(editPost, 'ISEDITPOST');
 
   useEffect(() => {
     if (editPost) {
@@ -113,6 +112,8 @@ export const AddPostScreen = ({route}: any) => {
       }
       setTextInputValue(editPost?.text);
       setVisibility(editPost?.visibility);
+      // setTextInputBackgroundColor(editPost?.hexCode)
+      
     } else {
       setIsComponentMounted(true);
     }
@@ -374,23 +375,32 @@ export const AddPostScreen = ({route}: any) => {
     }
     setIsLoading(true);
     try {
-      if (mediaUri?.uri) {
+      if (mediaUri?.uri || mediaUri) {
         console.log('media is there');
+
         let compressedImage = null;
-        const result = await ImageCompress.compress(mediaUri.uri, {
-          quality: 0.8,
-        });
-        compressedImage = {
-          name: 'Image' as string,
-          type: mediaUri?.type as string,
-          uri: result,
-        };
+        if (mediaUri.uri) {
+          const result = await ImageCompress.compress(mediaUri.uri, {
+            quality: 0.8,
+          });
+          compressedImage = {
+            name: 'Image' as string,
+            type: mediaUri?.type as string,
+            uri: result,
+          };
+        } else {
+          compressedImage = {
+            name: 'Image' as string,
+            type: 'image/jpeg' as string,
+            uri: mediaUri,
+          };
+        }
 
         const cleanedText = textInputValue.replace(/\n{3,}/g, '\n\n').trim();
 
         const reqData: Partial<IPost> = {
           text: cleanedText,
-          media: compressedImage,
+          media: compressedImage as any,
           mediaType: 'image',
           visibility: visibility,
           musicTitle: selectedMusicTitle,

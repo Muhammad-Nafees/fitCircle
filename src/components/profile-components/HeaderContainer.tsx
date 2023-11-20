@@ -40,7 +40,6 @@ export const ProfileHeaderContainer = ({
     (state: RootState) => state.profile.trainerView,
   );
   const dispatch = useDispatch();
-  console.log(userData, 'chwohohe');
   const [isFollowed, setIsFollowed] = useState(isFollowing);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const navigation = useNavigation<SearchProfileNavigationProp>();
@@ -51,7 +50,6 @@ export const ProfileHeaderContainer = ({
   const loginUserDataId = useSelector(
     (state: RootState) => state.auth.user?._id,
   );
-  console.log(loginUserDataId, userData._id, 'shdohosdhohoash');
   const loginUserData = useSelector((state: RootState) => state.auth.user);
   const [isSeachUser, setIsSearchUser] = useState<boolean>(
     loginUserDataId === userData._id,
@@ -59,10 +57,7 @@ export const ProfileHeaderContainer = ({
 
   useEffect(() => {
     setIsSearchUser(loginUserDataId === userData._id);
-    console.log(
-      userData?.subscribers?.includes(loginUserDataId),
-      'isSubscriber',
-    );
+ 
     if (userData?.subscribers?.includes(loginUserDataId)) {
       setIsSubscribed(true);
       setSubscribeButtonStyle(
@@ -99,12 +94,10 @@ export const ProfileHeaderContainer = ({
     );
     try {
       const response = await toggleSubscribe(userData?._id);
-      console.log(response?.data, 'sss');
     } catch (error: any) {
       console.log(error?.response?.data, 'from follow subscribe on search!');
     }
   };
-  console.log(userData?.role, 'DD');
 
   const navigateToSchedule = () => {
     dispatch(setTrainerView(false));
