@@ -1,9 +1,11 @@
+import { FileData } from "./user.interface";
+
 export interface IParticipant {
   _id: string;
   email: string;
   firstName: string;
   lastName: string;
-  photo: string;
+  profileImage: string;
 }
 export interface IReceivedBy {
   createdAt: Date;
@@ -19,7 +21,7 @@ export interface IMessage {
   deleted: boolean;
   firstName: string;
   lastName: string;
-  mediaUrls: [];
+  mediaUrls: FileData[] | string | null | any;
   profileImage: string;
   receivedBy: IReceivedBy[];
   sentBy: string;
