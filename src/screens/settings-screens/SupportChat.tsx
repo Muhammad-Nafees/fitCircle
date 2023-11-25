@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView, // Import ScrollView
 } from 'react-native';
-import CustomSupportChat from '../../components/settings-components/CustomSupportChat';
 import CameraSupportChatIcon from '../../../assets/icons/CameraSupportChatIcon';
 import SendSupportIcon from '../../../assets/icons/SendSupportIcon';
 import ImageLibraryIcon from '../../../assets/icons/ImageLibraryIconSupport';
@@ -23,45 +22,61 @@ import {
 } from '../../socket';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
-import {FileData} from '../../interfaces/user.interface';
+import {FileData, IUser} from '../../interfaces/user.interface';
+import {IMessage} from 'interfaces/chat.interface';
+import CustomSupportChat from '../../components/settings-components/CustomSupportChat';
 
 const SupportChat = ({route}: any) => {
   const userId = useSelector((state: RootState) => state.auth.user?._id);
   const user = useSelector((state: RootState) => state.auth.user);
-
-  const chatId = route?.params?.chatId;
   const [mediaUri, setMediaUri] = useState<FileData | null>(null);
   const [messageInput, setMessageInput] = useState('');
-  const [messages, setMessages] = useState([]);
-  const message = route.params?.message;
-  const imageUri = route?.params?.imageUri;
-  console.log(chatId);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+
+  useEffect(() => {
+    if (route?.params?.messages) {
+      setMessages(route?.params?.messages);
+    }
+  }, []);
+
+  const chatId = route?.params?.chatId;
+  const admin = route?.params?.admin;
+
+  const handleChatMessages = (data: any) => {
+    console.log('CHAT MESSAGES');
+    console.log(data?.messages);
+    const sortedMessages = data?.messages?.sort((a: IMessage, b: IMessage) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return dateA.getTime() - dateB.getTime();
+    });
+    setMessages(sortedMessages);
+  };
+
+  useEffect(() => {
+    const handleMessage = (data: any) => {
+      if (admin?._id !== data?.sentBy) {
+        return;
+      }
+      if (admin?._id === data?.sentBy) {
+        setMessages(prev => [...prev, data]);
+      }
+    };
+    socket.on(`createSupportMessage/${chatId}/${admin?._id}`, handleMessage);
+    return () => {
+      socket.off(`createSupportMessage/${chatId}/${admin?._id}`, handleMessage);
+    };
+  }, []);
 
   useEffect(() => {
     console.log('SUPPORT CHAT MESSAGESS!!!');
-    console.log(userId, chatId);
     getSupportChatMessages(userId as string, chatId);
-    socket.on(`getChatSupportMessages/${userId}`, data => {
-      console.log('CHAT MESSAGES');
-      console.log(data,"DATA");
-    });
+    socket.on(`getChatSupportMessages/${userId}`, handleChatMessages);
     return () => {
-      socket.off(`getChatSupportMessages/${userId}`);
+      socket.off(`getChatSupportMessages/${userId}`, handleChatMessages);
     };
-  }, [chatId]);
+  }, [chatId, userId]);
 
-  useEffect(() => {
-    if (message || imageUri) {
-      const newMessage = {
-        username: 'Sameer',
-        dateTime: '02/10/2023 | 6:00 AM',
-        messageId: 'KGNV83JNFG8',
-        message: message,
-        imageUri: imageUri,
-      };
-      setMessages([newMessage]);
-    }
-  }, [message, imageUri]);
 
   const handleCaptureButtonPress = async () => {
     setMediaUri(null);
@@ -72,7 +87,12 @@ const SupportChat = ({route}: any) => {
     })
       .then(image => {
         if (image.path) {
-          setMediaUri(image.path);
+          console.log(image, 'imfff');
+          setMediaUri({
+            uri: image?.path,
+            type: image?.mime,
+            name: 'image',
+          });
         }
       })
       .catch(error => {
@@ -111,48 +131,36 @@ const SupportChat = ({route}: any) => {
 
   const handleSend = () => {
     const name = `${user?.firstName} ${user?.lastName}`;
+    console.log(userId, chatId, mediaUri, name, 'MESSAGE BODY');
     sendMessageToSupport(userId as string, chatId, messageInput, name);
-    // if (mediaUri) {
-    //   const newMessage = {
-    //     username: 'Sameer',
-    //     dateTime: '02/10/2023 | 6:00 AM',
-    //     messageId: 'KGNV83JNFG8',
-    //     message: '',
-    //     imageUri: mediaUri,
-    //   };
 
-    //   setMessages([...messages, newMessage]);
-    //   setMediaUri(null); // Clear the mediaUri
-    // } else if (messageInput) {
-    //   const newMessage = {
-    //     username: 'Sameer',
-    //     dateTime: '02/10/2023 | 6:00 AM',
-    //     messageId: 'KGNV83JNFG8',
-    //     message: messageInput,
-    //     imageUri: null,
-    //   };
-
-    //   setMessages([...messages, newMessage]);
-    //   setMessageInput(''); // Clear the message input
-    // }
+    const newMessage: Partial<IMessage> = {
+      createdAt: new Date(),
+      _id: user?._id as string,
+      body: messageInput,
+      mediaUrls: [mediaUri],
+    };
+    let newMessageArr = [...messages, newMessage];
+    setMessages(newMessageArr as any);
+    setMessageInput('');
+    setMediaUri(null)
   };
-
   return (
     <View style={styles.container}>
       <View style={{flex: 1}}>
         <ScrollView style={{flexGrow: 1}}>
           <View style={{paddingHorizontal: 16}}>
             <Text style={styles.heading}>Support</Text>
-            {messages.map((message, index) => (
-              <CustomSupportChat
-                key={index}
-                username={message.username}
-                dateTime={message.dateTime}
-                messageId={message.messageId}
-                message={message.message}
-                imageUri={message.imageUri}
-              />
-            ))}
+            {messages?.map((message: IMessage) => {
+              return (
+                <CustomSupportChat
+                  key={message._id}
+                  message={message}
+                  admin={admin}
+                  user={user as IUser}
+                />
+              );
+            })}
           </View>
         </ScrollView>
       </View>

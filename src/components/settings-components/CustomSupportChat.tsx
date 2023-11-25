@@ -1,30 +1,49 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
+import {FileData, IUser} from 'interfaces/user.interface';
+import {IMessage, IParticipant} from 'interfaces/chat.interface';
+import {s3bucketReference} from '../../api';
 
-const CustomSupportChat = ({
-  username,
-  dateTime,
-  messageId,
-  message,
-  imageUri,
-}) => {
+interface Props {
+  message: IMessage;
+  admin: IParticipant;
+  user: IUser;
+}
+
+const CustomSupportChat = ({message, admin, user}: Props) => {
+  const isMessageByAdmin = message?.senderId === admin?._id;
   return (
-    <View style={{gap: 10, flex: 1, marginVertical: 10}}>
-      <View style={{flexDirection: 'row', gap: 15}}>
-        <CustomProfileAvatar username={username} size={52} />
-        <View>
-          <Text style={styles.dateTime}>{dateTime}</Text>
-          <Text style={styles.messageId}>{messageId}</Text>
+    <View
+      style={{
+        gap: 10,
+        flex: 1,
+        marginVertical: 10,
+      }}>
+      <View>
+        <View style={{flexDirection: 'row', gap: 15}}>
+          <CustomProfileAvatar
+            profileImage={
+              isMessageByAdmin ? admin?.profileImage : user?.profileImage
+            }
+            username={isMessageByAdmin ? admin?.firstName : user?.username}
+            size={52}
+          />
+          <View>
+            {/* <Text style={styles.dateTime}>{message?.createdAt}</Text> */}
+            <Text style={styles.messageId}>{message?._id}</Text>
+          </View>
         </View>
+        <Text style={styles.message}>{message?.body}</Text>
+        {message?.mediaUrls?.map((media: FileData) => (
+          <Image
+            source={{
+              uri: media?.uri ? media?.uri : `${s3bucketReference}/${media}`,
+            }}
+            style={{borderRadius: 10, height: 200, width: 200}}
+          />
+        ))}
       </View>
-      {message && <Text style={styles.message}>{message}</Text>}
-      {imageUri && (
-        <Image
-          source={{uri: imageUri}}
-          style={{borderRadius: 10, height: 200, width: 200}}
-        />
-      )}
     </View>
   );
 };

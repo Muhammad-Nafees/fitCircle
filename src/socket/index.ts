@@ -1,3 +1,4 @@
+import {FileData} from 'interfaces/user.interface';
 import io from 'socket.io-client';
 
 const BASE_SOCKET_CONNECTION: string = 'http://fitcircle.yameenyousuf.com'; // dev
@@ -37,7 +38,7 @@ export const sendMessageToSupport = (
   chatId: string,
   message: any,
   name: string,
-) => {
+  ) => {
   socket.emit('createSupportMessage', {
     senderId: userId,
     chatId: chatId,

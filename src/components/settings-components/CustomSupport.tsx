@@ -1,9 +1,10 @@
 import {format} from 'date-fns';
-import {ISupportChats} from '../../interfaces/chat.interface';
+import {IParticipant, ISupportChats} from '../../interfaces/chat.interface';
 import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {SupportChatNavigationProp} from '../../interfaces/navigation.type';
+import {useEffect, useState} from 'react';
 
 interface Props {
   chat: ISupportChats;
@@ -13,11 +14,20 @@ const CustomSupport = ({chat}: Props) => {
   const navigation = useNavigation<SupportChatNavigationProp>();
   const date = new Date(chat?.lastMessage?.createdAt);
   const formattedLastMessageDate = format(date, 'dd/MM/yyyy');
+  const [admin, setAdmin] = useState<IParticipant | null>(null);
+
+  useEffect(() => {
+    const adminUser = chat?.participants?.find(
+      (admin: IParticipant) => admin._id === '6561d764ca127177040c5edb',
+    );
+    setAdmin(adminUser as IParticipant);
+  }, []);
+
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => navigation.navigate('SupportChat', {chatId: chat?._id})}>
-      <CustomProfileAvatar profileImage="" username="Sameer" size={50} />
+      onPress={() => navigation.navigate('SupportChat', {chatId: chat?._id,admin:admin})}>
+      <CustomProfileAvatar profileImage={admin?.profileImage as string} username={admin?.firstName} size={50} />
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={[styles.text, {color: 'rgba(255, 255, 255, 0.5)'}]}>

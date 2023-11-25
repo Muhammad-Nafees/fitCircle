@@ -18,13 +18,14 @@ import CameraSupportIcon from '../../../assets/icons/CameraSupportIcon';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
-import {createChatSupport, socket} from '../../socket';
+import {createChatSupport, sendMessageToSupport, socket} from '../../socket';
+import Toast from 'react-native-toast-message';
+import {FileData} from 'interfaces/user.interface';
 
 const SupportMessage = ({navigation}: any) => {
-  const [mediaUri, setMediaUri] = useState(null);
+  const [mediaUri, setMediaUri] = useState<FileData | null>(null);
   const [messageInput, setMessageInput] = useState('');
-  const userId = useSelector((state: RootState) => state.auth.user?._id);
-  console.log(userId,"userID")
+  const user = useSelector((state: RootState) => state.auth.user);
   const handlePhotoButtonPress = () => {
     setMediaUri(null);
     const options: ImageLibraryOptions = {
@@ -36,7 +37,11 @@ const SupportMessage = ({navigation}: any) => {
 
     launchImageLibrary(options, (response: any) => {
       if (!response.didCancel && !response.errorMessage && response.assets) {
-        setMediaUri(response.assets[0].uri);
+        setMediaUri({
+          uri: response.assets[0].uri as string,
+          name: response.assets[0].fileName as any,
+          type: response.assets[0].type as any,
+        });
       }
     });
   };
@@ -46,16 +51,32 @@ const SupportMessage = ({navigation}: any) => {
   };
 
   const handleMessageSend = () => {
+    const name = `${user?.firstName} ${user?.lastName}`;
+
     const dataToSend = {
-      message: messageInput,
-      imageUri: mediaUri,
+      createdAt: new Date(),
+      _id: user?._id as string,
+      body: messageInput,
+      mediaUrls: [mediaUri],
     };
-    createChatSupport(userId as string);
-    socket.on(`createChatForSupport/${userId}`, data => {
-      console.log('chatSupport created');
+    createChatSupport(user?._id as string);
+    socket.on(`createChatForSupport/${user?._id}`, data => {
       console.log(data);
+      if (data?.data) {
+        sendMessageToSupport(
+          user?._id as string,
+          data?._id,
+          messageInput,
+          name,
+        );
+        navigation.navigate('SupportChat');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: `You already have an open ticket!`,
+        });
+      }
     });
-    // navigation.navigate('SupportChat', dataToSend);
   };
 
   return (
@@ -83,7 +104,7 @@ const SupportMessage = ({navigation}: any) => {
           {mediaUri !== null ? (
             <View style={{marginVertical: 30}}>
               <Image
-                source={{uri: mediaUri}}
+                source={{uri: mediaUri.uri}}
                 style={{borderRadius: 10, height: 300, width: '100%'}}
               />
               <TouchableOpacity
