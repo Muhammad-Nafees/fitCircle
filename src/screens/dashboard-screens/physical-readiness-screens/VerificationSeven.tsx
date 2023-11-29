@@ -40,8 +40,6 @@ const VerificationSeven = ({navigation, route}: any) => {
       ...verificationSix,
       initial,
     };
-    console.log(verificationSix, 'verif');
-    console.log(reqData, 'req');
     setIsLoading(true);
     try {
       const response = await addPhysicalActivity(reqData);

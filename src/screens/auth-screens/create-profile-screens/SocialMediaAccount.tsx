@@ -30,7 +30,6 @@ const SocialMediaAccount = ({navigation}: any) => {
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>();
-  console.log(previousUserData, 'from social media');
 
   const handleSubmit = async (values: FormValues) => {
     const socialMediaLinks: ISocial[] = [

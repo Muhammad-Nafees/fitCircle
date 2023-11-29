@@ -100,7 +100,6 @@ export const Slot = ({navigation, route}: any) => {
       );
 
       const data = response?.data?.data;
-      console.log(response?.data, 'RESPONESS');
 
       const filterData = data.filter((slot: any) => {
         currentDate.setHours(0, 0, 0, 0);

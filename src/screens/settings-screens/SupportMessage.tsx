@@ -18,14 +18,22 @@ import CameraSupportIcon from '../../../assets/icons/CameraSupportIcon';
 import {horizontalScale, verticalScale} from '../../utils/metrics';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
-import {createChatSupport, sendMessageToSupport, socket} from '../../socket';
+import {
+  createChatSupport,
+  sendMediaToSupport,
+  sendMessageToSupport,
+  socket,
+} from '../../socket';
 import Toast from 'react-native-toast-message';
-import {FileData} from 'interfaces/user.interface';
+import {FileData} from '../../interfaces/user.interface';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 const SupportMessage = ({navigation}: any) => {
   const [mediaUri, setMediaUri] = useState<FileData | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const user = useSelector((state: RootState) => state.auth.user);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handlePhotoButtonPress = () => {
     setMediaUri(null);
     const options: ImageLibraryOptions = {
@@ -49,34 +57,51 @@ const SupportMessage = ({navigation}: any) => {
   const handleCancelPress = () => {
     setMediaUri(null);
   };
-
-  const handleMessageSend = () => {
+  const handleCreateChatSupport = async (data: any) => {
     const name = `${user?.firstName} ${user?.lastName}`;
-
-    const dataToSend = {
-      createdAt: new Date(),
-      _id: user?._id as string,
-      body: messageInput,
-      mediaUrls: [mediaUri],
-    };
-    createChatSupport(user?._id as string);
-    socket.on(`createChatForSupport/${user?._id}`, data => {
-      console.log(data);
-      if (data?.data) {
-        sendMessageToSupport(
-          user?._id as string,
-          data?._id,
-          messageInput,
-          name,
-        );
-        navigation.navigate('SupportChat');
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: `You already have an open ticket!`,
-        });
+    console.log(data, 'creting chat for support!');
+    if (data?.data) {
+      setIsLoading(true);
+      sendMessageToSupport(
+        user?._id as string,
+        data?.data?._id,
+        messageInput,
+        name,
+      );
+      if (mediaUri) {
+        try {
+          const response = await sendMediaToSupport(
+            user?._id as string,
+            data?.data?._id,
+            mediaUri,
+          );
+          console.log(response?.data, 'RESPONSE FROM MEDIA!');
+        } catch (error) {
+          console.log(error, 'From send media to support');
+        }
       }
-    });
+      setIsLoading(false);
+      setTimeout(() => {
+        navigation.navigate('SupportChat', {chatId: data?.data?._id});
+      }, 3000);
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: `You already have an open ticket!`,
+      });
+    }
+  };
+
+  const handleMessageSend = async () => {
+    if (messageInput === '') {
+      Toast.show({
+        type: 'error',
+        text1: 'Add a message to continue!',
+      });
+      return;
+    }
+    createChatSupport(user?._id as string);
+    socket.on(`createChatForSupport/${user?._id}`, handleCreateChatSupport);
   };
 
   return (
@@ -142,9 +167,11 @@ const SupportMessage = ({navigation}: any) => {
           marginHorizontal: horizontalScale(24),
         }}>
         <CustomButton
-          isDisabled={messageInput !== '' || mediaUri !== null ? false : true}
+          isDisabled={
+            messageInput !== '' || isLoading || mediaUri !== null ? false : true
+          }
           onPress={handleMessageSend}>
-          Send New Message
+          {isLoading ? <CustomLoader /> : 'Send New Message'}
         </CustomButton>
       </View>
     </ScrollView>

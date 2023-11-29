@@ -6,7 +6,6 @@ import {
 import {api} from '../../api/utils/interceptor';
 
 export const calculateTdee = async (reqData: ITDEE) => {
-  console.log(reqData, 'from cal tdee reqpost');
   const response = await api.post(`readings/tdee`, reqData);
   return response;
 };

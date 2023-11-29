@@ -1,7 +1,6 @@
 import moment from 'moment';
 
 export const generateTimeSlots = (forNextDay: boolean) => {
-  console.log(forNextDay, 'fornextdayy');
   if (forNextDay) {
     const startTime = moment().add(1, 'day').startOf('day');
     const endTime = moment(startTime).add(1, 'day');
@@ -87,3 +86,20 @@ export const getCurrentMonth = () => {
 };
 
 export const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+export const getTimeAndDate = (date: any) => {
+  const parsedDate = new Date(date as any);
+
+  parsedDate.setUTCHours(parsedDate.getUTCHours() + 5); // Adjust for Pakistan Standard Time
+
+  const month = String(parsedDate.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getUTCDate()).padStart(2, "0");
+  const year = parsedDate.getUTCFullYear();
+  const hours = String(parsedDate.getUTCHours() % 12 || 12).padStart(2, "0"); // Ensure 12-hour format
+  const minutes = String(parsedDate.getUTCMinutes()).padStart(2, "0");
+  const period = parsedDate.getUTCHours() >= 12 ? "PM" : "AM";
+
+  const formattedDate = `${month}/${day}/${year}`;
+  const formattedTime = `${hours}:${minutes} ${period}`;
+  return { formattedDate, formattedTime };
+};

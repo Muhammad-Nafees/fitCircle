@@ -4,6 +4,7 @@ import CustomProfileAvatar from '../shared-components/CustomProfileAvatar';
 import {FileData, IUser} from 'interfaces/user.interface';
 import {IMessage, IParticipant} from 'interfaces/chat.interface';
 import {s3bucketReference} from '../../api';
+import {getTimeAndDate} from '../../utils/helper';
 
 interface Props {
   message: IMessage;
@@ -13,6 +14,7 @@ interface Props {
 
 const CustomSupportChat = ({message, admin, user}: Props) => {
   const isMessageByAdmin = message?.senderId === admin?._id;
+  const {formattedTime, formattedDate} = getTimeAndDate(message?.createdAt);
   return (
     <View
       style={{
@@ -30,19 +32,23 @@ const CustomSupportChat = ({message, admin, user}: Props) => {
             size={52}
           />
           <View>
-            {/* <Text style={styles.dateTime}>{message?.createdAt}</Text> */}
+            <Text style={styles.dateTime}>
+              {formattedDate} | {formattedTime}
+            </Text>
             <Text style={styles.messageId}>{message?._id}</Text>
           </View>
         </View>
         <Text style={styles.message}>{message?.body}</Text>
-        {message?.mediaUrls?.map((media: FileData) => (
-          <Image
-            source={{
-              uri: media?.uri ? media?.uri : `${s3bucketReference}/${media}`,
-            }}
-            style={{borderRadius: 10, height: 200, width: 200}}
-          />
-        ))}
+        {message?.mediaUrls &&
+          message?.mediaUrls?.map((media: FileData) => (
+            <Image
+              key={media?.uri}
+              source={{
+                uri: media?.uri ? media?.uri : `${s3bucketReference}/${media}`,
+              }}
+              style={{borderRadius: 10, height: 200, width: 200}}
+            />
+          ))}
       </View>
     </View>
   );

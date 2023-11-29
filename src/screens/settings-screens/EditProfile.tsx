@@ -216,7 +216,6 @@ export const EditProfile = ({navigation}: any) => {
           hourlyRate: Number(values.hourlyRate),
         }),
       };
-      console.log(reqUserData, 'REQDATA');
       const response = await updateProfile(reqUserData as IUser);
       const updatedData = response?.data?.data;
       console.log(updatedData, 'UPDATED DATA!');
@@ -235,7 +234,6 @@ export const EditProfile = ({navigation}: any) => {
     }
     setIsLoading(false);
   };
-  console.log(userData, 'USERDATA');
 
   return (
     <View style={[STYLES.container, {paddingHorizontal: 0}]}>

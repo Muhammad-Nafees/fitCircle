@@ -35,7 +35,6 @@ const CommunitiesScreen = ({navigation}: any) => {
   const [communities, setCommunities] = useState<any>(COMMUNITIES_LIST);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const previousUserData = useSelector((state: RootState) => state.auth.user);
-  console.log(previousUserData, 'from communities');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -44,7 +43,6 @@ const CommunitiesScreen = ({navigation}: any) => {
       try {
         const response = await getCommunities();
         const data = response?.data.data;
-        console.log(data, 'data');
         setCommunities(data.communities);
       } catch (error: any) {
         if (error?.response?.data?.message) {

@@ -76,7 +76,6 @@ export const MacroCalculator = ({navigation, route}: any) => {
           fatsPercentage: 30,
         });
       }
-      console.log(presets[preset as keyof typeof presets].value);
       setChartData(responseData);
     } catch (error: any) {
       console.log('error from calculate macros:', error?.response?.data);

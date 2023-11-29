@@ -76,7 +76,6 @@ const CreatePackage = ({navigation, route}: any) => {
   }, []);
 
   const handleSubmit = (values: any) => {
-    console.log(values, 'valuess');
     const myPackageData: Partial<IPackage> = {
       title: values.packageTitle,
       description: values.packageDescription,

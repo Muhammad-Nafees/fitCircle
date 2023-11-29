@@ -243,7 +243,6 @@ export const AddPostScreen = ({route}: any) => {
     })
       .then((image: any) => {
         if (image.path) {
-          console.log(image, 'image');
           setMediaUri({
             uri: image.path,
             name: 'camera',
@@ -273,7 +272,6 @@ export const AddPostScreen = ({route}: any) => {
       durationLimit: 15,
     };
     await launchCamera(options, (response: ImagePickerResponse) => {
-      console.log(response, 'rrrrrr');
       if (response?.assets) {
         if (response?.assets && response.assets.length > 0) {
           const fileSizeInBytes = response.assets[0].fileSize;

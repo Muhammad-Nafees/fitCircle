@@ -31,7 +31,6 @@ const CustomVideo = ({
       setVideoThumbnail(uri);
     } else {
       try {
-        console.log('from try');
         const response = await createThumbnail({
           url: `${s3bucketReference}/${video.media}`,
           timeStamp: 1000,

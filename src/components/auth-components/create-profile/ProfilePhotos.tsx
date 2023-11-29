@@ -130,7 +130,6 @@ const ProfilePhotos = ({profile, setProfile, cover, setCover}: Props) => {
       });
     }
   };
-  console.log(profile, 'PRFOILE PICTURE!!');
 
   const handleProfilePhotoContainerPress = async () => {
     const options: ImageLibraryOptions = {

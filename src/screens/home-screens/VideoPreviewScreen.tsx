@@ -272,7 +272,6 @@ export const VideoPreviewScreen = ({
     setBoostModalVisible(false);
     setShowDialog(!showDialog);
     if (selectedDate !== '' && selectedOptionInternal) {
-      console.log('BOOSTING POST');
       setIsBoostPost(true);
     }
   };
@@ -341,7 +340,6 @@ export const VideoPreviewScreen = ({
     }, [boostPost, boostData]);
 
     const handleBoostPost = async () => {
-      console.log(boostData, 'BOOOOOSTDATA!!');
       try {
         const response = await boostPost(boostData);
         console.log(response?.data?.data, 'FROM BOOST POST!');

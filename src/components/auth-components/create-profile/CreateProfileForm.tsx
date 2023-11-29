@@ -46,11 +46,9 @@ const CreateProfileForm = ({profilePicture, coverPicture}: Props) => {
   const [userPhone, setUserPhone] = useState<string>('');
   const [countryCode, setCountryCode] = useState();
   const [allData, setAllData] = useState<any | null>([]);
-  console.log(userData, 'from createprofile');
 
   useEffect(() => {
     if (userData?.phone) {
-      console.log(userData?.phone, 'sS');
       setUserPhone(userData.phone);
     }
   }, []);
@@ -73,7 +71,6 @@ const CreateProfileForm = ({profilePicture, coverPicture}: Props) => {
   }, []);
   useEffect(() => {
     const getCountryCode = async (selectedCountry: string) => {
-      console.log(selectedCountry, 'selecteds');
       const country = allData.filter(
         (country: any) => country.name == selectedCountry,
       );
@@ -130,7 +127,6 @@ const CreateProfileForm = ({profilePicture, coverPicture}: Props) => {
     if (isError) {
       return;
     }
-    console.log(userData, 'from create profile');
 
     const partialUserData: Partial<IUser> = {
       ...userData,
@@ -173,7 +169,6 @@ const CreateProfileForm = ({profilePicture, coverPicture}: Props) => {
     setFieldValue('username', text);
     try {
       const response = await checkUsername({username: text});
-      console.log(response.data);
       setUsernameError('');
     } catch (error: any) {
       console.log(error.response.data);
