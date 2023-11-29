@@ -7,7 +7,6 @@ export const login = async (values: any) => {
 };
 
 export const register = async (values: any) => {
-  console.log(values, 'values!');
   const response = await api.post(`auth/register`, values);
   return response;
 };
@@ -51,7 +50,6 @@ export const getCountries = async () => {
   return response;
 };
 export const getCities = async (country: string) => {
-  console.log(country, 'ssssssssssssss');
   const response = await api.get(`cities?country=${country}`);
   return response;
 };
@@ -123,7 +121,6 @@ export const updateProfile = async (userData: IUser) => {
   }
 
   const response = await api.put(`user/update-profile`, formData, {
-    // console.log(formData,"formDara"),
     headers: {
       'Content-Type': 'multipart/form-data',
     },

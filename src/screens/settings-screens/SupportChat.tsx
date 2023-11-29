@@ -17,6 +17,7 @@ import {
 import {openCamera} from 'react-native-image-crop-picker';
 import {
   getSupportChatMessages,
+  sendMediaToSupport,
   sendMessageToSupport,
   socket,
 } from '../../socket';
@@ -25,6 +26,8 @@ import {RootState} from '../../redux/store';
 import {FileData, IUser} from '../../interfaces/user.interface';
 import {IMessage} from 'interfaces/chat.interface';
 import CustomSupportChat from '../../components/settings-components/CustomSupportChat';
+import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
+import CustomLoader from '../../components/shared-components/CustomLoader';
 
 const SupportChat = ({route}: any) => {
   const userId = useSelector((state: RootState) => state.auth.user?._id);
@@ -32,6 +35,16 @@ const SupportChat = ({route}: any) => {
   const [mediaUri, setMediaUri] = useState<FileData | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState<IMessage[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const scrollViewRef = useRef(null);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
+  useEffect(() => {
+    // Scroll to the bottom when messages change
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({animated: true});
+    }
+  }, [messages, isInputFocused]);
 
   useEffect(() => {
     if (route?.params?.messages) {
@@ -43,8 +56,6 @@ const SupportChat = ({route}: any) => {
   const admin = route?.params?.admin;
 
   const handleChatMessages = (data: any) => {
-    console.log('CHAT MESSAGES');
-    console.log(data?.messages);
     const sortedMessages = data?.messages?.sort((a: IMessage, b: IMessage) => {
       const dateA = new Date(a.createdAt);
       const dateB = new Date(b.createdAt);
@@ -69,14 +80,12 @@ const SupportChat = ({route}: any) => {
   }, []);
 
   useEffect(() => {
-    console.log('SUPPORT CHAT MESSAGESS!!!');
     getSupportChatMessages(userId as string, chatId);
     socket.on(`getChatSupportMessages/${userId}`, handleChatMessages);
     return () => {
       socket.off(`getChatSupportMessages/${userId}`, handleChatMessages);
     };
   }, [chatId, userId]);
-
 
   const handleCaptureButtonPress = async () => {
     setMediaUri(null);
@@ -87,7 +96,6 @@ const SupportChat = ({route}: any) => {
     })
       .then(image => {
         if (image.path) {
-          console.log(image, 'imfff');
           setMediaUri({
             uri: image?.path,
             type: image?.mime,
@@ -101,13 +109,6 @@ const SupportChat = ({route}: any) => {
         }
       });
   };
-
-  useEffect(() => {
-    if (mediaUri) {
-      console.log(mediaUri);
-      handleSend();
-    }
-  }, [mediaUri]);
 
   const handlePhotoButtonPress = () => {
     setMediaUri(null);
@@ -129,26 +130,47 @@ const SupportChat = ({route}: any) => {
     });
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    if (messageInput === '' && mediaUri === null) {
+      return;
+    }
+    setIsLoading(true);
     const name = `${user?.firstName} ${user?.lastName}`;
-    console.log(userId, chatId, mediaUri, name, 'MESSAGE BODY');
     sendMessageToSupport(userId as string, chatId, messageInput, name);
+    if (mediaUri) {
+      try {
+        const response = await sendMediaToSupport(
+          userId as string,
+          chatId,
+          mediaUri,
+        );
+      } catch (error) {
+        console.log(error, 'From send media to support');
+      }
+    }
 
     const newMessage: Partial<IMessage> = {
       createdAt: new Date(),
       _id: user?._id as string,
       body: messageInput,
-      mediaUrls: [mediaUri],
+      senderId: userId,
+      mediaUrls: mediaUri !== null && [mediaUri],
     };
     let newMessageArr = [...messages, newMessage];
     setMessages(newMessageArr as any);
     setMessageInput('');
-    setMediaUri(null)
+    setMediaUri(null);
+    setIsLoading(false);
   };
   return (
     <View style={styles.container}>
       <View style={{flex: 1}}>
-        <ScrollView style={{flexGrow: 1}}>
+        <ScrollView
+          style={{flexGrow: 1}}
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current!.scrollToEnd({animated: true})
+          }>
           <View style={{paddingHorizontal: 16}}>
             <Text style={styles.heading}>Support</Text>
             {messages?.map((message: IMessage) => {
@@ -164,6 +186,13 @@ const SupportChat = ({route}: any) => {
           </View>
         </ScrollView>
       </View>
+      {mediaUri !== null && (
+        <CustomAttachmentDialog
+          message="Photo Attached"
+          onCancel={() => setMediaUri(null)}
+          showCancel={true}
+        />
+      )}
       <View style={styles.messageInputContainer}>
         <TouchableOpacity onPress={handlePhotoButtonPress}>
           <ImageLibraryIcon />
@@ -171,15 +200,18 @@ const SupportChat = ({route}: any) => {
         <TouchableOpacity onPress={handleCaptureButtonPress}>
           <CameraSupportChatIcon />
         </TouchableOpacity>
+
         <TextInput
           style={styles.input}
           placeholder="Send Message"
           placeholderTextColor={'rgba(153, 153, 153, 1)'}
           value={messageInput}
+          onFocus={() => setIsInputFocused(true)}
+          onBlur={() => setIsInputFocused(false)}
           onChangeText={text => setMessageInput(text)}
         />
-        <TouchableOpacity onPress={handleSend}>
-          <SendSupportIcon />
+        <TouchableOpacity disabled={isLoading} onPress={handleSend}>
+          {isLoading ? <CustomLoader /> : <SendSupportIcon />}
         </TouchableOpacity>
       </View>
     </View>

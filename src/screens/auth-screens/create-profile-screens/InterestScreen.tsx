@@ -24,7 +24,6 @@ const InterestScreen = ({navigation}: any) => {
   const previousUserData = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  console.log(previousUserData,"from interest")
 
   useEffect(() => {
     const fetchInterest = async () => {

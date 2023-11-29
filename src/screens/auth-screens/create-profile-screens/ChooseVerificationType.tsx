@@ -13,7 +13,6 @@ const ChooseVerificationType = ({navigation}: any) => {
   const [verificationType, setVerificationType] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userData = useSelector((state: RootState) => state.auth.user);
-  console.log(userData,"phone")
 
   const handleSubmit = async (type: string) => {
     let reqData = {};

@@ -42,13 +42,11 @@ const CreateNewPassword = ({navigation, route}: any) => {
   };
 
   const handleSubmit = async (values: FormValues) => {
-    console.log(values);
     setIsLoading(true);
     const reqData = {
       newPassword: values.newPassword,
       confirmPassword: values.confirmNewPassword,
     };
-    console.log(reqData, 'reqw');
     try {
       const response = await resetPassword(reqData);
       navigation.navigate('PasswordChangedDialog');

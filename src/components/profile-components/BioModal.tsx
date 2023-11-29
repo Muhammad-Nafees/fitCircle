@@ -9,7 +9,6 @@ interface Props {
 }
 
 const BioModal = ({userData}: Props) => {
-  console.log(userData, 'UUUUU');
   const navigation: any = useNavigation();
   const data = [
     {label: 'Gender', value: userData?.gender},

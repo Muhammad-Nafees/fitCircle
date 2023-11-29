@@ -85,11 +85,9 @@ export const SearchScreen = () => {
 
   const handleSearchProfile = async () => {
     setIsLoading(true);
-    console.log(selectedFilter, 'SelectedFilter');
     try {
       if (selectedFilter == 'other' || selectedFilter == null) {
         const response = await searchProfile(searchQuery);
-        console.log('from user   search');
         const users = response?.data?.data?.users;
         setSearchData(users);
         setMessage('No users Found!');

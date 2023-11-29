@@ -104,7 +104,6 @@ const UploadMealPlan = ({navigation, route}: any) => {
       if (!isCancel(res)) {
         const nameWithoutExtension = res.name.replace('.pdf', '');
         setpdfFile(res);
-        console.log(res, 'RES');
         setFileName(nameWithoutExtension);
       }
     } catch (e) {

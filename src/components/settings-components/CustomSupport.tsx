@@ -5,6 +5,9 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {SupportChatNavigationProp} from '../../interfaces/navigation.type';
 import {useEffect, useState} from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
 
 interface Props {
   chat: ISupportChats;
@@ -12,13 +15,14 @@ interface Props {
 
 const CustomSupport = ({chat}: Props) => {
   const navigation = useNavigation<SupportChatNavigationProp>();
+  const userId = useSelector((state: RootState) => state.auth.user?._id);
   const date = new Date(chat?.lastMessage?.createdAt);
   const formattedLastMessageDate = format(date, 'dd/MM/yyyy');
   const [admin, setAdmin] = useState<IParticipant | null>(null);
 
   useEffect(() => {
     const adminUser = chat?.participants?.find(
-      (admin: IParticipant) => admin._id === '6561d764ca127177040c5edb',
+      (admin: IParticipant) => admin._id !== userId,
     );
     setAdmin(adminUser as IParticipant);
   }, []);
@@ -26,8 +30,14 @@ const CustomSupport = ({chat}: Props) => {
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => navigation.navigate('SupportChat', {chatId: chat?._id,admin:admin})}>
-      <CustomProfileAvatar profileImage={admin?.profileImage as string} username={admin?.firstName} size={50} />
+      onPress={() =>
+        navigation.navigate('SupportChat', {chatId: chat?._id, admin: admin})
+      }>
+      <CustomProfileAvatar
+        profileImage={admin?.profileImage as string}
+        username={admin?.firstName}
+        size={50}
+      />
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={[styles.text, {color: 'rgba(255, 255, 255, 0.5)'}]}>
@@ -38,7 +48,17 @@ const CustomSupport = ({chat}: Props) => {
           </Text>
         </View>
         <Text style={styles.id}>{chat?._id}</Text>
-        <Text style={styles.description}>{chat?.lastMessage?.body}</Text>
+        {chat?.lastMessage?.body ? (
+          chat?.lastMessage?.body?.length > 10 ? (
+            <Text style={styles.description}>
+              {chat?.lastMessage?.body.slice(0, 33) + '...'}
+            </Text>
+          ) : (
+            <Text style={styles.description}>{chat?.lastMessage?.body}</Text>
+          )
+        ) : (
+          <Icon name="image-outline" size={20} color="#ffffff" />
+        )}
       </View>
     </TouchableOpacity>
   );

@@ -31,7 +31,6 @@ const GenderForm = () => {
   const dispatch = useDispatch();
   const [weightUnit, setWeightUnit] = useState<Unit['kg']>('kg');
   const [heightUnit, setHeightUnit] = useState<Unit['ft']>('ft');
-  console.log(previousUserData, 'from gender');
 
   const handleSelectUnit = (unit: keyof Unit, type: string) => {
     if (type == 'kg') {

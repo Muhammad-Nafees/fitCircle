@@ -41,7 +41,6 @@ export const editPostWithImage = async (
     if (reqData?.title) {
       formData.append('title', reqData.title);
     }
-    console.log(formData, postId, 'FROM APIII CALLLLLLL');
 
     const response = await api.put(`post/update/${postId}`, formData, {
       // headers: {

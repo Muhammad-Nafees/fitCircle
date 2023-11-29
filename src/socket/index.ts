@@ -1,4 +1,5 @@
-import {FileData} from 'interfaces/user.interface';
+import {api} from '../api/utils/interceptor';
+import {FileData} from '../interfaces/user.interface';
 import io from 'socket.io-client';
 
 const BASE_SOCKET_CONNECTION: string = 'http://fitcircle.yameenyousuf.com'; // dev
@@ -38,11 +39,30 @@ export const sendMessageToSupport = (
   chatId: string,
   message: any,
   name: string,
-  ) => {
+) => {
   socket.emit('createSupportMessage', {
     senderId: userId,
     chatId: chatId,
     messageBody: message,
     name: name,
   });
+};
+
+export const sendMediaToSupport = async (
+  senderId: string,
+  chatId: string,
+  mediaFile: FileData,
+) => {
+  let formData = new FormData();
+  formData.append('senderId', senderId);
+  formData.append('chatId', chatId);
+  formData.append('mediaFile', mediaFile);
+
+  const response = await api.post(`media/send-media`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return response;
 };

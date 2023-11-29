@@ -1,31 +1,34 @@
 import CustomButton from '../../components/shared-components/CustomButton';
 import CustomSupport from '../../components/settings-components/CustomSupport';
 import {View, Text, StyleSheet} from 'react-native';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {getSupportChats, socket} from '../../socket';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {ISupportChats} from '../../interfaces/chat.interface';
 import CustomLoader from '../../components/shared-components/CustomLoader';
+import {useFocusEffect} from '@react-navigation/native';
 
 const SupportOne = ({navigation}: any) => {
   const userId = useSelector((state: RootState) => state.auth.user?._id);
   const [allSupportChats, setAllSupportChats] = useState<ISupportChats[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    setIsLoading(true);
-    getSupportChats(userId as string);
-    socket.on(`getSupportChats/${userId}`, data => {
-      console.log('getChats');
-      console.log(data);
-      setAllSupportChats(data);
-      setIsLoading(false);
-    });
-    return () => {
-      socket.off(`getSupportChats/${userId}`);
-    };
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setIsLoading(true);
+      getSupportChats(userId as string);
+      socket.on(`getSupportChats/${userId}`, data => {
+        console.log('getChats');
+        console.log(data);
+        setAllSupportChats(data);
+        setIsLoading(false);
+      });
+      return () => {
+        socket.off(`getSupportChats/${userId}`);
+      };
+    }, []),
+  );
 
   return (
     <View style={styles.container}>

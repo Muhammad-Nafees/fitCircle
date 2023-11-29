@@ -201,7 +201,6 @@ const CommentsScreen = ({route, navigation}: any) => {
         ...(replyId !== '' && {parent: replyId}),
       };
       setIsLoading(true);
-      console.log(reqData, 'REQDATA');
       const response = await addComment(reqData);
       const data = response?.data.data;
       console.log(data, 'response from add comment');
