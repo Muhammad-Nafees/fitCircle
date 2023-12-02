@@ -7,10 +7,12 @@ import {
   FlatList,
   ScrollView,
   BackHandler,
+  AppState,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import Sound from 'react-native-sound';
 // ----------------------------------------------------------------------------------------------//
 import {RootState} from '../../redux/store';
 import {setSelectedPost} from '../../redux/postSlice';
@@ -110,6 +112,9 @@ const ProfileScreen = ({navigation, route}: any) => {
   );
   const profilePersonalData = useSelector((state: RootState) => state.profile);
   const [isSearchProfile, setIsSearchProfile] = useState<boolean>(false);
+  const [play, setPlay] = useState<boolean>(false);
+  const [id, setId] = useState<string | null>(null);
+  const [sound, setSound] = useState<any>();
 
   useEffect(() => {
     if (searchUserProfile && searchUserProfile._id) {
@@ -129,6 +134,25 @@ const ProfileScreen = ({navigation, route}: any) => {
       setShouldFetchPostsInitially(false);
     };
   }, [searchUserProfile, userData, dispatch]);
+
+  useEffect(() => {
+    if (sound) {
+      const subscription = AppState.addEventListener(
+        'change',
+        (nextAppState: any) => {
+          if (nextAppState === 'background') {
+            onPause();
+          } else if (nextAppState === 'active' && selectedVideo && id) {
+            onPlayPause(id);
+          }
+        },
+      );
+
+      return () => {
+        subscription.remove();
+      };
+    }
+  }, [sound]);
 
   const handleCancelButton = () => {
     setIsModalVisible(!isModalVisible);
@@ -426,6 +450,64 @@ const ProfileScreen = ({navigation, route}: any) => {
     // handleEditDeletePost('DeleteVideo', id);
   };
 
+  const getMusic = (postId: string) => {
+    try {
+      if (sound) {
+        sound.stop();
+        sound.release();
+      }
+      let post = myVideos?.find((item: never) => item?._id == postId);
+      if (post?.musicUrl) {
+        let music = new Sound(post?.musicUrl, Sound.MAIN_BUNDLE, error => {
+          if (error) {
+            console.log('failed to load the music', error);
+            return;
+          }
+          music.setNumberOfLoops(-1);
+          setSound(music);
+          music?.play();
+        });
+      }
+    } catch (error: any) {
+      console.log(error?.response, 'Error fetching music list!');
+    }
+  };
+
+  const onPlayPause = (vid: string) => {
+    if (play) {
+      if (!vid || id == vid) {
+        setPlay(false);
+        sound?.pause();
+      } else {
+        getMusic(vid);
+        setId(vid);
+      }
+    } else {
+      if (id == vid) {
+        setPlay(true);
+        sound?.play();
+      } else {
+        getMusic(vid);
+        setId(vid);
+        setPlay(true);
+      }
+    }
+  };
+
+  const onPause = () => {
+    setPlay(true);
+    sound?.pause();
+  };
+
+  const onVideoEnd = () => {
+    sound?.setCurrentTime(0);
+  };
+
+  const onCloseModal = () => {
+    onPause();
+    setReelsModal(false);
+  };
+
   return (
     <View style={[styles.container]}>
       <ProfileHeaderContainer
@@ -610,7 +692,7 @@ const ProfileScreen = ({navigation, route}: any) => {
         )}
       </View>
       <Modal
-        onBackButtonPress={() => setReelsModal(false)}
+        onBackButtonPress={onCloseModal}
         isVisible={reelsModal}
         style={styles.fullscreenContainer}>
         <View style={{height: '100%', width: '100%'}}>
@@ -620,9 +702,11 @@ const ProfileScreen = ({navigation, route}: any) => {
             isProfile={true}
             handleCancelPress={handleVideoPress}
             handleFavoriteDialog={handleFavoriteDialog}
-            onDeletePost={() => {
-              setReelsModal(false);
-            }}
+            onDeletePost={onCloseModal}
+            onPlayPause={onPlayPause}
+            play={play}
+            id={id}
+            onVideoEnd={onVideoEnd}
           />
         </View>
       </Modal>

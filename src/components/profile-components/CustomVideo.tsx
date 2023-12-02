@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   ImageBackground,
@@ -59,14 +59,16 @@ const CustomVideo = ({
   return (
     <TouchableOpacity onPress={() => handleVideoPress(video)}>
       <View style={styles.container}>
-        <Image
-          source={{uri: videoThumbnail}}
-          style={[
-            styles.thumbnail,
-            {borderColor: videoThumbnail == null ? 'white' : undefined},
-          ]}
-          resizeMode="cover"
-        />
+        {videoThumbnail && (
+          <Image
+            source={{uri: videoThumbnail}}
+            style={[
+              styles.thumbnail,
+              {borderColor: videoThumbnail == null ? 'white' : undefined},
+            ]}
+            resizeMode="cover"
+          />
+        )}
         <View
           style={[
             {

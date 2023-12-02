@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Dimensions, AppState} from 'react-native';
 import Sound from 'react-native-sound';
 import {SwiperFlatList} from 'react-native-swiper-flatlist';
 import ReelsComponent from './Reels';
@@ -24,6 +24,25 @@ const CreatorPosts = ({
   const [play, setPlay] = useState<boolean>(false);
   const [id, setId] = useState<string | null>(null);
   const [sound, setSound] = useState<any>();
+
+  useEffect(() => {
+    if (sound) {
+      const subscription = AppState.addEventListener(
+        'change',
+        (nextAppState: any) => {
+          if (nextAppState === 'background') {
+            onPause();
+          } else if (nextAppState === 'active' && id) {
+            onPlayPause(id);
+          }
+        },
+      );
+
+      return () => {
+        subscription.remove();
+      };
+    }
+  }, [sound]);
 
   const getMusic = (postId: string) => {
     try {
@@ -68,6 +87,11 @@ const CreatorPosts = ({
         setPlay(true);
       }
     }
+  };
+
+  const onPause = () => {
+    setPlay(true);
+    sound?.pause();
   };
 
   const onVideoEnd = () => {
