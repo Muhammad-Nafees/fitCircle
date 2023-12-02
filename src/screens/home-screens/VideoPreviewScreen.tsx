@@ -333,30 +333,30 @@ export const VideoPreviewScreen = ({
   // api call
 
   /// boosting
-    useEffect(() => {
-      if (boostData?.post) {
-        handleBoostPost();
-      }
-    }, [boostPost, boostData]);
+  useEffect(() => {
+    if (boostData?.post) {
+      handleBoostPost();
+    }
+  }, [boostPost, boostData]);
 
-    const handleBoostPost = async () => {
-      try {
-        const response = await boostPost(boostData);
-        console.log(response?.data?.data, 'FROM BOOST POST!');
-        setBoostData(null);
-        setIsBoostPost(false);
-      } catch (error: any) {
-        console.log(error?.response?.data, 'FROM BOOST POST!');
-      }
-    };
-    // adding video
-    const handleShareVideo = async () => {
-      if (content == '') {
-        Toast.show({
-          type: 'error',
-          text1: `Add text to post a video!`,
-        });
-        return;
+  const handleBoostPost = async () => {
+    try {
+      const response = await boostPost(boostData);
+      console.log(response?.data?.data, 'FROM BOOST POST!');
+      setBoostData(null);
+      setIsBoostPost(false);
+    } catch (error: any) {
+      console.log(error?.response?.data, 'FROM BOOST POST!');
+    }
+  };
+  // adding video
+  const handleShareVideo = async () => {
+    if (content == '') {
+      Toast.show({
+        type: 'error',
+        text1: `Add text to post a video!`,
+      });
+      return;
     }
     setIsLoading(true);
     try {
@@ -496,7 +496,12 @@ export const VideoPreviewScreen = ({
             />
           </TouchableOpacity>
         )}
-        <View style={styles.textContentContainer}>
+        <View
+          style={
+            !thumbnail
+              ? styles.textContentContainer
+              : [styles.textContentContainer, {bottom: verticalScale(180)}]
+          }>
           <Text style={styles.textContent}>{content}</Text>
         </View>
         <View style={styles.iconsContainer}>
@@ -884,10 +889,9 @@ const styles = StyleSheet.create({
   },
   textContentContainer: {
     position: 'absolute',
+    bottom: verticalScale(150),
     alignItems: 'center',
-    marginTop: '145%',
-    marginRight: '10%',
-    marginLeft: horizontalScale(20),
+    marginLeft: horizontalScale(18),
     zIndex: 88,
   },
   textContent: {

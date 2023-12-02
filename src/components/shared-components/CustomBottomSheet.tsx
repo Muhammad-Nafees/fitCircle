@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Modal from 'react-native-modal';
 import Sound from 'react-native-sound';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-toast-message';
@@ -142,42 +141,40 @@ const CustomBottomSheet = ({
     );
   };
 
+  if (!musicModal) {
+    return null;
+  }
+
   return (
-    <Modal
-      onBackButtonPress={() => setMusicModal(false)}
-      isVisible={musicModal}
-      style={styles.bottomModal}
-      backdropOpacity={0.3}>
-      <View style={styles.modal}>
-        <View style={styles.bottomOptions}>
-          <TouchableOpacity style={styles.topLine}></TouchableOpacity>
-          <View>
-            <TextInput
-              placeholder="Search music..."
-              value={title}
-              placeholderTextColor="#fff"
-              style={styles.searchInput}
-              multiline={true}
-              onChangeText={setTitle}
-            />
-          </View>
-          <View style={{height: verticalScale(270)}}>
-            <ScrollView>
-              {!loader && !musicList.length ? (
-                <Text style={styles.notFoundText}>No music found</Text>
-              ) : null}
-              {loader ? (
-                <CustomLoader />
-              ) : musicList.length ? (
-                musicList.map((item: any, index: number) => (
-                  <RenderItem key={item?.id} index={index} item={item} />
-                ))
-              ) : null}
-            </ScrollView>
-          </View>
+    <View style={styles.modal}>
+      <View style={styles.bottomOptions}>
+        <TouchableOpacity style={styles.topLine}></TouchableOpacity>
+        <View>
+          <TextInput
+            placeholder="Search music..."
+            value={title}
+            placeholderTextColor="#fff"
+            style={styles.searchInput}
+            multiline={true}
+            onChangeText={setTitle}
+          />
+        </View>
+        <View style={{height: verticalScale(270), flex: 1}}>
+          <ScrollView>
+            {!loader && !musicList.length ? (
+              <Text style={styles.notFoundText}>No music found</Text>
+            ) : null}
+            {loader ? (
+              <CustomLoader />
+            ) : musicList.length ? (
+              musicList.map((item: any, index: number) => (
+                <RenderItem key={item?.id} index={index} item={item} />
+              ))
+            ) : null}
+          </ScrollView>
         </View>
       </View>
-    </Modal>
+    </View>
   );
 };
 
@@ -191,12 +188,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
     width: '100%',
+    position: 'absolute',
+    bottom: 0,
   },
   bottomOptions: {
     paddingHorizontal: horizontalScale(16),
     paddingVertical: verticalScale(30),
     paddingTop: verticalScale(15),
-    height: '45%',
   },
   topLine: {
     height: verticalScale(5),
