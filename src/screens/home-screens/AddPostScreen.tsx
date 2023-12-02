@@ -11,6 +11,7 @@ import {
   Platform,
   PermissionsAndroid,
   TouchableWithoutFeedback,
+  AppState,
 } from 'react-native';
 import {
   ImageLibraryOptions,
@@ -113,11 +114,37 @@ export const AddPostScreen = ({route}: any) => {
       setTextInputValue(editPost?.text);
       setVisibility(editPost?.visibility);
       // setTextInputBackgroundColor(editPost?.hexCode)
-      
     } else {
       setIsComponentMounted(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!videoUri && thumbnails?.length) {
+      onPause();
+      setThumbnails([]);
+      setSelectedMusicTitle('');
+    }
+  }, [videoUri, thumbnails?.length]);
+
+  useEffect(() => {
+    if (sound) {
+      const subscription = AppState.addEventListener(
+        'change',
+        (nextAppState: any) => {
+          if (nextAppState === 'background') {
+            onPause();
+          } else if (nextAppState === 'active' && videoUri) {
+            onPlayPause();
+          }
+        },
+      );
+
+      return () => {
+        subscription.remove();
+      };
+    }
+  }, [sound]);
 
   const onSelectCost = (value: number) => {
     setCostValue(value);

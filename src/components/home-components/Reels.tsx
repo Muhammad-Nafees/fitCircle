@@ -216,7 +216,7 @@ export const ReelsComponent = ({
           </TouchableOpacity>
         )}
       </View>
-      {showThumbnail && (
+      {showThumbnail && videoThumbnail && (
         <View style={styles.thumbnailContainer}>
           <Image source={{uri: videoThumbnail}} style={styles.thumbnail} />
         </View>
@@ -282,7 +282,10 @@ export const ReelsComponent = ({
             <TouchableOpacity
               style={styles.iconItemContainer}
               onPress={handleShareVideo}>
-              <Image source={ShareIcon} style={[styles.icon, {width: horizontalScale(40)}]} />
+              <Image
+                source={ShareIcon}
+                style={[styles.icon, {width: horizontalScale(40)}]}
+              />
               <Text style={styles.iconText}>Share</Text>
             </TouchableOpacity>
           </View>
@@ -376,7 +379,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     justifyContent: 'center',
-    marginTop: 7
+    marginTop: 7,
   },
   lockedOverlay: {
     ...StyleSheet.absoluteFillObject,
