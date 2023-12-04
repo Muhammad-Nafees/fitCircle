@@ -13,6 +13,7 @@ const SupportOne = ({navigation}: any) => {
   const userId = useSelector((state: RootState) => state.auth.user?._id);
   const [allSupportChats, setAllSupportChats] = useState<ISupportChats[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [ticketId, setTicketId] = useState<string>('');
 
   useFocusEffect(
     useCallback(() => {

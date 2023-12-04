@@ -80,7 +80,7 @@ export const CustomPost = ({
   const [isImageFullscreen, setImageFullscreen] = useState(false);
   const navigation = useNavigation();
   const userData: any = useSelector((state: RootState) => state.auth.user);
-  const isOwner = userData._id === post.user._id;
+  const isOwner = userData?._id === post?.user?._id;
   const [editableContent, setEditableContent] = useState('');
   const [editableTitle, setEditableTitle] = useState(post?.title);
 

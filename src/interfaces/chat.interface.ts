@@ -1,4 +1,4 @@
-import { FileData } from "./user.interface";
+import {FileData} from './user.interface';
 
 export interface IParticipant {
   _id: string;
@@ -31,6 +31,7 @@ export interface IMessage {
 
 export interface ISupportChats {
   _id: string;
+  chat_Id: string;
   chatSupport: number | null;
   participants: IParticipant[];
   lastMessage: IMessage;

@@ -10,9 +10,10 @@ interface Props {
   message: IMessage;
   admin: IParticipant;
   user: IUser;
+  ticketId?: string;
 }
 
-const CustomSupportChat = ({message, admin, user}: Props) => {
+const CustomSupportChat = ({message, admin, user,ticketId}: Props) => {
   const isMessageByAdmin = message?.senderId === admin?._id;
   const {formattedTime, formattedDate} = getTimeAndDate(message?.createdAt);
   return (
@@ -35,7 +36,7 @@ const CustomSupportChat = ({message, admin, user}: Props) => {
             <Text style={styles.dateTime}>
               {formattedDate} | {formattedTime}
             </Text>
-            <Text style={styles.messageId}>{message?._id}</Text>
+            <Text style={styles.messageId}>{ticketId}</Text>
           </View>
         </View>
         <Text style={styles.message}>{message?.body}</Text>

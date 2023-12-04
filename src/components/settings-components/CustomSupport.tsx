@@ -31,7 +31,7 @@ const CustomSupport = ({chat}: Props) => {
     <TouchableOpacity
       style={styles.container}
       onPress={() =>
-        navigation.navigate('SupportChat', {chatId: chat?._id, admin: admin})
+        navigation.navigate('SupportChat', {chatId: chat?._id, admin: admin,ticketId: chat?.chat_Id})
       }>
       <CustomProfileAvatar
         profileImage={admin?.profileImage as string}
@@ -47,7 +47,7 @@ const CustomSupport = ({chat}: Props) => {
             {chat?.ticketStatus}
           </Text>
         </View>
-        <Text style={styles.id}>{chat?._id}</Text>
+        <Text style={styles.id}>{chat?.chat_Id}</Text>
         {chat?.lastMessage?.body ? (
           chat?.lastMessage?.body?.length > 10 ? (
             <Text style={styles.description}>
