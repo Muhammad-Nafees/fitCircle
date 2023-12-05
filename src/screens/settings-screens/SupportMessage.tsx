@@ -62,27 +62,32 @@ const SupportMessage = ({navigation}: any) => {
     console.log(data, 'creting chat for support!');
     if (data?.data) {
       setIsLoading(true);
-      sendMessageToSupport(
-        user?._id as string,
-        data?.data?._id,
-        messageInput,
-        name,
-      );
-      if (mediaUri) {
+
+      if (mediaUri && messageInput) {
         try {
           const response = await sendMediaToSupport(
             user?._id as string,
             data?.data?._id,
             mediaUri,
+            messageInput,
           );
-          console.log(response?.data, 'RESPONSE FROM MEDIA!');
         } catch (error) {
           console.log(error, 'From send media to support');
         }
+      } else {
+        sendMessageToSupport(
+          user?._id as string,
+          data?.data?._id,
+          messageInput,
+          name,
+        );
       }
       setIsLoading(false);
       setTimeout(() => {
-        navigation.navigate('SupportChat', {chatId: data?.data?._id});
+        navigation.navigate('SupportChat', {
+          chatId: data?.data?._id,
+          ticketId: data?.data?.chat_Id,
+        });
       }, 3000);
     } else {
       Toast.show({

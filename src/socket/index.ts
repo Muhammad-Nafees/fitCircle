@@ -52,11 +52,15 @@ export const sendMediaToSupport = async (
   senderId: string,
   chatId: string,
   mediaFile: FileData,
+  messageBody?: string,
 ) => {
   let formData = new FormData();
   formData.append('senderId', senderId);
   formData.append('chatId', chatId);
   formData.append('mediaFile', mediaFile);
+  if (messageBody) {
+    formData.append('messageBody', messageBody);
+  }
 
   const response = await api.post(`media/send-media`, formData, {
     headers: {
