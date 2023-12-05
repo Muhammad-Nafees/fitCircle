@@ -58,7 +58,7 @@ export const createProfileSchema = (userRole: any) => {
       .matches(/^[A-Za-z0-9]+$/, 'Invalid input: No spaces allowed')
       .min(3, 'Username must be at least 3 characters')
       .max(10, 'Username must be at most 10 characters'),
-    bio: Yup.string().required('Bio is required'),
+    bio: Yup.string().required('Bio is required '),
 
     phone: Yup.string().required('Phone number is required'),
     country: Yup.string().required('Select country'),
