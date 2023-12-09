@@ -54,6 +54,9 @@ const SupportChat = ({route}: any) => {
 
   const chatId = route?.params?.chatId;
   const admin = route?.params?.admin;
+  const ticketId = route?.params?.ticketId;
+  console.log(ticketId,"TICKETID")
+
 
   const handleChatMessages = (data: any) => {
     const sortedMessages = data?.messages?.sort((a: IMessage, b: IMessage) => {
@@ -136,8 +139,7 @@ const SupportChat = ({route}: any) => {
     }
     setIsLoading(true);
     const name = `${user?.firstName} ${user?.lastName}`;
-    sendMessageToSupport(userId as string, chatId, messageInput, name);
-    if (mediaUri) {
+    if (mediaUri && messageInput === '') {
       try {
         const response = await sendMediaToSupport(
           userId as string,
@@ -147,6 +149,20 @@ const SupportChat = ({route}: any) => {
       } catch (error) {
         console.log(error, 'From send media to support');
       }
+    } else if (mediaUri && messageInput !== '') {
+      console.log('else if');
+      try {
+        const response = await sendMediaToSupport(
+          userId as string,
+          chatId,
+          mediaUri,
+          messageInput,
+        );
+      } catch (error) {
+        console.log(error, 'From send media to support');
+      }
+    } else {
+      sendMessageToSupport(userId as string, chatId, messageInput, name);
     }
 
     const newMessage: Partial<IMessage> = {
@@ -162,6 +178,7 @@ const SupportChat = ({route}: any) => {
     setMediaUri(null);
     setIsLoading(false);
   };
+  console.log(route?.params,"PARAMS")
   return (
     <View style={styles.container}>
       <View style={{flex: 1}}>
@@ -180,6 +197,7 @@ const SupportChat = ({route}: any) => {
                   message={message}
                   admin={admin}
                   user={user as IUser}
+                  ticketId={route?.params?.ticketId}
                 />
               );
             })}

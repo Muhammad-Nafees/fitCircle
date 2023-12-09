@@ -52,11 +52,11 @@ export const ProfileHeaderContainer = ({
   );
   const loginUserData = useSelector((state: RootState) => state.auth.user);
   const [isSeachUser, setIsSearchUser] = useState<boolean>(
-    loginUserDataId === userData._id,
+    loginUserDataId === userData?._id,
   );
 
   useEffect(() => {
-    setIsSearchUser(loginUserDataId === userData._id);
+    setIsSearchUser(loginUserDataId === userData?._id);
  
     if (userData?.subscribers?.includes(loginUserDataId)) {
       setIsSubscribed(true);
@@ -64,7 +64,7 @@ export const ProfileHeaderContainer = ({
         isSubscribed ? styles.profileButton : styles.transparentButton,
       );
     }
-  }, [loginUserDataId, userData._id]);
+  }, [loginUserDataId, userData?._id]);
 
   const handleFollowToggle = async () => {
     setIsFollowed(!isFollowed);
