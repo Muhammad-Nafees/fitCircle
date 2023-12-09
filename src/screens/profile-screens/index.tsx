@@ -495,7 +495,7 @@ const ProfileScreen = ({navigation, route}: any) => {
   };
 
   const onPause = () => {
-    setPlay(true);
+    setPlay(false);
     sound?.pause();
   };
 

@@ -246,6 +246,7 @@ export const ReelsComponent = ({
           bufferForPlaybackMs: 2500, // Amount of time (in milliseconds) to buffer ahead during playback
           bufferForPlaybackAfterRebufferMs: 5000, // Amount of time (in milliseconds) to buffer ahead after rebuffering
         }}
+        muted={!!id}
       />
       <View style={styles.textContentContainer}>
         {post?.title !== '' && (
