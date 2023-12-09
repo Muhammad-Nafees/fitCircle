@@ -50,7 +50,7 @@ const CreatorPosts = ({
         sound.stop();
         sound.release();
       }
-      let post = data?.find((item: never) => item?._id == postId);
+      let post: any = data?.find((item: any) => item?._id == postId);
       if (post?.musicUrl) {
         let music = new Sound(post?.musicUrl, Sound.MAIN_BUNDLE, error => {
           if (error) {
@@ -78,7 +78,6 @@ const CreatorPosts = ({
       }
     } else {
       if (id == vid) {
-        console.log('3');
         setPlay(true);
         sound?.play();
       } else {
@@ -90,7 +89,7 @@ const CreatorPosts = ({
   };
 
   const onPause = () => {
-    setPlay(true);
+    setPlay(false);
     sound?.pause();
   };
 
