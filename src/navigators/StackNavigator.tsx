@@ -30,6 +30,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
 import AuthStackNavigator from './AuthStackNavigator';
 import FavoriteDialogScreen from '../screens/auth-screens/create-profile-screens/FavoriteDialogScreen';
+import {TermsPolicyScreen} from '../screens/settings-screens/TermsPolicy';
 
 const Stack = createStackNavigator();
 
@@ -126,6 +127,8 @@ const StackNavigator = () => {
         component={BlankButtonRenderScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen name="TermsConditions" component={TermsPolicyScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={TermsPolicyScreen} />
     </Stack.Navigator>
   );
 };

@@ -45,6 +45,7 @@ const CommunitiesScreen = ({navigation}: any) => {
         const data = response?.data.data;
         setCommunities(data.communities);
       } catch (error: any) {
+        console.log(error?.response?.data,"FROM COMMUNITIES!")
         if (error?.response?.data?.message) {
           Toast.show({
             type: 'error',
@@ -141,7 +142,7 @@ const CommunitiesScreen = ({navigation}: any) => {
             <FlatList
               data={communities}
               renderItem={renderCommunity}
-              keyExtractor={(item, index) => item._id + index + 1 + Math.random()}
+              keyExtractor={(item, index) => item._id}
             />
           </View>
         )}

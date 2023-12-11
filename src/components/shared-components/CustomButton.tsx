@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: moderateScale(12),
     textAlign: 'center',
-    fontWeight: '700',
+    fontFamily: 'Gilroy-Bold'
   },
   disabledButtonText: {
     opacity: 0.5,

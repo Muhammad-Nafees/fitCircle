@@ -124,7 +124,7 @@ export const questionTexts2 = [
 ];
 
 export const activityFactors = {
-  'Sedentary (Little or no exercise)': {
+  'Sedentary (Little or no Exercise)': {
     value: 1.2,
   },
   'Lightly active (Light exercise/sports 1-3 days a week)': {

@@ -39,6 +39,7 @@ const DropdownTextInput = ({
   const route = useRoute();
 
   const handleDropdownSelection = (option: any) => {
+    console.log('clicked!');
     setShowDropdown(false);
     setSelectedOption(option);
     onSelectUnit(option, defaultOption);
@@ -83,29 +84,27 @@ const DropdownTextInput = ({
         />
         <View style={styles.dropdownContainer}>
           <TouchableOpacity
-            onPress={() => editable && setShowDropdown(!showDropdown)}>
-            <View
+            onPress={() => editable && setShowDropdown(!showDropdown)}
+            style={[
+              styles.dropdownIconContainer,
+              tdee && {backgroundColor: '#fff'},
+              route.name === 'VerificationOne' && {
+                width: 48,
+              },
+            ]}>
+            <Text
               style={[
-                styles.dropdownIconContainer,
-                tdee && {backgroundColor: '#fff'},
-                route.name === 'VerificationOne' && {
-                  width: 48,
-                },
+                styles.selectedOptionText,
+                tdee && {color: 'rgba(68, 68, 68, 0.5)'},
               ]}>
-              <Text
-                style={[
-                  styles.selectedOptionText,
-                  tdee && {color: 'rgba(68, 68, 68, 0.5)'},
-                ]}>
-                {selectedOption}
-              </Text>
-              <Icon
-                name="chevron-down-outline"
-                size={18}
-                color={tdee ? 'rgba(68, 68, 68, 0.5)' : 'white'}
-                style={styles.icon}
-              />
-            </View>
+              {selectedOption}
+            </Text>
+            <Icon
+              name="chevron-down-outline"
+              size={18}
+              color={tdee ? 'rgba(68, 68, 68, 0.5)' : 'white'}
+              style={styles.icon}
+            />
           </TouchableOpacity>
           {showDropdown && (
             <View style={styles.dropdownContent}>

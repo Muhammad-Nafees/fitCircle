@@ -106,7 +106,7 @@ export interface IComment {
   text: string;
   createdAt: Date;
   parent: string;
-  nestedComments: IComment[];
+  replies: IComment[];
 }
 
 export interface ITDEE {

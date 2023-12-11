@@ -1,14 +1,10 @@
 import React from 'react';
-import {
-  Text,
-  ScrollView,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 
 import {IComment} from '../../interfaces/user.interface';
 import CommentItem from './CommentItem';
+import {TouchableOpacity} from 'react-native';
+import {Text} from 'react-native';
 
 interface Props {
   allComments: any;
@@ -25,22 +21,21 @@ const Comment = ({
   onLoadComments,
   isLoadMore,
 }: Props) => {
-  const totalCommentsLength = allComments.length;
+  // const totalCommentsLength = allComments.length;
 
   const nestedCommentsLength = allComments.reduce(
     (count: number, comment: IComment) => {
-      return (
-        count + (comment.nestedComments ? comment.nestedComments.length : 0)
-      );
+      return count + (comment.replies ? comment.replies.length : 0);
     },
     0,
   );
 
-  const totalLength = totalCommentsLength + nestedCommentsLength;
+  const totalLength = commentsCount + nestedCommentsLength;
+  console.log(totalLength, 'allcommm');
 
   return (
     <View style={styles.container}>
-      {!isLoadMore && totalLength !== commentsCount && commentsCount > 2 && (
+      {!isLoadMore && commentsCount > 2 && (
         <TouchableOpacity onPress={onLoadComments}>
           <Text
             style={{
@@ -49,30 +44,23 @@ const Comment = ({
               fontSize: 12,
             }}>
             {' '}
-            View {commentsCount - totalLength} more comments
+            View {commentsCount - 2} more comments
           </Text>
         </TouchableOpacity>
       )}
-      {allComments?.map((parentComment: any, index: number) => (
-        <View key={parentComment._id + index} style={{marginTop: 8}}>
-          <CommentItem
-            comment={parentComment}
-            index={index}
-            onReply={onReply}
-          />
-
-          {parentComment?.nestedComments?.length > 0 &&
-            parentComment?.nestedComments?.map(
-              (comment: any, index: number) => (
-                <CommentItem
-                  comment={comment}
-                  index={index}
-                  onReply={onReply}
-                  parentComment={parentComment}
-                  isNested={true}
-                />
-              ),
-            )}
+      {allComments?.map((comment: IComment, index: number) => (
+        <View key={comment._id + index} style={{marginTop: 8}}>
+          <CommentItem comment={comment} index={index} onReply={onReply} />
+          {comment?.replies?.length > 0 &&
+            comment?.replies?.map((reply: any, index: number) => (
+              <CommentItem
+                comment={reply}
+                index={index}
+                onReply={onReply}
+                parentComment={comment?._id}
+                isNested={true}
+              />
+            ))}
         </View>
       ))}
     </View>

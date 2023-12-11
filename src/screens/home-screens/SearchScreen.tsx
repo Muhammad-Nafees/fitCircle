@@ -83,7 +83,12 @@ export const SearchScreen = () => {
     );
   };
 
-  const handleSearchProfile = async () => {
+  const handleSearchProfile = async (text: string) => {
+    if (text.startsWith(' ')) {
+      setMessage('No users Found!');
+      return;
+    }
+    setSearchQuery(text);
     setIsLoading(true);
     try {
       if (selectedFilter == 'other' || selectedFilter == null) {
@@ -92,7 +97,7 @@ export const SearchScreen = () => {
         setSearchData(users);
         setMessage('No users Found!');
       } else {
-        const response = await searchProfileByRole(selectedFilter, searchQuery);
+        const response = await searchProfileByRole(selectedFilter, text);
         const users = response?.data?.data?.users;
         setSearchData(users);
         setMessage(`No ${selectedFilter} Found!`);
@@ -120,7 +125,7 @@ export const SearchScreen = () => {
               placeholder={placeholderText}
               style={styles.input}
               value={searchQuery}
-              onChangeText={setSearchQuery}
+              onChangeText={text => handleSearchProfile(text)}
               onBlur={handleSearchBarBlur}
               placeholderTextColor="#fff"
             />
@@ -153,10 +158,8 @@ export const SearchScreen = () => {
             </View>
           ) : null}
         </View>
-        <TouchableOpacity onPress={handleSearchProfile}>
-          <Text style={styles.submitButton}>
-            {isLoading ? <CustomLoader /> : 'Search'}{' '}
-          </Text>
+        <TouchableOpacity disabled={true}>
+          <Text style={styles.submitButton}>Search</Text>
         </TouchableOpacity>
       </View>
 

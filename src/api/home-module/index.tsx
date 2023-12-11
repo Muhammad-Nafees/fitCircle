@@ -192,7 +192,9 @@ export const getAllCommentsByPosts = async (
 export const addComment = async (reqData: Partial<IComment>) => {
   let formData = new FormData();
   formData.append('text', reqData.text);
-  formData.append('post', reqData.post);
+  if (reqData?.post) {
+    formData.append('post', reqData.post);
+  }
   if (reqData?.parent) {
     formData.append('parent', reqData.parent);
   }

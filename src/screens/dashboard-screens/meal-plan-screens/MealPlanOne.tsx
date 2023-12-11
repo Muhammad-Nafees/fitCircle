@@ -54,10 +54,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 14,
   },
   text2: {
-    marginHorizontal: 120,
+    marginHorizontal: 100,
     textAlign: 'center',
-    color: 'white',
+    color: 'rgba(255, 255, 255, 1)',
     fontWeight: '500',
     fontSize: 16,
+    fontFamily: 'Gilroy-Medium'
   },
 });
