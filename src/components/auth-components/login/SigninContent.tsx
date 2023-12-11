@@ -25,17 +25,27 @@ const SigninContent = ({children, screen}: Props) => {
             gap: 12,
             paddingHorizontal: horizontalScale(28),
           }}>
-          <Text
-            style={[
-              STYLES.text40,
-              {width: horizontalScale(238), marginTop: verticalScale(10)},
-            ]}>
-            Find the best gyms and coaches
-          </Text>
+          <View style={{gap: 0}}>
+            <Text
+              style={[
+                STYLES.text40,
+                {width: horizontalScale(215), marginBottom: - verticalScale(10)},
+              ]}>
+              Find the
+            </Text>
+            <Text style={[STYLES.text40, {width: horizontalScale(255)}]}>
+              best gyms and coaches
+            </Text>
+          </View>
           <Text
             style={[
               STYLES.text16,
-              {opacity: 0.7, marginTop: verticalScale(5)},
+              {
+                opacity: 0.7,
+                marginTop: verticalScale(5),
+                marginRight: 13,
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
             ]}>
             Gym buddies, New friends, Advise & Tips, Community, Inspiration,
             Motivation

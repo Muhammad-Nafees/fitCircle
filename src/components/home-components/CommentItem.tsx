@@ -19,7 +19,7 @@ interface Props {
   index: number;
   isNested?: boolean;
   parentComment?: IComment | any;
-  onReply?: (id: string) => void;
+  onReply: (id: string) => void;
 }
 
 const CommentItem = ({comment, onReply, isNested, parentComment}: Props) => {
@@ -70,7 +70,7 @@ const CommentItem = ({comment, onReply, isNested, parentComment}: Props) => {
           </Text>
 
           <TouchableOpacity
-            onPress={() => onReply(isNested ? parentComment._id : comment._id)}>
+            onPress={() => onReply(isNested ? parentComment : comment?._id)}>
             <Text style={styles.replyText}>Reply</Text>
           </TouchableOpacity>
         </View>

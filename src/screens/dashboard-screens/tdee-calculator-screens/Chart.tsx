@@ -55,9 +55,11 @@ export const ChartScreen = ({navigation, route}: any) => {
               ))}
             </View>
           </View>
-          <CustomButton onPress={() => navigation.navigate('MealPlan')}>
-            Continue to Meal Plan
-          </CustomButton>
+          <View style={{marginHorizontal: 30}}>
+            <CustomButton onPress={() => navigation.navigate('MealPlan')}>
+              Continue to Meal Plan
+            </CustomButton>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -71,7 +73,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    marginHorizontal: 60,
     marginVertical: 16,
   },
   heading: {
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 28,
   },
-  subTextContent: {fontSize: 12, fontWeight: '700', color: 'white'},
+  subTextContent: {fontSize: 12, color: 'white', fontFamily: 'Gilroy-Bold',marginHorizontal: 30},
   chartContainer: {
     justifyContent: 'center',
     alignItems: 'center',

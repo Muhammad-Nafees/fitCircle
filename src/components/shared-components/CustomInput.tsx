@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(8),
     backgroundColor: '#ffffff',
     padding: moderateScale(10),
+    paddingTop: 13,
   },
   icon: {
     position: 'absolute',

@@ -86,23 +86,26 @@ const InterestScreen = ({navigation}: any) => {
             {interests?.length === 0 ? (
               <CustomLoader isStyle={true} />
             ) : (
-              interests?.map((data: any,index:number) => {
+              interests?.map((data: any, index: number) => {
                 const isSelected = selectedInterest.some(
                   item => item._id === data._id,
                 );
                 return (
-                  <TouchableOpacity
-                    key={data._id+index+1+Math.random()}
-                    style={[
-                      styles.itemsInnerContainer,
-                      {
-                        backgroundColor: isSelected ? '#209BCC' : 'transparent',
-                        borderColor: isSelected ? 'transparent' : 'white',
-                      },
-                    ]}
-                    onPress={() => handleSelect(data?.name, data._id)}>
-                    <Text style={STYLES.text14}>{data?.name}</Text>
-                  </TouchableOpacity>
+                  <View key={data._id}>
+                    <TouchableOpacity
+                      style={[
+                        styles.itemsInnerContainer,
+                        {
+                          backgroundColor: isSelected
+                            ? '#209BCC'
+                            : 'transparent',
+                          borderColor: isSelected ? 'transparent' : 'white',
+                        },
+                      ]}
+                      onPress={() => handleSelect(data?.name, data._id)}>
+                      <Text style={STYLES.text14}>{data?.name}</Text>
+                    </TouchableOpacity>
+                  </View>
                 );
               })
             )}

@@ -47,6 +47,7 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
       setGoalWeightUnit(unit);
     }
   };
+  console.log(heightUnit,weightUnit)
 
   const formikRef: any = useRef();
   const handleSubmit = async (values: any) => {
@@ -172,9 +173,8 @@ export const TdeeCalculator = ({navigation, disabled}: any) => {
                     <Text style={{color: 'rgba(255, 145, 145, 1)'}}>*</Text>
                   </Text>
                   <DropdownTextInput
-                    editable={true}
                     value={values.height}
-                    options={['ft', 'm']}
+                    options={['ft', 'cm']}
                     placeholder="Type here"
                     defaultOption="ft"
                     handleChange={handleChange('height')}

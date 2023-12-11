@@ -169,9 +169,10 @@ const LoginForm = () => {
                   style={[
                     STYLES.text14,
                     {
-                      fontWeight: '700',
+                      // fontWeight: '700',
                       color: '#209BCC',
                       textDecorationLine: 'underline',
+                      fontFamily: 'Poppins-Bold',
                     },
                   ]}>
                   Sign up
@@ -181,11 +182,28 @@ const LoginForm = () => {
 
             <View style={{marginVertical: verticalScale(47)}}>
               <Text
-                style={[STYLES.text12, {fontWeight: '500', color: '#979797'}]}>
+                style={[
+                  STYLES.text12,
+                  {
+                    fontWeight: '500',
+                    color: '#979797',
+                    fontFamily: 'Gilroy-Medium',
+                    lineHeight: 16,
+                  },
+                ]}>
                 By clicking login, you agree to our{' '}
-                <Text style={{color: '#219EBC'}}>Terms and Conditions </Text>{' '}
+                <Text
+                  style={{color: '#219EBC'}}
+                  onPress={() => navigation.navigate('TermsConditions')}>
+                  Terms and Conditions{' '}
+                </Text>{' '}
                 and
-                <Text style={{color: '#219EBC'}}> Privacy Policy </Text>
+                <Text
+                  style={{color: '#219EBC'}}
+                  onPress={() => navigation.navigate('PrivacyPolicy')}>
+                  {' '}
+                  Privacy Policy{' '}
+                </Text>
               </Text>
             </View>
           </View>
@@ -217,5 +235,6 @@ const styles = StyleSheet.create({
     gap: 2,
     justifyContent: 'center',
     marginTop: verticalScale(30),
+    alignItems: 'center',
   },
 });

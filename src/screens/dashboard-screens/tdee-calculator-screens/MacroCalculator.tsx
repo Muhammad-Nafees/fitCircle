@@ -146,7 +146,7 @@ export const MacroCalculator = ({navigation, route}: any) => {
             thumbTintColor="#209BCC"
             minimumTrackTintColor="#209BCC"
             maximumTrackTintColor="#ffffff"
-            disabled={true}
+            disabled={false}
           />
           <View style={{marginVertical: 20, marginRight: '70%'}}>
             <Text style={styles.heading}>Protein</Text>
@@ -165,7 +165,7 @@ export const MacroCalculator = ({navigation, route}: any) => {
             thumbTintColor="#209BCC"
             minimumTrackTintColor="#209BCC"
             maximumTrackTintColor="#ffffff"
-            disabled={true}
+            disabled={false}
           />
           <View style={{marginVertical: 20, marginRight: '75%'}}>
             <Text style={styles.heading}>Fat</Text>
@@ -174,17 +174,20 @@ export const MacroCalculator = ({navigation, route}: any) => {
             <Text style={styles.data}> {percentageData.fatsPercentage}%</Text>
             <Text style={styles.data}>{chartData?.fats.toFixed(0)} grams</Text>
           </View>
-          <Slider
-            value={percentageData.fatsPercentage}
-            maximumValue={100}
-            onValueChange={() => null}
-            style={{width: '85%'}}
-            thumbTintColor="#209BCC"
-            minimumTrackTintColor="#209BCC"
-            maximumTrackTintColor="#ffffff"
-            disabled={true}
-          />
+          <View style={{height: 20}}>
+                    <Slider
+              value={percentageData.fatsPercentage}
+              maximumValue={100}
+              onValueChange={() => null}
+              style={{width: '85%',height: '100%'}}
+              thumbTintColor="#209BCC"
+              minimumTrackTintColor="#209BCC"
+              maximumTrackTintColor="#ffffff"
+              disabled={false}
+            />
+          </View>
         </View>
+
         <View style={styles.button}>
           {chartData.carbohydrates !== 0 && (
             <CustomButton onPress={handleSubmit}>{'Show Chart'}</CustomButton>

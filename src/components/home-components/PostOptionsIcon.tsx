@@ -61,14 +61,15 @@ export const PostOptionsIcon = ({
           <Text style={styles.options}>My Package</Text>
         </TouchableOpacity>
       )}
-      {userRole === 'nutritionist' && (
-        <TouchableOpacity
-          style={styles.bottomContainerButtons}
-          onPress={() => navigation.navigate('MealPlanScreen')}>
-          <MealPlanSvgIcon />
-          <Text style={styles.options}>My Meal Plan</Text>
-        </TouchableOpacity>
-      )}
+      {userRole === 'nutritionist' ||
+        (userRole === 'user' && (
+          <TouchableOpacity
+            style={styles.bottomContainerButtons}
+            onPress={() => navigation.navigate('MealPlanScreen')}>
+            <MealPlanSvgIcon />
+            <Text style={styles.options}>My Meal Plan</Text>
+          </TouchableOpacity>
+        ))}
       <TouchableOpacity
         style={styles.bottomContainerButtons}
         onPress={handleScheduleRoute}>

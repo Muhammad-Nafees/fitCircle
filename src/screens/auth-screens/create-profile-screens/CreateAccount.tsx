@@ -74,7 +74,7 @@ const CreateAccount = ({navigation, route}: any) => {
       });
       const data = response?.data?.data;
       console.log(data.user);
-      console.log(data,"ddd")
+      console.log(data, 'ddd');
       dispatch(setUserData(data?.user));
       dispatch(setAccessToken(data?.accessToken));
       dispatch(setRefreshToken(data?.refreshToken));
@@ -84,7 +84,7 @@ const CreateAccount = ({navigation, route}: any) => {
         text1: `${response?.data.message}`,
       });
     } catch (error: any) {
-      console.log(error.response.data, 'error');
+      console.log(error?.response?.data?.message, 'ERROR FROM CREATE ACCOUNT!');
       if (error?.response?.data?.message) {
         Toast.show({
           type: 'error',

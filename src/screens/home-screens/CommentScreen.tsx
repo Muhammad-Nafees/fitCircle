@@ -101,58 +101,28 @@ const CommentsScreen = ({route, navigation}: any) => {
             page,
           );
           const data = response?.data?.data;
-
-          const sortedData = data?.sort((sortA: any, sortB: any) => {
-            const dateA: any = new Date(sortA.createdAt);
-            const dateB: any = new Date(sortB.createdAt);
-            return dateA - dateB;
-          });
-
-          const organizedComments: any = [];
-
-          sortedData?.forEach((comment, index) => {
-            if (!comment.parent) {
-              // This comment does not have a parent, add it to the organized list
-              comment.nestedComments = [];
-              organizedComments.push(comment);
-            } else {
-              const parentComment = organizedComments.find(
-                c => c._id === comment.parent,
-              );
-
-              if (parentComment) {
-                parentComment.nestedComments =
-                  parentComment.nestedComments || [];
-                parentComment.nestedComments.push(comment);
-              }
-            }
-          });
-          if (comments && loadMore) {
-            setLoadMore(true);
-            setComments(organizedComments);
-          } else {
-            setComments(organizedComments.slice(-2));
-          }
-
-          setAllComments(organizedComments);
-          setCommentsCount(data?.length);
+          const sortedComments = data?.comments?.sort(
+            (sortA: any, sortB: any) => {
+              const dateA: any = new Date(sortA.createdAt);
+              const dateB: any = new Date(sortB.createdAt);
+              return dateA - dateB;
+            },
+          );
+          setComments(sortedComments);
+          setAllComments(data?.pagination?.totalItems);
+          setCommentsCount(data?.pagination?.totalItems);
         } catch (error: any) {
-          console.log('errorfrom fetching comments', error);
+          console.log('errorfrom fetching comments', error?.response?.data);
         }
         setIsCommentsLoading(false);
       };
       getComments();
-    }, [isLoading]),
+    }, [limit,isLoading]),
   );
 
   const handleLoadMoreComments = () => {
     setLoadMore(true);
-    const sortedData = allComments?.sort((sortA: any, sortB: any) => {
-      const dateA: any = new Date(sortA.createdAt);
-      const dateB: any = new Date(sortB.createdAt);
-      return dateA - dateB;
-    });
-    setComments(sortedData);
+    setLimit(20);
   };
 
   useEffect(() => {
@@ -181,7 +151,6 @@ const CommentsScreen = ({route, navigation}: any) => {
       });
       return;
     }
-
     try {
       let compressedImage = null;
       if (mediaUri) {
@@ -194,16 +163,24 @@ const CommentsScreen = ({route, navigation}: any) => {
           uri: result,
         };
       }
-      const reqData: Partial<IComment> = {
-        post: selectedPost?._id,
-        text: commentText,
-        media: mediaUri,
-        ...(replyId !== '' && {parent: replyId}),
-      };
+
+      let reqData: Partial<IComment> = {};
+      if (isReplying) {
+        reqData = {
+          parent: replyId,
+          text: commentText,
+          media: mediaUri,
+        };
+      } else {
+        reqData = {
+          post: selectedPost?._id,
+          text: commentText,
+          media: mediaUri,
+        };
+      }
       setIsLoading(true);
       const response = await addComment(reqData);
       const data = response?.data.data;
-      console.log(data, 'response from add comment');
       if (isReplying) {
         setIsScrollToBottom(false);
       } else {
