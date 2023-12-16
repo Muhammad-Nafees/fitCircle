@@ -18,16 +18,16 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig<any>) => {
   return config;
 });
 
-// api.interceptors.response.use(
-//   response => {
-//     return response;
-//   },
-//   error => {
-//     console.log(error);
-//     let response = {data: {message: 'Something went wrong'}};
-//     if (error.response.status === 401) {
-//       store.dispatch(authenticate(false));
-//     }
-//     return response;
-//   },
-// );
+api.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    console.log(error);
+    let response = {data: {message: 'Something went wrong'}};
+    if (error.response.status === 401) {
+      store.dispatch(authenticate(false));
+    }
+    return response;
+  },
+);
