@@ -60,8 +60,12 @@ export const createPostWithVideo = async (reqData: Partial<IPost>) => {
   formData.append('text', reqData?.text);
   formData.append('media', reqData?.media);
   formData.append('mediaType', reqData?.mediaType);
-  formData.append('musicTitle', reqData?.musicTitle);
-  formData.append('musicUrl', reqData?.musicUrl);
+  if (reqData?.musicTitle) {
+    formData.append('musicTitle', reqData?.musicTitle);
+  }
+  if (reqData?.musicUrl) {
+    formData.append('musicUrl', reqData?.musicUrl);
+  }
   if (reqData?.title) {
     formData.append('title', reqData.title);
   }

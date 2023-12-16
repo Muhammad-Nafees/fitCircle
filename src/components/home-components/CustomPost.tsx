@@ -91,7 +91,8 @@ export const CustomPost = ({
         setCommentsCount(commentCount);
       }
       if (post && !commentCount) {
-        setCommentsCount(post?.comments?.length);
+        console.log(post)
+        setCommentsCount(post?.commentsCount);
       }
     }, [post, commentCount]),
   );
