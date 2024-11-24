@@ -29,6 +29,8 @@ const forgetPasswordNumberSchema = Yup.object().shape({
   phone: Yup.string().required('Phone number is required'),
 });
 
+
+
 const ForgetPasswordNumber = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -38,6 +40,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
   const initialValues: FormValues = {
     phone: '',
   };
+
   const handleSubmit = async (values: any) => {
     const checkValid = phoneInput.current?.isValidNumber(value);
     if (!checkValid) {
@@ -69,7 +72,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
       setIsLoading(false);
     }
   };
-
+  
   const handleInputFocus = () => {
     setIsFocused(true);
   };
@@ -166,6 +169,7 @@ const ForgetPasswordNumber = ({navigation}: any) => {
                   Use email address instead
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
                 disabled={isLoading || values.phone.trim() === ''}
                 onPress={() => handleSubmit()}

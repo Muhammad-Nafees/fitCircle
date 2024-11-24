@@ -58,6 +58,7 @@ const SignupForm = () => {
       setIsLoading(false);
       return;
     }
+    
     const getCode = phoneInput.current?.getCountryCode();
     navigation.navigate('CreateAccount', {
       email: values.email,

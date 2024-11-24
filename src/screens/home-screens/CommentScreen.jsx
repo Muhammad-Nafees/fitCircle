@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   ScrollView,
   View,
@@ -11,14 +11,12 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native';
-import {CustomPost} from '../../components/home-components/CustomPost';
-import CustomLoader from '../../components/shared-components/CustomLoader';
-import {useFocusEffect} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../redux/store';
+import { useFocusEffect } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 import Modal from 'react-native-modal';
-import {ImageZoom} from '@thaihuynhquang/react-native-image-zoom-next';
-import {Image as ImageCompress} from 'react-native-compressor';
+import { ImageZoom } from '@thaihuynhquang/react-native-image-zoom-next';
+import { Image as ImageCompress } from 'react-native-compressor';
 import {
   horizontalScale,
   moderateScale,
@@ -30,55 +28,51 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import CustomAttachmentDialog from '../../components/shared-components/CustomAttachmentDialog';
-import {addComment, getAllCommentsByPosts} from '../../api/home-module';
+import { addComment, getAllCommentsByPosts } from '../../api/home-module';
 import NoComment from './NoComment';
-import {stat} from 'react-native-fs';
 import Comment from '../../components/home-components/Comment';
-import {FileData, IComment} from '../../interfaces/user.interface';
-import {setCommentCount} from '../../redux/postSlice';
 import Toast from 'react-native-toast-message';
 const SendIcon = require('../../../assets/icons/send.png');
 
 const width = Dimensions.get('window').width;
 
-const CommentsScreen = ({route, navigation}: any) => {
+const CommentsScreen = ({ route, navigation }) => {
   const selectedPost = useSelector(
-    (state: RootState) => state.post.selectedPost,
+    (state: RootState) => state.post.selectedPost
   );
   const profileScreen = route?.params?.profileScreen;
-  const [comments, setComments] = useState<IComment[]>();
-  const [allComments, setAllComments] = useState<IComment[]>();
-
-  const [commentsCount, setCommentsCount] = useState<null | number>(0);
+  const [comments, setComments] = useState([]);
+  const [allComments, setAllComments] = useState([]);
+  const [commentsCount, setCommentsCount] = useState(null);
   const [loading, setLoading] = useState(false);
   const [commentScreenActive, setCommentScreenActive] = useState(false);
   const [isImageFullscreen, setImageFullscreen] = useState(false);
   const [media, setMedia] = useState(null);
   const [commentText, setCommentText] = useState('');
-  const [mediaUri, setMediaUri] = useState<FileData | null | any>(null);
+  const [mediaUri, setMediaUri] = useState(null);
   const [isReplying, setIsReplying] = useState(false);
-  const [replyId, setReplyId] = useState<string>('');
-  const inputRef = useRef<any>();
-  const userData = useSelector((state: RootState) => state.auth.user);
+  const [replyId, setReplyId] = useState('');
+  const inputRef = useRef();
+  const userData = useSelector((state) => state.auth.user);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(2);
-  const [loadMore, setLoadMore] = useState<boolean>(false);
-  const [isCommentsLoading, setIsCommentsLoading] = useState<boolean>(false);
-  const [isScrollToBottom, setIsScrollToBottom] = useState<boolean>(false);
-
-  const [noComments, setNoComments] = useState<boolean>(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
+  const [loadMore, setLoadMore] = useState(false);
+  const [isCommentsLoading, setIsCommentsLoading] = useState(false);
+  const [isScrollToBottom, setIsScrollToBottom] = useState(false);
+  const [noComments, setNoComments] = useState(false);
 
   const commentRef = useRef();
 
   const handlePhotoButtonPress = async () => {
     setMediaUri(null);
-    const options: ImageLibraryOptions = {
+    const options = {
       mediaType: 'photo',
       quality: 0.8,
     };
-    await launchImageLibrary(options, (response: any) => {
+
+    await launchImageLibrary(options, (response) => {
       if (response.assets) {
         console.log(response?.assets, 'assets');
         setMediaUri({
@@ -96,28 +90,33 @@ const CommentsScreen = ({route, navigation}: any) => {
         setIsCommentsLoading(true);
         try {
           const response = await getAllCommentsByPosts(
-            selectedPost._id as string,
+            selectedPost._id,
             limit,
-            page,
+            page
           );
           const data = response?.data?.data;
           const sortedComments = data?.comments?.sort(
-            (sortA: any, sortB: any) => {
-              const dateA: any = new Date(sortA.createdAt);
-              const dateB: any = new Date(sortB.createdAt);
+            (sortA, sortB) => {
+              const dateA = new Date(sortA.createdAt);
+              const dateB = new Date(sortB.createdAt);
               return dateA - dateB;
-            },
+            }
           );
+
           setComments(sortedComments);
           setAllComments(data?.pagination?.totalItems);
           setCommentsCount(data?.pagination?.totalItems);
-        } catch (error: any) {
-          console.log('errorfrom fetching comments', error?.response?.data);
-        }
+        } catch (error) {
+          console.log(
+            'errorfrom fetching comments',
+            error?.response?.data
+          );
+        };
+
         setIsCommentsLoading(false);
       };
       getComments();
-    }, [limit,isLoading]),
+    }, [limit, isLoading])
   );
 
   const handleLoadMoreComments = () => {
@@ -133,7 +132,7 @@ const CommentsScreen = ({route, navigation}: any) => {
 
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction,
+      backAction
     );
 
     return () => backHandler.remove();
@@ -143,6 +142,7 @@ const CommentsScreen = ({route, navigation}: any) => {
     setImageFullscreen(false);
     setMedia(null);
   };
+
   const handleAddComment = async () => {
     if (commentText == '') {
       Toast.show({
@@ -151,20 +151,26 @@ const CommentsScreen = ({route, navigation}: any) => {
       });
       return;
     }
+
     try {
       let compressedImage = null;
       if (mediaUri) {
-        const result = await ImageCompress.compress(mediaUri.uri, {
-          quality: 0.8,
-        });
+        const result = await ImageCompress.compress(
+          mediaUri.uri,
+          {
+            quality: 0.8,
+          }
+        );
+
         compressedImage = {
-          name: mediaUri?.name as string,
-          type: mediaUri?.type as string,
+          name: mediaUri?.name,
+          type: mediaUri?.type,
           uri: result,
         };
       }
 
-      let reqData: Partial<IComment> = {};
+      let reqData = {};
+
       if (isReplying) {
         reqData = {
           parent: replyId,
@@ -178,6 +184,7 @@ const CommentsScreen = ({route, navigation}: any) => {
           media: mediaUri,
         };
       }
+
       setIsLoading(true);
       const response = await addComment(reqData);
       const data = response?.data.data;
@@ -186,7 +193,8 @@ const CommentsScreen = ({route, navigation}: any) => {
       } else {
         setIsScrollToBottom(true);
       }
-    } catch (error: any) {
+
+    } catch (error) {
       console.log(error, 'error from add comment');
     }
     setIsLoading(false);
@@ -196,7 +204,9 @@ const CommentsScreen = ({route, navigation}: any) => {
     setReplyId('');
   };
 
-  const handleReply = (id: string) => {
+
+
+  const handleReply = (id) => {
     setReplyId(id);
     if (inputRef.current) {
       inputRef.current.focus();
@@ -204,29 +214,35 @@ const CommentsScreen = ({route, navigation}: any) => {
     setIsReplying(true);
   };
 
+
   return (
     <View
-      style={{flex: 1, justifyContent: 'space-between', position: 'relative'}}>
+      style={{ flex: 1, justifyContent: 'space-between', position: 'relative' }}
+    >
       <ScrollView
         keyboardShouldPersistTaps="always"
         nestedScrollEnabled={true}
-        style={{position: 'relative'}}>
-        <View style={{backgroundColor: '#353535'}}>
-          <CustomPost
-            post={selectedPost}
-            commentCount={commentsCount}
-            isCommentsScreenActive={commentScreenActive}
-            // handleBackPress={handleBackPress}
-            heightFull={!selectedPost?.media}
-            isEditing={route?.params?.isEdit}
-          />
+        style={{ position: 'relative' }}
+      >
+
+        <View style={{ backgroundColor: '#353535' }}>
+          {/* Assuming CustomPost is a valid component */}
+          {/* Adjust props accordingly */}
+          {/* {CustomPost({
+            post: selectedPost,
+            commentCount: commentsCount,
+            isCommentsScreenActive: commentScreenActive,
+            heightFull: !selectedPost?.media,
+            isEditing: route?.params?.isEdit,
+          })} */}
         </View>
         <View
           style={{
             height: verticalScale(350),
             width: '100%',
             backgroundColor: '#ffffff',
-          }}>
+          }}
+        >
           <ScrollView
             ref={commentRef}
             nestedScrollEnabled={true}
@@ -235,8 +251,10 @@ const CommentsScreen = ({route, navigation}: any) => {
               allComments &&
               allComments?.length > 0 &&
               isScrollToBottom &&
-              commentRef?.current.scrollToEnd({animated: true})
-            }>
+              commentRef?.current.scrollToEnd({ animated: true })
+            }
+          >
+
             {comments && comments?.length > 0 ? (
               <Comment
                 isLoadMore={loadMore}
@@ -246,29 +264,24 @@ const CommentsScreen = ({route, navigation}: any) => {
                 onReply={handleReply}
               />
             ) : isCommentsLoading ? (
-              <CustomLoader extraStyles={{marginTop: 30}} />
+              <CustomLoader extraStyles={{ marginTop: 30 }} />
             ) : (
               <NoComment />
             )}
-            {/* {comments && comments.length > 0 ? (
-              <View
-                style={{
-                  height: comments.length < 2 ? 120 : 70,
-                  backgroundColor: '#ffffff',
-                }}
-              />
-            ) : null} */}
           </ScrollView>
         </View>
+
         <Modal
           onBackButtonPress={() => setImageFullscreen(false)}
           isVisible={isImageFullscreen}
           backdropOpacity={1}
           onBackdropPress={() => setImageFullscreen(false)}
-          style={styles.fullscreenContainer}>
+          style={styles.fullscreenContainer}
+        >
           <TouchableOpacity
             onPress={handleImageClose}
-            style={styles.fullscreenContainer}>
+            style={styles.fullscreenContainer}
+          >
             <ImageZoom
               uri={media}
               minScale={1}
@@ -280,7 +293,8 @@ const CommentsScreen = ({route, navigation}: any) => {
         </Modal>
 
         <View
-          style={{backgroundColor: 'black', position: 'absolute', bottom: 0}}>
+          style={{ backgroundColor: 'black', position: 'absolute', bottom: 0 }}
+        >
           {mediaUri && !isReplying && (
             <CustomAttachmentDialog
               message="Photo Attached"
@@ -295,6 +309,7 @@ const CommentsScreen = ({route, navigation}: any) => {
               onCancel={() => setIsReplying(false)}
             />
           )}
+
           {isReplying && mediaUri && (
             <CustomAttachmentDialog
               message="Photo Attached in Reply"
@@ -305,37 +320,41 @@ const CommentsScreen = ({route, navigation}: any) => {
               }}
             />
           )}
+
           <View style={styles.inputContainer}>
             <View
               style={{
                 flexDirection: 'row',
                 backgroundColor: '#00abd2',
                 width: '85%',
-              }}>
+              }}
+            >
               <TextInput
                 style={styles.textInput}
                 ref={inputRef}
                 placeholder="Message"
                 placeholderTextColor="#fff"
                 value={commentText}
-                onChangeText={text => setCommentText(text)}
+                onChangeText={(text) => setCommentText(text)}
               />
               <TouchableOpacity
                 style={styles.photoButton}
-                onPress={handlePhotoButtonPress}>
+                onPress={handlePhotoButtonPress}
+              >
                 <CreatePostCommentSvgIcon />
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity
               style={styles.commentButton}
-              onPress={handleAddComment}>
+              onPress={handleAddComment}
+            >
               {isLoading ? (
                 <CustomLoader />
               ) : (
                 <Image
                   source={SendIcon}
-                  style={{width: 20, height: 20, tintColor: '#fff'}}
+                  style={{ width: 20, height: 20, tintColor: '#fff' }}
                 />
               )}
             </TouchableOpacity>
@@ -382,28 +401,11 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(8),
     paddingHorizontal: horizontalScale(12),
   },
-  attachmentDialog: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 10,
-    padding: 10,
-  },
   photoButton: {
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: horizontalScale(13),
     opacity: 0.8,
-  },
-  cancelIconContainer: {
-    position: 'absolute',
-    top: 15,
-    right: 15,
-    zIndex: 10,
-  },
-  cancelIcon: {
-    width: horizontalScale(24),
-    height: verticalScale(24),
-    tintColor: '#000',
   },
 });
 

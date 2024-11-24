@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Text,
   View,
@@ -9,18 +9,15 @@ import {
   Animated,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
-import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import { useSelector, useDispatch } from 'react-redux';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import {
   ParamListBase,
   useFocusEffect,
   useIsFocused,
   useNavigation,
-  useRoute,
 } from '@react-navigation/native';
-// ---------------------------------------------------------------------//
-import {RootState} from '../../redux/store';
-import {horizontalScale, verticalScale} from '../../utils/metrics';
+
 import NotificationIcon from '../../../assets/icons/NotificationIcon';
 const SearchIcon = require('../../../assets/icons/search.png');
 import {
@@ -29,32 +26,32 @@ import {
   setPagination,
   setSelectedPost,
 } from '../../redux/postSlice';
-// import {PostsData} from '../dummyData';
+
 import CustomProfileAvatar from '../../components/shared-components/CustomProfileAvatar';
 import MyCirclePosts from '../../components/home-components/MyCirclePosts';
-import {deletePost, getPosts, getVideoPosts} from '../../api/home-module';
+import { deletePost, getPosts, getVideoPosts } from '../../api/home-module';
 import CreatorPosts from '../../components/home-components/CreatorPosts';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
-import {setTrainerView} from '../../redux/profileSlice';
+import { setTrainerView } from '../../redux/profileSlice';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
-  const userData = useSelector((state: RootState) => state.auth.user);
-  const [userId, setUserId] = useState<any>(userData?._id);
+  const userData = useSelector((state) => state.auth.user);
+  const [userId, setUserId] = useState(userData?._id);
   const [selectedButton, setSelectedButton] = useState('My Circle');
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const navigation = useNavigation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const tabBarHeight = useBottomTabBarHeight();
-  const [myCircleData, setMycirleData] = useState<any>();
-  const [creatorData, setCreatorData] = useState<any>();
-  const [creatorPage, setCreatorPage] = useState<number>(1);
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(40);
-  const [hasMoreCirclePosts, setHasMoreCirclePosts] = useState<boolean>(false);
-  const [hasMoreVideos, setHasMoreVideos] = useState<boolean>(false);
-  const [isLoadMore, setIsLoadMore] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [myCircleData, setMycirleData] = useState();
+  const [creatorData, setCreatorData] = useState();
+  const [creatorPage, setCreatorPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(40);
+  const [hasMoreCirclePosts, setHasMoreCirclePosts] = useState(false);
+  const [hasMoreVideos, setHasMoreVideos] = useState(false);
+  const [isLoadMore, setIsLoadMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const isFocused = useIsFocused();
 
   const scrollY = new Animated.Value(0);
@@ -64,12 +61,12 @@ const HomeScreen = () => {
   });
 
   const handleSearchBarFocus = () => {
-    navigation.navigate('Search' as never);
+    navigation.navigate('Search');
   };
 
-  const handleCommentButtonPress = (selectedPost: any, id: string) => {
+  const handleCommentButtonPress = (selectedPost, id) => {
     dispatch(setSelectedPost(selectedPost));
-    navigation.navigate('CommentsScreen', {id: id});
+    navigation.navigate('CommentsScreen', { id: id });
   };
 
   const handleRefresh = () => {
@@ -77,7 +74,7 @@ const HomeScreen = () => {
     setPage(1);
   };
 
-  const handleButtonPress = (button: string) => {
+  const handleButtonPress = (button) => {
     setSelectedButton(button);
   };
 
@@ -89,7 +86,7 @@ const HomeScreen = () => {
           const response = await getPosts(page, limit);
           const data = response?.data?.data;
           if (myCircleData && isLoadMore) {
-            setMycirleData((prevData: any) => {
+            setMycirleData((prevData) => {
               return [...prevData, ...data?.posts];
             });
           } else {
@@ -98,7 +95,7 @@ const HomeScreen = () => {
           setHasMoreCirclePosts(data?.pagination?.hasNextPage);
           setIsLoadMore(false);
           setIsRefreshing(false);
-        } catch (error: any) {
+        } catch (error) {
           console.log(error?.response, 'Error fetching my circle posts!');
         }
         setIsLoading(false);
@@ -111,7 +108,7 @@ const HomeScreen = () => {
   const loadMoreItems = () => {
     if (hasMoreCirclePosts) {
       setIsLoadMore(true);
-      setPage((prevPage: number) => prevPage + 1);
+      setPage((prevPage) => prevPage + 1);
     }
     return;
   };
@@ -126,7 +123,7 @@ const HomeScreen = () => {
 
           setCreatorData(data?.posts);
           setHasMoreVideos(data?.pagination?.hasNextPage);
-        } catch (error: any) {
+        } catch (error) {
           console.log(error, 'Error fetching my creator posts!');
         }
         setIsLoading(false);
@@ -137,11 +134,12 @@ const HomeScreen = () => {
 
   const loadMoreVideos = () => {
     if (hasMoreCirclePosts) {
-      setCreatorPage((prevPage: number) => prevPage + 1);
+      setCreatorPage((prevPage) => prevPage + 1);
     }
     return;
   };
-  const handleDeleteVideo = async (id: string) => {
+
+  const handleDeleteVideo = async (id) => {
     try {
       const response = await deletePost(id);
       const responseData = response?.data;
@@ -151,7 +149,7 @@ const HomeScreen = () => {
         type: 'success',
         text1: `${responseData?.message}`,
       });
-    } catch (error: any) {
+    } catch (error) {
       console.log(error?.response?.data?.message, 'From delete video');
       Toast.show({
         type: 'error',
@@ -163,15 +161,15 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <Animated.View
-        style={[styles.topContainer, {transform: [{translateY: translateY}]}]}>
+        style={[styles.topContainer, { transform: [{ translateY: translateY }] }]}>
         <View style={styles.headerContainer}>
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('Profile', {isFollowing: false})
+              navigation.navigate('Profile', { isFollowing: false })
             }>
             <CustomProfileAvatar
-              username={userData?.username as string}
-              profileImage={userData?.profileImage as any}
+              username={userData?.username}
+              profileImage={userData?.profileImage}
             />
           </TouchableOpacity>
           <View style={styles.textinputContainer}>
@@ -193,8 +191,8 @@ const HomeScreen = () => {
                   style={[
                     styles.button1Text,
                     selectedButton === 'My Circle'
-                      ? {backgroundColor: '#019acd'}
-                      : {color: '#444444'},
+                      ? { backgroundColor: '#019acd' }
+                      : { color: '#444444' },
                   ]}>
                   My Circle
                 </Text>
@@ -205,8 +203,8 @@ const HomeScreen = () => {
                   style={[
                     styles.button2Text,
                     selectedButton === 'Creator'
-                      ? {backgroundColor: '#019acd'}
-                      : {color: '#444444'},
+                      ? { backgroundColor: '#019acd' }
+                      : { color: '#444444' },
                   ]}>
                   Creator
                 </Text>
@@ -221,30 +219,25 @@ const HomeScreen = () => {
         </View>
       </Animated.View>
       <View style={styles.bottomContainer}>
-        {
-          // isRefreshing ? (
-          //   <ActivityIndicator size="large" color="#ffffff" />
-          // ) :
-          selectedButton === 'My Circle' ? (
-            <MyCirclePosts
-              data={myCircleData}
-              isLoading={isLoading}
-              isRefreshing={isRefreshing}
-              handleRefresh={handleRefresh}
-              loadMoreItems={loadMoreItems}
-              handleCommentButtonPress={handleCommentButtonPress}
-            />
-          ) : (
-            <CreatorPosts
-              data={creatorData}
-              userId={userId}
-              tabBarHeight={tabBarHeight}
-              isProfile={false}
-              handleRefresh={handleRefresh}
-              onDeletePost={handleDeleteVideo}
-            />
-          )
-        }
+        {selectedButton === 'My Circle' ? (
+          <MyCirclePosts
+            data={myCircleData}
+            isLoading={isLoading}
+            isRefreshing={isRefreshing}
+            handleRefresh={handleRefresh}
+            loadMoreItems={loadMoreItems}
+            handleCommentButtonPress={handleCommentButtonPress}
+          />
+        ) : (
+          <CreatorPosts
+            data={creatorData}
+            userId={userId}
+            tabBarHeight={tabBarHeight}
+            isProfile={false}
+            handleRefresh={handleRefresh}
+            onDeletePost={handleDeleteVideo}
+          />
+        )}
       </View>
     </View>
   );
@@ -270,19 +263,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: horizontalScale(16),
-    paddingTop: verticalScale(5),
+    paddingHorizontal: 16,
+    paddingTop: 5,
   },
   searchbar: {
     backgroundColor: '#5a5b5c',
     borderRadius: 0,
     width: '85%',
-    height: verticalScale(3),
+    height: 3,
   },
   topContainerButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: verticalScale(16),
+    marginTop: 16,
     margin: 'auto',
     flex: 1,
     paddingLeft: 25,
@@ -297,36 +290,36 @@ const styles = StyleSheet.create({
     backgroundColor: '#373638',
     borderBottomRightRadius: 40,
     borderTopLeftRadius: 40,
-    paddingVertical: verticalScale(5),
-    paddingHorizontal: horizontalScale(33),
+    paddingVertical: 5,
+    paddingHorizontal: 33,
     color: '#fff',
     zIndex: 999,
   },
   button2Text: {
     backgroundColor: '#373638',
     borderBottomRightRadius: 40,
-    paddingVertical: verticalScale(4),
-    paddingHorizontal: horizontalScale(32),
+    paddingVertical: 4,
+    paddingHorizontal: 32,
     color: '#fff',
     marginLeft: -20,
   },
   input: {
     width: '100%',
-    marginHorizontal: horizontalScale(5),
+    marginHorizontal: 5,
   },
   searchIcon: {
-    width: horizontalScale(20),
-    height: verticalScale(20),
+    width: 20,
+    height: 20,
     tintColor: '#fff',
-    marginLeft: horizontalScale(10),
+    marginLeft: 10,
   },
   textinputContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#2c2d2f',
-    marginBottom: -verticalScale(5),
-    paddingHorizontal: horizontalScale(25),
+    marginBottom: -5,
+    paddingHorizontal: 25,
     width: '85%',
   },
   notificationIcon: {

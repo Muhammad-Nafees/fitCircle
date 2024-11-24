@@ -49,6 +49,7 @@ const CreateAccount = ({navigation, route}: any) => {
       setIsError('');
     }
   };
+  
   const getCode = phoneInput.current?.getCountryCode();
 
   const initialValues: CreateAccountFormValues = {

@@ -21,7 +21,6 @@ const Comment = ({
   onLoadComments,
   isLoadMore,
 }: Props) => {
-  // const totalCommentsLength = allComments.length;
 
   const nestedCommentsLength = allComments.reduce(
     (count: number, comment: IComment) => {
@@ -48,6 +47,7 @@ const Comment = ({
           </Text>
         </TouchableOpacity>
       )}
+
       {allComments?.map((comment: IComment, index: number) => (
         <View key={comment._id + index} style={{marginTop: 8}}>
           <CommentItem comment={comment} index={index} onReply={onReply} />
@@ -63,6 +63,7 @@ const Comment = ({
             ))}
         </View>
       ))}
+      
     </View>
   );
 };

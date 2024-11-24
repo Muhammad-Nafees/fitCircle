@@ -31,12 +31,14 @@ const OtpScreen = ({navigation, route}: any) => {
   const dispatch = useDispatch();
 
   const [secondsRemaining, setSecondsRemaining] = useState(60);
+
   useEffect(() => {
     setVerificationType(route?.params?.verificationType);
     if (accountType === 'signup') {
       setEmail(userData?.email);
       setPhone(userData?.phone);
     } else {
+      
       if (route?.params?.verificationType === 'phone') {
         setPhone(userData?.phone);
         setEmail('');
@@ -45,19 +47,22 @@ const OtpScreen = ({navigation, route}: any) => {
         setPhone('');
       }
     }
+
     setGeneratedOtp(route?.params?.otp);
   }, [route?.params?.verificationType]);
+  
+
 
   const handleSubmit = async () => {
     const concatenatedString = otp.join('');
     const convertOtpIntoNumber = parseInt(concatenatedString);
     setIsLoading(true);
+
     try {
       const response = await verifyCode(convertOtpIntoNumber);
       const data = response?.data.data;
       dispatch(setAccessToken(data.accessToken));
       setIsLoading(false);
-      // setSecondsRemaining(0);
       navigation.navigate('AccountVerified');
       Toast.show({
         type: 'success',
@@ -72,6 +77,7 @@ const OtpScreen = ({navigation, route}: any) => {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     if (secondsRemaining == 0) {
       return;
